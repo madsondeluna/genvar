@@ -1,12 +1,16 @@
 # GenVar Dashboard
 
-**Trabalho de Conclusao de Curso - MBA em Engenharia de Software**
-Escola Politecnica da Universidade de Sao Paulo (USP)
+---
 
-**Autor:** Madson A. de Luna Aragao
-**Vinculo:** Doutorando em Bioinformatica - Universidade Federal de Minas Gerais (UFMG)
-**Repositorio:** https://github.com/madsondeluna/genvar
-**Versao:** 1.0.0
+| | |
+|---|---|
+| **Instituicao** | Escola Superior de Agricultura Luiz de Queiroz (ESALQ) - Universidade de Sao Paulo (USP) |
+| **Curso** | MBA em Engenharia de Software |
+| **Modalidade** | Trabalho de Conclusao de Curso (TCC) |
+| **Autor** | Madson A. de Luna Aragao |
+| **Vinculo** | Doutorando em Bioinformatica - Universidade Federal de Minas Gerais (UFMG) |
+| **Repositorio** | https://github.com/madsondeluna/genvar |
+| **Versao** | 1.0.0 |
 
 ---
 
