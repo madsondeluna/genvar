@@ -36,7 +36,7 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 - Metricas de restricao evolutiva: pLI, LOEUF (oe_lof_upper), o/e LoF, o/e Missense
 - Resumo de variantes: total, patogenicas, VUS, benignas
 - Visualizacao de distribuicao de variantes ao longo do gene (heatmap por bins de 1kb)
-- Link para estrutura proteica predita pelo AlphaFold (imagem PAE + download PDB)
+- Estrutura proteica predita pelo AlphaFold: imagem PAE, visualizador 3D interativo (NGL) colorido por confianca pLDDT, download PDB
 - Links externos: NCBI Gene, gnomAD, UniProt, AlphaFold
 
 **Busca por Variante (dbSNP rs ID)**
@@ -265,11 +265,12 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 |------------|--------|--------|
 | React | 18.2 | Biblioteca de interface declarativa baseada em componentes |
 | Vite | 5.0 | Build tool e dev server com HMR |
-| Tailwind CSS | 3.3 | Framework CSS utility-first (paleta cinza exclusiva) |
+| Tailwind CSS | 3.3 | Framework CSS utility-first (paleta cinza + cores semanticas) |
 | TanStack Query | 5.17 | Gerenciamento de estado assincrono e cache client-side |
 | Axios | 1.6 | Cliente HTTP com interceptors de erro |
 | Plotly.js | 2.27 | Biblioteca de visualizacao interativa (5 tipos de grafico) |
 | react-plotly.js | 2.6 | Wrapper React para Plotly.js |
+| NGL | 2.3 | Visualizador 3D de estruturas moleculares (PDB) no browser |
 | Lucide React | 0.294 | Biblioteca de icones SVG |
 | react-router-dom | 6.20 | Roteamento client-side (SPA) |
 
@@ -292,6 +293,7 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 | `PredictionScoresRadar` | Radar/polar | SIFT, PolyPhen-2, CADD, REVEL normalizados 0-1 | Plotly.js |
 | `GeneLocusHeatmap` | Barras empilhadas | Distribuicao de variantes em bins de 1kb ao longo do gene | Plotly.js |
 | `ConstraintMetrics` | Gauges + barras de progresso | pLI, LOEUF, o/e LoF, o/e Missense (gnomAD) | CSS nativo |
+| `ProteinViewer` | Visualizador 3D interativo | Estrutura proteica AlphaFold (PDB), colorido por confianca pLDDT; representacoes Cartoon, Surface, Ball & Stick, Ribbon | NGL |
 | `VariantTable` | Tabela ordenavel + paginacao | Lista de variantes classificadas por categoria clinica | React |
 
 **Normalizacao dos escores de patogenicidade no radar chart:**
@@ -340,6 +342,7 @@ genvar-dashboard/
 │   │   │   ├── PredictionScoresRadar.jsx
 │   │   │   ├── GeneLocusHeatmap.jsx
 │   │   │   ├── ConstraintMetrics.jsx
+│   │   │   ├── ProteinViewer.jsx
 │   │   │   ├── VariantTable.jsx
 │   │   │   ├── LoadingSpinner.jsx
 │   │   │   └── ErrorAlert.jsx
@@ -351,7 +354,7 @@ genvar-dashboard/
 │   │   └── index.css                Tailwind base + componentes customizados
 │   ├── package.json
 │   ├── vite.config.js               Proxy /api -> backend:8000
-│   └── tailwind.config.js           Paleta cinza + fonte JetBrains Mono
+│   └── tailwind.config.js           Paleta cinza + fonte Geist Mono
 ├── docker-compose.yml               Orquestracao: backend + frontend + redis
 ├── API_TESTING_REPORT.md            Relatorio de testes e discrepancias das APIs
 └── README.md
@@ -523,8 +526,8 @@ Acesse http://localhost:3000 no navegador para usar a aplicacao.
 
 Na pagina inicial, voce pode buscar por:
 
-- **Gene** (simbolo HGNC): `BRCA1`, `TP53`, `APOE`, `CFTR`, `KRAS`
-- **Variante** (rs ID do dbSNP): `rs429358`, `rs7412`, `rs28897672`
+- **Gene** (simbolo HGNC): `MLH1`, `HBB`, `MSH2`, `VHL`, `LDLR`, `RB1`
+- **Variante** (rs ID do dbSNP): `rs334`, `rs1800562`, `rs6025`, `rs1799853`
 
 A primeira busca pode demorar alguns segundos pois as APIs externas sao consultadas em tempo real. Buscas subsequentes do mesmo gene/variante sao instantaneas (cache).
 
