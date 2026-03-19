@@ -1,13 +1,28 @@
 import Plot from 'react-plotly.js'
 
-function afToGray(af) {
-  if (af <= 0) return '#F5F5F5'
-  const log = Math.log10(af)
-  // log range roughly -6 to 0
-  const t = Math.min(1, Math.max(0, (log + 6) / 6))
-  const grays = ['#F5F5F5', '#D4D4D4', '#A3A3A3', '#737373', '#525252', '#171717']
-  const idx = Math.floor(t * (grays.length - 1))
-  return grays[idx]
+// Distinct colors per population for easy differentiation
+const POP_COLORS = {
+  AFR: '#2563EB', // blue
+  AMR: '#D97706', // amber
+  ASJ: '#7C3AED', // violet
+  EAS: '#DC2626', // red
+  FIN: '#0891B2', // cyan
+  NFE: '#059669', // emerald
+  SAS: '#EA580C', // orange
+  MID: '#BE185D', // pink
+  AMI: '#65A30D', // lime
+}
+
+const POP_DESCRIPTIONS = {
+  AFR: 'African / African American',
+  AMR: 'Latino / Admixed American',
+  ASJ: 'Ashkenazi Jewish',
+  EAS: 'East Asian',
+  FIN: 'Finnish',
+  NFE: 'Non-Finnish European',
+  SAS: 'South Asian',
+  MID: 'Middle Eastern',
+  AMI: 'Amish',
 }
 
 export default function FrequencyBarChart({ frequencies }) {
@@ -23,27 +38,33 @@ export default function FrequencyBarChart({ frequencies }) {
   const sorted = [...frequencies].sort((a, b) => b.allele_frequency - a.allele_frequency)
   const labels = sorted.map((p) => p.population)
   const values = sorted.map((p) => p.allele_frequency)
-  const colors = sorted.map((p) => afToGray(p.allele_frequency))
+  const colors = sorted.map((p) => POP_COLORS[p.population] || '#737373')
   const texts = sorted.map(
     (p) =>
-      `${p.population_name}<br>AF: ${p.allele_frequency.toExponential(3)}<br>AC: ${p.allele_count} / AN: ${p.allele_number}`
+      `<b>${POP_DESCRIPTIONS[p.population] || p.population_name}</b><br>` +
+      `AF: ${p.allele_frequency.toExponential(3)}<br>` +
+      `AC: ${p.allele_count.toLocaleString()} / AN: ${p.allele_number.toLocaleString()}`
   )
 
-  const data = [
+  const plotData = [
     {
       type: 'bar',
       x: labels,
       y: values,
       text: texts,
       hoverinfo: 'text',
-      marker: { color: colors, line: { color: '#171717', width: 0.5 } },
+      marker: {
+        color: colors,
+        line: { color: 'white', width: 1 },
+        opacity: 0.88,
+      },
     },
   ]
 
   const layout = {
     yaxis: {
       type: 'log',
-      title: { text: 'Allele Frequency (log)', font: { family: 'JetBrains Mono', size: 11 } },
+      title: { text: 'Allele Frequency (log scale)', font: { family: 'JetBrains Mono', size: 11 } },
       gridcolor: '#E5E5E5',
       tickfont: { family: 'JetBrains Mono', size: 10 },
       zeroline: false,
@@ -52,7 +73,7 @@ export default function FrequencyBarChart({ frequencies }) {
       tickfont: { family: 'JetBrains Mono', size: 11 },
       tickangle: 0,
     },
-    margin: { l: 60, r: 20, t: 20, b: 50 },
+    margin: { l: 70, r: 20, t: 20, b: 50 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
     font: { family: 'JetBrains Mono', color: '#171717' },
@@ -66,12 +87,32 @@ export default function FrequencyBarChart({ frequencies }) {
   return (
     <div className="card-flat">
       <h3 className="section-title">Population Allele Frequencies</h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Allele frequency (AC/AN) per gnomAD population. Log scale. Hover for details.
+      </p>
+
       <Plot
-        data={data}
+        data={plotData}
         layout={layout}
         config={{ responsive: true, displayModeBar: false }}
         style={{ width: '100%', height: '300px' }}
       />
+
+      {/* Population legend */}
+      <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-x-4 gap-y-2">
+        {sorted.map((p) => (
+          <div key={p.population} className="flex items-center gap-1.5">
+            <div
+              className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
+              style={{ backgroundColor: POP_COLORS[p.population] || '#737373' }}
+            />
+            <span className="text-xs text-gray-500">
+              <span className="font-medium text-gray-700">{p.population}</span>
+              {' '}{POP_DESCRIPTIONS[p.population] || p.population_name}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

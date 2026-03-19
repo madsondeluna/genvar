@@ -1,30 +1,50 @@
-function MetricBar({ label, value, max = 1, description }) {
-  if (value == null) {
-    return (
-      <div className="flex flex-col gap-1">
-        <div className="flex justify-between">
-          <span className="label">{label}</span>
-          <span className="text-xs text-gray-400">N/A</span>
-        </div>
-        <div className="h-2 bg-gray-100 rounded-full" />
-        {description && <p className="text-xs text-gray-400">{description}</p>}
-      </div>
-    )
-  }
+// pLI:   > 0.9 = highly constrained (red), 0.1-0.9 = intermediate (amber), < 0.1 = tolerant (green)
+// LOEUF: < 0.35 = highly constrained (red), 0.35-0.6 = intermediate (amber), > 0.6 = tolerant (green)
+// oe_lof/oe_mis: < 0.5 = constrained (red), 0.5-0.8 = intermediate (amber), > 0.8 = tolerant (green)
 
-  const pct = Math.min(100, (value / max) * 100)
-  const fillClass = pct > 75 ? 'bg-gray-900' : pct > 40 ? 'bg-gray-600' : 'bg-gray-300'
+function constraintColor(value, metric) {
+  if (value == null) return { bar: '#E5E5E5', text: 'text-gray-400', label: 'N/A', bg: 'bg-gray-100' }
+  if (metric === 'pli') {
+    if (value >= 0.9) return { bar: '#DC2626', text: 'text-red-600', label: 'Highly constrained', bg: 'bg-red-50' }
+    if (value >= 0.1) return { bar: '#D97706', text: 'text-amber-600', label: 'Intermediate', bg: 'bg-amber-50' }
+    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerant to LoF', bg: 'bg-green-50' }
+  }
+  if (metric === 'loeuf') {
+    if (value <= 0.35) return { bar: '#DC2626', text: 'text-red-600', label: 'Highly constrained', bg: 'bg-red-50' }
+    if (value <= 0.6) return { bar: '#D97706', text: 'text-amber-600', label: 'Intermediate', bg: 'bg-amber-50' }
+    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerant to LoF', bg: 'bg-green-50' }
+  }
+  // oe_lof, oe_mis
+  if (value <= 0.5) return { bar: '#DC2626', text: 'text-red-600', label: 'Strong constraint', bg: 'bg-red-50' }
+  if (value <= 0.8) return { bar: '#D97706', text: 'text-amber-600', label: 'Moderate constraint', bg: 'bg-amber-50' }
+  return { bar: '#16A34A', text: 'text-green-600', label: 'Near expected', bg: 'bg-green-50' }
+}
+
+function MetricBar({ label, value, max = 1, metric, description }) {
+  const color = constraintColor(value, metric)
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex justify-between">
-        <span className="label">{label}</span>
-        <span className="text-xs font-medium text-gray-700">{value.toFixed(4)}</span>
+    <div className="flex flex-col gap-1.5">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <span className="label">{label}</span>
+          {value != null && (
+            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${color.bg} ${color.text}`}>
+              {color.label}
+            </span>
+          )}
+        </div>
+        <span className="text-xs font-semibold text-gray-700">
+          {value != null ? value.toFixed(4) : 'N/A'}
+        </span>
       </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${fillClass}`}
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: value != null ? `${Math.min(100, (value / max) * 100)}%` : '0%',
+            backgroundColor: color.bar,
+          }}
         />
       </div>
       {description && <p className="text-xs text-gray-400">{description}</p>}
@@ -32,32 +52,39 @@ function MetricBar({ label, value, max = 1, description }) {
   )
 }
 
-function ScoreGauge({ label, value, interpretation }) {
-  if (value == null) {
-    return (
-      <div className="card-flat">
-        <p className="label mb-2">{label}</p>
-        <p className="text-2xl font-bold text-gray-300">N/A</p>
-        <p className="text-xs text-gray-400 mt-1">{interpretation || 'Not available'}</p>
-      </div>
-    )
-  }
-
-  const pct = Math.min(100, value * 100)
-  const level = value > 0.9 ? 'High constraint' : value > 0.5 ? 'Moderate constraint' : 'Low constraint'
+function ScoreGauge({ label, value, metric, interpretation }) {
+  const color = constraintColor(value, metric)
+  const pct = value != null ? Math.min(100, value * 100) : 0
 
   return (
-    <div className="card-flat">
-      <p className="label mb-2">{label}</p>
-      <p className="text-3xl font-bold text-gray-900 tracking-tight">{value.toFixed(4)}</p>
-      <p className="text-xs text-gray-500 mt-1">{level}</p>
-      <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+    <div className={`rounded-lg border p-4 ${value != null ? color.bg : 'bg-gray-50'} border-gray-200`}>
+      <p className="label mb-1">{label}</p>
+      <p className={`text-3xl font-bold tracking-tight ${value != null ? color.text : 'text-gray-300'}`}>
+        {value != null ? value.toFixed(4) : 'N/A'}
+      </p>
+      <p className={`text-xs font-medium mt-1 ${value != null ? color.text : 'text-gray-400'}`}>
+        {value != null ? color.label : 'Not available'}
+      </p>
+      <div className="mt-3 h-1.5 bg-white bg-opacity-60 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gray-900 rounded-full transition-all duration-500"
-          style={{ width: `${pct}%` }}
+          className="h-full rounded-full transition-all duration-700"
+          style={{ width: `${pct}%`, backgroundColor: color.bar }}
         />
       </div>
-      {interpretation && <p className="text-xs text-gray-400 mt-1">{interpretation}</p>}
+      {interpretation && <p className="text-xs text-gray-500 mt-2">{interpretation}</p>}
+    </div>
+  )
+}
+
+function Legend({ items }) {
+  return (
+    <div className="flex flex-wrap gap-3 mt-1">
+      {items.map((item) => (
+        <div key={item.label} className="flex items-center gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+          <span className="text-xs text-gray-500">{item.label}</span>
+        </div>
+      ))}
     </div>
   )
 }
@@ -69,37 +96,59 @@ export default function ConstraintMetrics({ data }) {
 
   return (
     <div className="card-flat">
-      <h3 className="section-title">Constraint Metrics (gnomAD)</h3>
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="flex items-start justify-between mb-1">
+        <h3 className="section-title mb-0">Constraint Metrics</h3>
+        <span className="text-xs text-gray-400">gnomAD r4</span>
+      </div>
+      <p className="text-xs text-gray-400 mb-4">
+        Evolutionary constraint indicates how much natural selection acts against loss-of-function variants in this gene.
+        Highly constrained genes are intolerant to mutations.
+      </p>
+
+      <div className="grid grid-cols-2 gap-3 mb-5">
         <ScoreGauge
           label="pLI Score"
           value={pli_score}
-          interpretation="Probability of being loss-of-function intolerant"
+          metric="pli"
+          interpretation="Probability of LoF intolerance. > 0.9 = high constraint."
         />
         <ScoreGauge
           label="LOEUF"
           value={oe_lof_upper}
-          interpretation="LoF observed/expected upper bound fraction"
+          metric="loeuf"
+          interpretation="LoF o/e upper bound. < 0.35 = high constraint."
         />
       </div>
-      <div className="flex flex-col gap-4">
+
+      <Legend
+        items={[
+          { color: '#DC2626', label: 'Highly constrained' },
+          { color: '#D97706', label: 'Intermediate' },
+          { color: '#16A34A', label: 'Tolerant' },
+        ]}
+      />
+
+      <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-gray-100">
         <MetricBar
           label="LoF Z-score"
           value={lof_z_score}
           max={5}
-          description="Loss-of-function constraint z-score"
+          metric="pli"
+          description="Z-score for depletion of LoF variants. Higher = more constrained."
         />
         <MetricBar
           label="o/e LoF"
           value={oe_lof}
           max={1}
-          description="Observed/expected loss-of-function ratio"
+          metric="loeuf"
+          description="Ratio of observed to expected LoF variants. Lower = stronger constraint."
         />
         <MetricBar
           label="o/e Missense"
           value={oe_mis}
           max={1}
-          description="Observed/expected missense ratio"
+          metric="loeuf"
+          description="Ratio of observed to expected missense variants. Lower = stronger constraint."
         />
       </div>
     </div>

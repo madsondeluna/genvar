@@ -9,6 +9,36 @@ import FrequencyBarChart from '../components/FrequencyBarChart'
 import PredictionScoresRadar from '../components/PredictionScoresRadar'
 import { ArrowLeft, Search, ExternalLink } from 'lucide-react'
 
+const SCORE_COLORS = {
+  red:   { value: 'text-red-600',   bg: 'bg-red-50',   badge: 'text-red-600 bg-red-50' },
+  amber: { value: 'text-amber-600', bg: 'bg-amber-50', badge: 'text-amber-600 bg-amber-50' },
+  green: { value: 'text-green-600', bg: 'bg-green-50', badge: 'text-green-600 bg-green-50' },
+}
+
+function ScoreDetail({ label, score, prediction, color, hint }) {
+  const palette = color ? SCORE_COLORS[color] : null
+  return (
+    <div className={`rounded-md p-3 ${palette ? palette.bg : 'bg-gray-50'}`}>
+      <p className="label mb-1">{label}</p>
+      {score != null ? (
+        <>
+          <p className={`text-lg font-bold tracking-tight ${palette ? palette.value : 'text-gray-700'}`}>
+            {score.toFixed(4)}
+          </p>
+          {prediction && (
+            <p className={`text-xs font-medium mt-0.5 ${palette ? palette.value : 'text-gray-500'}`}>
+              {prediction}
+            </p>
+          )}
+          {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+        </>
+      ) : (
+        <p className="text-sm text-gray-400">N/A</p>
+      )}
+    </div>
+  )
+}
+
 function InfoRow({ label, value }) {
   if (!value && value !== 0) return null
   return (
@@ -23,10 +53,12 @@ function SignificanceBadge({ sig }) {
   if (!sig) return null
   const s = sig.toLowerCase()
   let cls = 'tag tag-other'
-  if (s.includes('pathogenic') && !s.includes('conflicting')) cls = 'tag tag-pathogenic'
+  if (s.includes('likely pathogenic')) cls = 'tag tag-likely-pathogenic'
+  else if (s.includes('pathogenic') && !s.includes('conflicting')) cls = 'tag tag-pathogenic'
+  else if (s.includes('likely benign')) cls = 'tag tag-likely-benign'
   else if (s.includes('benign')) cls = 'tag tag-benign'
   else if (s.includes('uncertain') || s.includes('vus')) cls = 'tag tag-vus'
-  else if (s.includes('conflicting')) cls = 'tag tag-vus'
+  else if (s.includes('conflicting')) cls = 'tag tag-conflicting'
   return <span className={cls}>{sig}</span>
 }
 
@@ -188,50 +220,32 @@ export default function VariantPage() {
                 <h3 className="section-title">Prediction Score Details</h3>
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="label mb-1">SIFT Score</p>
-                      {data.sift_score != null ? (
-                        <>
-                          <p className="value">{data.sift_score.toFixed(4)}</p>
-                          <p className="text-xs text-gray-400">{data.sift_prediction || ''}</p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-gray-400">N/A</p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="label mb-1">PolyPhen-2 Score</p>
-                      {data.polyphen_score != null ? (
-                        <>
-                          <p className="value">{data.polyphen_score.toFixed(4)}</p>
-                          <p className="text-xs text-gray-400">{data.polyphen_prediction || ''}</p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-gray-400">N/A</p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="label mb-1">CADD Phred</p>
-                      {data.cadd_phred != null ? (
-                        <p className="value">{data.cadd_phred.toFixed(2)}</p>
-                      ) : (
-                        <p className="text-sm text-gray-400">N/A</p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="label mb-1">REVEL Score</p>
-                      {data.revel_score != null ? (
-                        <p className="value">{data.revel_score.toFixed(4)}</p>
-                      ) : (
-                        <p className="text-sm text-gray-400">N/A</p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="divider pt-2">
-                    <p className="text-xs text-gray-400 pt-3">
-                      SIFT: tolerated if score &gt; 0.05. PolyPhen: probably damaging if &gt; 0.908.
-                      CADD Phred: pathogenic if &gt; 15. REVEL: likely pathogenic if &gt; 0.5.
-                    </p>
+                    <ScoreDetail
+                      label="SIFT"
+                      score={data.sift_score}
+                      prediction={data.sift_prediction}
+                      color={data.sift_score != null ? (data.sift_score < 0.05 ? 'red' : 'green') : null}
+                      hint="< 0.05 = damaging"
+                    />
+                    <ScoreDetail
+                      label="PolyPhen-2"
+                      score={data.polyphen_score}
+                      prediction={data.polyphen_prediction}
+                      color={data.polyphen_score != null ? (data.polyphen_score > 0.908 ? 'red' : data.polyphen_score > 0.446 ? 'amber' : 'green') : null}
+                      hint="> 0.908 = prob. damaging"
+                    />
+                    <ScoreDetail
+                      label="CADD Phred"
+                      score={data.cadd_phred}
+                      color={data.cadd_phred != null ? (data.cadd_phred > 20 ? 'red' : data.cadd_phred > 10 ? 'amber' : 'green') : null}
+                      hint="> 20 = high impact"
+                    />
+                    <ScoreDetail
+                      label="REVEL"
+                      score={data.revel_score}
+                      color={data.revel_score != null ? (data.revel_score > 0.5 ? 'red' : 'green') : null}
+                      hint="> 0.5 = likely pathogenic"
+                    />
                   </div>
                 </div>
               </div>

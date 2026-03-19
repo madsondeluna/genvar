@@ -1,24 +1,37 @@
 import Plot from 'react-plotly.js'
 
-const GRAY_COLORSCALE = [
-  [0, '#F5F5F5'],
-  [0.2, '#D4D4D4'],
-  [0.4, '#A3A3A3'],
-  [0.6, '#737373'],
-  [0.8, '#525252'],
-  [1, '#171717'],
+// Blue-to-red colorscale: low frequency = blue, high frequency = red
+const FREQ_COLORSCALE = [
+  [0,    '#DBEAFE'], // blue-100
+  [0.15, '#3B82F6'], // blue-500
+  [0.4,  '#8B5CF6'], // violet-500
+  [0.65, '#F59E0B'], // amber-500
+  [0.85, '#EF4444'], // red-500
+  [1,    '#991B1B'], // red-800
 ]
 
 const POP_COORDS = {
-  AFR: { lat: 0, lon: 20 },
+  AFR: { lat: 0,  lon: 20  },
   AMR: { lat: 10, lon: -80 },
-  ASJ: { lat: 31, lon: 35 },
+  ASJ: { lat: 31, lon: 35  },
   EAS: { lat: 35, lon: 105 },
-  FIN: { lat: 64, lon: 26 },
-  NFE: { lat: 50, lon: 10 },
-  SAS: { lat: 20, lon: 78 },
-  MID: { lat: 30, lon: 50 },
+  FIN: { lat: 64, lon: 26  },
+  NFE: { lat: 50, lon: 10  },
+  SAS: { lat: 20, lon: 78  },
+  MID: { lat: 30, lon: 50  },
   AMI: { lat: 40, lon: -82 },
+}
+
+const POP_NAMES = {
+  AFR: 'African / African American',
+  AMR: 'Latino / Admixed American',
+  ASJ: 'Ashkenazi Jewish',
+  EAS: 'East Asian',
+  FIN: 'Finnish',
+  NFE: 'Non-Finnish European',
+  SAS: 'South Asian',
+  MID: 'Middle Eastern',
+  AMI: 'Amish',
 }
 
 export default function GeographicVariantMap({ frequencies }) {
@@ -31,11 +44,7 @@ export default function GeographicVariantMap({ frequencies }) {
     )
   }
 
-  const lats = []
-  const lons = []
-  const afs = []
-  const texts = []
-  const sizes = []
+  const lats = [], lons = [], afs = [], texts = [], sizes = [], popLabels = []
 
   for (const pop of frequencies) {
     const code = pop.population.toUpperCase()
@@ -46,37 +55,41 @@ export default function GeographicVariantMap({ frequencies }) {
     lats.push(coords.lat)
     lons.push(coords.lon)
     afs.push(af)
+    popLabels.push(code)
     texts.push(
-      `${pop.population_name}<br>` +
-      `AF: ${af.toExponential(3)}<br>` +
-      `AC: ${pop.allele_count.toLocaleString()}<br>` +
-      `AN: ${pop.allele_number.toLocaleString()}`
+      `<b>${POP_NAMES[code] || pop.population_name}</b> (${code})<br>` +
+      `Allele Frequency: ${af.toExponential(3)}<br>` +
+      `AC: ${pop.allele_count.toLocaleString()} / AN: ${pop.allele_number.toLocaleString()}`
     )
-    // Log scale sizing, minimum 8
+    // Marker size proportional to log frequency, minimum 12
     const logAf = af > 0 ? Math.max(Math.log10(af) + 6, 0) : 0
-    sizes.push(Math.max(8, logAf * 10))
+    sizes.push(Math.max(12, logAf * 12))
   }
 
-  const data = [
+  const plotData = [
     {
       type: 'scattergeo',
-      mode: 'markers',
+      mode: 'markers+text',
       lat: lats,
       lon: lons,
-      text: texts,
-      hoverinfo: 'text',
+      text: popLabels,
+      customdata: texts,
+      hovertemplate: '%{customdata}<extra></extra>',
+      textposition: 'top center',
+      textfont: { family: 'JetBrains Mono', size: 9, color: '#374151' },
       marker: {
         size: sizes,
         color: afs,
-        colorscale: GRAY_COLORSCALE,
+        colorscale: FREQ_COLORSCALE,
         showscale: true,
         colorbar: {
-          title: { text: 'Allele Frequency', font: { family: 'JetBrains Mono', size: 11 } },
-          tickfont: { family: 'JetBrains Mono', size: 10 },
-          thickness: 14,
+          title: { text: 'AF', font: { family: 'JetBrains Mono', size: 11 } },
+          tickfont: { family: 'JetBrains Mono', size: 9 },
+          thickness: 12,
+          len: 0.7,
         },
-        line: { color: '#171717', width: 1 },
-        opacity: 0.85,
+        line: { color: 'white', width: 1.5 },
+        opacity: 0.9,
       },
     },
   ]
@@ -86,18 +99,18 @@ export default function GeographicVariantMap({ frequencies }) {
       scope: 'world',
       projection: { type: 'natural earth' },
       showland: true,
-      landcolor: '#F5F5F5',
+      landcolor: '#F3F4F6',
       showocean: true,
-      oceancolor: '#FAFAFA',
+      oceancolor: '#EFF6FF',
       showcoastlines: true,
-      coastlinecolor: '#D4D4D4',
+      coastlinecolor: '#D1D5DB',
       showframe: false,
       bgcolor: 'white',
       showlakes: false,
       showcountries: true,
-      countrycolor: '#E5E5E5',
+      countrycolor: '#E5E7EB',
     },
-    margin: { l: 0, r: 0, t: 0, b: 0 },
+    margin: { l: 0, r: 60, t: 10, b: 0 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
     font: { family: 'JetBrains Mono', color: '#171717' },
@@ -105,14 +118,19 @@ export default function GeographicVariantMap({ frequencies }) {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
       font: { family: 'JetBrains Mono', size: 12 },
+      align: 'left',
     },
   }
 
   return (
     <div className="card-flat">
       <h3 className="section-title">Geographic Distribution</h3>
+      <p className="text-xs text-gray-400 mb-2">
+        Marker size proportional to allele frequency (log scale). Color: blue (rare) to red (common).
+        Hover over each population for details.
+      </p>
       <Plot
-        data={data}
+        data={plotData}
         layout={layout}
         config={{ responsive: true, displayModeBar: false }}
         style={{ width: '100%', height: '380px' }}

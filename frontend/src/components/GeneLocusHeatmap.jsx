@@ -49,26 +49,26 @@ export default function GeneLocusHeatmap({ geneData }) {
   const data = [
     {
       type: 'bar',
-      name: 'Pathogenic',
+      name: 'Pathogenic / Likely Pathogenic',
       x: xLabels,
       y: bins.map((b) => b.pathogenic),
-      marker: { color: '#171717' },
+      marker: { color: '#DC2626' },
       hovertemplate: 'Position: %{x}<br>Pathogenic: %{y}<extra></extra>',
     },
     {
       type: 'bar',
-      name: 'VUS',
+      name: 'VUS / Conflicting',
       x: xLabels,
       y: bins.map((b) => b.vus),
-      marker: { color: '#737373' },
+      marker: { color: '#D97706' },
       hovertemplate: 'Position: %{x}<br>VUS: %{y}<extra></extra>',
     },
     {
       type: 'bar',
-      name: 'Benign',
+      name: 'Benign / Likely Benign',
       x: xLabels,
       y: bins.map((b) => b.benign),
-      marker: { color: '#E5E5E5' },
+      marker: { color: '#16A34A' },
       hovertemplate: 'Position: %{x}<br>Benign: %{y}<extra></extra>',
     },
   ]
@@ -88,9 +88,9 @@ export default function GeneLocusHeatmap({ geneData }) {
     legend: {
       font: { family: 'JetBrains Mono', size: 11 },
       orientation: 'h',
-      y: -0.2,
+      y: -0.25,
     },
-    margin: { l: 55, r: 20, t: 20, b: 60 },
+    margin: { l: 55, r: 20, t: 20, b: 70 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
     font: { family: 'JetBrains Mono', color: '#171717' },
@@ -105,13 +105,14 @@ export default function GeneLocusHeatmap({ geneData }) {
     <div className="card-flat">
       <h3 className="section-title">Variant Distribution Along Gene</h3>
       <p className="text-xs text-gray-400 mb-2">
-        1kb bins | chr{geneData.chromosome}:{geneData.start.toLocaleString()}-{geneData.end.toLocaleString()}
+        Variants classified by ClinVar grouped into 1kb bins.
+        chr{geneData.chromosome}:{geneData.start.toLocaleString()}-{geneData.end.toLocaleString()}
       </p>
       <Plot
         data={data}
         layout={layout}
         config={{ responsive: true, displayModeBar: false }}
-        style={{ width: '100%', height: '280px' }}
+        style={{ width: '100%', height: '300px' }}
       />
     </div>
   )

@@ -4,12 +4,12 @@ import { ChevronUp, ChevronDown } from 'lucide-react'
 function SignificanceTag({ sig }) {
   if (!sig) return <span className="tag tag-other">Unknown</span>
   const s = sig.toLowerCase()
-  if (s.includes('pathogenic') && !s.includes('conflicting'))
-    return <span className="tag tag-pathogenic">Pathogenic</span>
+  if (s.includes('likely pathogenic')) return <span className="tag tag-likely-pathogenic">Likely Pathogenic</span>
+  if (s.includes('pathogenic') && !s.includes('conflicting')) return <span className="tag tag-pathogenic">Pathogenic</span>
+  if (s.includes('likely benign')) return <span className="tag tag-likely-benign">Likely Benign</span>
   if (s.includes('benign')) return <span className="tag tag-benign">Benign</span>
-  if (s.includes('uncertain') || s.includes('vus'))
-    return <span className="tag tag-vus">VUS</span>
-  if (s.includes('conflicting')) return <span className="tag tag-vus">Conflicting</span>
+  if (s.includes('uncertain') || s.includes('vus')) return <span className="tag tag-vus">VUS</span>
+  if (s.includes('conflicting')) return <span className="tag tag-conflicting">Conflicting</span>
   return <span className="tag tag-other">{sig}</span>
 }
 
