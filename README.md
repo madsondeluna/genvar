@@ -427,54 +427,151 @@ Documentacao interativa Swagger UI disponivel em `http://localhost:8000/docs`.
 
 ## Instalacao e Execucao
 
-### Pre-requisitos
+### Opcao 1 - Execucao Local (recomendada para desenvolvimento)
 
-- Python 3.12+
-- Node.js 20+
-- Redis 7 (opcional - o sistema funciona sem Redis, sem cache)
-- Docker + Docker Compose (opcional)
+Esta e a forma mais rapida de rodar a aplicacao no seu computador sem precisar de Docker.
 
-### Execucao com Docker Compose
+#### Passo 1 - Clonar o repositorio
 
 ```bash
 git clone https://github.com/madsondeluna/genvar.git
 cd genvar
+```
+
+#### Passo 2 - Verificar pre-requisitos
+
+Confirme que voce tem Python e Node.js instalados:
+
+```bash
+python3 --version    # deve ser 3.12 ou superior
+node --version       # deve ser 20 ou superior
+npm --version        # deve ser 9 ou superior
+```
+
+Caso nao tenha Python 3.12+:
+- macOS: `brew install python@3.12`
+- Ubuntu/Debian: `sudo apt install python3.12 python3.12-venv`
+- Windows: baixar em https://www.python.org/downloads/
+
+Caso nao tenha Node.js 20+:
+- macOS: `brew install node`
+- Ubuntu/Debian: `sudo apt install nodejs npm`
+- Windows: baixar em https://nodejs.org/
+
+#### Passo 3 - Subir o backend (FastAPI)
+
+Abra um terminal e execute:
+
+```bash
+# Entrar na pasta do backend
+cd backend
+
+# Criar ambiente virtual Python isolado
+python3 -m venv .venv
+
+# Ativar o ambiente virtual
+source .venv/bin/activate          # Linux / macOS
+# .venv\Scripts\activate           # Windows (PowerShell ou CMD)
+
+# Instalar dependencias Python
+pip install -r requirements.txt
+
+# Iniciar o servidor de desenvolvimento
+uvicorn app.main:app --reload --port 8000
+```
+
+Se tudo correu bem, voce vera:
+
+```
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+```
+
+Acesse http://localhost:8000/docs para ver a documentacao interativa da API (Swagger UI).
+
+**Deixe este terminal aberto.**
+
+#### Passo 4 - Subir o frontend (React)
+
+Abra **outro terminal** (mantenha o backend rodando no primeiro) e execute:
+
+```bash
+# A partir da raiz do repositorio clonado
+cd frontend
+
+# Instalar dependencias Node.js
+npm install
+
+# Iniciar o servidor de desenvolvimento
+npm run dev
+```
+
+Se tudo correu bem, voce vera:
+
+```
+  VITE v5.x.x  ready in XXX ms
+
+  Local:   http://localhost:3000/
+```
+
+Acesse http://localhost:3000 no navegador para usar a aplicacao.
+
+#### Passo 5 - Usar a aplicacao
+
+Na pagina inicial, voce pode buscar por:
+
+- **Gene** (simbolo HGNC): `BRCA1`, `TP53`, `APOE`, `CFTR`, `KRAS`
+- **Variante** (rs ID do dbSNP): `rs429358`, `rs7412`, `rs28897672`
+
+A primeira busca pode demorar alguns segundos pois as APIs externas sao consultadas em tempo real. Buscas subsequentes do mesmo gene/variante sao instantaneas (cache).
+
+---
+
+### Opcao 2 - Execucao com Docker Compose
+
+Necessario ter Docker Desktop instalado (https://www.docker.com/products/docker-desktop).
+
+```bash
+git clone https://github.com/madsondeluna/genvar.git
+cd genvar
+
+# Construir e subir todos os servicos (backend + frontend + redis)
 docker-compose up --build
 ```
+
+Aguarde o build completar (pode levar alguns minutos na primeira vez). Depois:
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - Swagger UI: http://localhost:8000/docs
 
-### Execucao Local
+Para parar: `Ctrl+C` e depois `docker-compose down`.
 
-**Backend:**
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate       # Linux/macOS
-# .venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-```
+---
 
-**Frontend (outro terminal):**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Variaveis de Ambiente (opcionais)
 
-O frontend sobe em http://localhost:3000 e faz proxy das chamadas `/api` para o backend.
-
-### Variaveis de Ambiente (backend/.env)
+Crie um arquivo `backend/.env` para personalizar o comportamento:
 
 ```env
+# URL do Redis para cache (opcional - sem Redis o sistema funciona normalmente)
 REDIS_URL=redis://localhost:6379
+
+# Tempo de cache em segundos (padrao: 1 hora)
 CACHE_TTL_SECONDS=3600
+
+# Limite de variantes retornadas pelo Ensembl por gene
 ENSEMBL_MAX_VARIANTS=500
+
+# Nivel de log
 LOG_LEVEL=INFO
 ```
+
+Se o arquivo `.env` nao existir, os valores padrao acima sao usados automaticamente.
+
+**Nota sobre Redis:** O Redis e opcional. Se nao estiver disponivel, o sistema funciona normalmente sem cache - apenas cada requisicao vai consultar as APIs externas novamente. Para instalar o Redis localmente:
+- macOS: `brew install redis && brew services start redis`
+- Ubuntu: `sudo apt install redis-server && sudo systemctl start redis`
 
 ---
 
