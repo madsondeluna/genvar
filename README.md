@@ -201,34 +201,6 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 
 ![Diagrama de Arquitetura GenVar](docs/arquitetura-genvar.svg)
 
-```
-                           Usuario (Browser)
-                                  |
-                         http://localhost:3000
-                                  |
-                    +-------------+-------------+
-                    |       Frontend (React)     |
-                    |  Vite | TanStack Query      |
-                    |  Plotly.js | Tailwind CSS   |
-                    +-------------+-------------+
-                                  |
-                           /api/* (proxy)
-                                  |
-                    +-------------+-------------+
-                    |      Backend (FastAPI)      |
-                    |   asyncio.gather()          |
-                    |   Pydantic v2 schemas       |
-                    +--+--------+--------+--------+
-                       |        |        |
-                    Redis    Ensembl  gnomAD
-                    Cache    REST     GraphQL
-                               |        |
-                            ClinVar  AlphaFold
-                            E-utils  REST
-                               |
-                            UniProt
-                            REST
-```
 
 **Fluxo de uma requisicao de gene:**
 1. Frontend envia `GET /api/gene/BRCA1`
