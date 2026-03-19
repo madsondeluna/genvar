@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 font-mono antialiased;
+  }
+
+  * {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .card-flat {
+    @apply bg-white border border-gray-200 rounded-lg p-6;
+  }
+
+  .btn-primary {
+    @apply bg-gray-900 text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 active:bg-gray-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-900 px-6 py-3 rounded-md font-medium border border-gray-300 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-md font-mono text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white transition-shadow duration-150;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-gray-900 mb-4 tracking-tight;
+  }
+
+  .label {
+    @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .value {
+    @apply text-sm font-medium text-gray-900;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+
+  .tag-pathogenic {
+    @apply tag bg-gray-900 text-white;
+  }
+
+  .tag-benign {
+    @apply tag bg-gray-200 text-gray-700;
+  }
+
+  .tag-vus {
+    @apply tag bg-gray-500 text-white;
+  }
+
+  .tag-other {
+    @apply tag bg-gray-100 text-gray-600;
+  }
+
+  .divider {
+    @apply border-t border-gray-200;
+  }
+
+  .table-header {
+    @apply text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 text-left;
+  }
+
+  .table-cell {
+    @apply px-4 py-3 text-sm text-gray-700;
+  }
+
+  .table-row {
+    @apply border-t border-gray-100 hover:bg-gray-50 transition-colors duration-100;
+  }
+}
