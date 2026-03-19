@@ -76,7 +76,7 @@ export default function GenePage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
 
         {isLoading && (
-          <LoadingSpinner message={`Fetching data for ${symbol} from Ensembl, gnomAD, ClinVar, AlphaFold...`} />
+          <LoadingSpinner message={`Building profile for ${symbol}...`} />
         )}
 
         {error && <ErrorAlert message={error.message} />}
