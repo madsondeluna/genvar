@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Dna, Activity } from 'lucide-react'
 
-const GENE_EXAMPLES = ['BRCA1', 'TP53', 'APOE', 'CFTR', 'KRAS', 'PTEN']
-const VARIANT_EXAMPLES = ['rs429358', 'rs7412', 'rs28897672', 'rs80357906']
+const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
+const VARIANT_EXAMPLES = ['rs334', 'rs1800562', 'rs6025', 'rs1799853']
 
 export default function HomePage() {
   const [geneInput, setGeneInput] = useState('')
