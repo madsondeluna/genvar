@@ -7,6 +7,7 @@ import ErrorAlert from '../components/ErrorAlert'
 import ConstraintMetrics from '../components/ConstraintMetrics'
 import GeneLocusHeatmap from '../components/GeneLocusHeatmap'
 import VariantTable from '../components/VariantTable'
+import ProteinViewer from '../components/ProteinViewer'
 import { ArrowLeft, Search, ExternalLink } from 'lucide-react'
 
 function InfoRow({ label, value }) {
@@ -176,7 +177,9 @@ export default function GenePage() {
             {data.alphafold_pae_url && (
               <div className="card-flat">
                 <h3 className="section-title">Protein Structure (AlphaFold)</h3>
-                <div className="flex gap-6 items-start">
+
+                {/* PAE image + info */}
+                <div className="flex gap-6 items-start mb-6">
                   <img
                     src={data.alphafold_pae_url}
                     alt="AlphaFold predicted alignment error"
@@ -200,6 +203,17 @@ export default function GenePage() {
                     )}
                   </div>
                 </div>
+
+                {/* 3D viewer */}
+                {data.alphafold_pdb_url && (
+                  <div>
+                    <p className="label mb-3">Interactive 3D Structure</p>
+                    <ProteinViewer
+                      pdbUrl={data.alphafold_pdb_url}
+                      uniprotId={data.uniprot_id}
+                    />
+                  </div>
+                )}
               </div>
             )}
 
