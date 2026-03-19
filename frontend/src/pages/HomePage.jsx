@@ -34,9 +34,9 @@ export default function HomePage() {
           <h1 className="text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-4">
             GenVar Dashboard
           </h1>
-          <p className="text-gray-500 text-lg leading-relaxed max-w-2xl">
-            Explore genes and genetic variants with data aggregated from Ensembl, gnomAD, ClinVar,
-            AlphaFold, and UniProt. Developed for the Software Engineering TCC at MBA USP.
+          <p className="text-gray-500 text-lg leading-relaxed max-w-2xl text-justify">
+            Search genes and variants. Get clinical significance, population frequencies, protein
+            structure predictions, and constraint metrics... All in one place!
           </p>
         </div>
 
@@ -127,7 +127,7 @@ export default function HomePage() {
           <p className="label mb-6">Data Sources</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {[
-              { name: 'Ensembl', desc: 'Gene annotation & VEP' },
+              { name: 'Ensembl', desc: 'Gene annotation' },
               { name: 'gnomAD', desc: 'Population frequencies' },
               { name: 'ClinVar', desc: 'Clinical significance' },
               { name: 'AlphaFold', desc: 'Protein structure' },
@@ -140,6 +140,14 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+
+        {/* Footer credit */}
+        <div className="mt-12 pt-6 border-t border-gray-100">
+          <p className="text-xs text-gray-400 text-center">
+            Developed by Madson A. de Luna Aragao
+          </p>
+        </div>
+
       </div>
     </div>
   )
