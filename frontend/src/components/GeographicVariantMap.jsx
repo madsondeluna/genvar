@@ -76,15 +76,15 @@ export default function GeographicVariantMap({ frequencies }) {
       customdata: texts,
       hovertemplate: '%{customdata}<extra></extra>',
       textposition: 'top center',
-      textfont: { family: 'JetBrains Mono', size: 9, color: '#374151' },
+      textfont: { family: 'Geist Mono', size: 9, color: '#374151' },
       marker: {
         size: sizes,
         color: afs,
         colorscale: FREQ_COLORSCALE,
         showscale: true,
         colorbar: {
-          title: { text: 'AF', font: { family: 'JetBrains Mono', size: 11 } },
-          tickfont: { family: 'JetBrains Mono', size: 9 },
+          title: { text: 'AF', font: { family: 'Geist Mono', size: 11 } },
+          tickfont: { family: 'Geist Mono', size: 9 },
           thickness: 12,
           len: 0.7,
         },
@@ -113,11 +113,11 @@ export default function GeographicVariantMap({ frequencies }) {
     margin: { l: 0, r: 60, t: 10, b: 0 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
-    font: { family: 'JetBrains Mono', color: '#171717' },
+    font: { family: 'Geist Mono', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'JetBrains Mono', size: 12 },
+      font: { family: 'Geist Mono', size: 12 },
       align: 'left',
     },
   }

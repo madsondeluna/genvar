@@ -64,23 +64,23 @@ export default function FrequencyBarChart({ frequencies }) {
   const layout = {
     yaxis: {
       type: 'log',
-      title: { text: 'Allele Frequency (log scale)', font: { family: 'JetBrains Mono', size: 11 } },
+      title: { text: 'Allele Frequency (log scale)', font: { family: 'Geist Mono', size: 11 } },
       gridcolor: '#E5E5E5',
-      tickfont: { family: 'JetBrains Mono', size: 10 },
+      tickfont: { family: 'Geist Mono', size: 10 },
       zeroline: false,
     },
     xaxis: {
-      tickfont: { family: 'JetBrains Mono', size: 11 },
+      tickfont: { family: 'Geist Mono', size: 11 },
       tickangle: 0,
     },
     margin: { l: 70, r: 20, t: 20, b: 50 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
-    font: { family: 'JetBrains Mono', color: '#171717' },
+    font: { family: 'Geist Mono', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'JetBrains Mono', size: 12 },
+      font: { family: 'Geist Mono', size: 12 },
     },
   }
 

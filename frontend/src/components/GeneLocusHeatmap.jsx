@@ -76,28 +76,28 @@ export default function GeneLocusHeatmap({ geneData }) {
   const layout = {
     barmode: 'stack',
     xaxis: {
-      title: { text: 'Genomic Position', font: { family: 'JetBrains Mono', size: 11 } },
-      tickfont: { family: 'JetBrains Mono', size: 9 },
+      title: { text: 'Genomic Position', font: { family: 'Geist Mono', size: 11 } },
+      tickfont: { family: 'Geist Mono', size: 9 },
       showticklabels: bins.length < 80,
     },
     yaxis: {
-      title: { text: 'Variant Count', font: { family: 'JetBrains Mono', size: 11 } },
+      title: { text: 'Variant Count', font: { family: 'Geist Mono', size: 11 } },
       gridcolor: '#E5E5E5',
-      tickfont: { family: 'JetBrains Mono', size: 10 },
+      tickfont: { family: 'Geist Mono', size: 10 },
     },
     legend: {
-      font: { family: 'JetBrains Mono', size: 11 },
+      font: { family: 'Geist Mono', size: 11 },
       orientation: 'h',
       y: -0.25,
     },
     margin: { l: 55, r: 20, t: 20, b: 70 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
-    font: { family: 'JetBrains Mono', color: '#171717' },
+    font: { family: 'Geist Mono', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'JetBrains Mono', size: 12 },
+      font: { family: 'Geist Mono', size: 12 },
     },
   }
 

@@ -116,14 +116,14 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
         visible: true,
         range: [0, 1],
         gridcolor: '#E5E5E5',
-        tickfont: { family: 'JetBrains Mono', size: 9 },
+        tickfont: { family: 'Geist Mono', size: 9 },
         tickcolor: '#A3A3A3',
         linecolor: '#D4D4D4',
         tickvals: [0, 0.25, 0.5, 0.75, 1],
         ticktext: ['0', '0.25', '0.5', '0.75', '1'],
       },
       angularaxis: {
-        tickfont: { family: 'JetBrains Mono', size: 10 },
+        tickfont: { family: 'Geist Mono', size: 10 },
         linecolor: '#D4D4D4',
         gridcolor: '#E5E5E5',
       },
@@ -131,12 +131,12 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
     },
     margin: { l: 70, r: 70, t: 40, b: 30 },
     paper_bgcolor: 'white',
-    font: { family: 'JetBrains Mono', color: '#171717' },
+    font: { family: 'Geist Mono', color: '#171717' },
     showlegend: false,
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'JetBrains Mono', size: 12 },
+      font: { family: 'Geist Mono', size: 12 },
     },
   }
 
