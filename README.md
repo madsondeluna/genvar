@@ -199,6 +199,8 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 
 ## Arquitetura do Sistema
 
+![Diagrama de Arquitetura GenVar](docs/arquitetura-genvar.svg)
+
 ```
                            Usuario (Browser)
                                   |
