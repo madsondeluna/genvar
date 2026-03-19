@@ -203,17 +203,19 @@ Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas,
 
 
 **Fluxo de uma requisicao de gene:**
-1. Frontend envia `GET /api/gene/BRCA1`
-2. Backend valida o simbolo (regex HGNC)
-3. Verifica cache Redis (TTL: 1 hora)
-4. Se cache miss: executa em paralelo via `asyncio.gather()`:
-   - Ensembl: metadados do gene + lista de variantes
-   - gnomAD: metricas de restricao
-   - UniProt: accession da proteina
-5. Com o UniProt ID, consulta AlphaFold
-6. Agrega, valida com Pydantic e retorna JSON
-7. Armazena no Redis
-8. Frontend renderiza com TanStack Query (cache client-side adicional)
+1. Frontend envia `GET /api/gene/MLH1`
+2. Backend valida o simbolo via `validate_gene_symbol()` (regex HGNC)
+3. Verifica cache Redis com `cache_get(gene:MLH1)` — retorna imediatamente se cache hit
+4. Se cache miss: `ensembl.get_gene_info()` — **sequencial** (necessario para obter o `gene_id`)
+5. Com o `gene_id`, executa em paralelo via `asyncio.gather()`:
+   - `ensembl.get_gene_variants(gene_id)` — lista de variantes com `clinical_significance`
+   - `gnomad.get_gene_constraint(symbol)` — pLI, LOEUF, oe_lof, oe_mis
+   - `uniprot.get_uniprot_id(symbol)` — accession Swiss-Prot (ex: P40692)
+6. Com o UniProt ID: `alphafold.get_prediction(uniprot_id)` — pdbUrl, paeImageUrl
+7. `classify_clinical_significance()` — classifica variantes em pathogenic / VUS / benign / other
+8. `GeneResponse` (Pydantic v2) — valida e serializa o resultado
+9. `cache_set(TTL 3600s)` — armazena no Redis
+10. Frontend renderiza via TanStack Query (cache client-side adicional, staleTime 10min)
 
 ---
 
