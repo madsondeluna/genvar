@@ -23,14 +23,14 @@ const POP_COORDS = {
 }
 
 const POP_NAMES = {
-  AFR: 'African / African American',
-  AMR: 'Latino / Admixed American',
-  ASJ: 'Ashkenazi Jewish',
-  EAS: 'East Asian',
-  FIN: 'Finnish',
-  NFE: 'Non-Finnish European',
-  SAS: 'South Asian',
-  MID: 'Middle Eastern',
+  AFR: 'Africana / Afro-americana',
+  AMR: 'Latina / Americana mista',
+  ASJ: 'Judaica asquenaze',
+  EAS: 'Asiática oriental',
+  FIN: 'Finlandesa',
+  NFE: 'Europeia não finlandesa',
+  SAS: 'Sul asiática',
+  MID: 'Oriente Médio',
   AMI: 'Amish',
 }
 
@@ -38,8 +38,8 @@ export default function GeographicVariantMap({ frequencies }) {
   if (!frequencies || frequencies.length === 0) {
     return (
       <div className="card-flat">
-        <h3 className="section-title">Geographic Distribution</h3>
-        <p className="text-sm text-gray-400">No population frequency data available.</p>
+        <h3 className="section-title">Distribuição geográfica</h3>
+        <p className="text-sm text-gray-500">Sem dados populacionais disponíveis.</p>
       </div>
     )
   }
@@ -58,8 +58,8 @@ export default function GeographicVariantMap({ frequencies }) {
     popLabels.push(code)
     texts.push(
       `<b>${POP_NAMES[code] || pop.population_name}</b> (${code})<br>` +
-      `Allele Frequency: ${af.toExponential(3)}<br>` +
-      `AC: ${pop.allele_count.toLocaleString()} / AN: ${pop.allele_number.toLocaleString()}`
+      `Frequência alélica: ${af.toExponential(3)}<br>` +
+      `AC: ${pop.allele_count.toLocaleString('pt-BR')} / AN: ${pop.allele_number.toLocaleString('pt-BR')}`
     )
     // Marker size proportional to log frequency, minimum 12
     const logAf = af > 0 ? Math.max(Math.log10(af) + 6, 0) : 0
@@ -76,15 +76,15 @@ export default function GeographicVariantMap({ frequencies }) {
       customdata: texts,
       hovertemplate: '%{customdata}<extra></extra>',
       textposition: 'top center',
-      textfont: { family: 'Geist Mono', size: 9, color: '#374151' },
+      textfont: { family: 'Ubuntu', size: 9, color: '#374151' },
       marker: {
         size: sizes,
         color: afs,
         colorscale: FREQ_COLORSCALE,
         showscale: true,
         colorbar: {
-          title: { text: 'AF', font: { family: 'Geist Mono', size: 11 } },
-          tickfont: { family: 'Geist Mono', size: 9 },
+          title: { text: 'AF', font: { family: 'Ubuntu', size: 11 } },
+          tickfont: { family: 'Ubuntu', size: 9 },
           thickness: 12,
           len: 0.7,
         },
@@ -113,21 +113,21 @@ export default function GeographicVariantMap({ frequencies }) {
     margin: { l: 0, r: 60, t: 10, b: 0 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
-    font: { family: 'Geist Mono', color: '#171717' },
+    font: { family: 'Ubuntu', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'Geist Mono', size: 12 },
+      font: { family: 'Ubuntu', size: 12 },
       align: 'left',
     },
   }
 
   return (
     <div className="card-flat">
-      <h3 className="section-title">Geographic Distribution</h3>
-      <p className="text-xs text-gray-400 mb-2">
-        Marker size proportional to allele frequency (log scale). Color: blue (rare) to red (common).
-        Hover over each population for details.
+      <h3 className="section-title">Distribuição geográfica</h3>
+      <p className="text-xs text-gray-600 mb-2">
+        Tamanho do marcador proporcional à frequência alélica (escala log). Cor: azul (rara) a vermelho (comum).
+        Passe o mouse sobre cada população para detalhes.
       </p>
       <Plot
         data={plotData}

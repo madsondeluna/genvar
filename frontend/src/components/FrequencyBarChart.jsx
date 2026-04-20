@@ -14,14 +14,14 @@ const POP_COLORS = {
 }
 
 const POP_DESCRIPTIONS = {
-  AFR: 'African / African American',
-  AMR: 'Latino / Admixed American',
-  ASJ: 'Ashkenazi Jewish',
-  EAS: 'East Asian',
-  FIN: 'Finnish',
-  NFE: 'Non-Finnish European',
-  SAS: 'South Asian',
-  MID: 'Middle Eastern',
+  AFR: 'Africana / Afro-americana',
+  AMR: 'Latina / Americana mista',
+  ASJ: 'Judaica asquenaze',
+  EAS: 'Asiática oriental',
+  FIN: 'Finlandesa',
+  NFE: 'Europeia não finlandesa',
+  SAS: 'Sul asiática',
+  MID: 'Oriente Médio',
   AMI: 'Amish',
 }
 
@@ -29,8 +29,8 @@ export default function FrequencyBarChart({ frequencies }) {
   if (!frequencies || frequencies.length === 0) {
     return (
       <div className="card-flat">
-        <h3 className="section-title">Population Allele Frequencies</h3>
-        <p className="text-sm text-gray-400">No frequency data available.</p>
+        <h3 className="section-title">Frequências alélicas por população</h3>
+        <p className="text-sm text-gray-500">Sem dados de frequência disponíveis.</p>
       </div>
     )
   }
@@ -64,31 +64,31 @@ export default function FrequencyBarChart({ frequencies }) {
   const layout = {
     yaxis: {
       type: 'log',
-      title: { text: 'Allele Frequency (log scale)', font: { family: 'Geist Mono', size: 11 } },
+      title: { text: 'Frequência alélica (escala log)', font: { family: 'Ubuntu', size: 11 } },
       gridcolor: '#E5E5E5',
-      tickfont: { family: 'Geist Mono', size: 10 },
+      tickfont: { family: 'Ubuntu', size: 10 },
       zeroline: false,
     },
     xaxis: {
-      tickfont: { family: 'Geist Mono', size: 11 },
+      tickfont: { family: 'Ubuntu', size: 11 },
       tickangle: 0,
     },
     margin: { l: 70, r: 20, t: 20, b: 50 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
-    font: { family: 'Geist Mono', color: '#171717' },
+    font: { family: 'Ubuntu', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'Geist Mono', size: 12 },
+      font: { family: 'Ubuntu', size: 12 },
     },
   }
 
   return (
     <div className="card-flat">
-      <h3 className="section-title">Population Allele Frequencies</h3>
-      <p className="text-xs text-gray-400 mb-3">
-        Allele frequency (AC/AN) per gnomAD population. Log scale. Hover for details.
+      <h3 className="section-title">Frequências alélicas por população</h3>
+      <p className="text-xs text-gray-600 mb-3">
+        Frequência alélica (AC/AN) por população do gnomAD. Escala logarítmica. Passe o mouse para detalhes.
       </p>
 
       <Plot

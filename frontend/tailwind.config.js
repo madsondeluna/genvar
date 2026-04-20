@@ -3,7 +3,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['Geist Mono', 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', 'monospace'],
+        sans: ['Ubuntu', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['Ubuntu Mono', 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', 'monospace'],
       },
       colors: {
         gray: {

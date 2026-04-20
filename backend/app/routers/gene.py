@@ -23,7 +23,7 @@ def _parse_variant_row(v: dict) -> GeneVariant:
 @router.get("/{gene_symbol}", response_model=GeneResponse)
 async def get_gene_data(gene_symbol: str):
     symbol = validate_gene_symbol(gene_symbol)
-    cache_key = f"gene:{symbol}"
+    cache_key = f"gene:v2:{symbol}"
 
     cached = cache_get(cache_key)
     if cached:
@@ -96,9 +96,11 @@ async def get_gene_data(gene_symbol: str):
         pathogenic_count=len(pathogenic),
         vus_count=len(vus),
         benign_count=len(benign),
-        pathogenic_variants=pathogenic[:100],
-        vus_variants=vus[:100],
-        benign_variants=benign[:100],
+        other_count=len(other),
+        pathogenic_variants=pathogenic[:500],
+        vus_variants=vus[:500],
+        benign_variants=benign[:500],
+        other_variants=other[:500],
         pli_score=constraint.get("pli") if isinstance(constraint, dict) else None,
         lof_z_score=constraint.get("lof_z") if isinstance(constraint, dict) else None,
         oe_lof=constraint.get("oe_lof") if isinstance(constraint, dict) else None,

@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 
 const REPR_OPTIONS = [
   { value: 'cartoon', label: 'Cartoon' },
-  { value: 'surface', label: 'Surface' },
-  { value: 'ball+stick', label: 'Ball & Stick' },
-  { value: 'ribbon', label: 'Ribbon' },
+  { value: 'surface', label: 'Superfície' },
+  { value: 'ball+stick', label: 'Bola e bastão' },
+  { value: 'ribbon', label: 'Fita' },
 ]
 
 export default function ProteinViewer({ pdbUrl, uniprotId }) {
@@ -19,6 +19,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
     if (!containerRef.current || !pdbUrl) return
 
     let cancelled = false
+    let resizeObserver = null
 
     async function init() {
       const NGL = await import('ngl')
@@ -30,7 +31,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       })
       stageRef.current = stage
 
-      const resizeObserver = new ResizeObserver(() => stage.handleResize())
+      resizeObserver = new ResizeObserver(() => stage.handleResize())
       resizeObserver.observe(containerRef.current)
 
       try {
@@ -47,7 +48,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
         setLoading(false)
       } catch {
         if (!cancelled) {
-          setError('Failed to load structure')
+          setError('Falha ao carregar a estrutura')
           setLoading(false)
         }
       }
@@ -58,6 +59,10 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
     return () => {
       cancelled = true
       componentRef.current = null
+      if (resizeObserver) {
+        resizeObserver.disconnect()
+        resizeObserver = null
+      }
       if (stageRef.current) {
         stageRef.current.dispose()
         stageRef.current = null
@@ -107,34 +112,40 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
         <button
           onClick={resetView}
           className="text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+          aria-label="Resetar visualização"
         >
-          Reset view
+          Resetar
         </button>
       </div>
 
-      <div className="relative w-full rounded border border-gray-200 overflow-hidden" style={{ height: 400 }}>
+      <div
+        className="relative w-full rounded border border-gray-200 overflow-hidden"
+        style={{ height: 400 }}
+        role="img"
+        aria-label={uniprotId ? `Visualizador 3D para UniProt ${uniprotId}` : 'Visualizador 3D da proteína'}
+      >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-            <span className="text-sm text-gray-400">Loading structure...</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10" aria-live="polite">
+            <span className="text-sm text-gray-500">Carregando estrutura...</span>
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
-            <span className="text-sm text-red-500">{error}</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10" role="alert">
+            <span className="text-sm text-red-600">{error}</span>
           </div>
         )}
         <div ref={containerRef} className="w-full h-full" />
       </div>
 
       <div className="flex items-center gap-6">
-        <p className="text-xs text-gray-400">
-          Drag to rotate &nbsp;|&nbsp; Scroll to zoom &nbsp;|&nbsp; Right-click drag to pan
+        <p className="text-xs text-gray-500">
+          Arraste para girar &nbsp;|&nbsp; Use a roda para aplicar zoom &nbsp;|&nbsp; Clique direito + arrastar para mover
         </p>
         <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs text-gray-400">Confidence:</span>
+          <span className="text-xs text-gray-500">Confiança:</span>
           <div className="flex items-center gap-1">
             <div className="w-16 h-2 rounded" style={{ background: 'linear-gradient(to right, #d73027, #fee090, #4575b4)' }} />
-            <span className="text-xs text-gray-400">Low &rarr; High</span>
+            <span className="text-xs text-gray-500">Baixa &rarr; Alta</span>
           </div>
         </div>
       </div>

@@ -1,0 +1,54 @@
+services:
+  - type: redis
+    name: genvar-cache
+    plan: free
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: genvar-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: CACHE_TTL_SECONDS
+        value: "3600"
+      - key: ENSEMBL_MAX_VARIANTS
+        value: "500"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: ALLOWED_ORIGINS
+        value: https://genvar-frontend.onrender.com
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: genvar-cache
+          property: connectionString
+
+  - type: web
+    runtime: static
+    name: genvar-frontend
+    plan: free
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        value: https://genvar-backend.onrender.com/api
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -1,353 +1,394 @@
 # GenVar Dashboard
 
----
-
-| Campo | Informacao |
+| Campo | Informação |
 |---|---|
-| **Instituicao** | Escola Superior de Agricultura Luiz de Queiroz (ESALQ) - Universidade de Sao Paulo (USP) |
+| **Instituição** | Escola Superior de Agricultura Luiz de Queiroz (ESALQ), Universidade de São Paulo (USP) |
 | **Curso** | MBA em Engenharia de Software |
-| **Modalidade** | Trabalho de Conclusao de Curso (TCC) |
-| **Autor** | Madson A. de Luna Aragao |
-| **Repositorio** | https://github.com/madsondeluna/genvar |
-| **Versao** | 1.0.0 |
+| **Modalidade** | Trabalho de Conclusão de Curso (TCC) |
+| **Autor** | Madson A. de Luna Aragão |
+| **Repositório** | https://github.com/madsondeluna/genvar |
+| **Versão** | 2.0.0 |
+| **Idioma da interface** | Português do Brasil (PT-BR) |
 
----
 
-## Descricao do Projeto
+## Descrição do projeto
 
-GenVar Dashboard e uma aplicacao web full-stack para exploracao interativa de genes e variantes geneticas humanas. A plataforma integra dados de cinco bancos de dados publicos internacionais - Ensembl, gnomAD, ClinVar, AlphaFold e UniProt - em uma interface unificada, eliminando a necessidade de o usuario consultar multiplos portais separados para obter uma visao abrangente de uma variante ou gene de interesse.
+GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra dados de seis bancos públicos internacionais (Ensembl, gnomAD, ClinVar, AlphaFold, UniProt e MyVariant.info/dbNSFP) em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante ou gene de interesse.
 
-O sistema e voltado para pesquisadores, clinicos e estudantes das areas de bioinformatica, genetica medica e medicina de precisao, permitindo a exploracao de anotacoes funcionais, frequencias populacionais, significado clinico, escores de patogenicidade e estrutura proteica de forma integrada e visualmente acessivel.
+O sistema é voltado para pesquisadores, clínicos e estudantes das áreas de bioinformática, genética médica e medicina de precisão, permitindo a exploração de anotações funcionais, frequências populacionais, significado clínico, escores de patogenicidade, conservação evolutiva, predição de splicing e estrutura proteica de forma integrada e visualmente acessível.
 
----
 
-## Motivacao e Justificativa
+## Motivação e justificativa
 
-A interpretacao de variantes geneticas e um dos desafios centrais da genomica moderna. Ferramentas como gnomAD, ClinVar e Ensembl sao amplamente utilizadas na comunidade cientifica, mas cada uma oferece apenas uma perspectiva parcial. A ausencia de uma interface que consolide essas fontes em um fluxo de consulta unico representa um gargalo operacional em pesquisa e em contextos de diagnostico genomico.
+A interpretação de variantes genéticas é um dos desafios centrais da genômica moderna. Ferramentas como gnomAD, ClinVar, Ensembl e dbNSFP são amplamente utilizadas na comunidade científica, mas cada uma oferece apenas uma perspectiva parcial. A ausência de uma interface que consolide essas fontes em um fluxo de consulta único representa um gargalo operacional em pesquisa e em contextos de diagnóstico genômico.
 
-Este projeto aplica praticas de Engenharia de Software - arquitetura em camadas, APIs REST e GraphQL, testes automatizados, containerizacao e design de interfaces - ao dominio da bioinformatica, demonstrando como tecnicas de desenvolvimento moderno podem acelerar fluxos de trabalho cientificos.
+Este projeto aplica práticas de engenharia de software (arquitetura em camadas, APIs REST e GraphQL, testes automatizados, containerização e design de interfaces) ao domínio da bioinformática, demonstrando como técnicas de desenvolvimento moderno podem acelerar fluxos de trabalho científicos.
 
----
 
 ## Funcionalidades
 
-**Busca por Gene (simbolo HGNC)**
-- Informacoes basicas: ID Ensembl, cromossomo, locus genomico, fita, biotipo
-- Metricas de restricao evolutiva: pLI, LOEUF (oe_lof_upper), o/e LoF, o/e Missense
-- Resumo de variantes: total, patogenicas, VUS, benignas
-- Visualizacao de distribuicao de variantes ao longo do gene (heatmap por bins de 1kb)
-- Estrutura proteica predita pelo AlphaFold: imagem PAE, visualizador 3D interativo (NGL) colorido por confianca pLDDT, download PDB
-- Links externos: NCBI Gene, gnomAD, UniProt, AlphaFold
+### Busca por gene (símbolo HGNC)
 
-**Busca por Variante (dbSNP rs ID)**
-- Anotacao funcional completa via Variant Effect Predictor (VEP) do Ensembl
-- Frequencias alelicas populacionais do gnomAD (genoma, 9 populacoes principais)
-- Mapa geografico interativo com distribuicao global das frequencias
-- Grafico de barras de frequencias por populacao (escala logaritmica)
-- Classificacao clinica do ClinVar: significado, status de revisao, data, condicoes associadas
-- Escores de patogenicidade em grafico radar: SIFT, PolyPhen-2, CADD, REVEL
+- Informações básicas: ID Ensembl, cromossomo, locus genômico, fita, biotipo, montagem.
+- Métricas de restrição evolutiva: pLI, LOEUF (`oe_lof_upper`), o/e LoF, o/e Missense, Z-score de LoF.
+- Resumo de variantes em cinco categorias: total, patogênicas, VUS, benignas e sem classificação.
+- Ideograma cromossômico interativo (ideogram.js) com bandeamento G. O locus do gene aparece destacado por halo amarelo e um triângulo marcador, com as variantes classificadas coloridas por significado clínico.
+- Distribuição de variantes ao longo do gene em barras empilhadas com bins de 1 kb, incluindo variantes sem curadoria no ClinVar em cinza.
+- Estrutura proteica predita pelo AlphaFold: imagem PAE, visualizador 3D interativo (NGL) colorido por confiança pLDDT, opção de download do PDB.
+- Tabelas de variantes com ordenação, paginação, filtro por rs ID ou consequência e exportação em CSV.
+- Links externos: NCBI Gene, gnomAD, UniProt, AlphaFold.
+- Compartilhamento de URL com botão de copiar link.
 
----
+### Busca por variante (rs ID do dbSNP)
 
-## Bancos de Dados e APIs Integrados
+- Anotação funcional completa via Variant Effect Predictor (VEP) do Ensembl, com SIFT e PolyPhen-2.
+- Agregado de predições via MyVariant.info / dbNSFP, organizado em quatro grupos:
+  - **Patogenicidade**: CADD Phred e rankscore, REVEL, AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN.
+  - **Conservação evolutiva**: PhyloP (100 vertebrados), PhastCons (100 vertebrados), GERP++ RS.
+  - **Splicing**: SpliceAI (delta score máximo), dbscSNV ADA, dbscSNV RF.
+  - **Domínios proteicos InterPro** e referências cruzadas: ID ClinVar, IDs COSMIC, AF no 1000 Genomes, AF no ExAC.
+- Frequências alélicas populacionais do gnomAD (genoma, 9 populações principais).
+- Mapa geográfico interativo com distribuição global das frequências.
+- Gráfico de barras de frequências por população em escala logarítmica.
+- Classificação clínica do ClinVar: significado, status de revisão, data, condições associadas.
+- Gráfico radar com veredito agregado (SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1).
+- Ideograma cromossômico com a posição da variante destacada.
+- Histórico de buscas recentes armazenado em `localStorage`, com prefetch ao passar o mouse sobre exemplos da página inicial.
+
+
+## Bancos de dados e APIs integrados
 
 ### 1. Ensembl REST API
-**Instituicao:** European Bioinformatics Institute (EMBL-EBI) / Wellcome Sanger Institute
-**URL:** https://rest.ensembl.org
-**Tipo de API:** REST (JSON)
-**Autenticacao:** Nenhuma (publica)
-**Rate limit:** 15 requisicoes/segundo
 
-**Endpoints utilizados:**
+- **Instituição**: European Bioinformatics Institute (EMBL-EBI) e Wellcome Sanger Institute.
+- **URL**: https://rest.ensembl.org
+- **Tipo**: REST (JSON).
+- **Autenticação**: pública, sem chave.
+- **Rate limit**: 15 requisições por segundo.
 
-| Endpoint | Descricao |
+Endpoints utilizados:
+
+| Endpoint | Descrição |
 |----------|-----------|
-| `GET /lookup/symbol/homo_sapiens/{symbol}` | Recupera metadados do gene: ID Ensembl, cromossomo, locus, fita, biotipo, assembly |
-| `GET /overlap/id/{gene_id}?feature=variation` | Lista variantes sobrepostas ao gene, com consequencia e significado clinico bruto |
-| `GET /vep/human/id/{rsid}` | Variant Effect Predictor: anotacao funcional completa com SIFT, PolyPhen, consequencia molecular, mudanca de aminoacido |
-
-**Dados retornados utilizados no sistema:**
-- `id` (ENSG...) - identificador Ensembl do gene
-- `seq_region_name` - cromossomo
-- `start`, `end`, `strand` - locus genomico
-- `consequence_type` - tipo de consequencia molecular da variante
-- `clinical_significance` - array com classificacoes clinicas brutas
-- `sift_score`, `sift_prediction` - escore SIFT de tolerancia a substituicao
-- `polyphen_score`, `polyphen_prediction` - escore PolyPhen-2 de dano estrutural
-- `amino_acids`, `codons` - mudanca de aminoacido e codon
-
----
+| `GET /lookup/symbol/homo_sapiens/{symbol}` | Metadados do gene: ID Ensembl, cromossomo, locus, fita, biotipo, assembly. |
+| `GET /overlap/id/{gene_id}?feature=variation` | Lista de variantes sobrepostas ao gene, com consequência e significado clínico bruto. |
+| `GET /vep/human/id/{rsid}` | Variant Effect Predictor: anotação funcional completa, SIFT, PolyPhen, consequência molecular, troca de aminoácido. |
 
 ### 2. gnomAD GraphQL API
-**Instituicao:** Broad Institute of MIT and Harvard
-**URL:** https://gnomad.broadinstitute.org/api
-**Tipo de API:** GraphQL
-**Autenticacao:** Nenhuma (publica)
-**Dataset utilizado:** gnomAD r4 (genoma)
 
-**Queries utilizadas:**
+- **Instituição**: Broad Institute of MIT and Harvard.
+- **URL**: https://gnomad.broadinstitute.org/api
+- **Tipo**: GraphQL.
+- **Autenticação**: pública.
+- **Dataset**: gnomAD r4 (genoma).
 
-| Query | Descricao |
+Queries utilizadas:
+
+| Query | Descrição |
 |-------|-----------|
-| `variant(variantId, dataset)` | Frequencias alelicas por populacao (AC, AN, AF calculado como AC/AN) |
-| `gene(gene_symbol, reference_genome)` | Metricas de restricao evolutiva do gene |
+| `variant(variantId, dataset)` | Frequências alélicas por população (AC, AN, AF calculado como AC/AN). |
+| `gene(gene_symbol, reference_genome)` | Métricas de restrição evolutiva do gene. |
 
-**Populacoes retornadas e utilizadas:**
+Populações retornadas e exibidas:
 
-| ID (API) | Populacao |
+| ID (API) | População |
 |----------|-----------|
-| `afr` | African / African American |
-| `amr` | Latino / Admixed American |
-| `asj` | Ashkenazi Jewish |
-| `eas` | East Asian |
-| `fin` | Finnish |
-| `nfe` | Non-Finnish European |
-| `sas` | South Asian |
-| `mid` | Middle Eastern |
+| `afr` | Africana / Afro-americana |
+| `amr` | Latina / Americana mista |
+| `asj` | Judaica asquenaze |
+| `eas` | Asiática oriental |
+| `fin` | Finlandesa |
+| `nfe` | Europeia não finlandesa |
+| `sas` | Sul asiática |
+| `mid` | Oriente Médio |
 | `ami` | Amish |
 
-**Campos de restricao utilizados:**
-
-| Campo | Descricao |
-|-------|-----------|
-| `pli` | Probabilidade de intolerancia a variantes de perda de funcao (0-1) |
-| `oe_lof_upper` | LOEUF - upper bound do intervalo de confianca de o/e LoF |
-| `oe_lof` | Razao observado/esperado para variantes LoF |
-| `oe_mis` | Razao observado/esperado para variantes missense |
-| `lof_z` | Z-score de restricao para LoF |
-
-**Nota tecnica:** O campo `af` nao existe no tipo `VariantPopulation` da API - o valor e calculado no backend como `ac / an`. Os IDs de populacao sao em minusculas na API (`afr`, `amr`), divergindo da documentacao.
-
----
+**Nota técnica**: o campo `af` não existe no tipo `VariantPopulation` da API atual. A frequência é calculada no backend como `ac / an`. Os IDs de população são minúsculos (`afr`, `amr`), divergindo de alguns exemplos antigos de documentação.
 
 ### 3. ClinVar via NCBI E-utilities
-**Instituicao:** National Center for Biotechnology Information (NCBI) / National Library of Medicine (NLM)
-**URL:** https://eutils.ncbi.nlm.nih.gov/entrez/eutils
-**Tipo de API:** REST (JSON/XML)
-**Autenticacao:** Nenhuma (publica)
-**Rate limit:** 3 requisicoes/segundo sem chave de API
 
-**Fluxo de consulta (dois passos):**
+- **Instituição**: National Center for Biotechnology Information (NCBI), National Library of Medicine (NLM).
+- **URL**: https://eutils.ncbi.nlm.nih.gov/entrez/eutils
+- **Tipo**: REST (JSON/XML).
+- **Autenticação**: pública.
+- **Rate limit**: 3 requisições por segundo sem chave de API.
 
-| Passo | Endpoint | Descricao |
+Fluxo de consulta em dois passos:
+
+| Passo | Endpoint | Descrição |
 |-------|----------|-----------|
-| 1 | `GET /esearch.fcgi?db=clinvar&term={rsid}&retmode=json` | Recupera lista de UIDs ClinVar associados ao rs ID |
-| 2 | `GET /esummary.fcgi?db=clinvar&id={uids}&retmode=json` | Recupera sumario de multiplos registros em lote |
+| 1 | `GET /esearch.fcgi?db=clinvar&term={rsid}&retmode=json` | Recupera lista de UIDs ClinVar associados ao rs ID. |
+| 2 | `GET /esummary.fcgi?db=clinvar&id={uids}&retmode=json` | Recupera sumário de múltiplos registros em lote. |
 
-**Campos utilizados do objeto retornado:**
+Campos utilizados do objeto retornado:
 
-| Campo | Descricao |
+| Campo | Descrição |
 |-------|-----------|
-| `germline_classification.description` | Classificacao clinica textual (Pathogenic, Benign, VUS, Conflicting...) |
-| `germline_classification.review_status` | Nivel de evidencia da classificacao |
-| `germline_classification.last_evaluated` | Data da ultima avaliacao |
-| `germline_classification.trait_set[].trait_name` | Condicoes clinicas associadas |
-| `accession` | Identificador VCV (aggregate) ou RCV (submissao individual) |
+| `germline_classification.description` | Classificação clínica textual: Pathogenic, Benign, VUS, Conflicting, entre outras. |
+| `germline_classification.review_status` | Nível de evidência da classificação. |
+| `germline_classification.last_evaluated` | Data da última avaliação. |
+| `germline_classification.trait_set[].trait_name` | Condições clínicas associadas. |
+| `accession` | Identificador VCV (agregado) ou RCV (submissão individual). |
 
-**Nota tecnica:** O campo historico `clinical_significance` foi substituido por `germline_classification` na versao atual da API. O sistema busca todos os UIDs em lote e seleciona o registro VCV mais abrangente (maior numero de condicoes associadas = registro agregado).
-
----
+**Nota técnica**: o campo histórico `clinical_significance` foi substituído por `germline_classification` na versão atual da API. O sistema busca todos os UIDs em lote e seleciona o registro VCV mais abrangente, priorizando o de maior número de condições associadas (agregado).
 
 ### 4. AlphaFold Protein Structure Database API
-**Instituicao:** DeepMind / European Bioinformatics Institute (EMBL-EBI)
-**URL:** https://alphafold.ebi.ac.uk/api
-**Tipo de API:** REST (JSON)
-**Autenticacao:** Nenhuma (publica)
 
-**Endpoint utilizado:**
+- **Instituição**: DeepMind e European Bioinformatics Institute (EMBL-EBI).
+- **URL**: https://alphafold.ebi.ac.uk/api
+- **Tipo**: REST (JSON).
+- **Autenticação**: pública.
 
-| Endpoint | Descricao |
+Endpoint utilizado:
+
+| Endpoint | Descrição |
 |----------|-----------|
-| `GET /prediction/{uniprot_id}` | Recupera metadados e URLs da estrutura proteica predita |
+| `GET /prediction/{uniprot_id}` | Metadados e URLs da estrutura proteica predita. |
 
-**Campos utilizados:**
+Campos utilizados:
 
-| Campo | Descricao |
+| Campo | Descrição |
 |-------|-----------|
-| `pdbUrl` | URL para download da estrutura em formato PDB |
-| `cifUrl` | URL para download em formato mmCIF |
-| `paeImageUrl` | URL da imagem do Predicted Aligned Error (PAE) |
-| `globalMetricValue` | Score global de confianca pLDDT medio |
-| `latestVersion` | Versao mais recente do modelo |
-| `entryId` | Identificador do modelo (ex: AF-P38398-F1) |
+| `pdbUrl` | URL para download da estrutura em formato PDB. |
+| `cifUrl` | URL para download em formato mmCIF. |
+| `paeImageUrl` | URL da imagem do Predicted Aligned Error (PAE). |
+| `globalMetricValue` | Score global de confiança pLDDT médio. |
+| `latestVersion` | Versão mais recente do modelo. |
+| `entryId` | Identificador do modelo, por exemplo `AF-P38398-F1`. |
 
-**Nota tecnica:** A API retorna um array de objetos (multiplos fragmentos para proteinas longas). O sistema utiliza sempre o primeiro elemento (`[0]`), que corresponde ao modelo canonico.
-
----
+**Nota técnica**: a API retorna um array (múltiplos fragmentos para proteínas longas). O sistema utiliza sempre o primeiro elemento, que corresponde ao modelo canônico.
 
 ### 5. UniProt REST API
-**Instituicao:** Universal Protein Resource Consortium (UniProt) - EMBL-EBI / SIB / PIR
-**URL:** https://rest.uniprot.org
-**Tipo de API:** REST (JSON)
-**Autenticacao:** Nenhuma (publica)
 
-**Endpoint utilizado:**
+- **Instituição**: Universal Protein Resource Consortium (UniProt), formado por EMBL-EBI, SIB e PIR.
+- **URL**: https://rest.uniprot.org
+- **Tipo**: REST (JSON).
+- **Autenticação**: pública.
 
-| Endpoint | Descricao |
+Endpoint utilizado:
+
+| Endpoint | Descrição |
 |----------|-----------|
-| `GET /uniprotkb/search?query=gene:{symbol}+AND+organism_id:9606+AND+reviewed:true` | Mapeia simbolo HGNC para accession UniProtKB Swiss-Prot |
+| `GET /uniprotkb/search?query=gene:{symbol}+AND+organism_id:9606+AND+reviewed:true` | Mapeia símbolo HGNC para accession UniProtKB Swiss-Prot. |
 
-**Campos utilizados:**
+Campos utilizados:
 
-| Campo | Descricao |
+| Campo | Descrição |
 |-------|-----------|
-| `results[0].primaryAccession` | Accession UniProt canonica (ex: P38398 para BRCA1) |
+| `results[0].primaryAccession` | Accession UniProt canônica, por exemplo P38398 para BRCA1. |
 
-**Nota tecnica:** O filtro `reviewed:true` garante que apenas entradas Swiss-Prot (curadas manualmente) sejam retornadas, excluindo entradas TrEMBL (preditas automaticamente). O UniProt ID obtido e utilizado para consultar o AlphaFold.
+**Nota técnica**: o filtro `reviewed:true` garante que apenas entradas Swiss-Prot (curadas manualmente) sejam retornadas, excluindo entradas TrEMBL (preditas automaticamente). O UniProt ID obtido é utilizado para consultar o AlphaFold.
 
----
+### 6. MyVariant.info (dbNSFP e múltiplas fontes)
 
-## Arquitetura do Sistema
+- **Instituição**: BioThings, The Scripps Research Institute.
+- **URL**: https://myvariant.info/v1
+- **Tipo**: REST (JSON).
+- **Autenticação**: pública.
+- **Cobertura**: dbNSFP v4.x, CADD, dbscSNV, SpliceAI, ClinVar, COSMIC, dbSNP, ExAC, 1000 Genomes, gnomAD.
+
+Endpoints utilizados:
+
+| Endpoint | Descrição |
+|----------|-----------|
+| `GET /variant/chr{chr}:g.{pos}{ref}>{alt}?assembly=hg38&fields=...` | Consulta por HGVS genômico (preferencial quando há coordenadas). |
+| `GET /query?q=dbsnp.rsid:{rsid}&fields=...&assembly=hg38` | Consulta por rs ID (fallback). |
+
+Campos extraídos e mapeados para o `VariantResponse`:
+
+| Grupo | Campos |
+|-------|--------|
+| Patogenicidade | `cadd.phred`, `dbnsfp.cadd.raw_rankscore`, `dbnsfp.revel.score`, `dbnsfp.alphamissense.score/pred`, `dbnsfp.metalr.score/pred`, `dbnsfp.metasvm.score/pred`, `dbnsfp.primateai.score/pred`, `dbnsfp.mutpred.score`, `dbnsfp.fathmm.score/pred`, `dbnsfp.dann.score` |
+| Conservação | `dbnsfp.phylop100way_vertebrate.score`, `dbnsfp.phastcons100way_vertebrate.score`, `dbnsfp.gerp++.rs` |
+| Splicing | `cadd.spliceai.ds_ag/al/dg/dl` (máximo), `dbscsnv.ada_score`, `dbscsnv.rf_score` |
+| Proteína | `dbnsfp.interpro_domain` |
+| Frequências | `1000g.af`, `exac.af` |
+| Cross-refs | `clinvar.variant_id`, `cosmic.cosmic_id` |
+
+**Nota técnica**: a chamada é feita em paralelo com gnomAD e ClinVar via `asyncio.gather()`. Erros ou respostas 404 caem em `{}` graciosamente, sem bloquear a resposta. A API aceita tanto HGVS genômico quanto rs ID. O sistema tenta HGVS primeiro (mais preciso quando há coordenadas do VEP) e utiliza rs ID como fallback.
+
+
+## Arquitetura do sistema
 
 ![Diagrama de Arquitetura GenVar](docs/arquitetura-genvar.svg)
 
+**Fluxo de uma requisição de gene:**
 
-**Fluxo de uma requisicao de gene:**
-1. Frontend envia `GET /api/gene/MLH1`
-2. Backend valida o simbolo via `validate_gene_symbol()` (regex HGNC)
-3. Verifica cache Redis com `cache_get(gene:MLH1)` — retorna imediatamente se cache hit
-4. Se cache miss: `ensembl.get_gene_info()` — **sequencial** (necessario para obter o `gene_id`)
+1. Frontend envia `GET /api/gene/MLH1`.
+2. Backend valida o símbolo via `validate_gene_symbol()` (regex HGNC).
+3. Verifica cache Redis com chave versionada `gene:v2:MLH1`. Retorna imediatamente em caso de cache hit.
+4. Se cache miss: `ensembl.get_gene_info()`, sequencial (necessário para obter o `gene_id`).
 5. Com o `gene_id`, executa em paralelo via `asyncio.gather()`:
-   - `ensembl.get_gene_variants(gene_id)` — lista de variantes com `clinical_significance`
-   - `gnomad.get_gene_constraint(symbol)` — pLI, LOEUF, oe_lof, oe_mis
-   - `uniprot.get_uniprot_id(symbol)` — accession Swiss-Prot (ex: P40692)
-6. Com o UniProt ID: `alphafold.get_prediction(uniprot_id)` — pdbUrl, paeImageUrl
-7. `classify_clinical_significance()` — classifica variantes em pathogenic / VUS / benign / other
-8. `GeneResponse` (Pydantic v2) — valida e serializa o resultado
-9. `cache_set(TTL 3600s)` — armazena no Redis
-10. Frontend renderiza via TanStack Query (cache client-side adicional, staleTime 10min)
+   - `ensembl.get_gene_variants(gene_id)`: lista de variantes com `clinical_significance`.
+   - `gnomad.get_gene_constraint(symbol)`: pLI, LOEUF, oe_lof, oe_mis, lof_z.
+   - `uniprot.get_uniprot_id(symbol)`: accession Swiss-Prot.
+6. Com o UniProt ID: `alphafold.get_prediction(uniprot_id)` retorna `pdbUrl` e `paeImageUrl`.
+7. `classify_clinical_significance()` classifica variantes em pathogenic, VUS, benign e other. Todas as quatro listas são devolvidas (truncadas em 500 por categoria).
+8. `GeneResponse` (Pydantic v2) valida e serializa o resultado.
+9. `cache_set(TTL 3600s)` armazena no Redis.
+10. Frontend renderiza via TanStack Query, com cache client-side adicional e `staleTime` de 10 minutos.
 
----
+**Fluxo de uma requisição de variante:**
 
-## Tecnologias Utilizadas
+1. Frontend envia `GET /api/variant/rs429358`.
+2. Backend valida o rs ID via `validate_rsid()` (regex `^rs\d+$`).
+3. Verifica cache Redis com chave versionada `variant:v2:rs429358`.
+4. Se cache miss: `ensembl.get_vep_annotation()`, sequencial (necessário para obter chrom/pos/ref/alt).
+5. Em paralelo via `asyncio.gather()`:
+   - `gnomad.get_variant_frequencies(chrom, pos, ref, alt)`: frequências por população.
+   - `clinvar.get_variant_clinvar(rsid)`: busca em lote e seleção do VCV mais abrangente.
+   - `myvariant.get_variant_annotations(rsid, chrom, pos, ref, alt)`: dbNSFP completo.
+6. `VariantResponse` com mais de 40 campos serializados.
+7. `cache_set(TTL 3600s)` armazena no Redis.
+
+
+## Tecnologias utilizadas
 
 ### Backend
 
-| Tecnologia | Versao | Funcao |
+| Tecnologia | Versão | Função |
 |------------|--------|--------|
-| Python | 3.12+ | Linguagem principal do backend |
-| FastAPI | 0.115 | Framework web async com OpenAPI automatico |
-| Uvicorn | 0.32 | Servidor ASGI de alta performance |
-| httpx | 0.27 | Cliente HTTP async para consultas as APIs externas |
-| Pydantic v2 | 2.9 | Validacao e serializacao de dados (schemas de resposta) |
-| pydantic-settings | 2.5 | Gerenciamento de configuracoes via variaveis de ambiente |
-| Redis | 7 | Cache de respostas das APIs (TTL configuravel) |
-| pytest | 8.3 | Framework de testes unitarios e de integracao |
-| pytest-asyncio | 0.24 | Suporte a testes de funcoes async |
+| Python | 3.12+ | Linguagem principal do backend. |
+| FastAPI | 0.115 | Framework web assíncrono com OpenAPI automático. |
+| Uvicorn | 0.32 | Servidor ASGI de alta performance. |
+| httpx | 0.27 | Cliente HTTP assíncrono para consultas às APIs externas. |
+| Pydantic v2 | 2.9 | Validação e serialização de dados (schemas de resposta). |
+| pydantic-settings | 2.5 | Configurações via variáveis de ambiente. |
+| Redis | 7 | Cache de respostas das APIs, com TTL configurável. |
+| pytest | 8.3 | Framework de testes unitários e de integração. |
+| pytest-asyncio | 0.24 | Suporte a testes de funções assíncronas. |
 
 ### Frontend
 
-| Tecnologia | Versao | Funcao |
+| Tecnologia | Versão | Função |
 |------------|--------|--------|
-| React | 18.2 | Biblioteca de interface declarativa baseada em componentes |
-| Vite | 5.0 | Build tool e dev server com HMR |
-| Tailwind CSS | 3.3 | Framework CSS utility-first (paleta cinza + cores semanticas) |
-| TanStack Query | 5.17 | Gerenciamento de estado assincrono e cache client-side |
-| Axios | 1.6 | Cliente HTTP com interceptors de erro |
-| Plotly.js | 2.27 | Biblioteca de visualizacao interativa (5 tipos de grafico) |
-| react-plotly.js | 2.6 | Wrapper React para Plotly.js |
-| NGL | 2.3 | Visualizador 3D de estruturas moleculares (PDB) no browser |
-| Lucide React | 0.294 | Biblioteca de icones SVG |
-| react-router-dom | 6.20 | Roteamento client-side (SPA) |
+| React | 18.2 | Biblioteca de interface declarativa baseada em componentes. |
+| Vite | 5.0 | Build tool e dev server com HMR. |
+| Tailwind CSS | 3.3 | Framework CSS utility-first, paleta cinza e cores semânticas. |
+| TanStack Query | 5.17 | Estado assíncrono e cache client-side. |
+| Axios | 1.6 | Cliente HTTP com interceptors de erro. |
+| Plotly.js | 2.27 | Visualização interativa. |
+| react-plotly.js | 2.6 | Wrapper React para Plotly.js. |
+| ideogram | 1.53 | Ideograma cromossômico humano com bandeamento G (GRCh38). |
+| NGL | 2.3 | Visualizador 3D de estruturas moleculares (PDB) no browser. |
+| Lucide React | 0.294 | Ícones SVG. |
+| react-router-dom | 6.20 | Roteamento client-side (SPA). |
+| Google Fonts | Ubuntu e Ubuntu Mono | Tipografia sans-serif para prosa, mono para identificadores. |
 
 ### Infraestrutura
 
-| Tecnologia | Versao | Funcao |
+| Tecnologia | Versão | Função |
 |------------|--------|--------|
-| Docker | 24+ | Containerizacao de backend e frontend |
-| Docker Compose | 2.x | Orquestracao local dos servicos |
-| Nginx | Alpine | Servidor de arquivos estaticos + proxy reverso (producao) |
+| Docker | 24+ | Containerização de backend e frontend. |
+| Docker Compose | 2.x | Orquestração local dos serviços. |
+| Nginx | Alpine | Servidor de arquivos estáticos e proxy reverso (produção). |
 
----
 
-## Visualizacoes Implementadas
+## Visualizações implementadas
 
 | Componente | Tipo | Dados | Biblioteca |
 |------------|------|-------|------------|
-| `GeographicVariantMap` | Mapa mundial (scattergeo) | Frequencias alelicas por populacao (gnomAD) | Plotly.js |
-| `FrequencyBarChart` | Barras (escala log) | AC/AN/AF por populacao (gnomAD) | Plotly.js |
-| `PredictionScoresRadar` | Radar/polar | SIFT, PolyPhen-2, CADD, REVEL normalizados 0-1 | Plotly.js |
-| `GeneLocusHeatmap` | Barras empilhadas | Distribuicao de variantes em bins de 1kb ao longo do gene | Plotly.js |
-| `ConstraintMetrics` | Gauges + barras de progresso | pLI, LOEUF, o/e LoF, o/e Missense (gnomAD) | CSS nativo |
-| `ProteinViewer` | Visualizador 3D interativo | Estrutura proteica AlphaFold (PDB), colorido por confianca pLDDT; representacoes Cartoon, Surface, Ball & Stick, Ribbon | NGL |
-| `VariantTable` | Tabela ordenavel + paginacao | Lista de variantes classificadas por categoria clinica | React |
+| `ChromosomeIdeogram` | Ideograma horizontal GRCh38 com bandeamento G | Locus do gene, variantes classificadas ou posição da variante única | ideogram.js |
+| `GeographicVariantMap` | Mapa mundial (scattergeo) | Frequências alélicas por população (gnomAD) | Plotly.js |
+| `FrequencyBarChart` | Barras em escala log | AC, AN e AF por população (gnomAD) | Plotly.js |
+| `PredictionScoresRadar` | Radar polar | SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1 | Plotly.js |
+| `PredictionDetails` | Grupos de cartões coloridos | CADD, REVEL, AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN, PhyloP, PhastCons, GERP++, SpliceAI, dbscSNV, InterPro, COSMIC | React, sem dependência de chart |
+| `GeneLocusHeatmap` | Barras empilhadas | Distribuição de variantes em bins de 1 kb (4 categorias) | Plotly.js |
+| `ConstraintMetrics` | Gauges e barras de progresso | pLI, LOEUF, o/e LoF, o/e Missense (gnomAD) | CSS nativo |
+| `ProteinViewer` | Visualizador 3D interativo | Estrutura AlphaFold (PDB) colorida por pLDDT, representações Cartoon, Superfície, Bola e Bastão, Fita | NGL |
+| `VariantTable` | Tabela com ordenação, filtro, paginação e exportação CSV | Lista de variantes classificadas por categoria clínica | React |
+| `SignificanceTag` | Badge colorido | Classificação ClinVar unificada | React |
 
-**Normalizacao dos escores de patogenicidade no radar chart:**
+**Normalização dos escores de patogenicidade no gráfico radar:**
 
-| Escore | Direcao original | Normalizacao para 0-1 (0=benigno, 1=patogenico) |
-|--------|-----------------|--------------------------------------------------|
+| Escore | Direção original | Normalização para 0 a 1 (0 = benigno, 1 = patogênico) |
+|--------|-----------------|-------------------------------------------------------|
 | SIFT | Menor = mais deletério | `1 - score` |
-| PolyPhen-2 | Maior = mais deletério | Sem alteracao |
+| PolyPhen-2 | Maior = mais deletério | Sem alteração |
 | CADD Phred | Maior = mais deletério | `min(1, score / 40)` |
-| REVEL | Maior = mais deletério | Sem alteracao |
+| REVEL | Maior = mais deletério | Sem alteração |
 
----
 
-## Estrutura do Projeto
+## Estrutura do projeto
 
 ```
 genvar-dashboard/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                  FastAPI app, CORS, registro de routers
-│   │   ├── config.py                Configuracoes via variaveis de ambiente (pydantic-settings)
+│   │   ├── main.py                  FastAPI app, CORS, registro de routers.
+│   │   ├── config.py                Configurações via variáveis de ambiente.
 │   │   ├── routers/
-│   │   │   ├── gene.py              GET /api/gene/{symbol} - agregacao paralela
-│   │   │   └── variant.py           GET /api/variant/{rsid} - agregacao paralela
+│   │   │   ├── gene.py              GET /api/gene/{symbol}, agregação paralela.
+│   │   │   └── variant.py           GET /api/variant/{rsid}, agregação paralela.
 │   │   ├── services/
-│   │   │   ├── ensembl.py           Cliente Ensembl REST API
-│   │   │   ├── gnomad.py            Cliente gnomAD GraphQL API
-│   │   │   ├── clinvar.py           Cliente ClinVar E-utilities (busca em lote)
-│   │   │   ├── alphafold.py         Cliente AlphaFold REST API
-│   │   │   └── uniprot.py           Cliente UniProt REST API
+│   │   │   ├── ensembl.py           Cliente Ensembl REST API.
+│   │   │   ├── gnomad.py            Cliente gnomAD GraphQL API.
+│   │   │   ├── clinvar.py           Cliente ClinVar E-utilities (busca em lote).
+│   │   │   ├── alphafold.py         Cliente AlphaFold REST API.
+│   │   │   ├── uniprot.py           Cliente UniProt REST API.
+│   │   │   └── myvariant.py         Cliente MyVariant.info (dbNSFP agregado).
 │   │   ├── models/
-│   │   │   └── schemas.py           Modelos Pydantic v2 (GeneResponse, VariantResponse)
+│   │   │   └── schemas.py           Modelos Pydantic v2 (GeneResponse, VariantResponse).
 │   │   └── utils/
-│   │       ├── cache.py             Helpers Redis (graceful fallback sem Redis)
-│   │       └── validators.py        Validacao de entrada + classificacao clinica
+│   │       ├── cache.py             Helpers Redis, fallback gracioso.
+│   │       └── validators.py        Validação de entrada e classificação clínica.
 │   └── tests/
-│       ├── test_apis.py             9 testes de integracao contra APIs reais
-│       └── test_services.py         6 testes unitarios com mocks
+│       ├── test_apis.py             Testes de integração com APIs reais.
+│       └── test_services.py         Testes unitários com mocks.
 ├── frontend/
 │   ├── src/
 │   │   ├── api/
-│   │   │   └── client.js            Instancia Axios + interceptors de erro
+│   │   │   └── client.js            Instância Axios e interceptors de erro.
 │   │   ├── components/
+│   │   │   ├── ChromosomeIdeogram.jsx
 │   │   │   ├── GeographicVariantMap.jsx
 │   │   │   ├── FrequencyBarChart.jsx
 │   │   │   ├── PredictionScoresRadar.jsx
+│   │   │   ├── PredictionDetails.jsx
 │   │   │   ├── GeneLocusHeatmap.jsx
 │   │   │   ├── ConstraintMetrics.jsx
 │   │   │   ├── ProteinViewer.jsx
 │   │   │   ├── VariantTable.jsx
+│   │   │   ├── SignificanceTag.jsx
+│   │   │   ├── ExternalLinkButton.jsx
+│   │   │   ├── CopyLinkButton.jsx
+│   │   │   ├── Skeleton.jsx
+│   │   │   ├── ErrorBoundary.jsx
 │   │   │   ├── LoadingSpinner.jsx
 │   │   │   └── ErrorAlert.jsx
+│   │   ├── hooks/
+│   │   │   └── useSearchHistory.js  Histórico de buscas em localStorage.
 │   │   ├── pages/
-│   │   │   ├── HomePage.jsx         Pagina inicial com busca por gene e variante
-│   │   │   ├── GenePage.jsx         Dashboard completo de gene
-│   │   │   └── VariantPage.jsx      Dashboard completo de variante
-│   │   ├── App.jsx                  Roteamento e QueryClient provider
-│   │   └── index.css                Tailwind base + componentes customizados
+│   │   │   ├── HomePage.jsx         Página inicial com busca por gene e variante.
+│   │   │   ├── GenePage.jsx         Dashboard completo de gene.
+│   │   │   └── VariantPage.jsx      Dashboard completo de variante.
+│   │   ├── utils/
+│   │   │   ├── format.js            Formatadores e classificação de significância.
+│   │   │   ├── csv.js               Exportação de tabelas para CSV.
+│   │   │   └── ideogramAnnotations.js   Montagem de anotações para o ideograma.
+│   │   ├── App.jsx                  Roteamento, QueryClient, ErrorBoundary global.
+│   │   └── index.css                Tailwind base e componentes customizados.
 │   ├── package.json
-│   ├── vite.config.js               Proxy /api -> backend:8000
-│   └── tailwind.config.js           Paleta cinza + fonte Geist Mono
-├── docker-compose.yml               Orquestracao: backend + frontend + redis
-├── API_TESTING_REPORT.md            Relatorio de testes e discrepancias das APIs
+│   ├── vite.config.js               Proxy /api para backend:8000.
+│   └── tailwind.config.js           Paleta cinza e fonte Ubuntu.
+├── docker-compose.yml               Orquestração: backend, frontend e Redis.
+├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
 ```
 
----
 
-## Endpoints da API Backend
+## Endpoints da API backend
 
 ### GET /api/gene/{gene_symbol}
 
-Retorna informacoes consolidadas de um gene a partir do simbolo HGNC.
+Retorna informações consolidadas de um gene a partir do símbolo HGNC.
 
-**Parametros:**
-- `gene_symbol` (path): simbolo HGNC, ex: `BRCA1`, `TP53`, `APOE`
+**Parâmetros:**
+
+- `gene_symbol` (path): símbolo HGNC, por exemplo `BRCA1`, `TP53`, `APOE`.
 
 **Resposta (resumo):**
+
 ```json
 {
   "gene_symbol": "BRCA1",
@@ -357,28 +398,32 @@ Retorna informacoes consolidadas de um gene a partir do simbolo HGNC.
   "end": 43170245,
   "strand": -1,
   "total_variants": 500,
-  "pathogenic_count": 12,
-  "vus_count": 48,
-  "benign_count": 31,
+  "pathogenic_count": 0,
+  "vus_count": 27,
+  "benign_count": 9,
+  "other_count": 464,
   "pli_score": 1.54e-34,
   "lof_z_score": 2.617,
   "oe_lof": 0.766,
   "uniprot_id": "P38398",
   "alphafold_pdb_url": "https://alphafold.ebi.ac.uk/files/AF-P38398-F1-model_v6.pdb",
-  "pathogenic_variants": [...],
-  "vus_variants": [...],
-  "benign_variants": [...]
+  "pathogenic_variants": [],
+  "vus_variants": [],
+  "benign_variants": [],
+  "other_variants": []
 }
 ```
 
 ### GET /api/variant/{variant_id}
 
-Retorna anotacao completa de uma variante a partir do rs ID do dbSNP.
+Retorna anotação completa de uma variante a partir do rs ID do dbSNP.
 
-**Parametros:**
-- `variant_id` (path): rs ID, ex: `rs429358`, `rs7412`
+**Parâmetros:**
+
+- `variant_id` (path): rs ID, por exemplo `rs429358`, `rs7412`.
 
 **Resposta (resumo):**
+
 ```json
 {
   "variant_id": "rs429358",
@@ -390,203 +435,223 @@ Retorna anotacao completa de uma variante a partir do rs ID do dbSNP.
   "consequence": "missense_variant",
   "gnomad_global_af": 0.1574,
   "gnomad_frequencies": [
-    {"population": "AFR", "allele_frequency": 0.2157, "allele_count": 8954, "allele_number": 41512},
-    ...
+    {"population": "AFR", "allele_frequency": 0.2157, "allele_count": 8954, "allele_number": 41512}
   ],
   "clinvar_significance": "Conflicting classifications of pathogenicity; other; risk factor",
   "clinvar_review_status": "criteria provided, conflicting classifications",
-  "clinvar_conditions": ["Alzheimer disease", "Familial hypercholesterolemia", ...],
+  "clinvar_conditions": ["Alzheimer disease", "Familial hypercholesterolemia"],
   "sift_score": 1.0,
   "sift_prediction": "tolerated",
   "polyphen_score": null,
-  "polyphen_prediction": null
+  "cadd_phred": 16.6,
+  "cadd_rankscore": 0.39,
+  "revel_score": 0.229,
+  "alphamissense_score": 0.0365,
+  "alphamissense_pred": "B",
+  "metalr_score": 0.0,
+  "metasvm_score": -1.0126,
+  "primateai_score": 0.549,
+  "fathmm_score": -0.24,
+  "dann_score": 0.217,
+  "phylop_score": null,
+  "phastcons_score": null,
+  "gerp_rs": null,
+  "spliceai_max": null,
+  "interpro_domains": [],
+  "clinvar_variation_id": "441269",
+  "cosmic_ids": []
 }
 ```
 
-Documentacao interativa Swagger UI disponivel em `http://localhost:8000/docs`.
+Documentação interativa Swagger UI disponível em `http://localhost:8000/docs`.
 
----
 
-## Instalacao e Execucao
+## Instalação e execução
 
-### Opcao 1 - Execucao Local (recomendada para desenvolvimento)
+### Opção 1. Execução local (recomendada para desenvolvimento)
 
-Esta e a forma mais rapida de rodar a aplicacao no seu computador sem precisar de Docker.
+Forma mais rápida de rodar a aplicação localmente sem Docker.
 
-#### Passo 1 - Clonar o repositorio
+#### Passo 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/madsondeluna/genvar.git
 cd genvar
 ```
 
-#### Passo 2 - Verificar pre-requisitos
-
-Confirme que voce tem Python e Node.js instalados:
+#### Passo 2. Verificar pré-requisitos
 
 ```bash
-python3 --version    # deve ser 3.12 ou superior
-node --version       # deve ser 20 ou superior
-npm --version        # deve ser 9 ou superior
+python3 --version    # 3.12 ou superior
+node --version       # 20 ou superior
+npm --version        # 9 ou superior
 ```
 
-Caso nao tenha Python 3.12+:
-- macOS: `brew install python@3.12`
-- Ubuntu/Debian: `sudo apt install python3.12 python3.12-venv`
-- Windows: baixar em https://www.python.org/downloads/
+Se não tiver Python 3.12:
 
-Caso nao tenha Node.js 20+:
-- macOS: `brew install node`
-- Ubuntu/Debian: `sudo apt install nodejs npm`
-- Windows: baixar em https://nodejs.org/
+- macOS: `brew install python@3.12`.
+- Ubuntu ou Debian: `sudo apt install python3.12 python3.12-venv`.
+- Windows: baixar em https://www.python.org/downloads/.
 
-#### Passo 3 - Subir o backend (FastAPI)
+Se não tiver Node.js 20:
 
-Abra um terminal e execute:
+- macOS: `brew install node`.
+- Ubuntu ou Debian: `sudo apt install nodejs npm`.
+- Windows: baixar em https://nodejs.org/.
+
+#### Passo 3. Subir o backend (FastAPI)
+
+Em um terminal:
 
 ```bash
-# Entrar na pasta do backend
 cd backend
-
-# Criar ambiente virtual Python isolado
 python3 -m venv .venv
-
-# Ativar o ambiente virtual
-source .venv/bin/activate          # Linux / macOS
+source .venv/bin/activate          # Linux ou macOS
 # .venv\Scripts\activate           # Windows (PowerShell ou CMD)
-
-# Instalar dependencias Python
 pip install -r requirements.txt
-
-# Iniciar o servidor de desenvolvimento
 uvicorn app.main:app --reload --port 8000
 ```
 
-Se tudo correu bem, voce vera:
+Saída esperada:
 
 ```
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 ```
 
-Acesse http://localhost:8000/docs para ver a documentacao interativa da API (Swagger UI).
+Swagger UI: http://localhost:8000/docs. Mantenha esse terminal aberto.
 
-**Deixe este terminal aberto.**
+#### Passo 4. Subir o frontend (React)
 
-#### Passo 4 - Subir o frontend (React)
-
-Abra **outro terminal** (mantenha o backend rodando no primeiro) e execute:
+Em outro terminal:
 
 ```bash
-# A partir da raiz do repositorio clonado
 cd frontend
-
-# Instalar dependencias Node.js
 npm install
-
-# Iniciar o servidor de desenvolvimento
 npm run dev
 ```
 
-Se tudo correu bem, voce vera:
+Saída esperada:
 
 ```
   VITE v5.x.x  ready in XXX ms
-
   Local:   http://localhost:3000/
 ```
 
-Acesse http://localhost:3000 no navegador para usar a aplicacao.
+Acesse http://localhost:3000.
 
-#### Passo 5 - Usar a aplicacao
+#### Passo 5. Usar a aplicação
 
-Na pagina inicial, voce pode buscar por:
+Na página inicial, você pode buscar por:
 
-- **Gene** (simbolo HGNC): `MLH1`, `HBB`, `MSH2`, `VHL`, `LDLR`, `RB1`
-- **Variante** (rs ID do dbSNP): `rs334`, `rs1800562`, `rs6025`, `rs1799853`
+- Gene (símbolo HGNC): `MLH1`, `HBB`, `MSH2`, `VHL`, `LDLR`, `RB1`.
+- Variante (rs ID do dbSNP): `rs334`, `rs1800562`, `rs6025`, `rs1799853`.
 
-A primeira busca pode demorar alguns segundos pois as APIs externas sao consultadas em tempo real. Buscas subsequentes do mesmo gene/variante sao instantaneas (cache).
+A primeira busca pode levar alguns segundos enquanto as APIs externas são consultadas em tempo real. Buscas subsequentes do mesmo gene ou variante são instantâneas (cache).
 
----
+### Opção 2. Execução com Docker Compose
 
-### Opcao 2 - Execucao com Docker Compose
-
-Necessario ter Docker Desktop instalado (https://www.docker.com/products/docker-desktop).
+É necessário ter Docker Desktop instalado (https://www.docker.com/products/docker-desktop/).
 
 ```bash
 git clone https://github.com/madsondeluna/genvar.git
 cd genvar
-
-# Construir e subir todos os servicos (backend + frontend + redis)
-docker-compose up --build
+docker compose up --build
 ```
 
-Aguarde o build completar (pode levar alguns minutos na primeira vez). Depois:
+Aguarde o build (pode levar alguns minutos na primeira execução). Depois:
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Swagger UI: http://localhost:8000/docs
+- Frontend: http://localhost:3000.
+- Backend API: http://localhost:8000.
+- Swagger UI: http://localhost:8000/docs.
 
-Para parar: `Ctrl+C` e depois `docker-compose down`.
+Para parar: `Ctrl+C` e depois `docker compose down`.
 
----
+### Opção 3. Deploy no Render (produção)
 
-### Variaveis de Ambiente (opcionais)
+O repositório contém um Blueprint (`render.yaml`) que provisiona três serviços no Render:
 
-Crie um arquivo `backend/.env` para personalizar o comportamento:
+- `genvar-cache` (Key Value/Redis free, cache de respostas das APIs externas).
+- `genvar-backend` (Web Service, Docker, Python 3.12 + FastAPI + uvicorn).
+- `genvar-frontend` (Static Site, build Vite, CDN global).
+
+Passos:
+
+1. Faça push do repositório para o GitHub.
+2. Em https://dashboard.render.com, clique em **New**, depois **Blueprint**, e conecte o repositório.
+3. Render detecta o `render.yaml` e propõe os três serviços; confirme a criação.
+4. Aguarde o build (cerca de 5 a 8 minutos na primeira vez).
+5. Após o deploy, acesse o frontend em `https://genvar-frontend.onrender.com`.
+
+Notas importantes:
+
+- Os nomes de serviço no `render.yaml` (`genvar-backend`, `genvar-frontend`) precisam ser únicos dentro da sua conta Render. Caso já existam, ajuste os nomes e as URLs em `ALLOWED_ORIGINS` e `VITE_API_URL` antes do deploy.
+- O plano free do Render põe o backend em modo dormente após 15 minutos sem requisições. A primeira chamada depois desse intervalo leva 30 a 60 segundos para acordar; chamadas subsequentes são instantâneas.
+- O Redis free tem 25 MB de memória com política `allkeys-lru`; é suficiente para o cache, dado que as respostas são pequenas e expiram em 1 hora.
+- A variável `VITE_API_URL` é injetada em tempo de build; qualquer mudança no URL do backend exige redeploy do frontend.
+- O backend valida a origem via `ALLOWED_ORIGINS` (lista separada por vírgulas). Aceite múltiplas URLs se usar domínio custom: `https://app.seudominio.com,https://genvar-frontend.onrender.com`.
+
+Para fazer deploy em outra plataforma (Railway, Fly.io, AWS), use o mesmo Dockerfile do backend (respeita `$PORT`) e sirva o `frontend/dist` em qualquer CDN estático, passando `VITE_API_URL` no build.
+
+### Variáveis de ambiente (opcionais)
+
+Crie `backend/.env` para personalizar o comportamento:
 
 ```env
-# URL do Redis para cache (opcional - sem Redis o sistema funciona normalmente)
 REDIS_URL=redis://localhost:6379
-
-# Tempo de cache em segundos (padrao: 1 hora)
 CACHE_TTL_SECONDS=3600
-
-# Limite de variantes retornadas pelo Ensembl por gene
 ENSEMBL_MAX_VARIANTS=500
-
-# Nivel de log
 LOG_LEVEL=INFO
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
-Se o arquivo `.env` nao existir, os valores padrao acima sao usados automaticamente.
+Se o arquivo `.env` não existir, os valores padrão acima são usados.
 
-**Nota sobre Redis:** O Redis e opcional. Se nao estiver disponivel, o sistema funciona normalmente sem cache - apenas cada requisicao vai consultar as APIs externas novamente. Para instalar o Redis localmente:
-- macOS: `brew install redis && brew services start redis`
-- Ubuntu: `sudo apt install redis-server && sudo systemctl start redis`
+No frontend, o `VITE_API_URL` pode ser definido em `frontend/.env` para apontar para um backend remoto durante o desenvolvimento local:
 
----
+```env
+VITE_API_URL=https://genvar-backend.onrender.com/api
+```
+
+Sem essa variável, o frontend usa o caminho `/api` relativo, que é redirecionado pelo proxy configurado em `vite.config.js`.
+
+**Nota sobre Redis**: o Redis é opcional. Sem ele, o sistema funciona normalmente, apenas sem cache server-side. Instalação local:
+
+- macOS: `brew install redis && brew services start redis`.
+- Ubuntu: `sudo apt install redis-server && sudo systemctl start redis`.
+
 
 ## Testes
 
-**Testes unitarios (sem acesso a internet, com mocks):**
+Testes unitários (com mocks, sem rede):
+
 ```bash
 cd backend
 pytest tests/test_services.py -v
 ```
 
-**Testes de integracao (chamam as APIs reais):**
+Testes de integração (chamam APIs reais):
+
 ```bash
 pytest tests/test_apis.py -v
 ```
 
-**Resultado atual:** 15/15 testes passando (6 unitarios + 9 integracao).
 
----
+## Notas técnicas sobre as APIs
 
-## Notas Tecnicas sobre as APIs
+Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_REPORT.md`:
 
-Discrepancias identificadas durante os testes e documentadas em `API_TESTING_REPORT.md`:
+1. **gnomAD**: o campo `af` não existe no tipo `VariantPopulation`. A frequência é calculada no backend como `ac / an`.
+2. **gnomAD**: o campo de restrição é `oe_lof_upper` (LOEUF), não `loeuf` como aparece em alguns exemplos antigos.
+3. **gnomAD**: IDs de população são minúsculos (`afr`, `amr`) e incluem subconjuntos com separador `:` (por exemplo `hgdp:japanese`) que são filtrados pelo sistema.
+4. **ClinVar**: o campo `clinical_significance` foi substituído por `germline_classification` na API atual.
+5. **ClinVar**: a busca retorna múltiplos UIDs (VCV e RCV). O sistema faz batch fetch e seleciona o registro com maior número de condições associadas (VCV agregado).
+6. **AlphaFold**: o endpoint retorna array. `[0]` corresponde ao modelo canônico.
+7. **MyVariant.info**: preferir HGVS genômico (`chr{chr}:g.{pos}{ref}>{alt}`) quando há coordenadas do VEP. Em caso de falha, o sistema recorre à busca por `dbsnp.rsid`.
 
-1. **gnomAD:** O campo `af` nao existe no tipo `VariantPopulation` - frequencia calculada como `ac / an` no backend
-2. **gnomAD:** Campo de restricao e `oe_lof_upper` (LOEUF), nao `loeuf` como aparece em alguns exemplos de documentacao
-3. **gnomAD:** IDs de populacao sao minusculos (`afr`, `amr`) e incluem subconjuntos com separador `:` (ex: `hgdp:japanese`) que sao filtrados pelo sistema
-4. **ClinVar:** Campo `clinical_significance` foi substituido por `germline_classification` na API atual
-5. **ClinVar:** A busca retorna multiplos UIDs (VCV e RCV); o sistema faz batch fetch e seleciona o registro com maior numero de condicoes associadas (registro VCV agregado)
-6. **AlphaFold:** Endpoint retorna array de objetos; `[0]` corresponde ao modelo canonico
+As chaves de cache são versionadas (`gene:v2:`, `variant:v2:`) para invalidar respostas antigas após mudanças no schema.
 
----
 
-## Licenca
+## Licença
 
-MIT License. Dados cientificos provenientes de bases publicas com uso livre para fins de pesquisa e educacao.
+MIT License. Os dados científicos provêm de bases públicas com uso livre para fins de pesquisa e educação.

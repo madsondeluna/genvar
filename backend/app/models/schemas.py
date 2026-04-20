@@ -26,10 +26,12 @@ class GeneResponse(BaseModel):
     pathogenic_count: int = 0
     vus_count: int = 0
     benign_count: int = 0
+    other_count: int = 0
 
     pathogenic_variants: List[GeneVariant] = []
     vus_variants: List[GeneVariant] = []
     benign_variants: List[GeneVariant] = []
+    other_variants: List[GeneVariant] = []
 
     pli_score: Optional[float] = None
     lof_z_score: Optional[float] = None
@@ -74,8 +76,36 @@ class VariantResponse(BaseModel):
     sift_prediction: Optional[str] = None
     polyphen_score: Optional[float] = None
     polyphen_prediction: Optional[str] = None
+
     cadd_phred: Optional[float] = None
+    cadd_rankscore: Optional[float] = None
     revel_score: Optional[float] = None
+    alphamissense_score: Optional[float] = None
+    alphamissense_pred: Optional[str] = None
+    metalr_score: Optional[float] = None
+    metalr_pred: Optional[str] = None
+    metasvm_score: Optional[float] = None
+    metasvm_pred: Optional[str] = None
+    primateai_score: Optional[float] = None
+    primateai_pred: Optional[str] = None
+    mutpred_score: Optional[float] = None
+    fathmm_score: Optional[float] = None
+    fathmm_pred: Optional[str] = None
+    dann_score: Optional[float] = None
+
+    phylop_score: Optional[float] = None
+    phastcons_score: Optional[float] = None
+    gerp_rs: Optional[float] = None
+
+    spliceai_max: Optional[float] = None
+    dbscsnv_ada: Optional[float] = None
+    dbscsnv_rf: Optional[float] = None
+
+    interpro_domains: List[str] = []
+    thousand_genomes_af: Optional[float] = None
+    exac_af: Optional[float] = None
+    clinvar_variation_id: Optional[str] = None
+    cosmic_ids: List[str] = []
 
     protein_id: Optional[str] = None
     amino_acid_change: Optional[str] = None

@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -7,6 +6,11 @@ class Settings(BaseSettings):
     cache_ttl_seconds: int = 3600
     ensembl_max_variants: int = 500
     log_level: str = "INFO"
+    allowed_origins: str = "http://localhost:3000,http://localhost:5173"
+
+    @property
+    def origins_list(self) -> list[str]:
+        return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
 
     class Config:
         env_file = ".env"

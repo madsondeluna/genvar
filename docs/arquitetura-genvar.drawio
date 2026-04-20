@@ -1,218 +1,162 @@
-<mxfile host="app.diagrams.net" modified="2026-03-19" version="21.0.0">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
   <diagram name="Arquitetura — GenVar Dashboard" id="genvar-arch">
-    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1896" dy="840" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- ═══════════════════════════════════════════════
-             CAMADA 1: USUARIO
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="user" value="&lt;b&gt;Usuário&lt;/b&gt;&#xa;Navegador Web" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="690" y="20" width="180" height="65" as="geometry" />
+        <mxCell id="user" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;shadow=1;" value="&lt;b&gt;Usuário&lt;/b&gt;&#xa;Navegador Web" vertex="1">
+          <mxGeometry height="80" width="180" x="690" y="20" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             CAMADA 2: FRONTEND
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="fe_bg" value="" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=20;dashed=1;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="30" y="125" width="1500" height="315" as="geometry" />
+        <mxCell id="fe_bg" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=20;dashed=1;strokeWidth=2;shadow=1;" value="" vertex="1">
+          <mxGeometry height="315" width="1500" x="30" y="125" as="geometry" />
         </mxCell>
-        <mxCell id="fe_titulo" value="&lt;b&gt;CAMADA DE APRESENTAÇÃO — React 18 + Vite 5 + Tailwind CSS 3 + Geist Mono&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#2d6a2d;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="45" y="130" width="700" height="22" as="geometry" />
+        <mxCell id="fe_titulo" parent="1" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#2d6a2d;fontStyle=1;shadow=1;" value="&lt;b&gt;CAMADA DE APRESENTAÇÃO — React 18 + Vite 5 + Tailwind CSS 3 + Geist Mono&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="700" x="75" y="100" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_home" value="&lt;b&gt;HomePage&lt;/b&gt;&#xa;&#xa;• Busca por gene (HGNC)&#xa;• Busca por variante (rs ID)&#xa;• Botões de exemplos validados&#xa;• Lista de fontes de dados&#xa;• Crédito do autor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="50" y="160" width="210" height="255" as="geometry" />
+        <mxCell id="fe_home" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;HomePage&lt;/b&gt;&#xa;&#xa;• Busca por gene (HGNC)&#xa;• Busca por variante (rs ID)&#xa;• Botões de exemplos validados&#xa;• Lista de fontes de dados&#xa;• Crédito do autor" vertex="1">
+          <mxGeometry height="255" width="210" x="50" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_gene" value="&lt;b&gt;GenePage&lt;/b&gt;&#xa;&#xa;• Cabeçalho + links externos&#xa;  (NCBI, gnomAD, UniProt, AlphaFold)&#xa;• Grid de metadados Ensembl&#xa;• StatCards (total/path./VUS/benign)&#xa;• ConstraintMetrics (pLI, LOEUF)&#xa;• GeneLocusHeatmap (bins 1kb)&#xa;• ProteinViewer 3D — NGL&#xa;  (Cartoon / Surface / Ball+Stick / Ribbon)&#xa;• Imagem PAE (AlphaFold)&#xa;• VariantTable (path./VUS/benignas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="285" y="160" width="265" height="255" as="geometry" />
+        <mxCell id="fe_gene" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;GenePage&lt;/b&gt;&#xa;&#xa;• Cabeçalho + links externos&#xa;  (NCBI, gnomAD, UniProt, AlphaFold)&#xa;• Grid de metadados Ensembl&#xa;• StatCards (total/path./VUS/benign)&#xa;• ConstraintMetrics (pLI, LOEUF)&#xa;• GeneLocusHeatmap (bins 1kb)&#xa;• ProteinViewer 3D — NGL&#xa;  (Cartoon / Surface / Ball+Stick / Ribbon)&#xa;• Imagem PAE (AlphaFold)&#xa;• VariantTable (path./VUS/benignas)" vertex="1">
+          <mxGeometry height="255" width="265" x="285" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_variant" value="&lt;b&gt;VariantPage&lt;/b&gt;&#xa;&#xa;• Cabeçalho + SignificanceBadge&#xa;• Grid de metadados VEP&#xa;• ScoreDetail (SIFT, PolyPhen-2)&#xa;• PredictionScoresRadar&#xa;  (SIFT / PolyPhen / CADD / REVEL)&#xa;• FrequencyBarChart (escala log)&#xa;• GeographicVariantMap&#xa;  (mapa mundial, 9 populações)&#xa;• Tabela de frequências populacionais" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="575" y="160" width="265" height="255" as="geometry" />
+        <mxCell id="fe_variant" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;VariantPage&lt;/b&gt;&#xa;&#xa;• Cabeçalho + SignificanceBadge&#xa;• Grid de metadados VEP&#xa;• ScoreDetail (SIFT, PolyPhen-2)&#xa;• PredictionScoresRadar&#xa;  (SIFT / PolyPhen / CADD / REVEL)&#xa;• FrequencyBarChart (escala log)&#xa;• GeographicVariantMap&#xa;  (mapa mundial, 9 populações)&#xa;• Tabela de frequências populacionais" vertex="1">
+          <mxGeometry height="255" width="265" x="575" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_query" value="&lt;b&gt;TanStack Query v5&lt;/b&gt;&#xa;&#xa;• Cache client-side&#xa;  staleTime: 10 min&#xa;• Retry automático (1x)&#xa;• Estados: loading / error / data&#xa;• Deduplicação de requisições" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="875" y="160" width="210" height="120" as="geometry" />
+        <mxCell id="fe_query" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;TanStack Query v5&lt;/b&gt;&#xa;&#xa;• Cache client-side&#xa;  staleTime: 10 min&#xa;• Retry automático (1x)&#xa;• Estados: loading / error / data&#xa;• Deduplicação de requisições" vertex="1">
+          <mxGeometry height="120" width="210" x="875" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_axios" value="&lt;b&gt;Axios Client&lt;/b&gt;&#xa;&#xa;• baseURL: /api&#xa;• timeout: 60s&#xa;• Interceptor de erros&#xa;• Proxy Vite → :8000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="875" y="295" width="210" height="115" as="geometry" />
+        <mxCell id="fe_axios" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;Axios Client&lt;/b&gt;&#xa;&#xa;• baseURL: /api&#xa;• timeout: 60s&#xa;• Interceptor de erros&#xa;• Proxy Vite → :8000" vertex="1">
+          <mxGeometry height="115" width="210" x="875" y="295" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_viz" value="&lt;b&gt;Visualizações — Plotly.js + NGL&lt;/b&gt;&#xa;&#xa;• scattergeo → mapa de frequências&#xa;• bar (log) → frequências populacionais&#xa;• scatterpolar → radar de escores&#xa;• barras empilhadas → heatmap locus&#xa;• CSS gauges → métricas de restrição&#xa;• NGL → estrutura 3D proteína (PDB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1115" y="160" width="260" height="165" as="geometry" />
+        <mxCell id="fe_viz" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;Visualizações — Plotly.js + NGL&lt;/b&gt;&#xa;&#xa;• scattergeo → mapa de frequências&#xa;• bar (log) → frequências populacionais&#xa;• scatterpolar → radar de escores&#xa;• barras empilhadas → heatmap locus&#xa;• CSS gauges → métricas de restrição&#xa;• NGL → estrutura 3D proteína (PDB)" vertex="1">
+          <mxGeometry height="165" width="260" x="1115" y="160" as="geometry" />
         </mxCell>
-
-        <mxCell id="fe_router" value="&lt;b&gt;React Router v6 (SPA)&lt;/b&gt;&#xa;&#xa;/ → HomePage&#xa;/gene/:symbol → GenePage&#xa;/variant/:rsid → VariantPage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1115" y="340" width="260" height="85" as="geometry" />
+        <mxCell id="fe_router" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;React Router v6 (SPA)&lt;/b&gt;&#xa;&#xa;/ → HomePage&#xa;/gene/:symbol → GenePage&#xa;/variant/:rsid → VariantPage" vertex="1">
+          <mxGeometry height="85" width="260" x="1115" y="340" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             CAMADA 3: BACKEND
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="be_bg" value="" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=20;dashed=1;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="30" y="480" width="1500" height="230" as="geometry" />
+        <mxCell id="be_bg" parent="1" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=20;dashed=1;strokeWidth=2;shadow=1;" value="" vertex="1">
+          <mxGeometry height="230" width="1500" x="30" y="480" as="geometry" />
         </mxCell>
-        <mxCell id="be_titulo" value="&lt;b&gt;CAMADA DE APLICAÇÃO — FastAPI + Uvicorn + Pydantic v2 + httpx async&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#7d6608;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="45" y="485" width="700" height="22" as="geometry" />
+        <mxCell id="be_gene" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;Router — GET /api/gene/{symbol}&lt;/b&gt;&#xa;&#xa;1. validate_gene_symbol() — regex HGNC&#xa;2. cache_get(gene:{symbol}) — Redis&#xa;3. ensembl.get_gene_info() — sequencial&#xa;4. asyncio.gather() — paralelo:&#xa;   • get_gene_variants(gene_id)&#xa;   • get_gene_constraint(symbol)&#xa;   • get_uniprot_id(symbol)&#xa;5. alphafold.get_prediction(uniprot_id)&#xa;6. classify_clinical_significance()&#xa;7. GeneResponse (Pydantic v2)&#xa;8. cache_set(TTL 3600s)" vertex="1">
+          <mxGeometry height="180" width="350" x="50" y="515" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_gene" value="&lt;b&gt;Router — GET /api/gene/{symbol}&lt;/b&gt;&#xa;&#xa;1. validate_gene_symbol() — regex HGNC&#xa;2. cache_get(gene:{symbol}) — Redis&#xa;3. ensembl.get_gene_info() — sequencial&#xa;4. asyncio.gather() — paralelo:&#xa;   • get_gene_variants(gene_id)&#xa;   • get_gene_constraint(symbol)&#xa;   • get_uniprot_id(symbol)&#xa;5. alphafold.get_prediction(uniprot_id)&#xa;6. classify_clinical_significance()&#xa;7. GeneResponse (Pydantic v2)&#xa;8. cache_set(TTL 3600s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="50" y="515" width="350" height="180" as="geometry" />
+        <mxCell id="be_variant" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;Router — GET /api/variant/{rsid}&lt;/b&gt;&#xa;&#xa;1. validate_rsid() — regex rs[0-9]+&#xa;2. cache_get(variant:{rsid}) — Redis&#xa;3. ensembl.get_vep_annotation(rsid)&#xa;4. asyncio.gather() — paralelo:&#xa;   • gnomad.get_variant_frequencies()&#xa;   • clinvar.get_variant_clinvar()&#xa;5. VariantResponse (Pydantic v2)&#xa;6. cache_set(TTL 3600s)" vertex="1">
+          <mxGeometry height="180" width="350" x="425" y="515" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_variant" value="&lt;b&gt;Router — GET /api/variant/{rsid}&lt;/b&gt;&#xa;&#xa;1. validate_rsid() — regex rs[0-9]+&#xa;2. cache_get(variant:{rsid}) — Redis&#xa;3. ensembl.get_vep_annotation(rsid)&#xa;4. asyncio.gather() — paralelo:&#xa;   • gnomad.get_variant_frequencies()&#xa;   • clinvar.get_variant_clinvar()&#xa;5. VariantResponse (Pydantic v2)&#xa;6. cache_set(TTL 3600s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="425" y="515" width="350" height="180" as="geometry" />
+        <mxCell id="be_validators" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;validators.py&lt;/b&gt;&#xa;&#xa;validate_gene_symbol()&#xa;validate_rsid()&#xa;classify_clinical_significance()&#xa;  Pathogenic / VUS / Benign / Other" vertex="1">
+          <mxGeometry height="105" width="230" x="810" y="515" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_validators" value="&lt;b&gt;validators.py&lt;/b&gt;&#xa;&#xa;validate_gene_symbol()&#xa;validate_rsid()&#xa;classify_clinical_significance()&#xa;  Pathogenic / VUS / Benign / Other" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="810" y="515" width="230" height="105" as="geometry" />
+        <mxCell id="be_schemas" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;schemas.py — Pydantic v2&lt;/b&gt;&#xa;&#xa;GeneResponse | GeneVariant&#xa;VariantResponse | PopulationFrequency" vertex="1">
+          <mxGeometry height="60" width="230" x="810" y="633" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_schemas" value="&lt;b&gt;schemas.py — Pydantic v2&lt;/b&gt;&#xa;&#xa;GeneResponse | GeneVariant&#xa;VariantResponse | PopulationFrequency" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="810" y="633" width="230" height="60" as="geometry" />
+        <mxCell id="be_cache" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;cache.py + Redis 7&lt;/b&gt;&#xa;&#xa;cache_get() / cache_set()&#xa;TTL: 3600s — Graceful fallback" vertex="1">
+          <mxGeometry height="80" width="230" x="1065" y="515" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_cache" value="&lt;b&gt;cache.py + Redis 7&lt;/b&gt;&#xa;&#xa;cache_get() / cache_set()&#xa;TTL: 3600s — Graceful fallback" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1065" y="515" width="230" height="80" as="geometry" />
+        <mxCell id="be_main" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;main.py&lt;/b&gt;&#xa;&#xa;FastAPI app + CORS&#xa;Routers: /api/gene, /api/variant&#xa;GET / → health check" vertex="1">
+          <mxGeometry height="85" width="230" x="1065" y="608" as="geometry" />
         </mxCell>
-
-        <mxCell id="be_main" value="&lt;b&gt;main.py&lt;/b&gt;&#xa;&#xa;FastAPI app + CORS&#xa;Routers: /api/gene, /api/variant&#xa;GET / → health check" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1065" y="608" width="230" height="85" as="geometry" />
+        <mxCell id="svc_bg" parent="1" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;opacity=20;dashed=1;strokeWidth=2;shadow=1;" value="" vertex="1">
+          <mxGeometry height="165" width="1500" x="30" y="755" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             CAMADA 4: SERVIÇOS
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="svc_bg" value="" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;opacity=20;dashed=1;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="30" y="755" width="1500" height="165" as="geometry" />
+        <mxCell id="svc_titulo" parent="1" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#8a4400;fontStyle=1;shadow=1;" value="&lt;b&gt;CAMADA DE SERVIÇOS — Integrações httpx async (asyncio.gather)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="700" x="45" y="760" as="geometry" />
         </mxCell>
-        <mxCell id="svc_titulo" value="&lt;b&gt;CAMADA DE SERVIÇOS — Integrações httpx async (asyncio.gather)&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#8a4400;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="45" y="760" width="700" height="22" as="geometry" />
+        <mxCell id="svc_ensembl" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;ensembl.py&lt;/b&gt;&#xa;&#xa;get_gene_info()&#xa;get_gene_variants()&#xa;get_vep_annotation()&#xa;&#xa;REST / JSON — timeout 60s&#xa;400 = gene não encontrado" vertex="1">
+          <mxGeometry height="115" width="240" x="50" y="790" as="geometry" />
         </mxCell>
-
-        <mxCell id="svc_ensembl" value="&lt;b&gt;ensembl.py&lt;/b&gt;&#xa;&#xa;get_gene_info()&#xa;get_gene_variants()&#xa;get_vep_annotation()&#xa;&#xa;REST / JSON — timeout 60s&#xa;400 = gene não encontrado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="50" y="790" width="240" height="115" as="geometry" />
+        <mxCell id="svc_gnomad" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;gnomad.py&lt;/b&gt;&#xa;&#xa;get_variant_frequencies()&#xa;  → AF = AC / AN&#xa;  → 9 populações (IDs minúsculos)&#xa;get_gene_constraint()&#xa;  → pli, oe_lof_upper (LOEUF)&#xa;GraphQL — timeout 30s" vertex="1">
+          <mxGeometry height="115" width="240" x="315" y="790" as="geometry" />
         </mxCell>
-
-        <mxCell id="svc_gnomad" value="&lt;b&gt;gnomad.py&lt;/b&gt;&#xa;&#xa;get_variant_frequencies()&#xa;  → AF = AC / AN&#xa;  → 9 populações (IDs minúsculos)&#xa;get_gene_constraint()&#xa;  → pli, oe_lof_upper (LOEUF)&#xa;GraphQL — timeout 30s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="315" y="790" width="240" height="115" as="geometry" />
+        <mxCell id="svc_clinvar" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;clinvar.py&lt;/b&gt;&#xa;&#xa;search_clinvar() → UIDs&#xa;get_clinvar_batch_summary()&#xa;  → busca todos os UIDs em lote&#xa;  → seleciona VCV com mais condições&#xa;Campo: germline_classification&#xa;E-utilities / JSON" vertex="1">
+          <mxGeometry height="115" width="240" x="580" y="790" as="geometry" />
         </mxCell>
-
-        <mxCell id="svc_clinvar" value="&lt;b&gt;clinvar.py&lt;/b&gt;&#xa;&#xa;search_clinvar() → UIDs&#xa;get_clinvar_batch_summary()&#xa;  → busca todos os UIDs em lote&#xa;  → seleciona VCV com mais condições&#xa;Campo: germline_classification&#xa;E-utilities / JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="580" y="790" width="240" height="115" as="geometry" />
+        <mxCell id="svc_alphafold" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;alphafold.py&lt;/b&gt;&#xa;&#xa;get_prediction(uniprot_id)&#xa;  → response é array → usa [0]&#xa;  → pdbUrl (estrutura 3D)&#xa;  → paeImageUrl (mapa PAE)&#xa;  → globalMetricValue (pLDDT)&#xa;REST / JSON" vertex="1">
+          <mxGeometry height="115" width="240" x="845" y="790" as="geometry" />
         </mxCell>
-
-        <mxCell id="svc_alphafold" value="&lt;b&gt;alphafold.py&lt;/b&gt;&#xa;&#xa;get_prediction(uniprot_id)&#xa;  → response é array → usa [0]&#xa;  → pdbUrl (estrutura 3D)&#xa;  → paeImageUrl (mapa PAE)&#xa;  → globalMetricValue (pLDDT)&#xa;REST / JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="845" y="790" width="240" height="115" as="geometry" />
+        <mxCell id="svc_uniprot" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;uniprot.py&lt;/b&gt;&#xa;&#xa;get_uniprot_id(gene_symbol)&#xa;  → reviewed:true (Swiss-Prot)&#xa;  → organism_id: 9606 (humano)&#xa;  → results[0].primaryAccession&#xa;Usado para consultar AlphaFold&#xa;REST / JSON" vertex="1">
+          <mxGeometry height="115" width="240" x="1110" y="790" as="geometry" />
         </mxCell>
-
-        <mxCell id="svc_uniprot" value="&lt;b&gt;uniprot.py&lt;/b&gt;&#xa;&#xa;get_uniprot_id(gene_symbol)&#xa;  → reviewed:true (Swiss-Prot)&#xa;  → organism_id: 9606 (humano)&#xa;  → results[0].primaryAccession&#xa;Usado para consultar AlphaFold&#xa;REST / JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1110" y="790" width="240" height="115" as="geometry" />
+        <mxCell id="api_bg" parent="1" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=20;dashed=1;strokeWidth=2;shadow=1;" value="" vertex="1">
+          <mxGeometry height="150" width="1500" x="30" y="965" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             CAMADA 5: APIs EXTERNAS
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="api_bg" value="" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=20;dashed=1;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="30" y="965" width="1500" height="150" as="geometry" />
+        <mxCell id="api_titulo" parent="1" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#8b0000;fontStyle=1;shadow=1;" value="&lt;b&gt;FONTES DE DADOS EXTERNAS — APIs Públicas (sem autenticação)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="600" x="45" y="970" as="geometry" />
         </mxCell>
-        <mxCell id="api_titulo" value="&lt;b&gt;FONTES DE DADOS EXTERNAS — APIs Públicas (sem autenticação)&lt;/b&gt;" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#8b0000;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="45" y="970" width="600" height="22" as="geometry" />
+        <mxCell id="api_ensembl" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;Ensembl REST API&lt;/b&gt;&#xa;rest.ensembl.org&#xa;EMBL-EBI / Wellcome Sanger&#xa;Limite: 15 req/s" vertex="1">
+          <mxGeometry height="105" width="240" x="50" y="998" as="geometry" />
         </mxCell>
-
-        <mxCell id="api_ensembl" value="&lt;b&gt;Ensembl REST API&lt;/b&gt;&#xa;rest.ensembl.org&#xa;EMBL-EBI / Wellcome Sanger&#xa;Limite: 15 req/s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="50" y="998" width="240" height="105" as="geometry" />
+        <mxCell id="api_gnomad" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;gnomAD GraphQL API&lt;/b&gt;&#xa;gnomad.broadinstitute.org/api&#xa;Broad Institute — MIT/Harvard&#xa;Dataset: gnomAD r4 (genoma)" vertex="1">
+          <mxGeometry height="105" width="240" x="315" y="998" as="geometry" />
         </mxCell>
-
-        <mxCell id="api_gnomad" value="&lt;b&gt;gnomAD GraphQL API&lt;/b&gt;&#xa;gnomad.broadinstitute.org/api&#xa;Broad Institute — MIT/Harvard&#xa;Dataset: gnomAD r4 (genoma)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="315" y="998" width="240" height="105" as="geometry" />
+        <mxCell id="api_clinvar" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;ClinVar — NCBI E-utilities&lt;/b&gt;&#xa;eutils.ncbi.nlm.nih.gov&#xa;NCBI / National Library of Medicine&#xa;Limite: 3 req/s sem chave API" vertex="1">
+          <mxGeometry height="105" width="240" x="580" y="998" as="geometry" />
         </mxCell>
-
-        <mxCell id="api_clinvar" value="&lt;b&gt;ClinVar — NCBI E-utilities&lt;/b&gt;&#xa;eutils.ncbi.nlm.nih.gov&#xa;NCBI / National Library of Medicine&#xa;Limite: 3 req/s sem chave API" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="580" y="998" width="240" height="105" as="geometry" />
+        <mxCell id="api_alphafold" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;AlphaFold DB API&lt;/b&gt;&#xa;alphafold.ebi.ac.uk/api&#xa;DeepMind / EMBL-EBI&#xa;Modelos v4 — sem autenticação" vertex="1">
+          <mxGeometry height="105" width="240" x="845" y="998" as="geometry" />
         </mxCell>
-
-        <mxCell id="api_alphafold" value="&lt;b&gt;AlphaFold DB API&lt;/b&gt;&#xa;alphafold.ebi.ac.uk/api&#xa;DeepMind / EMBL-EBI&#xa;Modelos v4 — sem autenticação" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="845" y="998" width="240" height="105" as="geometry" />
+        <mxCell id="api_uniprot" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;shadow=1;" value="&lt;b&gt;UniProt REST API&lt;/b&gt;&#xa;rest.uniprot.org&#xa;EMBL-EBI / SIB / PIR&#xa;Swiss-Prot (curado manualmente)" vertex="1">
+          <mxGeometry height="105" width="240" x="1110" y="998" as="geometry" />
         </mxCell>
-
-        <mxCell id="api_uniprot" value="&lt;b&gt;UniProt REST API&lt;/b&gt;&#xa;rest.uniprot.org&#xa;EMBL-EBI / SIB / PIR&#xa;Swiss-Prot (curado manualmente)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="1110" y="998" width="240" height="105" as="geometry" />
-        </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             SETAS PRINCIPAIS (sem cruzamento)
-        ═══════════════════════════════════════════════ -->
-
-        <!-- Usuário → Frontend -->
-        <mxCell id="arr_u_fe" value="acessa" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="user" target="fe_home" parent="1">
+        <mxCell id="arr_u_fe" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="fe_home" value="acessa">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Frontend (Axios) → Backend -->
-        <mxCell id="arr_fe_be" value="GET /api/gene/{symbol}&#xa;GET /api/variant/{rsid}&#xa;(proxy Vite → :8000)" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="fe_axios" target="be_gene" parent="1">
+        <mxCell id="arr_fe_be" edge="1" parent="1" source="be_titulo" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="be_gene" value="GET /api/gene/{symbol}&#xa;GET /api/variant/{rsid}&#xa;(proxy Vite → :8000)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Backend → Serviços (Router Gene) -->
-        <mxCell id="arr_be_svc_gene" value="invoca serviços (asyncio.gather)" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="be_gene" target="svc_ensembl" parent="1">
+        <mxCell id="arr_be_svc_gene" edge="1" parent="1" source="be_gene" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="svc_ensembl" value="invoca serviços (asyncio.gather)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Backend → Serviços (Router Variant) -->
-        <mxCell id="arr_be_svc_variant" value="invoca serviços (asyncio.gather)" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="be_variant" target="svc_gnomad" parent="1">
+        <mxCell id="arr_be_svc_variant" edge="1" parent="1" source="be_variant" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="svc_gnomad" value="invoca serviços (asyncio.gather)">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Serviços → APIs Externas (linhas verticais diretas) -->
-        <mxCell id="arr_ens" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="svc_ensembl" target="api_ensembl" parent="1">
+        <mxCell id="arr_ens" edge="1" parent="1" source="svc_ensembl" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="api_ensembl" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="arr_gno" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="svc_gnomad" target="api_gnomad" parent="1">
+        <mxCell id="arr_gno" edge="1" parent="1" source="svc_gnomad" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="api_gnomad" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="arr_cli" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="svc_clinvar" target="api_clinvar" parent="1">
+        <mxCell id="arr_cli" edge="1" parent="1" source="svc_clinvar" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="api_clinvar" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="arr_af" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="svc_alphafold" target="api_alphafold" parent="1">
+        <mxCell id="arr_af" edge="1" parent="1" source="svc_alphafold" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="api_alphafold" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="arr_uni" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" source="svc_uniprot" target="api_uniprot" parent="1">
+        <mxCell id="arr_uni" edge="1" parent="1" source="svc_uniprot" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="api_uniprot" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- ═══════════════════════════════════════════════
-             LEGENDA
-        ═══════════════════════════════════════════════ -->
-        <mxCell id="leg_bg" value="" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" vertex="1" parent="1">
-          <mxGeometry x="1395" y="515" width="120" height="170" as="geometry" />
+        <mxCell id="leg_bg" parent="1" style="rounded=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;shadow=1;" value="" vertex="1">
+          <mxGeometry height="195" width="125" x="1395" y="515" as="geometry" />
         </mxCell>
-        <mxCell id="leg_t" value="&lt;b&gt;Legenda&lt;/b&gt;" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="520" width="100" height="20" as="geometry" />
+        <mxCell id="leg_t" parent="1" style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;shadow=1;" value="&lt;b&gt;Legenda&lt;/b&gt;" vertex="1">
+          <mxGeometry height="20" width="100" x="1405" y="520" as="geometry" />
         </mxCell>
-        <mxCell id="leg1" value="Página React" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="543" width="100" height="22" as="geometry" />
+        <mxCell id="leg1" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;shadow=1;" value="Página React" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="543" as="geometry" />
         </mxCell>
-        <mxCell id="leg2" value="Infra Frontend" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="569" width="100" height="22" as="geometry" />
+        <mxCell id="leg2" parent="1" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;shadow=1;" value="Infra Frontend" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="569" as="geometry" />
         </mxCell>
-        <mxCell id="leg3" value="Router Backend" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="595" width="100" height="22" as="geometry" />
+        <mxCell id="leg3" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;shadow=1;" value="Router Backend" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="595" as="geometry" />
         </mxCell>
-        <mxCell id="leg4" value="Utils / Cache" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="621" width="100" height="22" as="geometry" />
+        <mxCell id="leg4" parent="1" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;shadow=1;" value="Utils / Cache" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="621" as="geometry" />
         </mxCell>
-        <mxCell id="leg5" value="Serviço httpx" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="647" width="100" height="22" as="geometry" />
+        <mxCell id="leg5" parent="1" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;shadow=1;" value="Serviço httpx" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="647" as="geometry" />
         </mxCell>
-        <mxCell id="leg6" value="API Externa" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1405" y="673" width="100" height="22" as="geometry" />
+        <mxCell id="leg6" parent="1" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;shadow=1;" value="API Externa" vertex="1">
+          <mxGeometry height="22" width="100" x="1405" y="673" as="geometry" />
         </mxCell>
-
+        <mxCell id="BV2wxPx_FJrUzdMrNsm8-1" edge="1" parent="1" source="fe_axios" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=10;fontStyle=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;shadow=1;" target="be_titulo" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="980" y="410" as="sourcePoint" />
+            <mxPoint x="225" y="515" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="be_titulo" parent="1" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;fontColor=#7d6608;fontStyle=1;shadow=1;" value="&lt;b&gt;CAMADA DE APLICAÇÃO — FastAPI + Uvicorn + Pydantic v2 + httpx async&lt;/b&gt;" vertex="1">
+          <mxGeometry height="22" width="700" x="76" y="460" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

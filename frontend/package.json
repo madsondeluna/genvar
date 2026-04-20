@@ -11,6 +11,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.17.0",
     "axios": "^1.6.0",
+    "ideogram": "^1.53.0",
     "lucide-react": "^0.294.0",
     "ngl": "^2.4.0",
     "plotly.js": "^2.27.0",

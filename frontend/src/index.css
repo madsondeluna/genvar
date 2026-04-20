@@ -4,10 +4,13 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-900 font-mono antialiased;
+    @apply bg-white text-gray-900 font-sans antialiased;
   }
 
-  * {
+  code,
+  pre,
+  kbd,
+  samp {
     @apply font-mono;
   }
 }
@@ -38,7 +41,7 @@
   }
 
   .label {
-    @apply text-xs font-medium text-gray-500 uppercase tracking-wider;
+    @apply text-xs font-medium text-gray-600 uppercase tracking-wider;
   }
 
   .value {
@@ -46,7 +49,22 @@
   }
 
   .tag {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1;
+  }
+
+  .sticky-header {
+    @apply border-b border-gray-200 bg-white/90 backdrop-blur sticky top-0 z-10;
+  }
+
+  .ideogram-host #_ideogramLegend {
+    font-family: Ubuntu, system-ui, sans-serif !important;
+    font-size: 11px !important;
+    color: #525252 !important;
+  }
+
+  .ideogram-host .chrLabel,
+  .ideogram-host text {
+    font-family: Ubuntu, system-ui, sans-serif !important;
   }
 
   .tag-pathogenic {

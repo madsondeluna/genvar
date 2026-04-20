@@ -1,14 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchGene } from '../api/client'
-import LoadingSpinner from '../components/LoadingSpinner'
 import ErrorAlert from '../components/ErrorAlert'
 import ConstraintMetrics from '../components/ConstraintMetrics'
 import GeneLocusHeatmap from '../components/GeneLocusHeatmap'
 import VariantTable from '../components/VariantTable'
 import ProteinViewer from '../components/ProteinViewer'
-import { ArrowLeft, Search, ExternalLink } from 'lucide-react'
+import ExternalLinkButton from '../components/ExternalLinkButton'
+import CopyLinkButton from '../components/CopyLinkButton'
+import ChromosomeIdeogram from '../components/ChromosomeIdeogram'
+import { GenePageSkeleton } from '../components/Skeleton'
+import { useSearchHistory } from '../hooks/useSearchHistory'
+import { stripEnsemblSource } from '../utils/format'
+import { buildGeneAnnotations, GENE_LEGEND } from '../utils/ideogramAnnotations'
+import { ArrowLeft, Search } from 'lucide-react'
 
 function InfoRow({ label, value }) {
   if (!value) return null
@@ -24,7 +30,7 @@ function StatCard({ label, value }) {
   return (
     <div className="flex flex-col gap-1 p-4 border border-gray-200 rounded-md">
       <span className="text-2xl font-bold text-gray-900 tracking-tight">
-        {(value || 0).toLocaleString()}
+        {(value || 0).toLocaleString('pt-BR')}
       </span>
       <span className="label">{label}</span>
     </div>
@@ -35,6 +41,7 @@ export default function GenePage() {
   const { symbol } = useParams()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState('')
+  const { push } = useSearchHistory()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['gene', symbol],
@@ -43,6 +50,10 @@ export default function GenePage() {
     staleTime: 1000 * 60 * 10,
   })
 
+  useEffect(() => {
+    if (data?.gene_symbol) push('gene', data.gene_symbol)
+  }, [data?.gene_symbol, push])
+
   function handleSearch(e) {
     e.preventDefault()
     const val = searchInput.trim().toUpperCase()
@@ -50,197 +61,186 @@ export default function GenePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Nav */}
-      <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
+    <main className="min-h-screen bg-white">
+      <nav className="sticky-header" aria-label="Principal">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-6">
-          <Link to="/" className="flex items-center gap-2 text-gray-500 hover:text-gray-900 transition-colors text-sm">
-            <ArrowLeft className="w-4 h-4" />
+          <Link to="/" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors text-sm">
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             GenVar
           </Link>
-          <form onSubmit={handleSearch} className="flex gap-2 flex-1 max-w-xs">
+          <form onSubmit={handleSearch} className="flex gap-2 flex-1 max-w-xs" role="search">
+            <label htmlFor="gene-nav-search" className="sr-only">Buscar gene</label>
             <input
+              id="gene-nav-search"
               type="text"
               className="input py-1.5 text-sm"
-              placeholder="Search gene..."
+              placeholder="Buscar gene..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               spellCheck={false}
             />
-            <button type="submit" className="btn-primary py-1.5 px-3">
-              <Search className="w-4 h-4" />
+            <button type="submit" className="btn-primary py-1.5 px-3" aria-label="Buscar gene">
+              <Search className="w-4 h-4" aria-hidden="true" />
             </button>
           </form>
         </div>
-      </div>
+      </nav>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
 
-        {isLoading && (
-          <LoadingSpinner message={`Building profile for ${symbol}...`} />
-        )}
+        {isLoading && <GenePageSkeleton />}
 
         {error && <ErrorAlert message={error.message} />}
 
         {data && (
           <div className="flex flex-col gap-8">
 
-            {/* Gene Header */}
-            <div>
-              <div className="flex items-start justify-between gap-4 mb-3">
+            <section aria-labelledby="gene-title">
+              <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
                 <div>
-                  <p className="text-xs text-gray-400 uppercase tracking-widest mb-1">Gene</p>
-                  <h1 className="text-4xl font-bold text-gray-900 tracking-tight">{data.gene_symbol}</h1>
+                  <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Gene</p>
+                  <h1 id="gene-title" className="text-4xl font-bold text-gray-900 tracking-tight">
+                    {data.gene_symbol}
+                  </h1>
                   {data.description && (
-                    <p className="text-gray-500 mt-2 text-sm max-w-2xl leading-relaxed">
-                      {data.description.replace(/\[Source:.*\]/, '').trim()}
+                    <p className="text-gray-600 mt-2 text-sm max-w-2xl leading-relaxed">
+                      {stripEnsemblSource(data.description)}
                     </p>
                   )}
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <a
+                <div className="flex gap-2 flex-wrap">
+                  <CopyLinkButton />
+                  <ExternalLinkButton
                     href={`https://www.ncbi.nlm.nih.gov/gene/?term=${data.gene_symbol}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
-                  >
-                    NCBI <ExternalLink className="w-3 h-3" />
-                  </a>
-                  <a
+                    label="NCBI"
+                  />
+                  <ExternalLinkButton
                     href={`https://gnomad.broadinstitute.org/gene/${data.gene_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
-                  >
-                    gnomAD <ExternalLink className="w-3 h-3" />
-                  </a>
+                    label="gnomAD"
+                  />
                   {data.uniprot_id && (
-                    <a
+                    <ExternalLinkButton
                       href={`https://www.uniprot.org/uniprotkb/${data.uniprot_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
-                    >
-                      UniProt <ExternalLink className="w-3 h-3" />
-                    </a>
+                      label="UniProt"
+                    />
                   )}
                   {data.alphafold_pdb_url && (
-                    <a
+                    <ExternalLinkButton
                       href={`https://alphafold.ebi.ac.uk/entry/${data.uniprot_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
-                    >
-                      AlphaFold <ExternalLink className="w-3 h-3" />
-                    </a>
+                      label="AlphaFold"
+                    />
                   )}
                 </div>
               </div>
 
-              {/* Basic info */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
-                <InfoRow label="Ensembl ID" value={data.gene_id} />
-                <InfoRow label="Chromosome" value={`chr${data.chromosome}`} />
+                <InfoRow label="ID Ensembl" value={data.gene_id} />
+                <InfoRow label="Cromossomo" value={`chr${data.chromosome}`} />
                 <InfoRow
                   label="Locus"
-                  value={`${data.start?.toLocaleString()} - ${data.end?.toLocaleString()}`}
+                  value={`${data.start?.toLocaleString('pt-BR')} - ${data.end?.toLocaleString('pt-BR')}`}
                 />
-                <InfoRow label="Strand" value={data.strand === 1 ? 'Forward (+)' : 'Reverse (-)'} />
-                <InfoRow label="Biotype" value={data.biotype} />
-                <InfoRow label="Assembly" value={data.assembly_name} />
-                <InfoRow label="UniProt ID" value={data.uniprot_id} />
+                <InfoRow label="Fita" value={data.strand === 1 ? 'Direta (+)' : 'Reversa (-)'} />
+                <InfoRow label="Biotipo" value={data.biotype} />
+                <InfoRow label="Montagem" value={data.assembly_name} />
+                <InfoRow label="ID UniProt" value={data.uniprot_id} />
                 <InfoRow
-                  label="Gene Length"
+                  label="Tamanho do gene"
                   value={data.start && data.end ? `${((data.end - data.start) / 1000).toFixed(1)} kb` : null}
                 />
               </div>
-            </div>
+            </section>
 
-            {/* Variant Summary */}
-            <div>
-              <h2 className="section-title">Variant Summary</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard label="Total Variants" value={data.total_variants} />
-                <StatCard label="Pathogenic" value={data.pathogenic_count} />
+            <section aria-labelledby="variant-summary-title">
+              <h2 id="variant-summary-title" className="section-title">Resumo de variantes</h2>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <StatCard label="Total" value={data.total_variants} />
+                <StatCard label="Patogênicas" value={data.pathogenic_count} />
                 <StatCard label="VUS" value={data.vus_count} />
-                <StatCard label="Benign" value={data.benign_count} />
+                <StatCard label="Benignas" value={data.benign_count} />
+                <StatCard label="Sem classificação" value={data.other_count} />
               </div>
-            </div>
+            </section>
 
-            {/* Constraint + Heatmap */}
+            <ChromosomeIdeogram
+              annotations={buildGeneAnnotations(data)}
+              title={`Cromossomo ${data.chromosome}`}
+              description="Locus do gene e variantes classificadas ao longo do cromossomo. Rótulos de banda G exibidos."
+              focusChromosome={data.chromosome}
+              legendItems={GENE_LEGEND}
+              expandSinglePointBy={200_000}
+            />
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <ConstraintMetrics data={data} />
               <GeneLocusHeatmap geneData={data} />
             </div>
 
-            {/* AlphaFold Structure */}
             {data.alphafold_pae_url && (
-              <div className="card-flat">
-                <h3 className="section-title">Protein Structure (AlphaFold)</h3>
+              <section className="card-flat" aria-labelledby="structure-title">
+                <h3 id="structure-title" className="section-title">Estrutura proteica (AlphaFold)</h3>
 
-                {/* PAE image + info */}
-                <div className="flex gap-6 items-start mb-6">
+                <div className="flex gap-6 items-start mb-6 flex-wrap">
                   <img
                     src={data.alphafold_pae_url}
-                    alt="AlphaFold predicted alignment error"
+                    alt={`Gráfico de erro de alinhamento previsto para ${data.gene_symbol}`}
                     className="w-48 h-48 object-contain border border-gray-200 rounded"
                   />
                   <div className="flex flex-col gap-3">
                     <div>
-                      <p className="label mb-1">Predicted Alignment Error (PAE)</p>
-                      <p className="text-sm text-gray-500">
-                        Lower values indicate higher confidence in the relative positions of residues.
+                      <p className="label mb-1">Erro de alinhamento previsto (PAE)</p>
+                      <p className="text-sm text-gray-600">
+                        Valores menores indicam maior confiança nas posições relativas dos resíduos.
                       </p>
                     </div>
                     {data.alphafold_pdb_url && (
-                      <a
+                      <ExternalLinkButton
                         href={data.alphafold_pdb_url}
+                        label="Baixar PDB"
                         download
-                        className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1 self-start"
-                      >
-                        Download PDB <ExternalLink className="w-3 h-3" />
-                      </a>
+                      />
                     )}
                   </div>
                 </div>
 
-                {/* 3D viewer */}
                 {data.alphafold_pdb_url && (
                   <div>
-                    <p className="label mb-3">Interactive 3D Structure</p>
+                    <p className="label mb-3">Estrutura 3D interativa</p>
                     <ProteinViewer
                       pdbUrl={data.alphafold_pdb_url}
                       uniprotId={data.uniprot_id}
                     />
                   </div>
                 )}
-              </div>
+              </section>
             )}
 
-            {/* Variant Tables */}
             <div className="flex flex-col gap-6">
               {data.pathogenic_variants?.length > 0 && (
                 <VariantTable
                   variants={data.pathogenic_variants}
-                  title="Pathogenic Variants"
+                  title="Variantes patogênicas"
+                  csvPrefix={`${data.gene_symbol}-patogenicas`}
                 />
               )}
               {data.vus_variants?.length > 0 && (
                 <VariantTable
                   variants={data.vus_variants}
-                  title="Variants of Uncertain Significance"
+                  title="Variantes de significado incerto"
+                  csvPrefix={`${data.gene_symbol}-vus`}
                 />
               )}
               {data.benign_variants?.length > 0 && (
                 <VariantTable
                   variants={data.benign_variants}
-                  title="Benign Variants"
+                  title="Variantes benignas"
+                  csvPrefix={`${data.gene_symbol}-benignas`}
                 />
               )}
             </div>
           </div>
         )}
       </div>
-    </div>
+    </main>
   )
 }
