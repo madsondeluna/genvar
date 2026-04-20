@@ -222,7 +222,7 @@ export default function HomePage() {
 
         <div className="mt-12 pt-6 border-t border-gray-100 flex flex-col items-center gap-1">
           <p className="text-xs text-gray-500">
-            Desenvolvido por Madson A. de Luna Aragao
+            Desenvolvido por GROMADS
           </p>
           <p className="text-xs text-gray-500">
             <a
