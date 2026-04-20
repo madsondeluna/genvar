@@ -25,7 +25,7 @@ services:
       - key: LOG_LEVEL
         value: INFO
       - key: ALLOWED_ORIGINS
-        value: https://genvar-frontend.onrender.com
+        value: https://genvar.onrender.com
       - key: REDIS_URL
         fromService:
           type: redis
@@ -34,7 +34,7 @@ services:
 
   - type: web
     runtime: static
-    name: genvar-frontend
+    name: genvar
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
