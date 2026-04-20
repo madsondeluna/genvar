@@ -7,6 +7,9 @@
 | **Modalidade** | Trabalho de Conclusão de Curso (TCC) |
 | **Autor** | Madson A. de Luna Aragão |
 | **Repositório** | https://github.com/madsondeluna/genvar |
+| **Aplicação ao vivo** | https://genvar.onrender.com |
+| **API em produção** | https://genvar-backend.onrender.com |
+| **Documentação da API** | https://genvar-backend.onrender.com/docs |
 | **Versão** | 2.0.0 |
 | **Idioma da interface** | Português do Brasil (PT-BR) |
 
@@ -569,23 +572,25 @@ Para parar: `Ctrl+C` e depois `docker compose down`.
 
 ### Opção 3. Deploy no Render (produção)
 
+A aplicação está publicada em https://genvar.onrender.com, com a API em https://genvar-backend.onrender.com e a documentação interativa em https://genvar-backend.onrender.com/docs.
+
 O repositório contém um Blueprint (`render.yaml`) que provisiona três serviços no Render:
 
 - `genvar-cache` (Key Value/Redis free, cache de respostas das APIs externas).
-- `genvar-backend` (Web Service, Docker, Python 3.12 + FastAPI + uvicorn).
-- `genvar-frontend` (Static Site, build Vite, CDN global).
+- `genvar-backend` (Web Service, Docker, Python 3.12 + FastAPI + uvicorn, `https://genvar-backend.onrender.com`).
+- `genvar` (Static Site, build Vite, CDN global, `https://genvar.onrender.com`).
 
-Passos:
+Passos para reproduzir o deploy em outra conta:
 
 1. Faça push do repositório para o GitHub.
 2. Em https://dashboard.render.com, clique em **New**, depois **Blueprint**, e conecte o repositório.
 3. Render detecta o `render.yaml` e propõe os três serviços; confirme a criação.
 4. Aguarde o build (cerca de 5 a 8 minutos na primeira vez).
-5. Após o deploy, acesse o frontend em `https://genvar-frontend.onrender.com`.
+5. Após o deploy, acesse o frontend em `https://genvar.onrender.com` (ou no nome que você tiver escolhido, caso `genvar` já esteja em uso).
 
 Notas importantes:
 
-- Os nomes de serviço no `render.yaml` (`genvar-backend`, `genvar-frontend`) precisam ser únicos dentro da sua conta Render. Caso já existam, ajuste os nomes e as URLs em `ALLOWED_ORIGINS` e `VITE_API_URL` antes do deploy.
+- Os nomes de serviço no `render.yaml` (`genvar`, `genvar-backend`, `genvar-cache`) precisam ser únicos dentro do Render. Caso já existam, ajuste os nomes e atualize `ALLOWED_ORIGINS` (no backend) e `VITE_API_URL` (no frontend) antes do deploy.
 - O plano free do Render põe o backend em modo dormente após 15 minutos sem requisições. A primeira chamada depois desse intervalo leva 30 a 60 segundos para acordar; chamadas subsequentes são instantâneas.
 - O Redis free tem 25 MB de memória com política `allkeys-lru`; é suficiente para o cache, dado que as respostas são pequenas e expiram em 1 hora.
 - A variável `VITE_API_URL` é injetada em tempo de build; qualquer mudança no URL do backend exige redeploy do frontend.
