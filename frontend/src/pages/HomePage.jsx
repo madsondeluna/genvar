@@ -220,10 +220,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-gray-100 flex flex-col items-center gap-1">
-          <p className="text-xs text-gray-500">
-            Desenvolvido por GROMADS
-          </p>
+        <div className="mt-12 pt-6 border-t border-gray-100 flex justify-center">
           <p className="text-xs text-gray-500">
             <a
               href="https://github.com/madsondeluna/genvar"
