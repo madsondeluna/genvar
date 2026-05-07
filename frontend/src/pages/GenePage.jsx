@@ -17,7 +17,8 @@ import { buildGeneAnnotations, GENE_LEGEND } from '../utils/ideogramAnnotations'
 import { ArrowLeft, Search } from 'lucide-react'
 
 function InfoRow({ label, value }) {
-  if (!value) return null
+  // Explicit null/empty check so falsy-but-valid values (0, strand=-1) are still rendered
+  if (value == null || value === '') return null
   return (
     <div className="flex flex-col gap-0.5">
       <span className="label">{label}</span>

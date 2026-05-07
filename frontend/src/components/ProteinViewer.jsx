@@ -35,7 +35,11 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       resizeObserver.observe(containerRef.current)
 
       try {
-        const comp = await stage.loadFile(pdbUrl, { ext: 'pdb' })
+        // Abort after 30 s to avoid hanging indefinitely on slow AlphaFold CDN responses
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 30000)
+        const comp = await stage.loadFile(pdbUrl, { ext: 'pdb', signal: controller.signal })
+        clearTimeout(timeoutId)
         if (cancelled) return
 
         componentRef.current = comp
