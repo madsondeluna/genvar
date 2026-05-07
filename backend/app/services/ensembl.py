@@ -4,7 +4,8 @@ from fastapi import HTTPException
 
 
 BASE_URL = "https://rest.ensembl.org"
-HEADERS = {"Content-Type": "application/json"}
+# Ensembl REST requires Accept, not Content-Type, for response negotiation
+HEADERS = {"Accept": "application/json"}
 TIMEOUT = 30.0
 
 
@@ -34,8 +35,9 @@ async def get_gene_info(gene_symbol: str) -> Dict[str, Any]:
 
 async def get_gene_variants(gene_id: str, limit: int = 500) -> List[Dict[str, Any]]:
     async with httpx.AsyncClient() as client:
-        url = f"{BASE_URL}/overlap/id/{gene_id}?feature=variation"
-        response = await client.get(url, headers=HEADERS, timeout=60.0)
+        url = f"{BASE_URL}/overlap/id/{gene_id}"
+        # feature=variation must be a query param, not embedded in the URL string
+        response = await client.get(url, headers=HEADERS, timeout=60.0, params={"feature": "variation"})
 
         if response.status_code == 404:
             return []
@@ -80,8 +82,8 @@ async def get_vep_annotation(rsid: str) -> Optional[Dict[str, Any]]:
             if tc.get("sift_score") is not None and best_tc.get("sift_score") is None:
                 best_tc = tc
 
-        # Extract colocated variant info for CADD/REVEL (not in basic VEP without plugins)
-        colocated = vep.get("colocated_variants", [])
+        # colocated_variants not used (CADD/REVEL require VEP plugins not enabled here)
+        _ = vep.get("colocated_variants", [])
 
         result = {
             "variant_id": vep.get("id"),

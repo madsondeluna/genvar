@@ -3,7 +3,8 @@ from fastapi import HTTPException
 
 
 GENE_SYMBOL_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9\-\.]{0,49}$")
-RSID_PATTERN = re.compile(r"^rs\d+$", re.IGNORECASE)
+# IGNORECASE removed: validate_rsid normalises input to lowercase before matching
+RSID_PATTERN = re.compile(r"^rs\d+$")
 
 
 def validate_gene_symbol(symbol: str) -> str:
