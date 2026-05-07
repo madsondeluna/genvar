@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     cache_ttl_seconds: int = 3600
     ensembl_max_variants: int = 500
     log_level: str = "INFO"
+    # Centralised gnomAD dataset version; bump here to switch all queries at once
+    gnomad_dataset: str = "gnomad_r4"
     allowed_origins: str = "http://localhost:3000,http://localhost:5173"
 
     @property
