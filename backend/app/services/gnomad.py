@@ -1,5 +1,6 @@
 import httpx
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
+from app.config import settings
 
 GNOMAD_API = "https://gnomad.broadinstitute.org/api"
 TIMEOUT = 30.0
@@ -23,8 +24,10 @@ def _is_main_population(pop_id: str) -> bool:
 
 
 async def get_variant_frequencies(
-    chrom: str, pos: int, ref: str, alt: str, dataset: str = "gnomad_r4"
+    chrom: str, pos: int, ref: str, alt: str, dataset: str | None = None
 ) -> Dict[str, Any]:
+    # Fall back to the globally configured dataset when the caller does not specify one
+    dataset = dataset or settings.gnomad_dataset
     variant_id = f"{chrom}-{pos}-{ref}-{alt}"
 
     query = """
@@ -162,7 +165,3 @@ async def get_gene_constraint(gene_symbol: str) -> Dict[str, Any]:
     }
 
 
-async def rsid_to_gnomad_variant(
-    chrom: str, pos: int, ref: str, alt: str
-) -> Optional[Dict[str, Any]]:
-    return await get_variant_frequencies(chrom, pos, ref, alt)
