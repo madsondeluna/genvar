@@ -1,7 +1,19 @@
-from fastapi import FastAPI
+import time
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
 from app.routers import gene, variant
+
+
+class TimingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        t0 = time.perf_counter()
+        response = await call_next(request)
+        elapsed_ms = round((time.perf_counter() - t0) * 1000, 2)
+        response.headers["X-Response-Time-Ms"] = str(elapsed_ms)
+        return response
+
 
 app = FastAPI(
     title="GenVar Dashboard API",
@@ -9,6 +21,7 @@ app = FastAPI(
     version="2.0.0",
 )
 
+app.add_middleware(TimingMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.origins_list,

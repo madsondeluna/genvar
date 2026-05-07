@@ -374,6 +374,18 @@ genvar-dashboard/
 │   ├── package.json
 │   ├── vite.config.js               Proxy /api para backend:8000.
 │   └── tailwind.config.js           Paleta cinza e fonte Ubuntu.
+├── benchmark/
+│   ├── run_benchmarks.py            Orquestrador: executa todas as suítes ou uma individual.
+│   ├── plot_results.py              Gera figuras PNG a partir dos CSVs de resultado.
+│   ├── requirements.txt             Dependências do benchmark (httpx, rich, pandas, matplotlib).
+│   ├── suites/
+│   │   ├── latency.py               Suite 1: latência cold/warm com estatísticas completas.
+│   │   ├── exhaustion.py            Suite 2: carga sequencial e concorrente crescente.
+│   │   ├── errors.py                Suite 3: tratamento de entradas inválidas e edge cases.
+│   │   ├── comparison.py            Suite 4: simulação manual sequencial vs GenVar integrado.
+│   │   ├── completeness.py          Suite 5: cobertura de campos por resposta.
+│   │   └── payload.py               Suite 6: enriquecimento de dados vs APIs individuais.
+│   └── results/                     CSVs e figures/ gerados automaticamente.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
 ├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
@@ -640,6 +652,286 @@ Testes de integração (chamam APIs reais):
 ```bash
 pytest tests/test_apis.py -v
 ```
+
+
+## Validação quantitativa (suite de benchmark)
+
+Esta seção descreve o plano de metrificação do GenVar Dashboard desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
+
+Todos os scripts estão no diretório `benchmark/`.
+
+
+### Pré-requisitos
+
+```bash
+python3 --version     # 3.12 ou superior
+redis-cli ping        # deve retornar PONG (Redis opcional, ver nota abaixo)
+```
+
+Instalar dependências do benchmark em um ambiente isolado:
+
+```bash
+cd benchmark
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+O backend deve estar rodando antes de qualquer suíte:
+
+```bash
+cd backend
+source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+**Nota sobre Redis**: as suítes de latência, exaustão e comparativo fazem flush do Redis para garantir runs a frio controlados. Sem Redis, as métricas de speedup de cache não são coletadas, mas as demais métricas funcionam normalmente.
+
+
+### Execução
+
+```bash
+cd benchmark
+python run_benchmarks.py                           # todas as suítes
+python run_benchmarks.py --suite latency           # suíte individual
+python run_benchmarks.py --suite exhaustion
+python run_benchmarks.py --suite errors
+python run_benchmarks.py --suite comparison
+python run_benchmarks.py --suite completeness
+python run_benchmarks.py --suite payload
+python run_benchmarks.py --url http://localhost:8000 --out results/
+```
+
+Ao final, gerar todas as figuras:
+
+```bash
+python plot_results.py
+```
+
+As figuras são salvas em `results/figures/`.
+
+
+### Suíte 1: Latência (`suites/latency.py`)
+
+**O que valida**: o tempo de resposta dos dois endpoints principais (`/api/gene/{symbol}` e `/api/variant/{rsid}`) em condições sem cache (cold) e com cache Redis aquecido (warm).
+
+**Metodologia**:
+
+- Conjunto de teste fixo: genes MLH1, HBB, LDLR; variantes rs334, rs1800562, rs6025, rs1799853.
+- Fase cold: N=12 chamadas por alvo, Redis zerado via `FLUSHDB` antes de cada série, intervalo de 2 s entre chamadas para respeitar o rate limit do Ensembl (15 req/s).
+- Fase warm: N=20 chamadas por alvo com cache populado, intervalo de 0,3 s.
+- O backend retorna o header `X-Response-Time-Ms` (server-side), que é comparado com o tempo medido pelo cliente para isolar overhead de rede.
+
+**Métricas calculadas**: média, mediana, p95, p99, mínimo, máximo, desvio padrão (todos em ms) e speedup de cache (cold_mean / warm_mean).
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/latency_raw.csv` | Uma linha por chamada individual: phase, endpoint, target, run, elapsed_ms, server_ms, status, ok. |
+| `results/latency_stats.csv` | Estatísticas agregadas por combinação phase × endpoint × target: n, mean, median, p95, p99, min, max, std. |
+
+**Figuras geradas**:
+
+- `fig_latency_gene.png`: barras agrupadas (cold vs warm) para cada gene, com barra de erro representando o desvio padrão e triângulo marcando o p95. Mostra o impacto do cache no tempo de resposta para consultas de gene.
+- `fig_latency_variant.png`: mesmo formato para variantes.
+- `fig_cache_speedup.png`: barras horizontais com o fator de speedup por endpoint. Verde indica speedup acima de 10x, azul acima de 3x, âmbar abaixo de 3x.
+
+**Como interpretar**: valores de cold entre 2 s e 8 s são esperados, pois envolvem até cinco chamadas externas em paralelo. Valores de warm abaixo de 50 ms confirmam que o Redis está ativo. Um speedup de 50x ou mais é normal para queries com cache.
+
+
+### Suíte 2: Exaustão (`suites/exhaustion.py`)
+
+**O que valida**: o comportamento do sistema sob carga crescente, tanto em requisições sequenciais a taxas controladas quanto em rajadas concorrentes.
+
+**Metodologia**:
+
+- Fase 1 (sequential cold): três níveis de taxa, 0,5 req/s, 1 req/s e 2 req/s, com Redis zerado entre batches. Um batch completa uma passagem pelos seis alvos (três genes e três variantes). Mede degradação de latência e contagem de erros à medida que a taxa aumenta.
+- Fase 2 (concurrent warm): cache pré-aquecido com todos os alvos, depois rajadas de 5, 10 e 20 requisições simultâneas via `asyncio.gather`. Mede tempo total da rajada, latência média por requisição e erros.
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/exhaustion.csv` | Uma linha por requisição: phase, rate, concurrency, endpoint, target, elapsed_ms, status, ok. |
+
+**Figuras geradas**:
+
+- `fig_exhaustion_concurrent.png`: gráfico de linha com latência média e máxima por nível de concorrência (eixo esquerdo), com barras de erro sobrepostas ao eixo direito. Mostra o ponto em que o sistema começa a degradar.
+- `fig_exhaustion_sequential.png`: barras com latência média por taxa de requisição na fase sequencial.
+
+**Como interpretar**: na fase concorrente com cache, o sistema deve responder em menos de 100 ms mesmo com 20 requisições simultâneas, pois o Redis absorve a carga sem acionar APIs externas. Na fase sequencial a frio, o gargalo é o rate limit das APIs externas; erros a 2 req/s indicam que o sistema está no limite do Ensembl sem chave de API.
+
+
+### Suíte 3: Tratamento de erros (`suites/errors.py`)
+
+**O que valida**: a robustez do sistema diante de entradas malformadas ou inválidas. Garante que a API retorna códigos HTTP semânticos corretos (404 para recurso inexistente, 422 para entrada inválida) e nunca retorna 500 para entradas antecipáveis.
+
+**Casos de teste**:
+
+Para `/api/gene/*`:
+
+| Caso | Entrada | Esperado |
+|---|---|---|
+| Nome inválido | `FAKEGENE123` | 404 |
+| Caracteres especiais | `!@#$%^` | 422 |
+| Nome muito longo (60 chars) | `AAAAAA...` | 422 |
+| Apenas dígitos | `123456` | 422 |
+| Símbolo minúsculo válido | `mlh1` | 200 (normaliza) |
+| Capitalização mista válida | `mLh1` | 200 (normaliza) |
+| Gene não humano | `ACTB_MOUSE` | 404 |
+
+Para `/api/variant/*`:
+
+| Caso | Entrada | Esperado |
+|---|---|---|
+| rs0 | `rs0` | 404 |
+| Sem prefixo rs | `1234567` | 422 |
+| Letras no ID | `rsABC` | 422 |
+| Prefixo maiúsculo | `RS334` | 422 |
+| rs ID muito longo | `rs99999999999999999999` | 422 |
+| Variante conhecida | `rs334` | 200 (sanity check) |
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/errors.csv` | Uma linha por caso: endpoint, label, input, expected_status, actual_status, pass, elapsed_ms, detail. |
+
+**Figuras geradas**:
+
+- `fig_errors_matrix.png`: tabela colorida com resultado de cada teste. Verde para PASS, vermelho para FAIL. Mostra de forma direta a taxa de acerto do tratamento de erros.
+
+**Como interpretar**: todos os 14 casos devem passar (100% de acerto). Qualquer FAIL indica um bug de validação ou normalização de entrada. A ausência de linhas com status 5xx é o resultado mais importante: demonstra que a API é tolerante a entradas adversariais.
+
+
+### Suíte 4: Comparativo manual vs GenVar (`suites/comparison.py`)
+
+**O que valida**: o ganho de tempo que a ferramenta oferece em relação ao fluxo de consulta manual, em que o pesquisador acessa cada banco de dados separadamente.
+
+**Metodologia**: o script simula o fluxo manual chamando cada API externa em sequência, sem paralelismo e sem cache, para as quatro variantes de teste (rs334, rs1800562, rs6025, rs1799853). As chamadas são as mesmas que o backend GenVar faz internamente, mas executadas uma após a outra:
+
+1. Ensembl VEP: `GET /vep/human/id/{rsid}`.
+2. gnomAD: `POST /api` com query GraphQL para frequências.
+3. ClinVar: `GET /esearch.fcgi` + `GET /esummary.fcgi`.
+4. MyVariant.info: `GET /query?q={rsid}`.
+
+O tempo total sequencial (`sequential_api_ms`) é comparado com o tempo do endpoint GenVar sem cache (`genvar_uncached_ms`) e com cache (`genvar_cached_ms`).
+
+O speedup total inclui uma estimativa de 900 s (15 minutos) de processamento humano por variante, baseada em estudos de curadoria manual do ClinGen (Byers et al. 2022, *J Med Genet*; Landrum et al. 2018, *Nucleic Acids Res*). Esse valor representa o tempo que um pesquisador levaria para abrir cada portal, localizar os dados, interpretar a interface e registrar as informações em uma tabela.
+
+**Métricas calculadas**:
+
+| Métrica | Fórmula | Significado |
+|---|---|---|
+| `api_speedup` | `sequential_api_ms / genvar_uncached_ms` | Ganho obtido pelo paralelismo interno do GenVar. |
+| `manual_total_s` | `sequential_api_ms / 1000 + 900` | Tempo total estimado do fluxo manual (APIs + processamento humano). |
+| `total_speedup` | `manual_total_s / (genvar_uncached_ms / 1000)` | Ganho total incluindo o tempo humano. |
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/comparison.csv` | Uma linha por variante: tempos individuais de cada API, sequential_api_ms, genvar_uncached_ms, genvar_cached_ms, api_speedup, manual_total_s, total_speedup. |
+
+**Figuras geradas**:
+
+- `fig_comparison_speedup.png`: barras agrupadas por variante mostrando `api_speedup` (ganho de paralelismo) e `total_speedup` (ganho total com estimativa humana). A diferença entre as duas barras evidencia o impacto do processamento humano.
+- `fig_comparison_breakdown.png`: barras empilhadas com o tempo de cada chamada manual (Ensembl, gnomAD, ClinVar search, ClinVar fetch, MyVariant.info), com um ponto preto sobreposto marcando o tempo total do GenVar. Permite ver visualmente o que o paralelismo elimina.
+
+**Como interpretar**: o `api_speedup` deve ser próximo do número de chamadas paralelas (quatro no caso das variantes), pois o GenVar executa todas ao mesmo tempo. Valores de `api_speedup` entre 2x e 4x são esperados. O `total_speedup` é muito maior (centenas de vezes) porque o denominador é o tempo do GenVar em segundos, enquanto o numerador inclui 15 minutos de processamento humano.
+
+
+### Suíte 5: Completude de dados (`suites/completeness.py`)
+
+**O que valida**: a fração de campos do schema de resposta que são preenchidos para cada alvo de teste. Identifica quais campos são sistematicamente nulos em todos os alvos, o que caracteriza limitações das APIs externas (não da ferramenta).
+
+**Metodologia**: para cada resposta JSON, todos os campos de primeiro nível e um nível aninhado são contados. Um campo é considerado preenchido se não for `null`, não for uma lista vazia e não for uma string vazia. O score de completude é `filled / total * 100`.
+
+Alvos testados: MLH1, HBB, LDLR, RB1, VHL, MSH2 (genes); rs334, rs1800562, rs6025, rs1799853 (variantes).
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/completeness.csv` | Uma linha por alvo: total_fields, filled_fields, null_fields, completeness_pct. |
+| `results/completeness_null_fields.csv` | Uma linha por campo, ordenada por fill_rate_pct crescente. Campos com fill_rate_pct = 0 são limitações das APIs. |
+
+**Figuras geradas**:
+
+- `fig_completeness.png`: barras horizontais por alvo coloridas por faixa de completude (verde acima de 80%, azul-petróleo acima de 60%, âmbar abaixo). Cada barra exibe o percentual e a contagem `filled/total`.
+
+**Como interpretar**: completude abaixo de 80% para um dado alvo indica que alguma API não retornou dados para aquela consulta específica. O arquivo `completeness_null_fields.csv` separado permite distinguir campos que são nulos por limitação da API (fill_rate 0% em todos os alvos) de campos que são nulos apenas para alvos específicos (limitação de cobertura do banco de dados para aquele gene ou variante).
+
+
+### Suíte 6: Enriquecimento de payload (`suites/payload.py`)
+
+**O que valida**: a vantagem de agregação da ferramenta, medida pelo número de campos estruturados que o GenVar retorna em uma única chamada comparado ao que cada API individual retorna separadamente.
+
+**Metodologia**: para cada alvo, o script realiza:
+
+1. Uma chamada ao endpoint GenVar e conta os campos do JSON de resposta.
+2. Chamadas individuais a cada API externa, também contando os campos retornados.
+
+O **enrichment ratio** é calculado como `genvar_fields / max(individual_api_fields)`, onde o denominador é o maior número de campos retornado por qualquer API isolada.
+
+Para variantes: Ensembl VEP, gnomAD, ClinVar e MyVariant.info.
+Para genes: Ensembl lookup, UniProt e gnomAD constraint.
+
+**Métricas calculadas**:
+
+| Métrica | Significado |
+|---|---|
+| `genvar_fields` | Campos preenchidos na resposta do GenVar. |
+| `max_single_api_fields` | Máximo de campos entre todas as APIs individuais. |
+| `total_raw_api_fields` | Soma de todos os campos de todas as APIs (sem deduplicação). |
+| `enrichment_ratio` | genvar_fields / max_single_api_fields. |
+| `num_apis_aggregated` | Número de APIs consultadas por consulta. |
+
+**Arquivos de saída**:
+
+| Arquivo | Conteúdo |
+|---|---|
+| `results/payload.csv` | Uma linha por alvo com todas as métricas acima. |
+| `results/payload_per_api.csv` | Uma linha por combinação alvo × API: fields, bytes. |
+
+**Figuras geradas**:
+
+- `fig_enrichment_variant.png`: barras agrupadas por variante, uma barra por API e uma para o GenVar. Mostra visualmente que o GenVar retorna mais campos do que qualquer fonte isolada.
+- `fig_enrichment_gene.png`: mesmo formato para genes.
+- `fig_enrichment_ratio.png`: barras com o enrichment ratio por endpoint. Valores acima de 3x indicam que o GenVar entrega três vezes mais campos do que a melhor API individual.
+
+**Como interpretar**: um enrichment ratio de 4x para variantes, por exemplo, significa que uma única chamada ao GenVar entrega quatro vezes mais campos estruturados do que a chamada mais rica entre as fontes individuais. Este é o argumento quantitativo central para a proposta de valor da ferramenta: integração e não simples redirecionamento.
+
+
+### Outputs completos da suite
+
+| Arquivo CSV | Suite | Descrição |
+|---|---|---|
+| `latency_raw.csv` | Latência | Uma linha por chamada individual (cold e warm). |
+| `latency_stats.csv` | Latência | Estatísticas por endpoint/alvo/fase. |
+| `exhaustion.csv` | Exaustão | Uma linha por chamada, com fase, taxa e concorrência. |
+| `errors.csv` | Erros | Um caso por linha com resultado esperado vs obtido. |
+| `comparison.csv` | Comparativo | Tempo manual vs GenVar e speedups por variante. |
+| `completeness.csv` | Completude | Score de completude por alvo. |
+| `completeness_null_fields.csv` | Completude | Taxa de preenchimento por campo, ordenada crescente. |
+| `payload.csv` | Enriquecimento | Campos GenVar vs APIs individuais, enrichment ratio. |
+| `payload_per_api.csv` | Enriquecimento | Campos e bytes por API e alvo. |
+
+| Figura PNG | Suite | O que mostra |
+|---|---|---|
+| `fig_latency_gene.png` | Latência | Cold vs warm para genes, com p95 marcado. |
+| `fig_latency_variant.png` | Latência | Cold vs warm para variantes. |
+| `fig_cache_speedup.png` | Latência | Fator de speedup do cache por endpoint. |
+| `fig_comparison_speedup.png` | Comparativo | API speedup e total speedup por variante. |
+| `fig_comparison_breakdown.png` | Comparativo | Tempo empilhado por API vs ponto GenVar. |
+| `fig_exhaustion_concurrent.png` | Exaustão | Latência e erros vs nível de concorrência. |
+| `fig_exhaustion_sequential.png` | Exaustão | Latência média por taxa sequencial. |
+| `fig_completeness.png` | Completude | Completude percentual por alvo. |
+| `fig_enrichment_variant.png` | Enriquecimento | Campos por API vs GenVar para variantes. |
+| `fig_enrichment_gene.png` | Enriquecimento | Campos por API vs GenVar para genes. |
+| `fig_enrichment_ratio.png` | Enriquecimento | Enrichment ratio por endpoint. |
+| `fig_errors_matrix.png` | Erros | Tabela colorida com resultado de cada caso. |
 
 
 ## Notas técnicas sobre as APIs
