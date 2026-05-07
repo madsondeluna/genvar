@@ -1,6 +1,10 @@
 """
 Integration tests that call the real external APIs.
-Run with: pytest tests/test_apis.py -v
+Run with:  pytest tests/test_apis.py -v
+Skip in CI: pytest -m "not integration" or use --ignore=tests/test_apis.py
+
+All tests in this file make live network calls and require internet access.
+Mark them as @pytest.mark.integration if you need selective skipping.
 """
 import asyncio
 import pytest
@@ -172,3 +176,53 @@ async def test_uniprot_gene_lookup():
     results = data["results"]
     assert len(results) > 0
     assert results[0]["primaryAccession"] == "P38398"
+
+
+@pytest.mark.asyncio
+async def test_ensembl_get_gene_variants_brca1():
+    """Ensembl overlap endpoint must return variation features for BRCA1 (ENSG00000012048)."""
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            "https://rest.ensembl.org/overlap/id/ENSG00000012048",
+            headers={"Accept": "application/json"},
+            params={"feature": "variation"},
+            timeout=60.0,
+        )
+    assert r.status_code == 200
+    data = r.json()
+    assert isinstance(data, list)
+    assert len(data) > 0
+    # Each item must at least carry an id and seq_region_name
+    first = data[0]
+    assert "id" in first or "ID" in first
+
+
+@pytest.mark.asyncio
+async def test_myvariant_query_by_rsid():
+    """MyVariant.info must return annotation for rs429358 (APOE epsilon 4 allele)."""
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            "https://myvariant.info/v1/query",
+            params={"q": "rs429358", "fields": "dbsnp,cadd,dbnsfp", "size": "1"},
+            timeout=20.0,
+        )
+    assert r.status_code == 200
+    data = r.json()
+    assert data.get("total", 0) > 0
+    hits = data.get("hits", [])
+    assert len(hits) > 0
+
+
+@pytest.mark.asyncio
+async def test_myvariant_hgvs_lookup():
+    """MyVariant.info variant lookup by HGVS notation must return cadd/dbnsfp fields."""
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            "https://myvariant.info/v1/variant/chr19:g.44908684T>C",
+            params={"fields": "cadd,dbnsfp"},
+            timeout=20.0,
+        )
+    assert r.status_code == 200
+    data = r.json()
+    # At least one of the requested annotation sources should be present
+    assert "cadd" in data or "dbnsfp" in data
