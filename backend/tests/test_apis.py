@@ -1,6 +1,10 @@
 """
 Integration tests that call the real external APIs.
 Run with: pytest tests/test_apis.py -v
+
+These tests require a live internet connection and will fail if any upstream
+API is down or changes its schema. They are intentionally separate from the
+unit tests in test_services.py so CI can skip them with -m "not integration".
 """
 import asyncio
 import pytest
@@ -172,3 +176,60 @@ async def test_uniprot_gene_lookup():
     results = data["results"]
     assert len(results) > 0
     assert results[0]["primaryAccession"] == "P38398"
+
+
+@pytest.mark.asyncio
+async def test_ensembl_get_gene_variants_brca1():
+    """Ensembl overlap endpoint should return at least one variant for BRCA1."""
+    gene_id = "ENSG00000012048"
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            f"https://rest.ensembl.org/overlap/id/{gene_id}",
+            headers={"Accept": "application/json"},
+            params={"feature": "variation"},
+            timeout=60.0,
+        )
+    assert r.status_code == 200
+    data = r.json()
+    assert isinstance(data, list)
+    assert len(data) > 0
+    # Each item must carry at minimum an id and a start position.
+    assert "id" in data[0]
+    assert "start" in data[0]
+
+
+@pytest.mark.asyncio
+async def test_myvariant_query_by_rsid():
+    """MyVariant.info must return at least one hit for a known pathogenic variant."""
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            "https://myvariant.info/v1/query",
+            params={
+                "q": "dbsnp.rsid:rs334",
+                "fields": "dbnsfp.cadd.phred,dbnsfp.revel.score,clinvar.variant_id",
+                "assembly": "hg38",
+                "size": 1,
+            },
+            timeout=25.0,
+        )
+    assert r.status_code == 200
+    data = r.json()
+    hits = data.get("hits", [])
+    assert len(hits) > 0
+    # rs334 is the sickle-cell variant (HBB p.Glu7Val); it must have a ClinVar ID.
+    assert hits[0].get("clinvar", {}).get("variant_id") is not None
+
+
+@pytest.mark.asyncio
+async def test_myvariant_hgvs_lookup():
+    """MyVariant.info direct HGVS lookup should return a result for a known SNV."""
+    # rs334: chr11:g.5227002T>A (GRCh38)
+    hgvs = "chr11:g.5227002T>A"
+    async with httpx.AsyncClient() as client:
+        r = await client.get(
+            f"https://myvariant.info/v1/variant/{hgvs}",
+            params={"fields": "dbnsfp.cadd.phred", "assembly": "hg38"},
+            timeout=25.0,
+        )
+    # 200 with data or 404 are both acceptable; 5xx is not.
+    assert r.status_code in (200, 404)

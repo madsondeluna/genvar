@@ -1,9 +1,18 @@
+import logging
 import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
 from app.routers import gene, variant
+
+# Apply log_level from settings so the LOG_LEVEL env var actually takes effect.
+# Without this call, the setting is stored but Python's root logger stays at WARNING.
+logging.basicConfig(
+    level=getattr(logging, settings.log_level.upper(), logging.INFO),
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
+logger = logging.getLogger("genvar")
 
 
 class TimingMiddleware(BaseHTTPMiddleware):

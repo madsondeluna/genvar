@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     allowed_origins: str = "http://localhost:3000,http://localhost:5173"
 
+    # gnomAD dataset identifier. Update here when gnomAD releases a new version
+    # rather than hunting for the literal string across service modules.
+    gnomad_dataset: str = "gnomad_r4"
+
     @property
     def origins_list(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]

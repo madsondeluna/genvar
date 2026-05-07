@@ -23,4 +23,17 @@ dist/
 
 # OS
 .DS_Store
+.AppleDouble
 Thumbs.db
+
+# macOS extended-attribute sidecar files (Finder, cp -p, rsync)
+._*
+
+# Redis snapshots (dump.rdb created by redis-server in foreground mode)
+*.rdb
+
+# Benchmark outputs generated at runtime
+benchmark/results/*.csv
+benchmark/results/figures/
+!benchmark/results/.gitkeep
+!benchmark/results/figures/.gitkeep
