@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -10,13 +10,11 @@ class Settings(BaseSettings):
     gnomad_dataset: str = "gnomad_r4"
     allowed_origins: str = "http://localhost:3000,http://localhost:5173"
 
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
     @property
     def origins_list(self) -> list[str]:
         return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 
 settings = Settings()
