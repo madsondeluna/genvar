@@ -10,19 +10,33 @@ import PredictionDetails from '../components/PredictionDetails'
 import SignificanceTag from '../components/SignificanceTag'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import CopyLinkButton from '../components/CopyLinkButton'
-import ChromosomeIdeogram from '../components/ChromosomeIdeogram'
+import VariantChangePanel from '../components/VariantChangePanel'
 import { VariantPageSkeleton } from '../components/Skeleton'
 import { useSearchHistory } from '../hooks/useSearchHistory'
-import { formatAF, formatConsequence, formatInteger } from '../utils/format'
-import { buildVariantAnnotation, VARIANT_LEGEND } from '../utils/ideogramAnnotations'
+import {
+  formatAF,
+  formatConsequence,
+  formatInteger,
+  translateSignificance,
+  translateReviewStatus,
+  formatClinvarDate,
+} from '../utils/format'
+import { translateCondition } from '../utils/conditions'
 import { ArrowLeft, Search } from 'lucide-react'
 
-function InfoRow({ label, value }) {
+// Drop placeholder conditions ClinVar uses when no real disease is linked
+const PLACEHOLDER_CONDITIONS = new Set(['not provided', 'not specified', 'see cases'])
+function isRealCondition(c) {
+  return c && !PLACEHOLDER_CONDITIONS.has(c.trim().toLowerCase())
+}
+
+function InfoRow({ label, value, hint }) {
   if (!value && value !== 0) return null
   return (
     <div className="flex flex-col gap-0.5">
       <span className="label">{label}</span>
       <span className="value">{value}</span>
+      {hint && <span className="block text-xs text-gray-500 leading-snug mt-0.5 min-h-[2.25rem]">{hint}</span>}
     </div>
   )
 }
@@ -125,43 +139,77 @@ export default function VariantPage() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
-                <InfoRow label="Cromossomo" value={`chr${data.chromosome}`} />
-                <InfoRow label="Posição" value={formatInteger(data.position)} />
-                <InfoRow label="Alelos" value={`${data.ref_allele} > ${data.alt_allele}`} />
-                <InfoRow label="Consequência" value={formatConsequence(data.consequence)} />
-                <InfoRow label="Troca de aminoácido" value={data.amino_acid_change} />
-                <InfoRow label="AF global (gnomAD)" value={formatAF(data.gnomad_global_af)} />
-                <InfoRow label="AC global" value={formatInteger(data.gnomad_ac)} />
-                <InfoRow label="AN global" value={formatInteger(data.gnomad_an)} />
+                <InfoRow
+                  label="Cromossomo"
+                  value={`chr${data.chromosome}`}
+                  hint="Cromossomo onde a variante se encontra."
+                />
+                <InfoRow
+                  label="Posição"
+                  value={formatInteger(data.position)}
+                  hint="Coordenada da variante no cromossomo."
+                />
+                <InfoRow
+                  label="Alelos"
+                  value={`${data.ref_allele} > ${data.alt_allele}`}
+                  hint="Base de referência > base alterada."
+                />
+                <InfoRow
+                  label="Consequência"
+                  value={formatConsequence(data.consequence)}
+                  hint="Efeito previsto da variante sobre o gene."
+                />
+                <InfoRow
+                  label="Troca de aminoácido"
+                  value={data.amino_acid_change}
+                  hint="Aminoácido original e o que o substitui na proteína."
+                />
+                <InfoRow
+                  label="AF global (gnomAD)"
+                  value={formatAF(data.gnomad_global_af)}
+                  hint="Frequência do alelo alterado na população (AF)."
+                />
+                <InfoRow
+                  label="AC global"
+                  value={formatInteger(data.gnomad_ac)}
+                  hint="Quantas cópias do alelo alterado foram observadas (AC)."
+                />
+                <InfoRow
+                  label="AN global"
+                  value={formatInteger(data.gnomad_an)}
+                  hint="Total de alelos analisados na amostra (AN)."
+                />
               </div>
             </section>
 
-            <ChromosomeIdeogram
-              annotations={buildVariantAnnotation(data)}
-              title={`Cromossomo ${data.chromosome}`}
-              description={`Posição da variante em ${data.position?.toLocaleString('pt-BR')}. Rótulos de banda G exibidos.`}
-              focusChromosome={data.chromosome}
-              legendItems={VARIANT_LEGEND}
-              expandSinglePointBy={300_000}
-            />
+            <VariantChangePanel data={data} />
 
             {(data.clinvar_significance || data.clinvar_conditions?.length > 0) && (
               <section className="card-flat" aria-labelledby="clinvar-title">
                 <h3 id="clinvar-title" className="section-title">Classificação ClinVar</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-4">
-                    <InfoRow label="Significado clínico" value={data.clinvar_significance} />
-                    <InfoRow label="Status de revisão" value={data.clinvar_review_status} />
-                    <InfoRow label="Última avaliação" value={data.clinvar_last_evaluated} />
+                    <InfoRow
+                      label="Significado clínico"
+                      value={translateSignificance(data.clinvar_significance)}
+                    />
+                    <InfoRow
+                      label="Status de revisão"
+                      value={translateReviewStatus(data.clinvar_review_status)}
+                    />
+                    <InfoRow
+                      label="Última avaliação"
+                      value={formatClinvarDate(data.clinvar_last_evaluated)}
+                    />
                   </div>
-                  {data.clinvar_conditions?.length > 0 && (
+                  {data.clinvar_conditions?.filter(isRealCondition).length > 0 && (
                     <div>
                       <p className="label mb-2">Condições associadas</p>
                       <ul className="flex flex-col gap-1">
-                        {data.clinvar_conditions.map((c, i) => (
+                        {data.clinvar_conditions.filter(isRealCondition).map((c, i) => (
                           <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
                             <span className="text-gray-400 mt-0.5" aria-hidden="true">-</span>
-                            {c}
+                            {translateCondition(c)}
                           </li>
                         ))}
                       </ul>

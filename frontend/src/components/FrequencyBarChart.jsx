@@ -80,7 +80,7 @@ export default function FrequencyBarChart({ frequencies }) {
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'Ubuntu', size: 12 },
+      font: { family: 'Ubuntu', size: 12, color: '#000000' },
     },
   }
 
@@ -98,15 +98,15 @@ export default function FrequencyBarChart({ frequencies }) {
         style={{ width: '100%', height: '300px' }}
       />
 
-      {/* Population legend */}
-      <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-x-4 gap-y-2">
+      {/* Population legend: grid keeps codes and names aligned in columns */}
+      <div className="mt-4 pt-3 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-2">
         {sorted.map((p) => (
-          <div key={p.population} className="flex items-center gap-1.5">
+          <div key={p.population} className="flex items-start gap-1.5">
             <div
-              className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
+              className="w-2.5 h-2.5 rounded-sm flex-shrink-0 mt-0.5"
               style={{ backgroundColor: POP_COLORS[p.population] || '#737373' }}
             />
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-500 leading-snug">
               <span className="font-medium text-gray-700">{p.population}</span>
               {' '}{POP_DESCRIPTIONS[p.population] || p.population_name}
             </span>

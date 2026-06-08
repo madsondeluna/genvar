@@ -117,7 +117,7 @@ export default function GeographicVariantMap({ frequencies }) {
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'Ubuntu', size: 12 },
+      font: { family: 'Ubuntu', size: 12, color: '#000000' },
       align: 'left',
     },
   }
