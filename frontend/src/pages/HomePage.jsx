@@ -69,9 +69,12 @@ export default function HomePage() {
             GenVar Dashboard
           </h1>
           <p className="text-gray-600 text-base leading-relaxed text-justify">
-            Dados agregados de Ensembl, gnomAD, ClinVar, AlphaFold e UniProt. Pesquise por símbolo de
-            gene ou rs ID para consultar significado clínico, frequências populacionais, métricas de
-            restrição e estrutura proteica.
+            Integrando as principais fontes públicas de dados genômicos (Ensembl, gnomAD, ClinVar,
+            AlphaFold e UniProt) em uma consulta única, sem alternar entre múltiplos bancos de dados.
+            Pesquise por símbolo de gene ou rs ID (identificador da mutação) para reunir significado
+            clínico, frequências
+            alélicas por população, métricas de restrição gênica e estrutura proteica predita,
+            unindo agilidade e precisão.
           </p>
         </header>
 
