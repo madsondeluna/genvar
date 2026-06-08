@@ -194,7 +194,11 @@ export default function HomePage() {
                   }
                   className="text-xs px-2 py-1 border border-gray-200 rounded text-gray-700 hover:border-gray-400 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1 transition-colors flex items-center gap-1.5"
                 >
-                  <span className="text-gray-400">{entry.kind === 'gene' ? 'gene' : 'rs'}</span>
+                  {entry.kind === 'gene' ? (
+                    <Dna className="w-3 h-3 text-gray-400" aria-hidden="true" />
+                  ) : (
+                    <Activity className="w-3 h-3 text-gray-400" aria-hidden="true" />
+                  )}
                   {entry.value}
                 </button>
               ))}
