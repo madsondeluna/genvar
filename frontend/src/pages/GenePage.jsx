@@ -159,7 +159,7 @@ export default function GenePage() {
                 <InfoRow
                   label="Locus (posição no cromossomo)"
                   value={`${data.start?.toLocaleString('pt-BR')} - ${data.end?.toLocaleString('pt-BR')}`}
-                  hint="Início e fim do gene no cromossomo (em pares de base)."
+                  hint="Início e fim do gene no cromossomo."
                 />
                 <InfoRow
                   label="Fita"
