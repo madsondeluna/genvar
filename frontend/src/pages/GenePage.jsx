@@ -94,7 +94,7 @@ export default function GenePage() {
         {error && <ErrorAlert message={error.message} />}
 
         {data && (
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-5">
 
             <section aria-labelledby="gene-title">
               <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">

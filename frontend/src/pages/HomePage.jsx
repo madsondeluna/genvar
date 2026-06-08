@@ -59,23 +59,23 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-20">
+      <div className="max-w-4xl mx-auto px-6 py-12">
 
-        <header className="mb-16">
+        <header className="mb-10">
           <p className="text-xs font-medium text-gray-600 uppercase tracking-widest mb-3">
             Explorador de Variantes Genéticas
           </p>
-          <h1 className="text-5xl font-bold text-gray-900 tracking-tight leading-tight mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight leading-tight mb-3">
             GenVar Dashboard
           </h1>
-          <p className="text-gray-600 text-lg leading-relaxed max-w-2xl">
-            Dados agregados de genes e variantes a partir do Ensembl, gnomAD, ClinVar, AlphaFold e
-            UniProt. Pesquise por símbolo de gene ou rs ID para consultar significado clínico,
-            frequências populacionais, métricas de restrição e estrutura proteica.
+          <p className="text-gray-600 text-base leading-relaxed text-justify">
+            Dados agregados de Ensembl, gnomAD, ClinVar, AlphaFold e UniProt. Pesquise por símbolo de
+            gene ou rs ID para consultar significado clínico, frequências populacionais, métricas de
+            restrição e estrutura proteica.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
 
           <section className="card" aria-labelledby="gene-search-title">
             <div className="flex items-center gap-3 mb-4">
@@ -167,7 +167,7 @@ export default function HomePage() {
         </div>
 
         {entries.length > 0 && (
-          <section className="mb-16" aria-labelledby="recent-title">
+          <section className="mb-10" aria-labelledby="recent-title">
             <div className="flex items-center justify-between mb-3">
               <h2 id="recent-title" className="label flex items-center gap-2">
                 <Clock className="w-3 h-3" aria-hidden="true" />
@@ -202,8 +202,8 @@ export default function HomePage() {
           </section>
         )}
 
-        <div className="border-t border-gray-200 pt-12">
-          <p className="label mb-6">Fontes de dados</p>
+        <div className="border-t border-gray-200 pt-6">
+          <p className="label mb-3">Fontes de dados</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {[
               { name: 'Ensembl', desc: 'Anotação de genes' },
@@ -220,7 +220,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-gray-100 flex justify-center">
+        <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col items-center gap-1">
           <p className="text-xs text-gray-500">
             <a
               href="https://github.com/madsondeluna/genvar"
@@ -230,8 +230,9 @@ export default function HomePage() {
             >
               github.com/madsondeluna/genvar
             </a>
-            <span className="mx-2 text-gray-300" aria-hidden="true">|</span>
-            <span>v2.0.0</span>
+          </p>
+          <p className="text-xs text-gray-500">
+            Projeto de TCC para o MBA em Eng. de Software da USP
           </p>
         </div>
 
