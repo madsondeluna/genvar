@@ -1,3 +1,5 @@
+import { translatePrediction } from '../utils/format'
+
 const PREDICTORS = [
   {
     label: 'SIFT',
@@ -139,7 +141,7 @@ function ScoreCard({ label, score, prediction, color, hint }) {
           <p className={`text-lg font-bold tracking-tight ${txt}`}>
             {typeof score === 'number' ? score.toFixed(3) : score}
           </p>
-          {prediction && <p className={`text-xs font-medium mt-0.5 ${txt}`}>{prediction}</p>}
+          {prediction && <p className={`text-xs font-medium mt-0.5 ${txt}`}>{translatePrediction(prediction)}</p>}
           {hint && <p className="text-xs text-gray-600 mt-1">{hint}</p>}
         </>
       ) : (

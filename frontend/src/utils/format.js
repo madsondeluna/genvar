@@ -84,3 +84,114 @@ export function classifySignificance(sig) {
   if (s.includes('uncertain') || s.includes('vus')) return 'vus'
   return 'other'
 }
+
+// dbNSFP / VEP prediction codes and words. Single letters are tool-dependent, so the common
+// resolutions are used: D = deletério, T = tolerado, P = patogênica (AlphaMissense), B = benigno.
+const PREDICTION_PT = {
+  deleterious: 'Deletério',
+  deleterious_low_confidence: 'Deletério (baixa confiança)',
+  tolerated: 'Tolerado',
+  tolerated_low_confidence: 'Tolerado (baixa confiança)',
+  benign: 'Benigno',
+  possibly_damaging: 'Possivelmente deletério',
+  probably_damaging: 'Provavelmente deletério',
+  damaging: 'Deletério',
+  pathogenic: 'Patogênica',
+  ambiguous: 'Ambígua',
+  neutral: 'Neutro',
+  d: 'Deletério',
+  t: 'Tolerado',
+  p: 'Patogênica',
+  b: 'Benigno',
+  n: 'Neutro',
+  a: 'Ambígua',
+  u: 'Desconhecida',
+}
+
+export function translatePrediction(value) {
+  if (!value) return value
+  const key = String(value).trim().toLowerCase().replace(/\s+/g, '_')
+  return PREDICTION_PT[key] || value
+}
+
+// ClinVar significance terms. A compound string ("Pathogenic/Pathogenic, low penetrance; risk
+// factor") is split on / ; , and each segment translated, keeping the separators.
+const SIGNIFICANCE_PT = {
+  pathogenic: 'patogênica',
+  'likely pathogenic': 'provavelmente patogênica',
+  benign: 'benigna',
+  'likely benign': 'provavelmente benigna',
+  'uncertain significance': 'significado incerto',
+  'uncertain risk allele': 'alelo de risco incerto',
+  'low penetrance': 'baixa penetrância',
+  'risk factor': 'fator de risco',
+  'established risk allele': 'alelo de risco estabelecido',
+  'likely risk allele': 'provável alelo de risco',
+  'drug response': 'resposta a medicamento',
+  association: 'associação',
+  protective: 'protetora',
+  affects: 'afeta',
+  'conflicting interpretations of pathogenicity': 'classificações conflitantes',
+  'conflicting classifications of pathogenicity': 'classificações conflitantes',
+  'not provided': 'não informado',
+  other: 'outro',
+  'no classification for the single variant': 'sem classificação para a variante isolada',
+  'no classifications from unflagged records': 'sem classificações em registros válidos',
+}
+
+function translateSigSegment(part) {
+  const translated = part
+    .split(/([;,])/)
+    .map((s) => {
+      if (/^[;,]$/.test(s)) return s
+      const key = s.trim().toLowerCase()
+      if (!key) return s
+      const pt = SIGNIFICANCE_PT[key]
+      return pt ? s.replace(s.trim(), pt) : s
+    })
+    .join('')
+    .trim()
+  return translated.charAt(0).toUpperCase() + translated.slice(1)
+}
+
+export function translateSignificance(value) {
+  if (!value) return value
+  // ClinVar joins classifications with '/'. Drop a part that is only a prefix of another
+  // (e.g. "Pathogenic" next to "Pathogenic, low penetrance") so it does not read "X/X".
+  const parts = value.split('/').map((p) => p.trim()).filter(Boolean)
+  const kept = parts.filter(
+    (p, i) =>
+      !parts.some(
+        (q, j) => j !== i && q.toLowerCase().startsWith(p.toLowerCase()) && q.length > p.length,
+      ),
+  )
+  return [...new Set(kept)].map(translateSigSegment).join(' / ')
+}
+
+// ClinVar review status (star rating) phrases, translated whole.
+const REVIEW_STATUS_PT = {
+  'practice guideline': 'Diretriz de prática clínica',
+  'reviewed by expert panel': 'Revisado por painel de especialistas',
+  'criteria provided, multiple submitters, no conflicts':
+    'Com critérios, vários submissores, sem conflitos',
+  'criteria provided, conflicting classifications': 'Com critérios, classificações conflitantes',
+  'criteria provided, conflicting interpretations': 'Com critérios, interpretações conflitantes',
+  'criteria provided, single submitter': 'Com critérios, um submissor',
+  'no assertion criteria provided': 'Sem critérios de avaliação informados',
+  'no assertion provided': 'Sem avaliação informada',
+  'no classification provided': 'Sem classificação informada',
+  'no classifications from unflagged records': 'Sem classificações em registros válidos',
+  'flagged submission': 'Submissão sinalizada',
+}
+
+export function translateReviewStatus(value) {
+  if (!value) return value
+  return REVIEW_STATUS_PT[value.trim().toLowerCase()] || value
+}
+
+// ClinVar last_evaluated comes as "YYYY/MM/DD HH:MM"; show as DD/MM/YYYY.
+export function formatClinvarDate(value) {
+  if (!value) return value
+  const m = String(value).match(/^(\d{4})\/(\d{2})\/(\d{2})/)
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : value
+}

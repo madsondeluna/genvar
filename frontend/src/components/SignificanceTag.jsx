@@ -1,4 +1,4 @@
-import { classifySignificance } from '../utils/format'
+import { classifySignificance, translateSignificance } from '../utils/format'
 
 const PRESET = {
   pathogenic: { cls: 'tag tag-pathogenic', label: 'Patogênica' },
@@ -15,9 +15,9 @@ export default function SignificanceTag({ value, raw = false }) {
   if (!value) return <span className="tag tag-other">Desconhecida</span>
   const key = classifySignificance(value)
   const preset = PRESET[key] || PRESET.other
-  const label = raw ? value : preset.label || value
+  const label = raw ? translateSignificance(value) : preset.label || translateSignificance(value)
   return (
-    <span className={preset.cls} title={value}>
+    <span className={preset.cls}>
       {label}
     </span>
   )
