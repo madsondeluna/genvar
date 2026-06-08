@@ -16,24 +16,35 @@ import { stripEnsemblSource } from '../utils/format'
 import { buildGeneAnnotations, GENE_LEGEND } from '../utils/ideogramAnnotations'
 import { ArrowLeft, Search } from 'lucide-react'
 
-function InfoRow({ label, value }) {
+function InfoRow({ label, value, hint }) {
   // Explicit null/empty check so falsy-but-valid values (0, strand=-1) are still rendered
   if (value == null || value === '') return null
   return (
     <div className="flex flex-col gap-0.5">
       <span className="label">{label}</span>
       <span className="value">{value}</span>
+      {hint && <span className="block text-xs text-gray-500 leading-snug mt-0.5 min-h-[2.25rem]">{hint}</span>}
     </div>
   )
 }
 
-function StatCard({ label, value }) {
+function StatCard({ label, value, hint, dotColor }) {
   return (
     <div className="flex flex-col gap-1 p-4 border border-gray-200 rounded-md">
       <span className="text-2xl font-bold text-gray-900 tracking-tight">
         {(value || 0).toLocaleString('pt-BR')}
       </span>
-      <span className="label">{label}</span>
+      <span className="label flex items-center gap-1.5">
+        {dotColor && (
+          <span
+            className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+            style={{ backgroundColor: dotColor }}
+            aria-hidden="true"
+          />
+        )}
+        {label}
+      </span>
+      {hint && <span className="text-xs text-gray-500 leading-snug">{hint}</span>}
     </div>
   )
 }
@@ -135,38 +146,92 @@ export default function GenePage() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4 bg-gray-50 rounded-lg">
-                <InfoRow label="ID Ensembl" value={data.gene_id} />
-                <InfoRow label="Cromossomo" value={`chr${data.chromosome}`} />
                 <InfoRow
-                  label="Locus"
-                  value={`${data.start?.toLocaleString('pt-BR')} - ${data.end?.toLocaleString('pt-BR')}`}
+                  label="ID Ensembl"
+                  value={data.gene_id}
+                  hint="Identificador único do gene no banco Ensembl."
                 />
-                <InfoRow label="Fita" value={data.strand === 1 ? 'Direta (+)' : 'Reversa (-)'} />
-                <InfoRow label="Biotipo" value={data.biotype} />
-                <InfoRow label="Montagem" value={data.assembly_name} />
-                <InfoRow label="ID UniProt" value={data.uniprot_id} />
+                <InfoRow
+                  label="Cromossomo"
+                  value={`chr${data.chromosome}`}
+                  hint="Cromossomo em que o gene se encontra."
+                />
+                <InfoRow
+                  label="Locus (posição no cromossomo)"
+                  value={`${data.start?.toLocaleString('pt-BR')} - ${data.end?.toLocaleString('pt-BR')}`}
+                  hint="Início e fim do gene no cromossomo (em pares de base)."
+                />
+                <InfoRow
+                  label="Fita"
+                  value={data.strand === 1 ? 'Direta (+)' : 'Reversa (-)'}
+                  hint="Fita da dupla-hélice em que o gene é lido."
+                />
+                <InfoRow
+                  label="Tipo de gene"
+                  value={data.biotype}
+                  hint="protein_coding = codifica uma proteína."
+                />
+                <InfoRow
+                  label="Montagem"
+                  value={data.assembly_name}
+                  hint="Versão do genoma humano de referência."
+                />
+                <InfoRow
+                  label="ID UniProt"
+                  value={data.uniprot_id}
+                  hint="Identificador da proteína no banco UniProt."
+                />
                 <InfoRow
                   label="Tamanho do gene"
                   value={data.start && data.end ? `${((data.end - data.start) / 1000).toFixed(1)} kb` : null}
+                  hint="Extensão do gene (kb = mil pares de base, pb)."
                 />
               </div>
             </section>
 
             <section aria-labelledby="variant-summary-title">
-              <h2 id="variant-summary-title" className="section-title">Resumo de variantes</h2>
+              <h2 id="variant-summary-title" className="section-title mb-1">Resumo de variantes</h2>
+              <p className="text-xs text-gray-600 mb-3">
+                Variantes do gene catalogadas no Ensembl, agrupadas pela classificação clínica do
+                ClinVar. As cores seguem o gráfico de distribuição.
+              </p>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <StatCard label="Total" value={data.total_variants} />
-                <StatCard label="Patogênicas" value={data.pathogenic_count} />
-                <StatCard label="VUS" value={data.vus_count} />
-                <StatCard label="Benignas" value={data.benign_count} />
-                <StatCard label="Sem classificação" value={data.other_count} />
+                <StatCard
+                  label="Total"
+                  value={data.total_variants}
+                  hint="Todas as variantes já registradas neste gene."
+                />
+                <StatCard
+                  label="Patogênicas"
+                  value={data.pathogenic_count}
+                  dotColor="#DC2626"
+                  hint="Causam ou contribuem para doença."
+                />
+                <StatCard
+                  label="VUS"
+                  value={data.vus_count}
+                  dotColor="#D97706"
+                  hint="Significado incerto: evidência ainda insuficiente."
+                />
+                <StatCard
+                  label="Benignas"
+                  value={data.benign_count}
+                  dotColor="#16A34A"
+                  hint="Sem efeito conhecido sobre a saúde."
+                />
+                <StatCard
+                  label="Sem classificação"
+                  value={data.other_count}
+                  dotColor="#A3A3A3"
+                  hint="Ainda sem avaliação clínica no ClinVar."
+                />
               </div>
             </section>
 
             <ChromosomeIdeogram
               annotations={buildGeneAnnotations(data)}
               title={`Cromossomo ${data.chromosome}`}
-              description="Locus do gene e variantes classificadas ao longo do cromossomo. Rótulos de banda G exibidos."
+              description="Posição do gene no cromossomo, com os rótulos das bandas G."
               focusChromosome={data.chromosome}
               legendItems={GENE_LEGEND}
               expandSinglePointBy={200_000}
@@ -222,6 +287,7 @@ export default function GenePage() {
                   variants={data.pathogenic_variants}
                   title="Variantes patogênicas"
                   csvPrefix={`${data.gene_symbol}-patogenicas`}
+                  totalCount={data.pathogenic_count}
                 />
               )}
               {data.vus_variants?.length > 0 && (
@@ -229,6 +295,7 @@ export default function GenePage() {
                   variants={data.vus_variants}
                   title="Variantes de significado incerto"
                   csvPrefix={`${data.gene_symbol}-vus`}
+                  totalCount={data.vus_count}
                 />
               )}
               {data.benign_variants?.length > 0 && (
@@ -236,6 +303,7 @@ export default function GenePage() {
                   variants={data.benign_variants}
                   title="Variantes benignas"
                   csvPrefix={`${data.gene_symbol}-benignas`}
+                  totalCount={data.benign_count}
                 />
               )}
             </div>
