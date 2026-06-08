@@ -7,12 +7,11 @@ const CATEGORY_COLOR = {
   halo: '#FDE68A',
 }
 
+// Variant marks are sub-pixel at whole-chromosome scale (a 260kb gene is <1px on a 242Mb
+// chromosome), so the ideogram only conveys where the gene sits. Legend reflects that.
 export const GENE_LEGEND = [
   { label: 'Região do gene', color: CATEGORY_COLOR.halo },
   { label: 'Locus do gene', color: CATEGORY_COLOR.gene },
-  { label: 'Patogênica', color: CATEGORY_COLOR.pathogenic },
-  { label: 'VUS / Conflitante', color: CATEGORY_COLOR.vus },
-  { label: 'Benigna', color: CATEGORY_COLOR.benign },
 ]
 
 export const VARIANT_LEGEND = [
@@ -39,19 +38,7 @@ export function buildGeneAnnotation(gene) {
   }
 }
 
-function variantToAnnotation(variant, chr, category) {
-  const position = variant.position
-  if (!position) return null
-  return {
-    name: variant.variant_id || `${chr}:${position}`,
-    chr,
-    start: position,
-    stop: position + 1,
-    color: CATEGORY_COLOR[category],
-  }
-}
-
-export function buildGeneAnnotations(gene, { maxPerCategory = 60, haloPaddingBp = 800_000 } = {}) {
+export function buildGeneAnnotations(gene, { haloPaddingBp = 800_000 } = {}) {
   const chr = sanitizeChr(gene.chromosome)
   if (!chr) return []
 
@@ -69,17 +56,6 @@ export function buildGeneAnnotations(gene, { maxPerCategory = 60, haloPaddingBp 
 
   const geneAnn = buildGeneAnnotation(gene)
   if (geneAnn) out.push(geneAnn)
-
-  const push = (list, category) => {
-    for (const v of (list || []).slice(0, maxPerCategory)) {
-      const ann = variantToAnnotation(v, chr, category)
-      if (ann) out.push(ann)
-    }
-  }
-
-  push(gene.pathogenic_variants, 'pathogenic')
-  push(gene.vus_variants, 'vus')
-  push(gene.benign_variants, 'benign')
 
   return out
 }

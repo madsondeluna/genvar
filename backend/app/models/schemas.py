@@ -11,6 +11,14 @@ class GeneVariant(BaseModel):
     alleles: Optional[List[str]] = None
 
 
+class VariantBin(BaseModel):
+    start: int
+    pathogenic: int = 0
+    vus: int = 0
+    benign: int = 0
+    other: int = 0
+
+
 class GeneResponse(BaseModel):
     gene_symbol: str
     gene_id: str
@@ -32,6 +40,11 @@ class GeneResponse(BaseModel):
     vus_variants: List[GeneVariant] = []
     benign_variants: List[GeneVariant] = []
     other_variants: List[GeneVariant] = []
+
+    # Positional distribution computed server-side over all variants (not the capped lists)
+    variant_distribution: List[VariantBin] = []
+    variant_bin_size: int = 0
+    displayed_variants: int = 0
 
     pli_score: Optional[float] = None
     lof_z_score: Optional[float] = None

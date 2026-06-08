@@ -1,123 +1,96 @@
 import Plot from 'react-plotly.js'
 
-function buildBins(variants, geneStart, geneEnd, binSizeKb = 1) {
-  const binSize = binSizeKb * 1000
-  const numBins = Math.max(1, Math.ceil((geneEnd - geneStart) / binSize))
-  const bins = Array.from({ length: numBins }, (_, i) => ({
-    start: geneStart + i * binSize,
-    pathogenic: 0,
-    vus: 0,
-    benign: 0,
-    other: 0,
-  }))
-
-  const allVariants = [
-    ...(variants.pathogenic_variants || []).map((v) => ({ ...v, category: 'pathogenic' })),
-    ...(variants.vus_variants || []).map((v) => ({ ...v, category: 'vus' })),
-    ...(variants.benign_variants || []).map((v) => ({ ...v, category: 'benign' })),
-    ...(variants.other_variants || []).map((v) => ({ ...v, category: 'other' })),
-  ]
-
-  for (const v of allVariants) {
-    const idx = Math.floor((v.position - geneStart) / binSize)
-    if (idx >= 0 && idx < bins.length) {
-      bins[idx][v.category] += 1
-    }
-  }
-
-  return bins
-}
-
 export default function GeneLocusHeatmap({ geneData }) {
   if (!geneData) return null
 
-  const hasVariants =
-    geneData.pathogenic_variants?.length ||
-    geneData.vus_variants?.length ||
-    geneData.benign_variants?.length ||
-    geneData.other_variants?.length
+  const bins = geneData.variant_distribution || []
+  const binKb = Math.round((geneData.variant_bin_size || 1000) / 1000)
+  const classifiedTotal = bins.reduce((sum, b) => sum + b.pathogenic + b.vus + b.benign, 0)
 
-  if (!hasVariants) {
+  if (!bins.length || classifiedTotal === 0) {
     return (
       <div className="card-flat">
-        <h3 className="section-title">Distribuição de variantes ao longo do gene</h3>
-        <p className="text-sm text-gray-500">Nenhuma variante classificada disponível para este gene.</p>
+        <h3 className="section-title">Onde estão as variantes clínicas no gene</h3>
+        <p className="text-sm text-gray-500">Nenhuma variante classificada pelo ClinVar para este gene.</p>
       </div>
     )
   }
 
-  const bins = buildBins(geneData, geneData.start, geneData.end)
-  const xLabels = bins.map((b) => `${Math.round(b.start / 1000)}kb`)
+  // Numeric x in Mb gives a real coordinate axis that lines up with the chr{n} ideogram above,
+  // instead of opaque bin indices. Bar width equals the bin size so bars are contiguous.
+  const xMb = bins.map((b) => b.start / 1_000_000)
+  const widthMb = (geneData.variant_bin_size || 1000) / 1_000_000
+  const hover = '%{x:.3f} Mb (chr' + geneData.chromosome + ')<br>%{fullData.name}: %{y}<extra></extra>'
 
   const data = [
     {
       type: 'bar',
-      name: 'Patogênica / Potencialmente patogênica',
-      x: xLabels,
+      name: 'Patogênica',
+      x: xMb,
       y: bins.map((b) => b.pathogenic),
+      width: widthMb,
       marker: { color: '#DC2626' },
-      hovertemplate: 'Posição: %{x}<br>Patogênica: %{y}<extra></extra>',
+      hovertemplate: hover,
     },
     {
       type: 'bar',
       name: 'VUS / Conflitante',
-      x: xLabels,
+      x: xMb,
       y: bins.map((b) => b.vus),
+      width: widthMb,
       marker: { color: '#D97706' },
-      hovertemplate: 'Posição: %{x}<br>VUS: %{y}<extra></extra>',
+      hovertemplate: hover,
     },
     {
       type: 'bar',
-      name: 'Benigna / Potencialmente benigna',
-      x: xLabels,
+      name: 'Benigna',
+      x: xMb,
       y: bins.map((b) => b.benign),
+      width: widthMb,
       marker: { color: '#16A34A' },
-      hovertemplate: 'Posição: %{x}<br>Benigna: %{y}<extra></extra>',
-    },
-    {
-      type: 'bar',
-      name: 'Sem classificação',
-      x: xLabels,
-      y: bins.map((b) => b.other),
-      marker: { color: '#A3A3A3' },
-      hovertemplate: 'Posição: %{x}<br>Sem classificação: %{y}<extra></extra>',
+      hovertemplate: hover,
     },
   ]
 
   const layout = {
     barmode: 'stack',
+    bargap: 0,
     xaxis: {
-      title: { text: 'Posição genômica', font: { family: 'Ubuntu', size: 11 } },
-      tickfont: { family: 'Ubuntu', size: 9 },
-      showticklabels: bins.length < 80,
+      title: { text: `Posição em chr${geneData.chromosome} (Mb)`, font: { family: 'Ubuntu', size: 11 } },
+      tickfont: { family: 'Ubuntu', size: 10 },
+      tickformat: '.2f',
+      range: [geneData.start / 1_000_000, geneData.end / 1_000_000],
     },
     yaxis: {
-      title: { text: 'Contagem de variantes', font: { family: 'Ubuntu', size: 11 } },
+      title: { text: 'Variantes classificadas', font: { family: 'Ubuntu', size: 11 } },
       gridcolor: '#E5E5E5',
       tickfont: { family: 'Ubuntu', size: 10 },
     },
     legend: {
       font: { family: 'Ubuntu', size: 11 },
       orientation: 'h',
-      y: -0.25,
+      y: -0.3,
     },
-    margin: { l: 55, r: 20, t: 20, b: 70 },
+    margin: { l: 55, r: 20, t: 20, b: 80 },
     paper_bgcolor: 'white',
     plot_bgcolor: 'white',
     font: { family: 'Ubuntu', color: '#171717' },
     hoverlabel: {
       bgcolor: 'white',
       bordercolor: '#D4D4D4',
-      font: { family: 'Ubuntu', size: 12 },
+      font: { family: 'Ubuntu', size: 12, color: '#000000' },
     },
   }
 
   return (
     <div className="card-flat">
-      <h3 className="section-title">Distribuição de variantes ao longo do gene</h3>
+      <h3 className="section-title">Onde estão as variantes clínicas no gene</h3>
       <p className="text-xs text-gray-600 mb-2">
-        Todas as variantes do Ensembl agrupadas em janelas de 1 kb, coloridas pela classificação do
-        ClinVar. Variantes sem curadoria no ClinVar aparecem em cinza.
+        O eixo horizontal é a posição no cromossomo {geneData.chromosome} (em milhões de bases, Mb),
+        a mesma coordenada do mapa cromossômico acima. Cada barra cobre {binKb} kb do gene; a altura
+        mostra quantas variantes com classificação clínica no ClinVar caem ali, em patogênica
+        (vermelho), de significado incerto (âmbar) e benigna (verde). Variantes ainda sem curadoria no
+        ClinVar não entram neste gráfico.
         chr{geneData.chromosome}:{geneData.start.toLocaleString('pt-BR')}-{geneData.end.toLocaleString('pt-BR')}
       </p>
       <Plot

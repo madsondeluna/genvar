@@ -1,11 +1,19 @@
 import asyncio
+import math
 from fastapi import APIRouter
-from app.models.schemas import GeneResponse, GeneVariant
+from app.models.schemas import GeneResponse, GeneVariant, VariantBin
 from app.services import ensembl, gnomad, uniprot, alphafold
 from app.utils.validators import validate_gene_symbol, classify_clinical_significance
 from app.utils.cache import cache_get, cache_set
 
 router = APIRouter()
+
+# Per-category cap for the detail tables. The Ensembl overlap can return >100k variants;
+# rendering all of them is impractical, so the tables show a representative sample spread
+# across the gene while counts and the distribution chart use the full set.
+TABLE_SAMPLE_CAP = 200
+# Target number of bins for the positional distribution; bin size is rounded to whole kb.
+TARGET_BINS = 120
 
 
 def _parse_variant_row(v: dict) -> GeneVariant:
@@ -20,10 +28,38 @@ def _parse_variant_row(v: dict) -> GeneVariant:
     )
 
 
+def _sample_across(rows: list, cap: int = TABLE_SAMPLE_CAP) -> list:
+    """Evenly sample rows by index so the table spans the whole gene, not just the 5' end.
+
+    Rows arrive in Ensembl coordinate order, so even-index sampling preserves positional spread.
+    """
+    if len(rows) <= cap:
+        return rows
+    step = len(rows) / cap
+    return [rows[int(i * step)] for i in range(cap)]
+
+
+def _build_distribution(rows_by_category: dict, gene_start: int, gene_end: int) -> tuple[list, int]:
+    """Bin all classified variants by genomic position over the full gene span."""
+    span = max(1, gene_end - gene_start)
+    bin_size = max(1000, math.ceil(span / TARGET_BINS / 1000) * 1000)
+    num_bins = max(1, math.ceil(span / bin_size))
+    bins = [
+        {"start": gene_start + i * bin_size, "pathogenic": 0, "vus": 0, "benign": 0, "other": 0}
+        for i in range(num_bins)
+    ]
+    for category, rows in rows_by_category.items():
+        for row in rows:
+            idx = int((row.position - gene_start) // bin_size)
+            if 0 <= idx < num_bins:
+                bins[idx][category] += 1
+    return [VariantBin(**b) for b in bins], bin_size
+
+
 @router.get("/{gene_symbol}", response_model=GeneResponse)
 async def get_gene_data(gene_symbol: str):
     symbol = validate_gene_symbol(gene_symbol)
-    cache_key = f"gene:v2:{symbol}"
+    cache_key = f"gene:v3:{symbol}"
 
     cached = cache_get(cache_key)
     if cached:
@@ -82,6 +118,17 @@ async def get_gene_data(gene_symbol: str):
         else:
             other.append(row)
 
+    # Distribution over all variants; tables get a representative sample across the gene
+    distribution, bin_size = _build_distribution(
+        {"pathogenic": pathogenic, "vus": vus, "benign": benign, "other": other},
+        gene_info["start"],
+        gene_info["end"],
+    )
+    pathogenic_sample = _sample_across(pathogenic)
+    vus_sample = _sample_across(vus)
+    benign_sample = _sample_across(benign)
+    other_sample = _sample_across(other)
+
     result = GeneResponse(
         gene_symbol=gene_info["gene_symbol"],
         gene_id=gene_info["gene_id"],
@@ -97,10 +144,15 @@ async def get_gene_data(gene_symbol: str):
         vus_count=len(vus),
         benign_count=len(benign),
         other_count=len(other),
-        pathogenic_variants=pathogenic[:500],
-        vus_variants=vus[:500],
-        benign_variants=benign[:500],
-        other_variants=other[:500],
+        pathogenic_variants=pathogenic_sample,
+        vus_variants=vus_sample,
+        benign_variants=benign_sample,
+        other_variants=other_sample,
+        variant_distribution=distribution,
+        variant_bin_size=bin_size,
+        displayed_variants=(
+            len(pathogenic_sample) + len(vus_sample) + len(benign_sample) + len(other_sample)
+        ),
         pli_score=constraint.get("pli") if isinstance(constraint, dict) else None,
         lof_z_score=constraint.get("lof_z") if isinstance(constraint, dict) else None,
         oe_lof=constraint.get("oe_lof") if isinstance(constraint, dict) else None,

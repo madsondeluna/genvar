@@ -12,7 +12,7 @@ const CSV_COLUMNS = [
   { label: 'alleles', get: (v) => (v.alleles ? v.alleles.join('/') : '') },
 ]
 
-export default function VariantTable({ variants, title = 'Variantes', maxRows = 500, csvPrefix = 'variantes' }) {
+export default function VariantTable({ variants, title = 'Variantes', maxRows = 500, csvPrefix = 'variantes', totalCount = null }) {
   const [sortKey, setSortKey] = useState('position')
   const [sortAsc, setSortAsc] = useState(true)
   const [page, setPage] = useState(0)
@@ -89,6 +89,8 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
   }
 
   const truncated = variants.length > maxRows
+  // When the gene has more variants than the sampled list, say so instead of implying completeness
+  const isSample = totalCount != null && totalCount > variants.length
   const titleId = `${csvPrefix}-title`
 
   return (
@@ -97,7 +99,9 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
         <div className="flex items-baseline gap-3">
           <h3 id={titleId} className="section-title mb-0">{title}</h3>
           <span className="text-xs text-gray-500">
-            {sorted.length.toLocaleString('pt-BR')} de {variants.length.toLocaleString('pt-BR')}
+            {isSample
+              ? `amostra de ${variants.length.toLocaleString('pt-BR')} ao longo do gene (de ${totalCount.toLocaleString('pt-BR')})`
+              : `${sorted.length.toLocaleString('pt-BR')} de ${variants.length.toLocaleString('pt-BR')}`}
             {truncated && ` (exibindo as primeiras ${maxRows.toLocaleString('pt-BR')})`}
           </span>
         </div>

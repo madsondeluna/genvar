@@ -33,7 +33,7 @@ async def get_gene_info(gene_symbol: str) -> Dict[str, Any]:
         }
 
 
-async def get_gene_variants(gene_id: str, limit: int = 500) -> List[Dict[str, Any]]:
+async def get_gene_variants(gene_id: str, limit: int | None = None) -> List[Dict[str, Any]]:
     async with httpx.AsyncClient() as client:
         url = f"{BASE_URL}/overlap/id/{gene_id}"
         # feature=variation must be a query param, not embedded in the URL string
@@ -45,7 +45,11 @@ async def get_gene_variants(gene_id: str, limit: int = 500) -> List[Dict[str, An
         response.raise_for_status()
         variants = response.json()
 
-        return variants[:limit]
+        # clinical_significance and start come inline in the overlap response, so the full
+        # set is available without per-variant enrichment. Returning all of them lets the
+        # router compute representative counts and a positional distribution over the whole
+        # gene instead of the 5'-most slice. limit is kept for callers that want a cap.
+        return variants[:limit] if limit else variants
 
 
 async def get_vep_annotation(rsid: str) -> Optional[Dict[str, Any]]:
