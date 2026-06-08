@@ -1,19 +1,26 @@
 // pLI:   > 0.9 = highly constrained (red), 0.1-0.9 = intermediate (amber), < 0.1 = tolerant (green)
 // LOEUF: < 0.35 = highly constrained (red), 0.35-0.6 = intermediate (amber), > 0.6 = tolerant (green)
-// oe_lof/oe_mis: < 0.5 = constrained (red), 0.5-0.8 = intermediate (amber), > 0.8 = tolerant (green)
+// lofz:  z-score, unbounded. > 3.09 = constrained (red), 1-3.09 = intermediate (amber), < 1 = tolerant (green)
+// oe (oe_lof/oe_mis): < 0.5 = constrained (red), 0.5-0.8 = intermediate (amber), > 0.8 = tolerant (green)
 
 function constraintColor(value, metric) {
   if (value == null) return { bar: '#E5E5E5', text: 'text-gray-400', label: 'Indisponível', bg: 'bg-gray-100' }
   if (metric === 'pli') {
     if (value >= 0.9) return { bar: '#DC2626', text: 'text-red-600', label: 'Altamente restrito', bg: 'bg-red-50' }
     if (value >= 0.1) return { bar: '#D97706', text: 'text-amber-600', label: 'Intermediário', bg: 'bg-amber-50' }
-    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerante a LoF', bg: 'bg-green-50' }
+    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerante', bg: 'bg-green-50' }
   }
   if (metric === 'loeuf') {
     if (value <= 0.35) return { bar: '#DC2626', text: 'text-red-600', label: 'Altamente restrito', bg: 'bg-red-50' }
     if (value <= 0.6) return { bar: '#D97706', text: 'text-amber-600', label: 'Intermediário', bg: 'bg-amber-50' }
-    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerante a LoF', bg: 'bg-green-50' }
+    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerante', bg: 'bg-green-50' }
   }
+  if (metric === 'lofz') {
+    if (value >= 3.09) return { bar: '#DC2626', text: 'text-red-600', label: 'Altamente restrito', bg: 'bg-red-50' }
+    if (value >= 1) return { bar: '#D97706', text: 'text-amber-600', label: 'Intermediário', bg: 'bg-amber-50' }
+    return { bar: '#16A34A', text: 'text-green-600', label: 'Tolerante', bg: 'bg-green-50' }
+  }
+  // oe_lof / oe_mis
   if (value <= 0.5) return { bar: '#DC2626', text: 'text-red-600', label: 'Restrição forte', bg: 'bg-red-50' }
   if (value <= 0.8) return { bar: '#D97706', text: 'text-amber-600', label: 'Restrição moderada', bg: 'bg-amber-50' }
   return { bar: '#16A34A', text: 'text-green-600', label: 'Próximo do esperado', bg: 'bg-green-50' }
@@ -100,8 +107,10 @@ export default function ConstraintMetrics({ data }) {
         <span className="text-xs text-gray-500">gnomAD r4</span>
       </div>
       <p className="text-xs text-gray-600 mb-4">
-        Restrição evolutiva indica o quanto a seleção natural atua contra variantes de perda de função
-        neste gene. Genes altamente restritos são intolerantes a mutações.
+        Mostra se o gene tolera perder função. Variantes de perda de função (LoF) desligam o produto
+        do gene; genes importantes acumulam bem menos dessas variantes do que o esperado por acaso, e
+        são ditos restritos. Quanto mais restrito, maior a chance de uma mutação grave ali causar
+        doença. Métricas calculadas pelo gnomAD (r4).
       </p>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
@@ -109,13 +118,13 @@ export default function ConstraintMetrics({ data }) {
           label="Score pLI"
           value={pli_score}
           metric="pli"
-          interpretation="Probabilidade de intolerância a LoF. > 0,9 = alta restrição."
+          interpretation="Perto de 1, o gene não tolera ser desligado; perto de 0, tolera. Formalmente: probabilidade de intolerância a LoF (pLI); acima de 0,9 indica restrição forte."
         />
         <ScoreGauge
           label="LOEUF"
           value={oe_lof_upper}
           metric="loeuf"
-          interpretation="Limite superior de o/e para LoF. < 0,35 = alta restrição."
+          interpretation="Quanto menor, menos o gene tolera perder função. Formalmente: limite superior do intervalo de confiança da razão observado/esperado para LoF; abaixo de 0,35 indica restrição forte."
         />
       </div>
 
@@ -132,22 +141,22 @@ export default function ConstraintMetrics({ data }) {
           label="Z-score de LoF"
           value={lof_z_score}
           max={5}
-          metric="pli"
-          description="Z-score da depleção de variantes LoF. Maior = mais restrito."
+          metric="lofz"
+          description="Maior = o gene evita mais as variantes que o desligam. Formalmente: z-score do déficit de variantes LoF observadas vs. esperadas; acima de 3,09 indica restrição."
         />
         <MetricBar
           label="o/e LoF"
           value={oe_lof}
           max={1}
-          metric="loeuf"
-          description="Razão observado/esperado para variantes LoF. Menor = restrição mais forte."
+          metric="oe"
+          description="Menor = o gene tolera menos perder função. Formalmente: variantes de LoF observadas divididas pelas esperadas (o/e); abaixo de 0,5 indica restrição forte."
         />
         <MetricBar
           label="o/e Missense"
           value={oe_mis}
           max={1}
-          metric="loeuf"
-          description="Razão observado/esperado para variantes missense. Menor = restrição mais forte."
+          metric="oe"
+          description="Menor = o gene tolera menos trocas de aminoácido. Formalmente: variantes missense observadas divididas pelas esperadas (o/e); perto de 1 indica tolerância."
         />
       </div>
     </div>
