@@ -215,13 +215,23 @@ Campos extraídos e mapeados para o `VariantResponse`:
 
 ## Arquitetura do sistema
 
-![Diagrama de Arquitetura GenVar](docs/arquitetura-genvar.svg)
+A aplicação adota uma arquitetura em três camadas, conteinerizada em três serviços orquestrados por Docker Compose. A Figura 1 descreve a visão estática (componentes e fontes de dados) e a Figura 2 detalha o ciclo de vida dinâmico de uma requisição de gene no servidor. Os dois diagramas reproduzem a arquitetura real do sistema.
+
+![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
+
+**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through, expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v2`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
+
+![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
+
+**Figura 2. Ciclo de vida da requisição `/api/gene/{símbolo}`.** O fluxograma acompanha uma chamada do início ao fim no servidor. O navegador emite `GET /api/gene/{símbolo}` e o backend valida o símbolo. A primeira decisão consulta o Redis (Em cache?): em caso de acerto (hit), a resposta sai do cache em cerca de 16 ms, com entrega imediata, encerrando o fluxo; em caso de falha (miss), a requisição prossegue. A etapa seguinte é sequencial e obrigatória antes do paralelismo: o lookup no Ensembl converte o símbolo no `gene_id`. De posse do `gene_id`, o `asyncio.gather` dispara três chamadas em paralelo, o overlap de variantes no Ensembl, a restrição (constraint) do gene no gnomAD e o identificador da proteína no UniProt. A chamada ao AlphaFold (estrutura tridimensional) é condicional e só ocorre se o UniProt devolver um identificador. Concluídas as chamadas, o servidor agrega, classifica e prioriza as variantes, grava o resultado no cache (TTL 1 h) montando um JSON único e devolve a resposta ao navegador. A rota `/api/variant/{rs}` segue o mesmo padrão, acrescentando as chamadas ao ClinVar (E-utilities) e ao MyVariant.info (escores preditivos), omitidas no diagrama por clareza.
+
+Os passos abaixo descrevem os mesmos fluxos no nível do código.
 
 **Fluxo de uma requisição de gene:**
 
 1. Frontend envia `GET /api/gene/MLH1`.
 2. Backend valida o símbolo via `validate_gene_symbol()` (regex HGNC).
-3. Verifica cache Redis com chave versionada `gene:v2:MLH1`. Retorna imediatamente em caso de cache hit.
+3. Verifica cache Redis com chave versionada `gene:v3:MLH1`. Retorna imediatamente em caso de cache hit.
 4. Se cache miss: `ensembl.get_gene_info()`, sequencial (necessário para obter o `gene_id`).
 5. Com o `gene_id`, executa em paralelo via `asyncio.gather()`:
    - `ensembl.get_gene_variants(gene_id)`: lista de variantes com `clinical_significance`.
