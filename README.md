@@ -411,7 +411,7 @@ genvar-dashboard/
 │   │   ├── local/                   CSVs do ambiente local (execução nativa).
 │   │   ├── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
 │   │   └── figures/                 Figuras comparativas local vs Docker (fig_cmp_*).
-│   └── metricas_tcc/                Resultados do TCC: documentos, figuras e diagramas.
+│   └── metrics/                     Dados, figuras, diagramas e scripts da metrificação do TCC.
 ├── docs/                            Diagramas de arquitetura e fluxo (SVG das Figuras 1 e 2).
 ├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
