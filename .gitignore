@@ -26,9 +26,11 @@ dist/
 ._*
 Thumbs.db
 
-# Benchmark generated artifacts (regenerable from the tracked CSVs)
-benchmark/results/**/figures/
+# Benchmark single-environment figures (regenerable via plot_results.py)
+benchmark/results/local/figures/
+benchmark/results/docker/figures/
 benchmark/results/**/run_log.txt
+# The local vs Docker comparison figures (results/figures/, fig_cmp_*) are tracked.
 
 # Local runtime artifacts
 .coverage
