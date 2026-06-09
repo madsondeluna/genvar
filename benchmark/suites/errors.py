@@ -22,14 +22,14 @@ GENE_CASES = [
     ("lowercase_valid", "mlh1",                 200),  # should normalize
     ("mixed_case",      "mLh1",                 200),  # should normalize
     ("empty_path",      "_",                    422),  # path will be /api/gene/_
-    ("nonhuman_gene",   "ACTB_MOUSE",           404),
+    ("invalid_underscore", "ACTB_MOUSE",        422),  # underscore not allowed by the symbol regex
 ]
 
 VARIANT_CASES = [
     ("invalid_rsid",    "rs0",                  404),
     ("no_rs_prefix",    "1234567",              422),
     ("letters_in_rsid", "rsABC",                422),
-    ("uppercase_rs",    "RS334",                422),
+    ("uppercase_rs",    "RS334",                200),  # validate_rsid lowercases, so RS334 -> rs334
     ("too_long_rsid",   "rs" + "9" * 20,        422),
     ("valid_known",     "rs334",                200),  # sanity check
 ]

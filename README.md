@@ -32,24 +32,28 @@ Este projeto aplica práticas de engenharia de software (arquitetura em camadas,
 
 ### Busca por gene (símbolo HGNC)
 
+O símbolo HGNC (HUGO Gene Nomenclature Committee) é o nome oficial do gene, como BRCA1 ou TP53. A consulta devolve, em uma única página:
+
 - Informações básicas: ID Ensembl, cromossomo, locus genômico, fita, biotipo, montagem.
-- Métricas de restrição evolutiva: pLI, LOEUF (`oe_lof_upper`), o/e LoF, o/e Missense, Z-score de LoF.
-- Resumo de variantes em cinco categorias: total, patogênicas, VUS, benignas e sem classificação.
+- Métricas de restrição evolutiva, que indicam o quanto o gene tolera mutações que o inativam: pLI (probabilidade de intolerância à perda de função, de 0 a 1), LOEUF (`oe_lof_upper`, limite superior da razão observado/esperado de perda de função; quanto menor, mais restrito o gene), o/e LoF e o/e Missense (razões observado/esperado para variantes de perda de função e de troca de aminoácido) e Z-score de LoF. Perda de função (LoF, loss-of-function) é a mutação que desativa o gene.
+- Resumo de variantes em cinco categorias: total, patogênicas, VUS (Variant of Uncertain Significance, significado clínico incerto), benignas e sem classificação (campo `other`).
 - Ideograma cromossômico interativo (ideogram.js) com bandeamento G. O locus do gene aparece destacado por halo amarelo e um triângulo marcador, com as variantes classificadas coloridas por significado clínico.
 - Distribuição de variantes ao longo do gene em barras empilhadas com bins de 1 kb, incluindo variantes sem curadoria no ClinVar em cinza.
-- Estrutura proteica predita pelo AlphaFold: imagem PAE, visualizador 3D interativo (NGL) colorido por confiança pLDDT, opção de download do PDB.
+- Estrutura proteica predita pelo AlphaFold: imagem PAE (Predicted Aligned Error, confiança nas posições relativas entre partes da proteína), visualizador 3D interativo (NGL) colorido por confiança pLDDT (predicted Local Distance Difference Test, confiança por resíduo; quanto maior, melhor) e opção de baixar a estrutura em formato PDB (Protein Data Bank).
 - Tabelas de variantes com ordenação, paginação, filtro por rs ID ou consequência e exportação em CSV.
 - Links externos: NCBI Gene, gnomAD, UniProt, AlphaFold.
 - Compartilhamento de URL com botão de copiar link.
 
 ### Busca por variante (rs ID do dbSNP)
 
+O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o banco de variantes do NCBI, como rs429358. A consulta reúne:
+
 - Anotação funcional completa via Variant Effect Predictor (VEP) do Ensembl, com SIFT e PolyPhen-2.
-- Agregado de predições via MyVariant.info / dbNSFP, organizado em quatro grupos:
-  - **Patogenicidade**: CADD Phred e rankscore, REVEL, AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN.
+- Agregado de predições via MyVariant.info / dbNSFP (database for Nonsynonymous SNPs' Functional Predictions, base que reúne dezenas de escores de predição de efeito), organizado em quatro grupos:
+  - **Patogenicidade** (escores que estimam se a variante é danosa): CADD Phred (acima de cerca de 20 sugere efeito deletério) e rankscore, REVEL, AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN.
   - **Conservação evolutiva**: PhyloP (100 vertebrados), PhastCons (100 vertebrados), GERP++ RS.
   - **Splicing**: SpliceAI (delta score máximo), dbscSNV ADA, dbscSNV RF.
-  - **Domínios proteicos InterPro** e referências cruzadas: ID ClinVar, IDs COSMIC, AF no 1000 Genomes, AF no ExAC.
+  - **Domínios proteicos InterPro** (banco de domínios e famílias de proteínas) e referências cruzadas: ID ClinVar, IDs COSMIC (catálogo de mutações somáticas em câncer), AF (frequência alélica) no 1000 Genomes e no ExAC (Exome Aggregation Consortium, predecessor do gnomAD).
 - Frequências alélicas populacionais do gnomAD (genoma, 9 populações principais).
 - Mapa geográfico interativo com distribuição global das frequências.
 - Gráfico de barras de frequências por população em escala logarítmica.
@@ -83,7 +87,7 @@ Endpoints utilizados:
 
 - **Instituição**: Broad Institute of MIT and Harvard.
 - **URL**: https://gnomad.broadinstitute.org/api
-- **Tipo**: GraphQL.
+- **Tipo**: GraphQL (linguagem de consulta de APIs em que o cliente especifica os campos que quer, alternativa ao REST).
 - **Autenticação**: pública.
 - **Dataset**: gnomAD r4 (genoma).
 
@@ -118,7 +122,7 @@ Populações retornadas e exibidas:
 - **Autenticação**: pública.
 - **Rate limit**: 3 requisições por segundo sem chave de API.
 
-Fluxo de consulta em dois passos:
+As E-utilities (Entrez Programming Utilities) são as APIs de consulta programática do NCBI. O fluxo usa dois passos:
 
 | Passo | Endpoint | Descrição |
 |-------|----------|-----------|
@@ -196,7 +200,7 @@ Endpoints utilizados:
 
 | Endpoint | Descrição |
 |----------|-----------|
-| `GET /variant/chr{chr}:g.{pos}{ref}>{alt}?assembly=hg38&fields=...` | Consulta por HGVS genômico (preferencial quando há coordenadas). |
+| `GET /variant/chr{chr}:g.{pos}{ref}>{alt}?assembly=hg38&fields=...` | Consulta por HGVS genômico (HGVS, Human Genome Variation Society, a notação padrão para descrever variantes, por exemplo `chr19:g.44908684T>C`; preferencial quando há coordenadas). |
 | `GET /query?q=dbsnp.rsid:{rsid}&fields=...&assembly=hg38` | Consulta por rs ID (fallback). |
 
 Campos extraídos e mapeados para o `VariantResponse`:
@@ -219,7 +223,7 @@ A aplicação adota uma arquitetura em três camadas, conteinerizada em três se
 
 ![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
 
-**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through, expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v2`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
+**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v2`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
 
 ![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
 
@@ -269,7 +273,7 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | httpx | 0.27 | Cliente HTTP assíncrono para consultas às APIs externas. |
 | Pydantic v2 | 2.9 | Validação e serialização de dados (schemas de resposta). |
 | pydantic-settings | 2.5 | Configurações via variáveis de ambiente. |
-| Redis | 7 | Cache de respostas das APIs, com TTL configurável. |
+| redis-py | 5.0 | Cliente Python do cache; o servidor Redis 7 fica na seção de infraestrutura. |
 | pytest | 8.3 | Framework de testes unitários e de integração. |
 | pytest-asyncio | 0.24 | Suporte a testes de funções assíncronas. |
 
@@ -285,7 +289,7 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | Plotly.js | 2.27 | Visualização interativa. |
 | react-plotly.js | 2.6 | Wrapper React para Plotly.js. |
 | ideogram | 1.53 | Ideograma cromossômico humano com bandeamento G (GRCh38). |
-| NGL | 2.3 | Visualizador 3D de estruturas moleculares (PDB) no browser. |
+| NGL | 2.4 | Visualizador 3D de estruturas moleculares (PDB) no browser. |
 | Lucide React | 0.294 | Ícones SVG. |
 | react-router-dom | 6.20 | Roteamento client-side (SPA). |
 | Google Fonts | Ubuntu e Ubuntu Mono | Tipografia sans-serif para prosa, mono para identificadores. |
@@ -297,6 +301,7 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | Docker | 24+ | Containerização de backend e frontend. |
 | Docker Compose | 2.x | Orquestração local dos serviços. |
 | Nginx | Alpine | Servidor de arquivos estáticos e proxy reverso (produção). |
+| Redis | 7 (alpine) | Servidor de cache em memória das respostas das APIs. |
 
 
 ## Visualizações implementadas
@@ -364,6 +369,7 @@ genvar-dashboard/
 │   │   │   ├── ConstraintMetrics.jsx
 │   │   │   ├── ProteinViewer.jsx
 │   │   │   ├── VariantTable.jsx
+│   │   │   ├── VariantChangePanel.jsx
 │   │   │   ├── SignificanceTag.jsx
 │   │   │   ├── ExternalLinkButton.jsx
 │   │   │   ├── CopyLinkButton.jsx
@@ -379,6 +385,8 @@ genvar-dashboard/
 │   │   │   └── VariantPage.jsx      Dashboard completo de variante.
 │   │   ├── utils/
 │   │   │   ├── format.js            Formatadores e classificação de significância.
+│   │   │   ├── conditions.js        Normalização das condições clínicas do ClinVar.
+│   │   │   ├── protein.js           Formatação das mudanças moleculares (DNA e proteína).
 │   │   │   ├── csv.js               Exportação de tabelas para CSV.
 │   │   │   └── ideogramAnnotations.js   Montagem de anotações para o ideograma.
 │   │   ├── App.jsx                  Roteamento, QueryClient, ErrorBoundary global.
@@ -399,10 +407,16 @@ genvar-dashboard/
 │   │   ├── comparison.py            Suite 4: simulação manual sequencial vs GenVar (variante e gene).
 │   │   ├── completeness.py          Suite 5: cobertura de campos por resposta.
 │   │   └── payload.py               Suite 6: enriquecimento de dados vs APIs individuais.
-│   └── results/
-│       ├── local/                   CSVs do ambiente local (execução nativa).
-│       └── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
+│   ├── results/
+│   │   ├── local/                   CSVs do ambiente local (execução nativa).
+│   │   ├── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
+│   │   └── figures/                 Figuras comparativas local vs Docker (fig_cmp_*).
+│   └── metricas_tcc/                Resultados do TCC: documentos, figuras e diagramas.
+├── docs/                            Diagramas de arquitetura e fluxo (SVG das Figuras 1 e 2).
+├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
+├── render.yaml                      Configuração de deploy no Render.
+├── SETUP.md                         Guia de instalação detalhado.
 ├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
 ```
@@ -493,6 +507,20 @@ Retorna anotação completa de uma variante a partir do rs ID do dbSNP.
   "cosmic_ids": []
 }
 ```
+
+### GET / e GET /health
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /` | `{"status": "ok", "service": "GenVar Dashboard API", "version": "2.0.0"}`, identificação do serviço. |
+| `GET /health` | `{"status": "ok"}`, usado como health check pelo Render (`healthCheckPath` no `render.yaml`) e pela suíte de benchmark (`run_benchmarks.py`). |
+
+### Respostas de erro
+
+A API usa códigos HTTP semânticos e não retorna 5xx para entradas previsíveis:
+
+- **422 Unprocessable Entity**: entrada fora do formato esperado (símbolo HGNC ou rs ID inválido). Corpo `{"detail": "..."}` com a mensagem do validador.
+- **404 Not Found**: formato válido, mas o recurso não existe nas fontes (gene ausente no Ensembl ou rs ID ausente no dbSNP).
 
 Documentação interativa Swagger UI disponível em `http://localhost:8000/docs`.
 
@@ -634,9 +662,12 @@ Crie `backend/.env` para personalizar o comportamento:
 REDIS_URL=redis://localhost:6379
 CACHE_TTL_SECONDS=3600
 ENSEMBL_MAX_VARIANTS=500
+GNOMAD_DATASET=gnomad_r4
 LOG_LEVEL=INFO
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
+
+`GNOMAD_DATASET` define a versão do dataset gnomAD usada em todas as consultas de frequência e restrição (padrão `gnomad_r4`).
 
 Se o arquivo `.env` não existir, os valores padrão acima são usados.
 
@@ -674,7 +705,7 @@ pytest tests/test_apis.py -v
 
 Esta seção descreve o plano de metrificação do GenVar Dashboard desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
 
-Todas as suítes usam um conjunto de teste padronizado (MVP) definido em `suites/_targets.py`: 10 genes (MLH1, HBB, MSH2, VHL, LDLR, RB1, BRCA1, TP53, CFTR, PAH) e 10 variantes (rs334, rs1800562, rs6025, rs1799853, rs429358, rs1801133, rs1042522, rs5030858, rs28929474, rs121913529), escolhidos por cobertura das fontes e diversidade clínica. As coordenadas das variantes são GRCh38 (a correção de uma versão anterior em GRCh37, que fazia as chamadas manuais ao gnomAD retornarem vazio).
+Todas as suítes usam um conjunto de teste padronizado para o MVP (produto mínimo viável) definido em `suites/_targets.py`: 10 genes (MLH1, HBB, MSH2, VHL, LDLR, RB1, BRCA1, TP53, CFTR, PAH) e 10 variantes (rs334, rs1800562, rs6025, rs1799853, rs429358, rs1801133, rs1042522, rs5030858, rs28929474, rs121913529), escolhidos por cobertura das fontes e diversidade clínica. As coordenadas das variantes são GRCh38 (a correção de uma versão anterior em GRCh37, que fazia as chamadas manuais ao gnomAD retornarem vazio).
 
 O mesmo conjunto é medido em dois ambientes para quantificar o custo da containerização: execução local nativa (`results/local/`) e conteinerizada via Docker Compose (`results/docker/`). O script `plot_comparison.py` confronta os dois e gera as figuras comparativas `fig_cmp_*`.
 
@@ -764,7 +795,7 @@ Nas tabelas de saída das suítes abaixo, `results/` refere-se ao diretório do 
 - `fig_latency_variant.png`: mesmo formato para variantes.
 - `fig_cache_speedup.png`: barras horizontais com o fator de speedup por endpoint. Verde indica speedup acima de 10x, azul acima de 3x, âmbar abaixo de 3x.
 
-**Como interpretar**: valores de cold entre 2 s e 8 s são esperados, pois envolvem até cinco chamadas externas em paralelo. Valores de warm abaixo de 50 ms confirmam que o Redis está ativo. Um speedup de 50x ou mais é normal para queries com cache.
+**Como interpretar**: valores de cold entre 2 s e 8 s são esperados, pois envolvem até cinco chamadas externas, das quais até três em paralelo. Valores de warm abaixo de 50 ms confirmam que o Redis está ativo. Um speedup de 50x ou mais é normal para queries com cache.
 
 
 ### Suíte 2: Exaustão (`suites/exhaustion.py`)
@@ -806,7 +837,8 @@ Para `/api/gene/*`:
 | Apenas dígitos | `123456` | 422 |
 | Símbolo minúsculo válido | `mlh1` | 200 (normaliza) |
 | Capitalização mista válida | `mLh1` | 200 (normaliza) |
-| Gene não humano | `ACTB_MOUSE` | 404 |
+| Caminho vazio | `_` | 422 |
+| Caractere inválido (underscore) | `ACTB_MOUSE` | 422 |
 
 Para `/api/variant/*`:
 
@@ -815,7 +847,7 @@ Para `/api/variant/*`:
 | rs0 | `rs0` | 404 |
 | Sem prefixo rs | `1234567` | 422 |
 | Letras no ID | `rsABC` | 422 |
-| Prefixo maiúsculo | `RS334` | 422 |
+| Prefixo maiúsculo | `RS334` | 200 (normaliza) |
 | rs ID muito longo | `rs99999999999999999999` | 422 |
 | Variante conhecida | `rs334` | 200 (sanity check) |
 
@@ -876,7 +908,7 @@ O speedup total inclui uma estimativa de 900 s (15 minutos) de processamento hum
 - `fig_comparison_breakdown.png`: barras empilhadas com o tempo de cada chamada manual (Ensembl, gnomAD, ClinVar search, ClinVar fetch, MyVariant.info), com um ponto preto sobreposto marcando o tempo total do GenVar. Permite ver visualmente o que o paralelismo elimina.
 - `fig_comparison_breakdown_gene.png`: leitura análoga por gene, com o fluxo decomposto em lookup e overlap no Ensembl, restrição no gnomAD, UniProt e AlphaFold. O ponto do GenVar fica próximo ou acima do topo da barra porque, além das mesmas chamadas, o backend agrega no servidor todas as variantes do gene para a distribuição posicional.
 
-**Como interpretar**: o `api_speedup` deve ser próximo do número de chamadas paralelas (quatro no caso das variantes), pois o GenVar executa todas ao mesmo tempo. Valores de `api_speedup` entre 2x e 4x são esperados. O `total_speedup` é muito maior (centenas de vezes) porque o denominador é o tempo do GenVar em segundos, enquanto o numerador inclui 15 minutos de processamento humano.
+**Como interpretar**: o `api_speedup` reflete o ganho da execução paralela. Na variante, três chamadas correm em paralelo (gnomAD, ClinVar e MyVariant.info), enquanto o VEP do Ensembl é sequencial e obrigatório antes delas e costuma ser a etapa mais lenta, o que limita o ganho a algo próximo de 1 a 2 vezes. O `total_speedup` é muito maior (centenas de vezes) porque o denominador é o tempo do GenVar em segundos, enquanto o numerador inclui 15 minutos de processamento humano.
 
 
 ### Suíte 5: Completude de dados (`suites/completeness.py`)
@@ -995,7 +1027,7 @@ Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_RE
 6. **AlphaFold**: o endpoint retorna array. `[0]` corresponde ao modelo canônico.
 7. **MyVariant.info**: preferir HGVS genômico (`chr{chr}:g.{pos}{ref}>{alt}`) quando há coordenadas do VEP. Em caso de falha, o sistema recorre à busca por `dbsnp.rsid`.
 
-As chaves de cache são versionadas (`gene:v2:`, `variant:v2:`) para invalidar respostas antigas após mudanças no schema.
+As chaves de cache são versionadas (`gene:v3:`, `variant:v2:`) para invalidar respostas antigas após mudanças no schema.
 
 
 ## Licença
