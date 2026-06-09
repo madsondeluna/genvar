@@ -30,7 +30,7 @@ def carregar(caminho):
 
 
 if __name__ == "__main__":
-    caminho = sys.argv[1] if len(sys.argv) > 1 else "../dados/latency_stats.csv"
+    caminho = sys.argv[1] if len(sys.argv) > 1 else "../data/latency_stats.csv"
     frio, quente = carregar(caminho)
 
     # Ordena do maior para o menor ganho e imprime uma tabela simples.

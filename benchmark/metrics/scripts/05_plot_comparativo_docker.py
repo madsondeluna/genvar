@@ -16,8 +16,8 @@ Decisoes de honestidade embutidas:
 
 Codificacao fixa em todas as figuras: Local = azul-marinho, Docker = salmao.
 
-Entrada: ../dados (local) e ../dados_docker (Docker).
-Saida: ../figuras/fig_cmp_*.png
+Entrada: ../data (local) e ../dados_docker (Docker).
+Saida: ../figures/fig_cmp_*.png
 Uso: python 05_plot_comparativo_docker.py
 """
 import csv
@@ -35,9 +35,9 @@ LOCAL = NAVY      # ambiente local
 DOCKER = SALMON   # ambiente conteinerizado
 
 BASE = os.path.dirname(__file__)
-DL = os.path.join(BASE, "..", "dados")          # local
+DL = os.path.join(BASE, "..", "data")           # local
 DD = os.path.join(BASE, "..", "dados_docker")   # docker
-FIG = os.path.join(BASE, "..", "figuras")
+FIG = os.path.join(BASE, "..", "figures")
 
 GENES = ["MLH1", "HBB", "MSH2", "VHL", "LDLR", "RB1", "BRCA1", "TP53", "CFTR", "PAH"]
 VARS = ["rs334", "rs1800562", "rs6025", "rs1799853", "rs429358",

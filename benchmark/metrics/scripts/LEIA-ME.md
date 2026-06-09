@@ -2,8 +2,8 @@
 
 Esta pasta reúne os scripts auxiliares escritos para gerar e conferir as métricas do TCC.
 Todos têm comentários descritivos em português. A bateria de benchmarks em si fica no
-repositório do projeto, em `genvar-dashboard/benchmark/`, e é a fonte dos dados em `../dados/`
-e das figuras em `../figuras/`.
+repositório do projeto, em `genvar-dashboard/benchmark/`, e é a fonte dos dados em `../data/`
+e das figuras em `../figures/`.
 
 ## Scripts desta pasta
 
