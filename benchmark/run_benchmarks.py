@@ -14,7 +14,8 @@ Usage:
   python run_benchmarks.py --suite errors
   python run_benchmarks.py --suite comparison
   python run_benchmarks.py --suite completeness
-  python run_benchmarks.py --url http://localhost:8000 --out results/
+  python run_benchmarks.py --out results/local        # local environment (default)
+  python run_benchmarks.py --out results/docker       # containerized run, for plot_comparison.py
 """
 import argparse
 import asyncio
@@ -30,7 +31,7 @@ from suites import latency, exhaustion, errors, comparison, completeness, payloa
 
 BACKEND_URL = "http://localhost:8000"
 REDIS_URL = "redis://localhost:6379"
-RESULTS_DIR = Path(__file__).parent / "results"
+RESULTS_DIR = Path(__file__).parent / "results" / "local"
 
 console = Console()
 

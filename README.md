@@ -376,16 +376,20 @@ genvar-dashboard/
 │   └── tailwind.config.js           Paleta cinza e fonte Ubuntu.
 ├── benchmark/
 │   ├── run_benchmarks.py            Orquestrador: executa todas as suítes ou uma individual.
-│   ├── plot_results.py              Gera figuras PNG a partir dos CSVs de resultado.
+│   ├── plot_results.py              Gera as figuras de um ambiente a partir dos CSVs.
+│   ├── plot_comparison.py           Gera as figuras comparativas local vs Docker (fig_cmp_*).
 │   ├── requirements.txt             Dependências do benchmark (httpx, rich, pandas, matplotlib).
 │   ├── suites/
+│   │   ├── _targets.py              Conjunto MVP padronizado: 10 genes e 10 variantes (GRCh38).
 │   │   ├── latency.py               Suite 1: latência cold/warm com estatísticas completas.
 │   │   ├── exhaustion.py            Suite 2: carga sequencial e concorrente crescente.
 │   │   ├── errors.py                Suite 3: tratamento de entradas inválidas e edge cases.
-│   │   ├── comparison.py            Suite 4: simulação manual sequencial vs GenVar integrado.
+│   │   ├── comparison.py            Suite 4: simulação manual sequencial vs GenVar (variante e gene).
 │   │   ├── completeness.py          Suite 5: cobertura de campos por resposta.
 │   │   └── payload.py               Suite 6: enriquecimento de dados vs APIs individuais.
-│   └── results/                     CSVs e figures/ gerados automaticamente.
+│   └── results/
+│       ├── local/                   CSVs do ambiente local (execução nativa).
+│       └── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
 ├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
@@ -658,6 +662,10 @@ pytest tests/test_apis.py -v
 
 Esta seção descreve o plano de metrificação do GenVar Dashboard desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
 
+Todas as suítes usam um conjunto de teste padronizado (MVP) definido em `suites/_targets.py`: 10 genes (MLH1, HBB, MSH2, VHL, LDLR, RB1, BRCA1, TP53, CFTR, PAH) e 10 variantes (rs334, rs1800562, rs6025, rs1799853, rs429358, rs1801133, rs1042522, rs5030858, rs28929474, rs121913529), escolhidos por cobertura das fontes e diversidade clínica. As coordenadas das variantes são GRCh38 (a correção de uma versão anterior em GRCh37, que fazia as chamadas manuais ao gnomAD retornarem vazio).
+
+O mesmo conjunto é medido em dois ambientes para quantificar o custo da containerização: execução local nativa (`results/local/`) e conteinerizada via Docker Compose (`results/docker/`). O script `plot_comparison.py` confronta os dois e gera as figuras comparativas `fig_cmp_*`.
+
 Todos os scripts estão no diretório `benchmark/`.
 
 
@@ -692,23 +700,30 @@ uvicorn app.main:app --reload --port 8000
 
 ```bash
 cd benchmark
-python run_benchmarks.py                           # todas as suítes
+python run_benchmarks.py                           # todas as suítes (grava em results/local)
 python run_benchmarks.py --suite latency           # suíte individual
 python run_benchmarks.py --suite exhaustion
 python run_benchmarks.py --suite errors
 python run_benchmarks.py --suite comparison
 python run_benchmarks.py --suite completeness
 python run_benchmarks.py --suite payload
-python run_benchmarks.py --url http://localhost:8000 --out results/
 ```
 
-Ao final, gerar todas as figuras:
+Para a comparação entre ambientes, rodar a suite duas vezes, uma com os serviços nativos e outra com `docker compose up`, gravando em diretórios separados:
 
 ```bash
-python plot_results.py
+python run_benchmarks.py --out results/local       # serviços nativos
+python run_benchmarks.py --out results/docker      # serviços conteinerizados
 ```
 
-As figuras são salvas em `results/figures/`.
+Ao final, gerar as figuras. As de um ambiente (`results/local` por padrão) e as comparativas local vs Docker:
+
+```bash
+python plot_results.py                             # figuras de um ambiente -> results/local/figures
+python plot_comparison.py                          # figuras comparativas   -> results/figures (fig_cmp_*)
+```
+
+Nas tabelas de saída das suítes abaixo, `results/` refere-se ao diretório do ambiente medido (`results/local/` por padrão; `results/docker/` na execução conteinerizada).
 
 
 ### Suíte 1: Latência (`suites/latency.py`)
@@ -717,7 +732,7 @@ As figuras são salvas em `results/figures/`.
 
 **Metodologia**:
 
-- Conjunto de teste fixo: genes MLH1, HBB, LDLR; variantes rs334, rs1800562, rs6025, rs1799853.
+- Conjunto de teste: os 10 genes e as 10 variantes de `suites/_targets.py`.
 - Fase cold: N=12 chamadas por alvo, Redis zerado via `FLUSHDB` antes de cada série, intervalo de 2 s entre chamadas para respeitar o rate limit do Ensembl (15 req/s).
 - Fase warm: N=20 chamadas por alvo com cache populado, intervalo de 0,3 s.
 - O backend retorna o header `X-Response-Time-Ms` (server-side), que é comparado com o tempo medido pelo cliente para isolar overhead de rede.
@@ -798,9 +813,7 @@ Para `/api/variant/*`:
 |---|---|
 | `results/errors.csv` | Uma linha por caso: endpoint, label, input, expected_status, actual_status, pass, elapsed_ms, detail. |
 
-**Figuras geradas**:
-
-- `fig_errors_matrix.png`: tabela colorida com resultado de cada teste. Verde para PASS, vermelho para FAIL. Mostra de forma direta a taxa de acerto do tratamento de erros.
+**Figura**: aposentada. A matriz de erros (`fig_errors_matrix.png`) era a única tabela entre as figuras e destoava do padrão gráfico das demais; a robustez passou a ser reportada apenas em texto, a partir de `errors.csv`. A função `fig_errors` segue no `plot_results.py` para referência, fora do `main()`.
 
 **Como interpretar**: todos os 14 casos devem passar (100% de acerto). Qualquer FAIL indica um bug de validação ou normalização de entrada. A ausência de linhas com status 5xx é o resultado mais importante: demonstra que a API é tolerante a entradas adversariais.
 
@@ -809,12 +822,22 @@ Para `/api/variant/*`:
 
 **O que valida**: o ganho de tempo que a ferramenta oferece em relação ao fluxo de consulta manual, em que o pesquisador acessa cada banco de dados separadamente.
 
-**Metodologia**: o script simula o fluxo manual chamando cada API externa em sequência, sem paralelismo e sem cache, para as quatro variantes de teste (rs334, rs1800562, rs6025, rs1799853). As chamadas são as mesmas que o backend GenVar faz internamente, mas executadas uma após a outra:
+**Metodologia**: o script simula o fluxo manual chamando cada API externa em sequência, sem paralelismo e sem cache, para as 10 variantes e os 10 genes de `suites/_targets.py`. As chamadas são as mesmas que o backend GenVar faz internamente, mas executadas uma após a outra.
+
+Para variantes (`comparison.csv`):
 
 1. Ensembl VEP: `GET /vep/human/id/{rsid}`.
 2. gnomAD: `POST /api` com query GraphQL para frequências.
 3. ClinVar: `GET /esearch.fcgi` + `GET /esummary.fcgi`.
 4. MyVariant.info: `GET /query?q={rsid}`.
+
+Para genes (`comparison_gene.csv`, via `_manual_gene`):
+
+1. Ensembl lookup: `GET /lookup/symbol/...` para o gene_id.
+2. Ensembl overlap: `GET /overlap/...` para as variantes do gene.
+3. gnomAD: restrição (constraint) do gene.
+4. UniProt: identificador da proteína.
+5. AlphaFold: estrutura predita.
 
 O tempo total sequencial (`sequential_api_ms`) é comparado com o tempo do endpoint GenVar sem cache (`genvar_uncached_ms`) e com cache (`genvar_cached_ms`).
 
@@ -833,11 +856,13 @@ O speedup total inclui uma estimativa de 900 s (15 minutos) de processamento hum
 | Arquivo | Conteúdo |
 |---|---|
 | `results/comparison.csv` | Uma linha por variante: tempos individuais de cada API, sequential_api_ms, genvar_uncached_ms, genvar_cached_ms, api_speedup, manual_total_s, total_speedup. |
+| `results/comparison_gene.csv` | Uma linha por gene: tempos das etapas do fluxo manual (lookup, overlap, gnomAD, UniProt, AlphaFold) e os tempos do GenVar. |
 
 **Figuras geradas**:
 
 - `fig_comparison_speedup.png`: barras agrupadas por variante mostrando `api_speedup` (ganho de paralelismo) e `total_speedup` (ganho total com estimativa humana). A diferença entre as duas barras evidencia o impacto do processamento humano.
 - `fig_comparison_breakdown.png`: barras empilhadas com o tempo de cada chamada manual (Ensembl, gnomAD, ClinVar search, ClinVar fetch, MyVariant.info), com um ponto preto sobreposto marcando o tempo total do GenVar. Permite ver visualmente o que o paralelismo elimina.
+- `fig_comparison_breakdown_gene.png`: leitura análoga por gene, com o fluxo decomposto em lookup e overlap no Ensembl, restrição no gnomAD, UniProt e AlphaFold. O ponto do GenVar fica próximo ou acima do topo da barra porque, além das mesmas chamadas, o backend agrega no servidor todas as variantes do gene para a distribuição posicional.
 
 **Como interpretar**: o `api_speedup` deve ser próximo do número de chamadas paralelas (quatro no caso das variantes), pois o GenVar executa todas ao mesmo tempo. Valores de `api_speedup` entre 2x e 4x são esperados. O `total_speedup` é muito maior (centenas de vezes) porque o denominador é o tempo do GenVar em segundos, enquanto o numerador inclui 15 minutos de processamento humano.
 
@@ -848,7 +873,7 @@ O speedup total inclui uma estimativa de 900 s (15 minutos) de processamento hum
 
 **Metodologia**: para cada resposta JSON, todos os campos de primeiro nível e um nível aninhado são contados. Um campo é considerado preenchido se não for `null`, não for uma lista vazia e não for uma string vazia. O score de completude é `filled / total * 100`.
 
-Alvos testados: MLH1, HBB, LDLR, RB1, VHL, MSH2 (genes); rs334, rs1800562, rs6025, rs1799853 (variantes).
+Alvos testados: os 10 genes e as 10 variantes de `suites/_targets.py`.
 
 **Arquivos de saída**:
 
@@ -895,13 +920,9 @@ Para genes: Ensembl lookup, UniProt e gnomAD constraint.
 | `results/payload.csv` | Uma linha por alvo com todas as métricas acima. |
 | `results/payload_per_api.csv` | Uma linha por combinação alvo × API: fields, bytes. |
 
-**Figuras geradas**:
+**Figuras**: aposentadas. As figuras de enriquecimento (`fig_enrichment_variant.png`, `fig_enrichment_gene.png`, `fig_enrichment_ratio.png`) foram retiradas porque a contagem bruta de campos por fonte não traduz valor informacional e induz leitura equivocada (sem o MyVariant.info, a contagem da GenVar para variantes fica abaixo da do ClinVar). A consolidação de fontes passou a ser reportada apenas em texto, a partir de `payload.csv`. A função `fig_enrichment` segue no `plot_results.py` para referência, fora do `main()`.
 
-- `fig_enrichment_variant.png`: barras agrupadas por variante, uma barra por API e uma para o GenVar. Mostra visualmente que o GenVar retorna mais campos do que qualquer fonte isolada.
-- `fig_enrichment_gene.png`: mesmo formato para genes.
-- `fig_enrichment_ratio.png`: barras com o enrichment ratio por endpoint. Valores acima de 3x indicam que o GenVar entrega três vezes mais campos do que a melhor API individual.
-
-**Como interpretar**: um enrichment ratio de 4x para variantes, por exemplo, significa que uma única chamada ao GenVar entrega quatro vezes mais campos estruturados do que a chamada mais rica entre as fontes individuais. Este é o argumento quantitativo central para a proposta de valor da ferramenta: integração e não simples redirecionamento.
+**Como interpretar**: o `enrichment_ratio` mede quantas vezes a resposta do GenVar tem mais campos do que a API individual mais rica. O dado continua em `payload.csv`, mas é interpretado com cautela: a contagem de campos varia muito com o que cada fonte devolve no momento e não corresponde linearmente ao valor para o usuário.
 
 
 ### Outputs completos da suite
@@ -913,10 +934,13 @@ Para genes: Ensembl lookup, UniProt e gnomAD constraint.
 | `exhaustion.csv` | Exaustão | Uma linha por chamada, com fase, taxa e concorrência. |
 | `errors.csv` | Erros | Um caso por linha com resultado esperado vs obtido. |
 | `comparison.csv` | Comparativo | Tempo manual vs GenVar e speedups por variante. |
+| `comparison_gene.csv` | Comparativo | Tempo manual vs GenVar por gene (etapas do fluxo manual). |
 | `completeness.csv` | Completude | Score de completude por alvo. |
 | `completeness_null_fields.csv` | Completude | Taxa de preenchimento por campo, ordenada crescente. |
 | `payload.csv` | Enriquecimento | Campos GenVar vs APIs individuais, enrichment ratio. |
 | `payload_per_api.csv` | Enriquecimento | Campos e bytes por API e alvo. |
+
+Figuras de um ambiente (`plot_results.py`, salvas em `results/local/figures/`):
 
 | Figura PNG | Suite | O que mostra |
 |---|---|---|
@@ -924,14 +948,27 @@ Para genes: Ensembl lookup, UniProt e gnomAD constraint.
 | `fig_latency_variant.png` | Latência | Cold vs warm para variantes. |
 | `fig_cache_speedup.png` | Latência | Fator de speedup do cache por endpoint. |
 | `fig_comparison_speedup.png` | Comparativo | API speedup e total speedup por variante. |
-| `fig_comparison_breakdown.png` | Comparativo | Tempo empilhado por API vs ponto GenVar. |
+| `fig_comparison_breakdown.png` | Comparativo | Tempo empilhado por API vs ponto GenVar (variante). |
+| `fig_comparison_breakdown_gene.png` | Comparativo | Tempo empilhado por etapa vs ponto GenVar (gene). |
 | `fig_exhaustion_concurrent.png` | Exaustão | Latência e erros vs nível de concorrência. |
 | `fig_exhaustion_sequential.png` | Exaustão | Latência média por taxa sequencial. |
 | `fig_completeness.png` | Completude | Completude percentual por alvo. |
-| `fig_enrichment_variant.png` | Enriquecimento | Campos por API vs GenVar para variantes. |
-| `fig_enrichment_gene.png` | Enriquecimento | Campos por API vs GenVar para genes. |
-| `fig_enrichment_ratio.png` | Enriquecimento | Enrichment ratio por endpoint. |
-| `fig_errors_matrix.png` | Erros | Tabela colorida com resultado de cada caso. |
+
+As figuras de enriquecimento (`fig_enrichment_*`) e a matriz de erros (`fig_errors_matrix.png`) foram aposentadas; as funções correspondentes seguem no `plot_results.py` fora do `main()`.
+
+Figuras comparativas local vs Docker (`plot_comparison.py`, salvas em `results/figures/`):
+
+| Figura PNG | O que mostra |
+|---|---|
+| `fig_cmp_latencia_gene.png` | Latência de gene (sem cache e com cache), local vs Docker. |
+| `fig_cmp_latencia_variante.png` | Latência de variante (sem cache e com cache), local vs Docker. |
+| `fig_cmp_cache.png` | Aceleração por cache por consulta, local vs Docker. |
+| `fig_cmp_concorrencia.png` | Latência sob rajadas concorrentes, local vs Docker. |
+| `fig_cmp_sequencial.png` | Latência por taxa sequencial (gene e variante), local vs Docker. |
+| `fig_cmp_speedup_variante.png` | Aceleração da paralelização por variante, local vs Docker. |
+| `fig_cmp_breakdown_variante.png` | Fluxo manual (host) e GenVar local vs Docker, por variante. |
+| `fig_cmp_breakdown_gene.png` | Fluxo manual (host) e GenVar local vs Docker, por gene (* genes de alto volume). |
+| `fig_cmp_completude.png` | Completude por consulta, local vs Docker (* sem resposta no Docker). |
 
 
 ## Notas técnicas sobre as APIs

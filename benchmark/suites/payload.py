@@ -18,21 +18,13 @@ import httpx
 from rich.console import Console
 from rich.table import Table
 
-TEST_VARIANTS = ["rs334", "rs1800562", "rs6025", "rs1799853"]
-TEST_GENES    = ["MLH1", "HBB", "LDLR"]
+from ._targets import GENES as TEST_GENES, VARIANTS as TEST_VARIANTS, VARIANT_COORDS
 
 ENSEMBL_VEP   = "https://rest.ensembl.org"
 GNOMAD_API    = "https://gnomad.broadinstitute.org/api"
 CLINVAR_API   = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 MYVARIANT_API = "https://myvariant.info/v1"
 UNIPROT_API   = "https://rest.uniprot.org"
-
-VARIANT_COORDS = {
-    "rs334":     ("11", 5227002,  "T", "A"),
-    "rs1800562": ("6",  26093141, "G", "A"),
-    "rs6025":    ("1",  169519049,"G", "A"),
-    "rs1799853": ("10", 94942290, "C", "T"),
-}
 
 GNOMAD_VARIANT_QUERY = """
 query V($id: String!, $ds: DatasetId!) {

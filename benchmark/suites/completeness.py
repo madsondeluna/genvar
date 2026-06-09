@@ -15,8 +15,7 @@ import httpx
 from rich.console import Console
 from rich.table import Table
 
-TEST_GENES = ["MLH1", "HBB", "LDLR", "RB1", "VHL", "MSH2"]
-TEST_VARIANTS = ["rs334", "rs1800562", "rs6025", "rs1799853"]
+from ._targets import GENES as TEST_GENES, VARIANTS as TEST_VARIANTS
 
 
 def _is_filled(value) -> bool:

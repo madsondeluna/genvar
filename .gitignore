@@ -23,4 +23,14 @@ dist/
 
 # OS
 .DS_Store
+._*
 Thumbs.db
+
+# Benchmark generated artifacts (regenerable from the tracked CSVs)
+benchmark/results/**/figures/
+benchmark/results/**/run_log.txt
+
+# Local runtime artifacts
+.coverage
+*.rdb
+*.bkp

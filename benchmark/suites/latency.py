@@ -13,8 +13,7 @@ import httpx
 from rich.console import Console
 from rich.table import Table
 
-TEST_GENES = ["MLH1", "HBB", "LDLR"]
-TEST_VARIANTS = ["rs334", "rs1800562", "rs6025", "rs1799853"]
+from ._targets import GENES as TEST_GENES, VARIANTS as TEST_VARIANTS
 N_COLD = 12
 N_WARM = 20
 COLD_DELAY_S = 2.0

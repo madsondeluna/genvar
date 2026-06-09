@@ -1,0 +1,15 @@
+endpoint,label,input,expected_status,actual_status,pass,elapsed_ms,detail
+gene,invalid_name,FAKEGENE123,404,404,True,1138.28,Gene not found: FAKEGENE123
+gene,special_chars,!@#$%^,422,422,True,4.43,"Invalid gene symbol: '!@'. Expected HGNC format (e.g. BRCA1, TP53)."
+gene,too_long,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,422,422,True,5.01,"Invalid gene symbol: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'. Expected HGNC format (e.g. BRCA1, T"
+gene,digits_only,123456,422,422,True,6.11,"Invalid gene symbol: '123456'. Expected HGNC format (e.g. BRCA1, TP53)."
+gene,lowercase_valid,mlh1,200,200,True,19.13,
+gene,mixed_case,mLh1,200,200,True,14.99,
+gene,empty_path,_,422,422,True,4.58,"Invalid gene symbol: '_'. Expected HGNC format (e.g. BRCA1, TP53)."
+gene,nonhuman_gene,ACTB_MOUSE,404,422,False,5.05,"Invalid gene symbol: 'ACTB_MOUSE'. Expected HGNC format (e.g. BRCA1, TP53)."
+variant,invalid_rsid,rs0,404,404,True,1102.61,Variant not found: rs0
+variant,no_rs_prefix,1234567,422,422,True,5.23,Invalid variant ID: '1234567'. Expected dbSNP rs ID (e.g. rs429358).
+variant,letters_in_rsid,rsABC,422,422,True,7.67,Invalid variant ID: 'rsABC'. Expected dbSNP rs ID (e.g. rs429358).
+variant,uppercase_rs,RS334,422,200,False,5.43,
+variant,too_long_rsid,rs99999999999999999999,422,404,False,1632.08,Variant not found: rs99999999999999999999
+variant,valid_known,rs334,200,200,True,5.24,
