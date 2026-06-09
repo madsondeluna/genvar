@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1060" viewBox="0 0 1080 1060" font-family="Helvetica, Arial, sans-serif"><rect width="1080" height="1060" fill="#ffffff"/><defs><marker id="arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,3.2 L0,6.4 z" fill="#555555"/></marker><marker id="arrS" markerWidth="9" markerHeight="9" refX="0.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M8,0 L0,3.2 L8,6.4 z" fill="#555555"/></marker></defs>
+<text x="530" y="38" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">GenVar — Arquitetura do sistema</text>
+<text x="530" y="58" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#666" text-anchor="middle">Aplicação web full-stack para exploração de genes e variantes</text>
+<rect x="240" y="170" width="560" height="200" rx="10" ry="10" fill="#eef4fc" stroke="#6c8ebf" stroke-width="1.8"/>
+<path d="M250,170 h540 a10,10 0 0 1 10,10 v20 h-560 v-20 a10,10 0 0 1 10,-10 z" fill="#6c8ebf"/>
+<text x="254" y="190" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#ffffff">FRONTEND  —  React 18 + Vite · nginx:alpine · porta 3000</text>
+<rect x="240" y="440" width="560" height="200" rx="10" ry="10" fill="#eef6ec" stroke="#82b366" stroke-width="1.8"/>
+<path d="M250,440 h540 a10,10 0 0 1 10,10 v20 h-560 v-20 a10,10 0 0 1 10,-10 z" fill="#82b366"/>
+<text x="254" y="460" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#ffffff">BACKEND  —  FastAPI / Uvicorn · python:3.12-slim · porta 8000</text>
+<rect x="240" y="710" width="560" height="300" rx="10" ry="10" fill="#f3eef7" stroke="#9673a6" stroke-width="1.8"/>
+<path d="M250,710 h540 a10,10 0 0 1 10,10 v20 h-560 v-20 a10,10 0 0 1 10,-10 z" fill="#9673a6"/>
+<text x="254" y="730" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#ffffff">FONTES DE DADOS PÚBLICAS (HTTPS)</text>
+<rect x="400" y="80" width="240" height="48" rx="12" ry="12" fill="#f5f5f5" stroke="#666666" stroke-width="1.6"/>
+<text x="520.0" y="100.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Usuário</text>
+<text x="520.0" y="116.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">navegador web</text>
+<rect x="255" y="218" width="167" height="130" rx="4" ry="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.6"/>
+<text x="338.5" y="263.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Páginas</text>
+<text x="338.5" y="279.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">HomePage · GenePage ·</text>
+<text x="338.5" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">VariantPage</text>
+<text x="338.5" y="311.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">(react-router)</text>
+<rect x="436" y="218" width="167" height="130" rx="4" ry="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.6"/>
+<text x="519.5" y="271.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Visualizações</text>
+<text x="519.5" y="287.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">Plotly.js · NGL (3D) ·</text>
+<text x="519.5" y="303.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">Ideogram</text>
+<rect x="617" y="218" width="167" height="130" rx="4" ry="4" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.6"/>
+<text x="700.5" y="279.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Cliente HTTP</text>
+<text x="700.5" y="295.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">axios → proxy /api</text>
+<rect x="255" y="488" width="167" height="130" rx="4" ry="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="338.5" y="541.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Rotas</text>
+<text x="338.5" y="557.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">GET /api/gene/{símbolo}</text>
+<text x="338.5" y="573.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">· GET /api/variant/{rs}</text>
+<rect x="436" y="488" width="167" height="130" rx="4" ry="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="519.5" y="533.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Orquestração</text>
+<text x="519.5" y="549.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">assíncrona</text>
+<text x="519.5" y="565.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">asyncio.gather</text>
+<text x="519.5" y="581.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">(paralelo) + agregação</text>
+<rect x="617" y="488" width="167" height="130" rx="4" ry="4" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="700.5" y="541.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Módulos de serviço</text>
+<text x="700.5" y="557.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">6 serviços, um por</text>
+<text x="700.5" y="573.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">fonte</text>
+<path d="M880,468.0 a85.0,8.0 0 0 1 170,0 v144 a85.0,8.0 0 0 1 -170,0 z" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<path d="M880,468.0 a85.0,8.0 0 0 0 170,0" fill="none" stroke="#d79b00" stroke-width="1.6"/>
+<text x="965.0" y="524.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Cache · Redis 7</text>
+<text x="965.0" y="540.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">read-through · TTL 1 h ·</text>
+<text x="965.0" y="556.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">chaves gene:v3 ·</text>
+<text x="965.0" y="572.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">variant:v2</text>
+<rect x="255" y="754" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="382.5" y="786.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Ensembl</text>
+<text x="382.5" y="802.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">REST · gene, VEP, overlap de variantes</text>
+<rect x="255" y="840" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="382.5" y="872.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">gnomAD</text>
+<text x="382.5" y="888.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">GraphQL · frequências e restrição</text>
+<rect x="255" y="926" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="382.5" y="958.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">ClinVar</text>
+<text x="382.5" y="974.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">E-utilities · significância clínica</text>
+<rect x="530" y="754" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="657.5" y="786.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">UniProt</text>
+<text x="657.5" y="802.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">REST · identificador da proteína</text>
+<rect x="530" y="840" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="657.5" y="872.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">AlphaFold</text>
+<text x="657.5" y="888.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">REST · estrutura 3D</text>
+<rect x="530" y="926" width="255" height="72" rx="4" ry="4" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.6"/>
+<text x="657.5" y="958.0" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">MyVariant.info</text>
+<text x="657.5" y="974.0" font-family="Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#222222" text-anchor="middle">REST · escores preditivos</text>
+<polyline points="520.0,128.0 520.0,170.0" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="520.0,370.0 520.0,440.0" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="457.4" y="395.0" width="125.2" height="18" rx="9" fill="#ffffff" stroke="#555555" stroke-width="0.8" opacity="0.95"/>
+<text x="520.0" y="408.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#333" text-anchor="middle">HTTP / JSON · /api</text>
+<polyline points="800.0,540.0 880.0,540.0" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)" marker-start="url(#arrS)"/>
+<rect x="819.0" y="530.0" width="42.0" height="18" rx="9" fill="#ffffff" stroke="#555555" stroke-width="0.8" opacity="0.95"/>
+<text x="840.0" y="543.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#333" text-anchor="middle">R / W</text>
+<polyline points="520.0,640.0 520.0,710.0" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="447.8" y="665.0" width="144.4" height="18" rx="9" fill="#ffffff" stroke="#555555" stroke-width="0.8" opacity="0.95"/>
+<text x="520.0" y="678.0" font-family="Helvetica, Arial, sans-serif" font-size="10.5" fill="#333" text-anchor="middle">requisições paralelas</text>
+<rect x="850" y="170" width="180" height="160" rx="8" fill="#ffffff" stroke="#bbbbbb" stroke-width="1.4"/>
+<text x="862" y="192" font-family="Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#222222">LEGENDA</text>
+<rect x="862" y="204" width="22" height="14" rx="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.2"/>
+<text x="892" y="215" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#222222">Camada de apresentação</text>
+<rect x="862" y="228" width="22" height="14" rx="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1.2"/>
+<text x="892" y="239" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#222222">Camada de aplicação</text>
+<rect x="862" y="252" width="22" height="14" rx="3" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.2"/>
+<text x="892" y="263" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#222222">Cache em memória</text>
+<rect x="862" y="276" width="22" height="14" rx="3" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.2"/>
+<text x="892" y="287" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#222222">Fontes de dados externas</text>
+<line x1="862" y1="307" x2="884" y2="307" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="892" y="311" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#222222">Fluxo de requisição</text>
+</svg>
