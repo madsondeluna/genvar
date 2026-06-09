@@ -16,7 +16,7 @@
 
 ## Descrição do projeto
 
-GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra dados de seis bancos públicos internacionais (Ensembl, gnomAD, ClinVar, AlphaFold, UniProt e MyVariant.info/dbNSFP) em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante ou gene de interesse.
+GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt) e um agregador de escores preditivos (MyVariant.info, sobre o dbNSFP) em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante ou gene de interesse.
 
 O sistema é voltado para pesquisadores, clínicos e estudantes das áreas de bioinformática, genética médica e medicina de precisão, permitindo a exploração de anotações funcionais, frequências populacionais, significado clínico, escores de patogenicidade, conservação evolutiva, predição de splicing e estrutura proteica de forma integrada e visualmente acessível.
 
@@ -60,6 +60,8 @@ Este projeto aplica práticas de engenharia de software (arquitetura em camadas,
 
 
 ## Bancos de dados e APIs integrados
+
+O sistema consome cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt), descritas nas subseções 1 a 5, e um agregador de escores preditivos, o MyVariant.info, que reúne o dbNSFP e outras fontes. A página de gene usa quatro bases (Ensembl, gnomAD, UniProt e AlphaFold); a de variante usa três (Ensembl, gnomAD e ClinVar) somadas ao MyVariant.info. No gene, a significância clínica do ClinVar chega pela resposta do Ensembl, sem chamada direta.
 
 ### 1. Ensembl REST API
 
@@ -182,7 +184,7 @@ Campos utilizados:
 
 **Nota técnica**: o filtro `reviewed:true` garante que apenas entradas Swiss-Prot (curadas manualmente) sejam retornadas, excluindo entradas TrEMBL (preditas automaticamente). O UniProt ID obtido é utilizado para consultar o AlphaFold.
 
-### 6. MyVariant.info (dbNSFP e múltiplas fontes)
+### Agregador de escores preditivos: MyVariant.info (dbNSFP e múltiplas fontes)
 
 - **Instituição**: BioThings, The Scripps Research Institute.
 - **URL**: https://myvariant.info/v1
