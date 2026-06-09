@@ -10,7 +10,7 @@ A correcao foi necessaria porque as coordenadas antigas estavam na montagem GRCh
 fazia a chamada manual ao gnomAD retornar vazio.
 
 Pre requisito: backend em execucao em http://localhost:8000.
-Uso: python 02_extrair_coordenadas.py
+Uso: python 02_extract_coordinates.py
 """
 import json
 import urllib.request

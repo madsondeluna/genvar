@@ -8,7 +8,7 @@ para variantes). Serve para confirmar que todos os alvos escolhidos tem cobertur
 fontes antes de rodar a bateria de benchmarks.
 
 Pre requisito: backend em execucao em http://localhost:8000.
-Uso: python 01_validar_conjunto_teste.py
+Uso: python 01_validate_test_set.py
 """
 import json
 import urllib.request

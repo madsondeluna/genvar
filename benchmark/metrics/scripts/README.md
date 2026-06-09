@@ -7,11 +7,11 @@ e das figuras em `../figures/`.
 
 ## Scripts desta pasta
 
-- `01_validar_conjunto_teste.py`: confere se os 10 genes e as 10 variantes do conjunto
+- `01_validate_test_set.py`: confere se os 10 genes e as 10 variantes do conjunto
   retornam dados completos do backend antes de rodar os benchmarks.
-- `02_extrair_coordenadas.py`: busca no backend as coordenadas GRCh38 das 10 variantes,
+- `02_extract_coordinates.py`: busca no backend as coordenadas GRCh38 das 10 variantes,
   no formato usado pela simulação de consulta manual ao gnomAD.
-- `03_aceleracao_cache.py`: calcula a aceleração por cache a partir de `latency_stats.csv`,
+- `03_cache_speedup.py`: calcula a aceleração por cache a partir de `latency_stats.csv`,
   usando a chamada mais lenta da fase fria como linha de base sem cache.
 
 ## Bateria de benchmarks (no repositório do projeto)

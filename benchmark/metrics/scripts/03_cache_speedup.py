@@ -10,7 +10,7 @@ Este script le results/latency_stats.csv e imprime, para cada alvo, o tempo sem 
 (coluna max da fase fria), o tempo com cache (coluna mean da fase quente) e a razao entre
 os dois, que e o fator de aceleracao reportado.
 
-Uso: python 03_aceleracao_cache.py [caminho_para_latency_stats.csv]
+Uso: python 03_cache_speedup.py [caminho_para_latency_stats.csv]
 """
 import csv
 import sys
