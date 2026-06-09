@@ -63,6 +63,23 @@ O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o ba
 - Histórico de buscas recentes armazenado em `localStorage`, com prefetch ao passar o mouse sobre exemplos da página inicial.
 
 
+## A aplicação
+
+As imagens abaixo mostram a interface do GenVar em uso, a partir de consultas reais à plataforma.
+
+![Página inicial do GenVar](docs/tela-inicial.png)
+
+**Página inicial.** Ponto de entrada único da plataforma, com dois campos de busca lado a lado: por símbolo de gene (nomenclatura HGNC) e por identificador de variante (rs ID do dbSNP), cada um com exemplos clicáveis de acesso rápido. O rodapé lista as cinco bases públicas integradas (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt).
+
+![Consulta de variante no GenVar](docs/exemplo-variante.png)
+
+**Consulta de variante (rs334, anemia falciforme).** (A) Cabeçalho com os metadados da variante (cromossomo, posição, alelos, consequência, troca de aminoácido e frequência global no gnomAD) e o painel "O que a variante muda", que compara a referência e a variante no DNA e na proteína. (B) Classificação clínica do ClinVar, com significado, status de revisão e a lista de condições associadas. (C) Predições de patogenicidade em gráfico radar, ao lado do detalhamento dos escores preditivos (SIFT, PolyPhen-2, CADD, REVEL, AlphaMissense, entre outros). (D) Continuação dos escores e início da distribuição geográfica das frequências. (E) Mapa global das frequências alélicas e gráfico de frequências por população do gnomAD.
+
+![Consulta de gene no GenVar](docs/exemplo-gene.png)
+
+**Consulta de gene (TP53).** (A) Cabeçalho com os metadados do gene (ID Ensembl, cromossomo, locus, fita, ID UniProt e tamanho) e o resumo de variantes por classificação clínica, com o ideograma do cromossomo. (B) Métricas de restrição do gnomAD (pLI, LOEUF, o/e LoF, o/e Missense) e a distribuição posicional das variantes classificadas ao longo do gene. (C) Estrutura proteica predita pelo AlphaFold em renderização tridimensional interativa (NGL), colorida por confiança. (D) Tabela de variantes patogênicas, com filtro, ordenação e exportação em CSV. (E) Tabela de variantes de significado incerto (VUS). (F) Tabela de variantes benignas.
+
+
 ## Bancos de dados e APIs integrados
 
 O sistema consome cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt), descritas nas subseções 1 a 5, e um agregador de escores preditivos, o MyVariant.info, que reúne o dbNSFP e outras fontes. A página de gene usa quatro bases (Ensembl, gnomAD, UniProt e AlphaFold); a de variante usa três (Ensembl, gnomAD e ClinVar) somadas ao MyVariant.info. No gene, a significância clínica do ClinVar chega pela resposta do Ensembl, sem chamada direta.
