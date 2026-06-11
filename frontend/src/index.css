@@ -13,6 +13,14 @@
   samp {
     @apply font-mono;
   }
+
+  /* Justifica blocos de texto corrido. Parágrafos de uma só linha (labels, números)
+     não são afetados visualmente porque justify só atua a partir da segunda linha. */
+  p {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
 }
 
 @layer components {
