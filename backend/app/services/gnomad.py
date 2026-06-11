@@ -30,14 +30,27 @@ async def get_variant_frequencies(
     dataset = dataset or settings.gnomad_dataset
     variant_id = f"{chrom}-{pos}-{ref}-{alt}"
 
+    # joint = gnomAD's published exome+genome combined frequency (what the browser shows).
+    # genome/exome are kept as fallbacks for variants present in only one sequencing type.
+    # The joint block exposes ac/an but no af, so af is derived as ac/an downstream.
     query = """
     query VariantFrequencies($variantId: String!, $dataset: DatasetId!) {
       variant(variantId: $variantId, dataset: $dataset) {
         variantId
+        rsids
         chrom
         pos
         ref
         alt
+        joint {
+          ac
+          an
+          populations {
+            id
+            ac
+            an
+          }
+        }
         genome {
           ac
           an
@@ -79,14 +92,17 @@ async def get_variant_frequencies(
     if not variant:
         return {}
 
-    # Prefer genome data, fall back to exome
-    source = variant.get("genome") or variant.get("exome")
+    # Prefer gnomAD's combined joint frequency (matches the browser); fall back to genome,
+    # then exome, for variants present in only one sequencing type.
+    source = variant.get("joint") or variant.get("genome") or variant.get("exome")
     if not source:
         return {}
 
-    global_af = source.get("af")
     global_ac = source.get("ac")
     global_an = source.get("an")
+    global_af = source.get("af")
+    if global_af is None and global_an:
+        global_af = global_ac / global_an if global_an > 0 else 0.0
 
     populations = []
     for pop in source.get("populations", []):
@@ -109,6 +125,7 @@ async def get_variant_frequencies(
         })
 
     return {
+        "rsids": variant.get("rsids") or [],
         "global_af": global_af,
         "global_ac": global_ac,
         "global_an": global_an,
