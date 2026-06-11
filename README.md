@@ -35,7 +35,7 @@ Este projeto aplica práticas de engenharia de software (arquitetura em camadas,
 O símbolo HGNC (HUGO Gene Nomenclature Committee) é o nome oficial do gene, como BRCA1 ou TP53. A consulta devolve, em uma única página:
 
 - Informações básicas: ID Ensembl, cromossomo, locus genômico, fita, biotipo, montagem.
-- Métricas de restrição evolutiva, que indicam o quanto o gene tolera mutações que o inativam: pLI (probabilidade de intolerância à perda de função, de 0 a 1), LOEUF (`oe_lof_upper`, limite superior da razão observado/esperado de perda de função; quanto menor, mais restrito o gene), o/e LoF e o/e Missense (razões observado/esperado para variantes de perda de função e de troca de aminoácido) e Z-score de LoF. Perda de função (LoF, loss-of-function) é a mutação que desativa o gene.
+- Métricas de restrição evolutiva, que indicam o quanto o gene tolera mutações que o inativam: LOEUF (`oe_lof_upper`, limite superior da razão observado/esperado de perda de função; quanto menor, mais restrito o gene), o/e LoF e o/e Missense (razões observado/esperado para variantes de perda de função e de troca de aminoácido) e Z-score de LoF. As barras seguem uma orientação única: vazia e verde para tolerante, cheia e vermelha para restrito. Perda de função (LoF, loss-of-function) é a mutação que desativa o gene. O pLI ainda é calculado no backend, mas a leitura principal é apresentada pelo LOEUF, mais estável para genes curtos.
 - Resumo de variantes em cinco categorias: total, patogênicas, VUS (Variant of Uncertain Significance, significado clínico incerto), benignas e sem classificação (campo `other`).
 - Ideograma cromossômico interativo (ideogram.js) com bandeamento G. O locus do gene aparece destacado por halo amarelo e um triângulo marcador, com as variantes classificadas coloridas por significado clínico.
 - Distribuição de variantes ao longo do gene em barras empilhadas com bins de 1 kb, incluindo variantes sem curadoria no ClinVar em cinza.
@@ -54,11 +54,11 @@ O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o ba
   - **Conservação evolutiva**: PhyloP (100 vertebrados), PhastCons (100 vertebrados), GERP++ RS.
   - **Splicing**: SpliceAI (delta score máximo), dbscSNV ADA, dbscSNV RF.
   - **Domínios proteicos InterPro** (banco de domínios e famílias de proteínas) e referências cruzadas: ID ClinVar, IDs COSMIC (catálogo de mutações somáticas em câncer), AF (frequência alélica) no 1000 Genomes e no ExAC (Exome Aggregation Consortium, predecessor do gnomAD).
-- Frequências alélicas populacionais do gnomAD (genoma, 9 populações principais).
+- Frequências alélicas populacionais do gnomAD (frequência joint, exoma e genoma combinados, 9 populações principais).
 - Mapa geográfico interativo com distribuição global das frequências.
 - Gráfico de barras de frequências por população em escala logarítmica.
 - Classificação clínica do ClinVar: significado, status de revisão, data, condições associadas.
-- Gráfico radar com veredito agregado (SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1).
+- Barras de patogenicidade por preditor (SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1), com veredito agregado e a contagem de preditores que indicam dano.
 - Ideograma cromossômico com a posição da variante destacada.
 - Histórico de buscas recentes armazenado em `localStorage`, com prefetch ao passar o mouse sobre exemplos da página inicial.
 
@@ -73,11 +73,11 @@ As imagens abaixo mostram a interface do GenVar em uso, a partir de consultas re
 
 ![Consulta de variante no GenVar](docs/exemplo-variante.png)
 
-**Consulta de variante (rs334, anemia falciforme).** (A) Cabeçalho com os metadados da variante (cromossomo, posição, alelos, consequência, troca de aminoácido e frequência global no gnomAD) e o painel "O que a variante muda", que compara a referência e a variante no DNA e na proteína. (B) Classificação clínica do ClinVar, com significado, status de revisão e a lista de condições associadas. (C) Predições de patogenicidade em gráfico radar, ao lado do detalhamento dos escores preditivos (SIFT, PolyPhen-2, CADD, REVEL, AlphaMissense, entre outros). (D) Continuação dos escores e início da distribuição geográfica das frequências. (E) Mapa global das frequências alélicas e gráfico de frequências por população do gnomAD.
+**Consulta de variante (rs334, anemia falciforme).** (A) Cabeçalho com os metadados da variante (cromossomo, posição, alelos, consequência, troca de aminoácido e frequência global no gnomAD) e o painel "O que a variante muda", que compara a referência e a variante no DNA e na proteína. (B) Classificação clínica do ClinVar, com significado, status de revisão e a lista de condições associadas. (C) Predições de patogenicidade em barras por preditor, ao lado do detalhamento dos escores preditivos (SIFT, PolyPhen-2, CADD, REVEL, AlphaMissense, entre outros). (D) Continuação dos escores e início da distribuição geográfica das frequências. (E) Mapa global das frequências alélicas e gráfico de frequências por população do gnomAD.
 
 ![Consulta de gene no GenVar](docs/exemplo-gene.png)
 
-**Consulta de gene (TP53).** (A) Cabeçalho com os metadados do gene (ID Ensembl, cromossomo, locus, fita, ID UniProt e tamanho) e o resumo de variantes por classificação clínica, com o ideograma do cromossomo. (B) Métricas de restrição do gnomAD (pLI, LOEUF, o/e LoF, o/e Missense) e a distribuição posicional das variantes classificadas ao longo do gene. (C) Estrutura proteica predita pelo AlphaFold em renderização tridimensional interativa (NGL), colorida por confiança. (D) Tabela de variantes patogênicas, com filtro, ordenação e exportação em CSV. (E) Tabela de variantes de significado incerto (VUS). (F) Tabela de variantes benignas.
+**Consulta de gene (TP53).** (A) Cabeçalho com os metadados do gene (ID Ensembl, cromossomo, locus, fita, ID UniProt e tamanho) e o resumo de variantes por classificação clínica, com o ideograma do cromossomo. (B) Métricas de restrição do gnomAD (LOEUF, Z-score de LoF, o/e LoF, o/e Missense) e a distribuição posicional das variantes classificadas ao longo do gene. (C) Estrutura proteica predita pelo AlphaFold em renderização tridimensional interativa (NGL), colorida por confiança. (D) Tabela de variantes patogênicas, com filtro, ordenação e exportação em CSV. (E) Tabela de variantes de significado incerto (VUS). (F) Tabela de variantes benignas.
 
 
 ## Bancos de dados e APIs integrados
@@ -98,7 +98,9 @@ Endpoints utilizados:
 |----------|-----------|
 | `GET /lookup/symbol/homo_sapiens/{symbol}` | Metadados do gene: ID Ensembl, cromossomo, locus, fita, biotipo, assembly. |
 | `GET /overlap/id/{gene_id}?feature=variation` | Lista de variantes sobrepostas ao gene, com consequência e significado clínico bruto. |
-| `GET /vep/human/id/{rsid}` | Variant Effect Predictor: anotação funcional completa, SIFT, PolyPhen, consequência molecular, troca de aminoácido. |
+| `GET /vep/human/id/{rsid}` | Variant Effect Predictor: anotação funcional completa, SIFT, PolyPhen, consequência molecular, troca de aminoácido. A query inclui `canonical=1&mane=1` para a seleção priorizar o transcrito MANE Select / canônico. |
+
+**Nota técnica (rsID multialélico)**: o VEP devolve um bloco de consequência por alelo alternativo. Para um rsID multialélico (por exemplo rs334 = T/A/C/G), o sistema mantém o bloco de SIFT/PolyPhen por alelo e resolve qual alternativo exibir consultando o gnomAD: prefere o alelo cujo registro contém o rsID consultado, com desempate pela maior frequência global. O mesmo alelo é usado nas frequências, nas predições e na troca de aminoácido, evitando misturar o dado de um alelo com o de outro. As chamadas ao Ensembl ainda têm retentativa com backoff para os erros transitórios 429 e 5xx.
 
 ### 2. gnomAD GraphQL API
 
@@ -106,14 +108,14 @@ Endpoints utilizados:
 - **URL**: https://gnomad.broadinstitute.org/api
 - **Tipo**: GraphQL (linguagem de consulta de APIs em que o cliente especifica os campos que quer, alternativa ao REST).
 - **Autenticação**: pública.
-- **Dataset**: gnomAD r4 (genoma).
+- **Dataset**: gnomAD r4. As frequências usam o campo `joint` (exoma e genoma combinados, o mesmo que o navegador do gnomAD exibe), com queda para `genome` e depois `exome` quando o `joint` não existe.
 
 Queries utilizadas:
 
 | Query | Descrição |
 |-------|-----------|
-| `variant(variantId, dataset)` | Frequências alélicas por população (AC, AN, AF calculado como AC/AN). |
-| `gene(gene_symbol, reference_genome)` | Métricas de restrição evolutiva do gene. |
+| `variant(variantId, dataset)` | Frequências alélicas combinadas por população (`joint.ac`, `joint.an`, AF calculado como AC/AN) e `rsids` da variante. |
+| `gene(gene_symbol, reference_genome)` | Métricas de restrição evolutiva do gene (anotadas a partir do constraint v4.1.1 no índice GRCh38). |
 
 Populações retornadas e exibidas:
 
@@ -240,11 +242,11 @@ A aplicação adota uma arquitetura em três camadas, conteinerizada em três se
 
 ![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
 
-**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v2`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
+**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v3`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
 
 ![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
 
-**Figura 2. Ciclo de vida da requisição `/api/gene/{símbolo}`.** O fluxograma acompanha uma chamada do início ao fim no servidor. O navegador emite `GET /api/gene/{símbolo}` e o backend valida o símbolo. A primeira decisão consulta o Redis (Em cache?): em caso de acerto (hit), a resposta sai do cache em cerca de 16 ms, com entrega imediata, encerrando o fluxo; em caso de falha (miss), a requisição prossegue. A etapa seguinte é sequencial e obrigatória antes do paralelismo: o lookup no Ensembl converte o símbolo no `gene_id`. De posse do `gene_id`, o `asyncio.gather` dispara três chamadas em paralelo, o overlap de variantes no Ensembl, a restrição (constraint) do gene no gnomAD e o identificador da proteína no UniProt. A chamada ao AlphaFold (estrutura tridimensional) é condicional e só ocorre se o UniProt devolver um identificador. Concluídas as chamadas, o servidor agrega, classifica e prioriza as variantes, grava o resultado no cache (TTL 1 h) montando um JSON único e devolve a resposta ao navegador. A rota `/api/variant/{rs}` segue o mesmo padrão, acrescentando as chamadas ao ClinVar (E-utilities) e ao MyVariant.info (escores preditivos), omitidas no diagrama por clareza.
+**Figura 2. Ciclo de vida da requisição `/api/gene/{símbolo}`.** O fluxograma acompanha uma chamada do início ao fim no servidor. O navegador emite `GET /api/gene/{símbolo}` e o backend valida o símbolo. A primeira decisão consulta o Redis (Em cache?): em caso de acerto (hit), a resposta sai do cache em cerca de 16 ms, com entrega imediata, encerrando o fluxo; em caso de falha (miss), a requisição prossegue. A etapa seguinte é sequencial e obrigatória antes do paralelismo: o lookup no Ensembl converte o símbolo no `gene_id`. De posse do `gene_id`, o `asyncio.gather` dispara três chamadas em paralelo, o overlap de variantes no Ensembl, a restrição (constraint) do gene no gnomAD e o identificador da proteína no UniProt. A chamada ao AlphaFold (estrutura tridimensional) é condicional e só ocorre se o UniProt devolver um identificador. Concluídas as chamadas, o servidor agrega, classifica e prioriza as variantes, grava o resultado no cache (TTL 1 h, exceto quando a busca de variantes no Ensembl falhou, para não fixar um resultado vazio durante uma instabilidade) montando um JSON único e devolve a resposta ao navegador. A rota `/api/variant/{rs}` segue o mesmo padrão, acrescentando as chamadas ao ClinVar (E-utilities) e ao MyVariant.info (escores preditivos), omitidas no diagrama por clareza.
 
 Os passos abaixo descrevem os mesmos fluxos no nível do código.
 
@@ -261,21 +263,21 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 6. Com o UniProt ID: `alphafold.get_prediction(uniprot_id)` retorna `pdbUrl` e `paeImageUrl`.
 7. `classify_clinical_significance()` classifica variantes em pathogenic, VUS, benign e other. Todas as quatro listas são devolvidas (truncadas em 500 por categoria).
 8. `GeneResponse` (Pydantic v2) valida e serializa o resultado.
-9. `cache_set(TTL 3600s)` armazena no Redis.
+9. `cache_set(TTL 3600s)` armazena no Redis, exceto quando a busca de variantes falhou (não cacheia resultado degradado).
 10. Frontend renderiza via TanStack Query, com cache client-side adicional e `staleTime` de 10 minutos.
 
 **Fluxo de uma requisição de variante:**
 
 1. Frontend envia `GET /api/variant/rs429358`.
 2. Backend valida o rs ID via `validate_rsid()` (regex `^rs\d+$`).
-3. Verifica cache Redis com chave versionada `variant:v2:rs429358`.
-4. Se cache miss: `ensembl.get_vep_annotation()`, sequencial (necessário para obter chrom/pos/ref/alt).
-5. Em paralelo via `asyncio.gather()`:
-   - `gnomad.get_variant_frequencies(chrom, pos, ref, alt)`: frequências por população.
+3. Verifica cache Redis com chave versionada `variant:v3:rs429358`.
+4. Se cache miss: `ensembl.get_vep_annotation()`, sequencial (necessário para obter chrom/pos, o alelo de referência e a lista de alelos alternativos candidatos, mais a consequência por alelo).
+5. Resolve o alelo alternativo a exibir consultando o gnomAD para cada candidato e escolhendo o que casa com o rsID (desempate por frequência global).
+6. Em paralelo via `asyncio.gather()`:
    - `clinvar.get_variant_clinvar(rsid)`: busca em lote e seleção do VCV mais abrangente.
-   - `myvariant.get_variant_annotations(rsid, chrom, pos, ref, alt)`: dbNSFP completo.
-6. `VariantResponse` com mais de 40 campos serializados.
-7. `cache_set(TTL 3600s)` armazena no Redis.
+   - `myvariant.get_variant_annotations(rsid, chrom, pos, ref, alt)`: dbNSFP completo para o alelo resolvido.
+7. `VariantResponse` com mais de 40 campos serializados, com SIFT/PolyPhen e troca de aminoácido do mesmo alelo resolvido.
+8. `cache_set(TTL 3600s)` armazena no Redis.
 
 
 ## Tecnologias utilizadas
@@ -328,15 +330,15 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | `ChromosomeIdeogram` | Ideograma horizontal GRCh38 com bandeamento G | Locus do gene, variantes classificadas ou posição da variante única | ideogram.js |
 | `GeographicVariantMap` | Mapa mundial (scattergeo) | Frequências alélicas por população (gnomAD) | Plotly.js |
 | `FrequencyBarChart` | Barras em escala log | AC, AN e AF por população (gnomAD) | Plotly.js |
-| `PredictionScoresRadar` | Radar polar | SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1 | Plotly.js |
+| `PredictionScoresRadar` | Barras horizontais por preditor | SIFT, PolyPhen-2, CADD, REVEL normalizados de 0 a 1, com veredito e contagem de dano | CSS nativo |
 | `PredictionDetails` | Grupos de cartões coloridos | CADD, REVEL, AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN, PhyloP, PhastCons, GERP++, SpliceAI, dbscSNV, InterPro, COSMIC | React, sem dependência de chart |
 | `GeneLocusHeatmap` | Barras empilhadas | Distribuição de variantes em bins de 1 kb (4 categorias) | Plotly.js |
-| `ConstraintMetrics` | Gauges e barras de progresso | pLI, LOEUF, o/e LoF, o/e Missense (gnomAD) | CSS nativo |
+| `ConstraintMetrics` | Gauge do LOEUF e barras unificadas de restrição | LOEUF, Z-score de LoF, o/e LoF, o/e Missense (gnomAD) | CSS nativo |
 | `ProteinViewer` | Visualizador 3D interativo | Estrutura AlphaFold (PDB) colorida por pLDDT, representações Cartoon, Superfície, Bola e Bastão, Fita | NGL |
 | `VariantTable` | Tabela com ordenação, filtro, paginação e exportação CSV | Lista de variantes classificadas por categoria clínica | React |
 | `SignificanceTag` | Badge colorido | Classificação ClinVar unificada | React |
 
-**Normalização dos escores de patogenicidade no gráfico radar:**
+**Normalização dos escores de patogenicidade nas barras:**
 
 | Escore | Direção original | Normalização para 0 a 1 (0 = benigno, 1 = patogênico) |
 |--------|-----------------|-------------------------------------------------------|
@@ -1046,7 +1048,7 @@ Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_RE
 6. **AlphaFold**: o endpoint retorna array. `[0]` corresponde ao modelo canônico.
 7. **MyVariant.info**: preferir HGVS genômico (`chr{chr}:g.{pos}{ref}>{alt}`) quando há coordenadas do VEP. Em caso de falha, o sistema recorre à busca por `dbsnp.rsid`.
 
-As chaves de cache são versionadas (`gene:v3:`, `variant:v2:`) para invalidar respostas antigas após mudanças no schema.
+As chaves de cache são versionadas (`gene:v3:`, `variant:v3:`) para invalidar respostas antigas após mudanças no schema.
 
 
 ## Licença
