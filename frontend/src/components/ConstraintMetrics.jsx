@@ -154,6 +154,15 @@ export default function ConstraintMetrics({ data }) {
         doença. Métricas calculadas pelo gnomAD (r4).
       </p>
 
+      <div className="mb-4 rounded-md bg-gray-50 border border-gray-200 p-3">
+        <p className="text-xs text-gray-700">
+          <span className="font-semibold">O que é LoF:</span> sigla de loss of function (perda de
+          função). É uma mutação que inativa o gene, fazendo-o parar de produzir sua proteína normal.
+          Genes em que perder a função causa doença tendem a acumular poucas variantes LoF na
+          população saudável.
+        </p>
+      </div>
+
       <DirectionScale />
 
       <div className="mb-5">
