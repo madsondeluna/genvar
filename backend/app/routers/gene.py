@@ -83,7 +83,8 @@ async def get_gene_data(gene_symbol: str):
     )
 
     # Handle exceptions from gather
-    if isinstance(variants, Exception):
+    variants_failed = isinstance(variants, Exception)
+    if variants_failed:
         variants = []
     if isinstance(constraint, Exception):
         constraint = {}
@@ -163,5 +164,8 @@ async def get_gene_data(gene_symbol: str):
         alphafold_pae_url=alphafold_data.get("pae_image_url") if alphafold_data else None,
     )
 
-    cache_set(cache_key, result.model_dump())
+    # Don't cache a degraded result: if the Ensembl variant fetch failed transiently, caching
+    # the empty list would pin "no variants" for the whole TTL even after Ensembl recovers.
+    if not variants_failed:
+        cache_set(cache_key, result.model_dump())
     return result

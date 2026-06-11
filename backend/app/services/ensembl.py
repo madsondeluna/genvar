@@ -1,3 +1,4 @@
+import asyncio
 import httpx
 from typing import Dict, Any, List, Optional
 from fastapi import HTTPException
@@ -7,12 +8,37 @@ BASE_URL = "https://rest.ensembl.org"
 # Ensembl REST requires Accept, not Content-Type, for response negotiation
 HEADERS = {"Accept": "application/json"}
 TIMEOUT = 30.0
+# Ensembl REST is intermittently flaky (transient 5xx and 429 rate limits); a single hiccup
+# should not blank the whole gene page, so transient failures are retried with backoff.
+RETRY_STATUSES = {429, 500, 502, 503, 504}
+MAX_RETRIES = 3
+
+
+async def _ensembl_get(
+    client: httpx.AsyncClient, url: str, *, params: dict | None = None, timeout: float = TIMEOUT
+) -> httpx.Response:
+    response = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            response = await client.get(url, headers=HEADERS, timeout=timeout, params=params)
+        except (httpx.TimeoutException, httpx.TransportError):
+            if attempt == MAX_RETRIES - 1:
+                raise
+            await asyncio.sleep(0.5 * 2 ** attempt)
+            continue
+        if response.status_code in RETRY_STATUSES and attempt < MAX_RETRIES - 1:
+            retry_after = response.headers.get("Retry-After")
+            delay = float(retry_after) if retry_after and retry_after.isdigit() else 0.5 * 2 ** attempt
+            await asyncio.sleep(min(delay, 5.0))
+            continue
+        return response
+    return response
 
 
 async def get_gene_info(gene_symbol: str) -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
         url = f"{BASE_URL}/lookup/symbol/homo_sapiens/{gene_symbol}"
-        response = await client.get(url, headers=HEADERS, timeout=TIMEOUT)
+        response = await _ensembl_get(client, url)
 
         if response.status_code == 400:
             raise HTTPException(status_code=404, detail=f"Gene not found: {gene_symbol}")
@@ -37,7 +63,7 @@ async def get_gene_variants(gene_id: str, limit: int | None = None) -> List[Dict
     async with httpx.AsyncClient() as client:
         url = f"{BASE_URL}/overlap/id/{gene_id}"
         # feature=variation must be a query param, not embedded in the URL string
-        response = await client.get(url, headers=HEADERS, timeout=60.0, params={"feature": "variation"})
+        response = await _ensembl_get(client, url, params={"feature": "variation"}, timeout=60.0)
 
         if response.status_code == 404:
             return []
@@ -92,11 +118,8 @@ async def get_vep_annotation(rsid: str) -> Optional[Dict[str, Any]]:
         url = f"{BASE_URL}/vep/human/id/{rsid}"
         # canonical/mane flags let _tc_rank prefer the MANE Select / canonical transcript
         # instead of an arbitrary protein_coding one when a gene has many transcripts.
-        response = await client.get(
-            url,
-            headers=HEADERS,
-            timeout=TIMEOUT,
-            params={"content-type": "application/json", "canonical": 1, "mane": 1},
+        response = await _ensembl_get(
+            client, url, params={"content-type": "application/json", "canonical": 1, "mane": 1}
         )
 
         if response.status_code in (400, 404):
