@@ -117,7 +117,7 @@
     will-change: transform;
   }
 
-  /* rodapé fixo, o espelho da navbar */
+  /* rodapé fixo, o espelho da navbar: entra pelo mesmo scroll, vindo de baixo */
   .app-footer {
     position: fixed;
     bottom: 0;
@@ -125,6 +125,23 @@
     right: 0;
     border-top: var(--hairline) solid var(--border);
     background-color: var(--bg);
+  }
+
+  .app-footer-reveal {
+    transition:
+      transform var(--duration-5) var(--ease-out-soft),
+      opacity var(--duration-5) var(--ease-out-soft);
+  }
+
+  .app-footer-reveal[data-visible='false'] {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .app-footer-reveal[data-visible='true'] {
+    transform: translateY(0);
+    opacity: 1;
   }
 
   /* barra de modo, como no template da linguagem; --muted no lugar de

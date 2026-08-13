@@ -5,6 +5,7 @@ import { Search, Dna, Activity, Clock, X } from 'lucide-react'
 import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import BrandMorphNav from '../components/BrandMorphNav'
+import { useScrolled } from '../hooks/useScrolled'
 
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
 const VARIANT_EXAMPLES = ['rs334', 'rs1800562', 'rs6025', 'rs1799853']
@@ -51,6 +52,7 @@ const SHOWCASE = [
 
 export default function HomePage() {
   const heroSlotRef = useRef(null)
+  const scrolled = useScrolled()
   const [geneInput, setGeneInput] = useState('')
   const [variantInput, setVariantInput] = useState('')
   const navigate = useNavigate()
@@ -302,7 +304,7 @@ export default function HomePage() {
 
       </div>
 
-      <footer className="app-footer">
+      <footer className="app-footer app-footer-reveal" data-visible={String(scrolled)}>
         <div className="max-w-lg mx-auto px-24 py-12 flex items-center justify-center gap-24 flex-wrap">
           <span className="text-12 text-muted mono flex items-center justify-center gap-16 flex-wrap">
             <a

@@ -1,4 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useScrolled } from '../hooks/useScrolled'
 
 // Um único bloco de marca que atravessa dois estados: no topo da página ele
 // aparece grande, alinhado ao hero; ao rolar, ele encolhe e assenta no centro
@@ -10,7 +12,7 @@ const THRESHOLD = 8
 
 export default function BrandMorphNav({ heroSlotRef }) {
   const brandRef = useRef(null)
-  const [scrolled, setScrolled] = useState(false)
+  const scrolled = useScrolled(THRESHOLD)
   const [offset, setOffset] = useState(null)
 
   // mede a distância entre a posição de repouso (centro da barra) e o slot do
@@ -34,15 +36,6 @@ export default function BrandMorphNav({ heroSlotRef }) {
     return () => window.removeEventListener('resize', measure)
   }, [heroSlotRef])
 
-  useEffect(() => {
-    function onScroll() {
-      setScrolled(window.scrollY > THRESHOLD)
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   const atHero = !scrolled && offset
 
   return (
@@ -52,9 +45,9 @@ export default function BrandMorphNav({ heroSlotRef }) {
       aria-label="Principal"
     >
       <div className="max-w-xl mx-auto px-24 py-12 flex items-center justify-center">
-        <a
+        <Link
           ref={brandRef}
-          href="/"
+          to="/"
           className="brand-morph flex items-center gap-8 text-14 text-text"
           style={
             atHero
@@ -64,7 +57,7 @@ export default function BrandMorphNav({ heroSlotRef }) {
         >
           <img src="/brand/genvar-mark.svg" alt="Marca do GenVar" className="w-24 h-24" />
           GenVar Dashboard
-        </a>
+        </Link>
       </div>
     </nav>
   )
