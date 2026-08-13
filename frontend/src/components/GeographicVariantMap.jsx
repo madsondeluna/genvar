@@ -1,14 +1,10 @@
+import { useMemo } from 'react'
 import Plot from 'react-plotly.js'
+import { chartColors, baseLayout, withAlpha, populationColor, CHART_FONT } from '../utils/chartTheme'
 
-// Blue-to-red colorscale: low frequency = blue, high frequency = red
-const FREQ_COLORSCALE = [
-  [0,    '#DBEAFE'], // blue-100
-  [0.15, '#3B82F6'], // blue-500
-  [0.4,  '#8B5CF6'], // violet-500
-  [0.65, '#F59E0B'], // amber-500
-  [0.85, '#EF4444'], // red-500
-  [1,    '#991B1B'], // red-800
-]
+// Cor identifica a população (slots --chart-1..8, em sequência); o tamanho
+// carrega a frequência (escala log). Bolhas de vidro: preenchimento translúcido
+// com borda sólida da mesma cor.
 
 const POP_COORDS = {
   AFR: { lat: 0,  lon: 20  },
@@ -35,103 +31,97 @@ const POP_NAMES = {
 }
 
 export default function GeographicVariantMap({ frequencies }) {
-  if (!frequencies || frequencies.length === 0) {
+  const built = useMemo(() => {
+    if (!frequencies || frequencies.length === 0) return null
+    const c = chartColors()
+
+    const lats = [], lons = [], texts = [], sizes = [], popLabels = []
+    const fills = [], edges = []
+
+    for (const pop of frequencies) {
+      const code = pop.population.toUpperCase()
+      const coords = POP_COORDS[code]
+      if (!coords) continue
+
+      const af = pop.allele_frequency
+      lats.push(coords.lat)
+      lons.push(coords.lon)
+      popLabels.push(code)
+      const color = populationColor(code, c)
+      fills.push(withAlpha(color, 0.45))
+      edges.push(color)
+      texts.push(
+        `<b>${POP_NAMES[code] || pop.population_name}</b> (${code})<br>` +
+        `Frequência alélica: ${af.toExponential(3)}<br>` +
+        `AC: ${pop.allele_count.toLocaleString('pt-BR')} / AN: ${pop.allele_number.toLocaleString('pt-BR')}`
+      )
+      // Marker size proportional to log frequency, minimum 12
+      const logAf = af > 0 ? Math.max(Math.log10(af) + 6, 0) : 0
+      sizes.push(Math.max(12, logAf * 12))
+    }
+
+    const plotData = [
+      {
+        type: 'scattergeo',
+        mode: 'markers+text',
+        lat: lats,
+        lon: lons,
+        text: popLabels,
+        customdata: texts,
+        hovertemplate: '%{customdata}<extra></extra>',
+        textposition: 'top center',
+        textfont: { family: CHART_FONT, size: 9, color: c.inkMuted },
+        marker: {
+          size: sizes,
+          color: fills,
+          line: { color: edges, width: 1.5 },
+        },
+      },
+    ]
+
+    const layout = {
+      ...baseLayout(c),
+      geo: {
+        scope: 'world',
+        projection: { type: 'natural earth' },
+        showland: true,
+        landcolor: c.dim,
+        showocean: true,
+        oceancolor: c.surface,
+        showcoastlines: true,
+        coastlinecolor: c.border,
+        showframe: false,
+        bgcolor: c.surface,
+        showlakes: false,
+        showcountries: true,
+        countrycolor: c.border,
+      },
+      margin: { l: 0, r: 60, t: 10, b: 0 },
+    }
+
+    return { plotData, layout }
+  }, [frequencies])
+
+  if (!built) {
     return (
-      <div className="card-flat">
-        <h3 className="section-title">Distribuição geográfica</h3>
-        <p className="text-sm text-gray-500">Sem dados populacionais disponíveis.</p>
+      <div className="card">
+        <h3 className="section-title mb-8">Distribuição geográfica</h3>
+        <div className="empty">Sem dados populacionais disponíveis.</div>
       </div>
     )
   }
 
-  const lats = [], lons = [], afs = [], texts = [], sizes = [], popLabels = []
-
-  for (const pop of frequencies) {
-    const code = pop.population.toUpperCase()
-    const coords = POP_COORDS[code]
-    if (!coords) continue
-
-    const af = pop.allele_frequency
-    lats.push(coords.lat)
-    lons.push(coords.lon)
-    afs.push(af)
-    popLabels.push(code)
-    texts.push(
-      `<b>${POP_NAMES[code] || pop.population_name}</b> (${code})<br>` +
-      `Frequência alélica: ${af.toExponential(3)}<br>` +
-      `AC: ${pop.allele_count.toLocaleString('pt-BR')} / AN: ${pop.allele_number.toLocaleString('pt-BR')}`
-    )
-    // Marker size proportional to log frequency, minimum 12
-    const logAf = af > 0 ? Math.max(Math.log10(af) + 6, 0) : 0
-    sizes.push(Math.max(12, logAf * 12))
-  }
-
-  const plotData = [
-    {
-      type: 'scattergeo',
-      mode: 'markers+text',
-      lat: lats,
-      lon: lons,
-      text: popLabels,
-      customdata: texts,
-      hovertemplate: '%{customdata}<extra></extra>',
-      textposition: 'top center',
-      textfont: { family: 'Ubuntu', size: 9, color: '#374151' },
-      marker: {
-        size: sizes,
-        color: afs,
-        colorscale: FREQ_COLORSCALE,
-        showscale: true,
-        colorbar: {
-          title: { text: 'AF', font: { family: 'Ubuntu', size: 11 } },
-          tickfont: { family: 'Ubuntu', size: 9 },
-          thickness: 12,
-          len: 0.7,
-        },
-        line: { color: 'white', width: 1.5 },
-        opacity: 0.9,
-      },
-    },
-  ]
-
-  const layout = {
-    geo: {
-      scope: 'world',
-      projection: { type: 'natural earth' },
-      showland: true,
-      landcolor: '#F3F4F6',
-      showocean: true,
-      oceancolor: '#EFF6FF',
-      showcoastlines: true,
-      coastlinecolor: '#D1D5DB',
-      showframe: false,
-      bgcolor: 'white',
-      showlakes: false,
-      showcountries: true,
-      countrycolor: '#E5E7EB',
-    },
-    margin: { l: 0, r: 60, t: 10, b: 0 },
-    paper_bgcolor: 'white',
-    plot_bgcolor: 'white',
-    font: { family: 'Ubuntu', color: '#171717' },
-    hoverlabel: {
-      bgcolor: 'white',
-      bordercolor: '#D4D4D4',
-      font: { family: 'Ubuntu', size: 12, color: '#000000' },
-      align: 'left',
-    },
-  }
-
   return (
-    <div className="card-flat">
-      <h3 className="section-title">Distribuição geográfica</h3>
-      <p className="text-xs text-gray-600 mb-2">
-        Tamanho do marcador proporcional à frequência alélica (escala log). Cor: azul (rara) a vermelho (comum).
-        Passe o mouse sobre cada população para detalhes.
+    <div className="card">
+      <h3 className="section-title mb-8">Distribuição geográfica</h3>
+      <p className="text-12 text-muted mb-8">
+        Cor identifica a população, a mesma do gráfico de frequências abaixo. Tamanho do marcador
+        proporcional à frequência alélica (escala log). Passe o mouse sobre cada população para
+        detalhes.
       </p>
       <Plot
-        data={plotData}
-        layout={layout}
+        data={built.plotData}
+        layout={built.layout}
         config={{ responsive: true, displayModeBar: false }}
         style={{ width: '100%', height: '380px' }}
       />

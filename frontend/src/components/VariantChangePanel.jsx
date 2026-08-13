@@ -9,36 +9,44 @@ const KIND_LABEL = {
   frameshift: 'Mudança de matriz de leitura (frameshift)',
 }
 
+// Severidade usa status: warning para troca, critical para truncagem, good para sinônima.
 const KIND_TONE = {
-  missense: 'amber',
-  nonsense: 'red',
-  synonymous: 'green',
-  frameshift: 'red',
+  missense: 'warning',
+  nonsense: 'critical',
+  synonymous: 'good',
+  frameshift: 'critical',
 }
 
-const TONES = {
-  neutral: 'bg-gray-50 border-gray-200 text-gray-900',
-  amber: 'bg-amber-50 border-amber-200 text-amber-800',
-  red: 'bg-red-50 border-red-200 text-red-800',
-  green: 'bg-green-50 border-green-200 text-green-800',
+const TONE_CLASS = {
+  neutral: 'tint-neutral',
+  warning: 'tint-warning',
+  critical: 'tint-critical',
+  good: 'tint-good',
+}
+
+const TONE_INK = {
+  neutral: 'var(--text)',
+  warning: 'var(--state-warning)',
+  critical: 'var(--state-critical)',
+  good: 'var(--state-good)',
 }
 
 function Box({ caption, value, sub, tone = 'neutral' }) {
   return (
-    <div className={`flex-1 min-w-[120px] rounded-md border p-3 ${TONES[tone]}`}>
-      <p className="text-xs uppercase tracking-wide opacity-70 mb-1">{caption}</p>
-      <p className="text-lg font-bold tracking-tight font-mono">{value}</p>
-      {sub && <p className="text-xs opacity-80 mt-0.5">{sub}</p>}
+    <div className={`flex-1 rounded-media border p-12 ${TONE_CLASS[tone]}`} style={{ minWidth: 'calc(var(--photo-sm) * 1.25)' }}>
+      <p className="label mb-4">{caption}</p>
+      <p className="text-18 font-medium mono" style={{ color: TONE_INK[tone] }}>{value}</p>
+      {sub && <p className="text-12 text-muted mt-2">{sub}</p>}
     </div>
   )
 }
 
 function ChangeRow({ refValue, refSub, altValue, altSub, altTone }) {
   return (
-    <div className="flex items-stretch gap-2">
+    <div className="flex items-stretch gap-8">
       <Box caption="Referência" value={refValue} sub={refSub} tone="neutral" />
-      <div className="flex items-center text-gray-400" aria-hidden="true">
-        <ArrowRight className="w-5 h-5" />
+      <div className="flex items-center text-muted" aria-hidden="true">
+        <ArrowRight className="w-20 h-20" />
       </div>
       <Box caption="Variante" value={altValue} sub={altSub} tone={altTone} />
     </div>
@@ -51,24 +59,24 @@ export default function VariantChangePanel({ data }) {
   const hasDna = data.ref_allele && data.alt_allele
 
   return (
-    <section className="card-flat" aria-labelledby="change-title">
-      <h3 id="change-title" className="section-title">O que a variante muda</h3>
-      <p className="text-xs text-gray-600 mb-4">
+    <section className="card" aria-labelledby="change-title">
+      <h3 id="change-title" className="section-title mb-8">O que a variante muda</h3>
+      <p className="text-12 text-muted mb-16">
         Comparação entre a sequência de referência e a variante, no DNA e, quando se aplica, na
         proteína. A referência é a forma mais comum na população; a variante é a alteração descrita
         por este rs ID.
       </p>
 
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-20">
         {hasDna && (
           <div>
-            <p className="label mb-2">No DNA (base nitrogenada)</p>
+            <p className="label mb-8">No DNA (base nitrogenada)</p>
             <ChangeRow
               refValue={data.ref_allele}
               altValue={data.alt_allele}
-              altTone="amber"
+              altTone="warning"
             />
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-12 text-muted mt-8">
               Posição chr{data.chromosome}:{data.position?.toLocaleString('pt-BR')}. A base{' '}
               {data.ref_allele} é trocada por {data.alt_allele}.
             </p>
@@ -77,10 +85,10 @@ export default function VariantChangePanel({ data }) {
 
         {change && change.kind !== 'frameshift' && change.wt && (
           <div>
-            <p className="label mb-2">Na proteína (aminoácido)</p>
+            <p className="label mb-8">Na proteína (aminoácido)</p>
             {change.kind === 'synonymous' ? (
-              <div className={`rounded-md border p-3 ${TONES.green}`}>
-                <p className="text-sm font-medium">
+              <div className="rounded-media border p-12 tint-good">
+                <p className="text-14 font-medium" style={{ color: 'var(--state-good)' }}>
                   O aminoácido permanece {change.wt.name} ({change.wt.three}) na posição {change.pos}.
                 </p>
               </div>
@@ -97,7 +105,7 @@ export default function VariantChangePanel({ data }) {
                 altTone={KIND_TONE[change.kind]}
               />
             )}
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-12 text-muted mt-8">
               {KIND_LABEL[change.kind]}
               {data.amino_acid_change ? ` (${data.amino_acid_change})` : ''}.
             </p>
@@ -106,14 +114,14 @@ export default function VariantChangePanel({ data }) {
 
         {change && change.kind === 'frameshift' && (
           <div>
-            <p className="label mb-2">Na proteína (aminoácido)</p>
-            <div className={`rounded-md border p-3 ${TONES.red}`}>
-              <p className="text-sm font-medium">
+            <p className="label mb-8">Na proteína (aminoácido)</p>
+            <div className="rounded-media border p-12 tint-critical">
+              <p className="text-14 font-medium" style={{ color: 'var(--state-critical)' }}>
                 A leitura da proteína sai do lugar a partir do resíduo {change.pos ?? '?'}, alterando
                 toda a sequência seguinte.
               </p>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-12 text-muted mt-8">
               Mudança de matriz de leitura (frameshift)
               {data.amino_acid_change ? ` (${data.amino_acid_change})` : ''}.
             </p>
@@ -121,7 +129,7 @@ export default function VariantChangePanel({ data }) {
         )}
 
         {!change && (
-          <p className="text-xs text-gray-500">
+          <p className="text-12 text-muted">
             Esta variante não altera diretamente um aminoácido. Efeito previsto:{' '}
             {formatConsequence(data.consequence || data.most_severe_consequence)}.
           </p>

@@ -1,4 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { pureToken } from '../utils/pureTokens'
+
+// A escala de confiança (pLDDT, campo bfactor) usa a rampa divergente do Pure:
+// --div-9 (baixa) a --div-1 (alta), passando pelo neutro. A legenda desenha a
+// mesma rampa com os mesmos tokens, então viewer e legenda nunca divergem.
 
 const REPR_OPTIONS = [
   { value: 'cartoon', label: 'Cartoon' },
@@ -7,6 +12,11 @@ const REPR_OPTIONS = [
   { value: 'ribbon', label: 'Fita' },
 ]
 
+function confidenceScale() {
+  // pLDDT baixo -> alto: vermelho -> neutro -> azul
+  return ['--div-9', '--div-7', '--div-5', '--div-3', '--div-1'].map(pureToken)
+}
+
 export default function ProteinViewer({ pdbUrl, uniprotId }) {
   const containerRef = useRef(null)
   const stageRef = useRef(null)
@@ -14,6 +24,14 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
   const [repr, setRepr] = useState('cartoon')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  function getReprParams(reprType) {
+    // bfactor colorScheme only works reliably on cartoon/ribbon
+    const usesBfactor = reprType === 'cartoon' || reprType === 'ribbon'
+    return usesBfactor
+      ? { colorScheme: 'bfactor', colorScale: confidenceScale() }
+      : { colorScheme: 'chainname' }
+  }
 
   useEffect(() => {
     if (!containerRef.current || !pdbUrl) return
@@ -26,7 +44,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       if (cancelled) return
 
       const stage = new NGL.Stage(containerRef.current, {
-        backgroundColor: 'white',
+        backgroundColor: pureToken('--surface'),
         quality: 'medium',
       })
       stageRef.current = stage
@@ -43,11 +61,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
         if (cancelled) return
 
         componentRef.current = comp
-        comp.addRepresentation('cartoon', {
-          colorScheme: 'bfactor',
-          colorScale: 'RdYlBu',
-          colorReverse: true,
-        })
+        comp.addRepresentation('cartoon', getReprParams('cartoon'))
         comp.autoView()
         setLoading(false)
       } catch {
@@ -74,14 +88,6 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
     }
   }, [pdbUrl])
 
-  function getReprParams(reprType) {
-    // bfactor colorScheme only works reliably on cartoon/ribbon
-    const usesBfactor = reprType === 'cartoon' || reprType === 'ribbon'
-    return usesBfactor
-      ? { colorScheme: 'bfactor', colorScale: 'RdYlBu', colorReverse: true }
-      : { colorScheme: 'chainname' }
-  }
-
   function changeRepresentation(newRepr) {
     setRepr(newRepr)
     const comp = componentRef.current
@@ -96,18 +102,16 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col gap-12">
+      <div className="flex items-center justify-between gap-16 flex-wrap">
+        <div className="flex items-center gap-8">
           {REPR_OPTIONS.map((opt) => (
             <button
               key={opt.value}
               onClick={() => changeRepresentation(opt.value)}
-              className={`text-xs px-2.5 py-1 rounded border transition-colors ${
-                repr === opt.value
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700'
-              }`}
+              className="pill pill-sm"
+              aria-pressed={repr === opt.value}
+              style={repr === opt.value ? { borderColor: 'var(--text)' } : undefined}
             >
               {opt.label}
             </button>
@@ -115,7 +119,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
         </div>
         <button
           onClick={resetView}
-          className="text-xs px-2.5 py-1 rounded border border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+          className="pill pill-solid pill-sm"
           aria-label="Resetar visualização"
         >
           Resetar
@@ -123,33 +127,40 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       </div>
 
       <div
-        className="relative w-full rounded border border-gray-200 overflow-hidden"
-        style={{ height: 400 }}
+        className="relative w-full rounded-media border border-border overflow-hidden"
+        style={{ height: 'calc(var(--photo-sm) * 4)' }}
         role="img"
         aria-label={uniprotId ? `Visualizador 3D para UniProt ${uniprotId}` : 'Visualizador 3D da proteína'}
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10" aria-live="polite">
-            <span className="text-sm text-gray-500">Carregando estrutura...</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-dim z-10" aria-live="polite">
+            <span className="text-14 text-muted">Carregando estrutura...</span>
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10" role="alert">
-            <span className="text-sm text-red-600">{error}</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-dim z-10" role="alert">
+            <span className="text-14" style={{ color: 'var(--state-critical)' }}>{error}</span>
           </div>
         )}
         <div ref={containerRef} className="w-full h-full" />
       </div>
 
-      <div className="flex items-center gap-6">
-        <p className="text-xs text-gray-500">
-          Arraste para girar &nbsp;|&nbsp; Use a roda para aplicar zoom &nbsp;|&nbsp; Clique direito + arrastar para mover
+      <div className="flex items-center gap-24 flex-wrap">
+        <p className="text-12 text-muted">
+          Arraste para girar | Use a roda para aplicar zoom | Clique direito + arrastar para mover
         </p>
-        <div className="flex items-center gap-2 ml-auto">
-          <span className="text-xs text-gray-500">Confiança:</span>
-          <div className="flex items-center gap-1">
-            <div className="w-16 h-2 rounded" style={{ background: 'linear-gradient(to right, #d73027, #fee090, #4575b4)' }} />
-            <span className="text-xs text-gray-500">Baixa &rarr; Alta</span>
+        <div className="flex items-center gap-8 ml-auto">
+          <span className="text-12 text-muted">Confiança:</span>
+          <div className="flex items-center gap-4">
+            <div
+              className="w-64 h-8"
+              style={{
+                borderRadius: 'var(--radius-mark)',
+                background:
+                  'linear-gradient(to right, var(--div-9), var(--div-7), var(--div-5), var(--div-3), var(--div-1))',
+              }}
+            />
+            <span className="text-12 text-muted">Baixa &rarr; Alta</span>
           </div>
         </div>
       </div>
