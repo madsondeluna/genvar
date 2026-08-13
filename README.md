@@ -7,7 +7,7 @@
 | **Modalidade** | Trabalho de Conclusão de Curso (TCC) |
 | **Autor** | Madson A. de Luna Aragão |
 | **Repositório** | https://github.com/madsondeluna/genvar |
-| **Aplicação ao vivo** | https://genvar.onrender.com |
+| **Aplicação ao vivo** | https://genvar.delunalab.dev |
 | **API em produção** | https://genvar-backend.onrender.com |
 | **Documentação da API** | https://genvar-backend.onrender.com/docs |
 | **Versão** | 2.0.0 |
@@ -647,13 +647,13 @@ Para parar: `Ctrl+C` e depois `docker compose down`.
 
 ### Opção 3. Deploy no Render (produção)
 
-A aplicação está publicada em https://genvar.onrender.com, com a API em https://genvar-backend.onrender.com e a documentação interativa em https://genvar-backend.onrender.com/docs.
+A aplicação está publicada em https://genvar.delunalab.dev (domínio próprio, com https://genvar.onrender.com redirecionando para ele), com a API em https://genvar-backend.onrender.com e a documentação interativa em https://genvar-backend.onrender.com/docs.
 
 O repositório contém um Blueprint (`render.yaml`) que provisiona três serviços no Render:
 
 - `genvar-cache` (Key Value/Redis free, cache de respostas das APIs externas).
 - `genvar-backend` (Web Service, Docker, Python 3.12 + FastAPI + uvicorn, `https://genvar-backend.onrender.com`).
-- `genvar` (Static Site, build Vite, CDN global, `https://genvar.onrender.com`).
+- `genvar` (Static Site, build Vite, CDN global, `https://genvar.delunalab.dev`; domínio custom via CNAME `genvar -> genvar.onrender.com` no Cloudflare, TLS emitido pelo Render).
 
 Passos para reproduzir o deploy em outra conta:
 
