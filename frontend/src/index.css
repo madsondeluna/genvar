@@ -1,121 +1,220 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Pure Design 1.4.2. Ordem obrigatória: theme (tailwind + tokens), patterns. */
+@import './pure/theme.css';
+@import './pure/patterns.css';
 
-@layer base {
-  body {
-    @apply bg-white text-gray-900 font-sans antialiased;
-  }
+/* Camada do app. Nenhum literal de cor, tamanho ou tempo:
+   todo valor vem de tokens.css. */
 
-  code,
-  pre,
-  kbd,
-  samp {
-    @apply font-mono;
-  }
+/* Estado mais vivo: derivado do token por cor relativa, mesma luminância
+   (o contraste WCAG se preserva), croma ampliado. Nenhuma cor nova. */
+:root {
+  --state-chroma: 1.9;
+  --state-good: oklch(from var(--status-good) l calc(c * var(--state-chroma)) h);
+  --state-warning: oklch(from var(--status-warning) l calc(c * var(--state-chroma)) h);
+  --state-serious: oklch(from var(--status-serious) l calc(c * var(--state-chroma)) h);
+  --state-critical: oklch(from var(--status-critical) l calc(c * var(--state-chroma)) h);
+}
 
-  /* Justifica blocos de texto corrido. Parágrafos de uma só linha (labels, números)
-     não são afetados visualmente porque justify só atua a partir da segunda linha. */
+/* fora de @layer para vencer o patterns.css, que é não-camadado */
+.status-good { color: var(--state-good); }
+.status-warning { color: var(--state-warning); }
+.status-serious { color: var(--state-serious); }
+.status-critical { color: var(--state-critical); }
+
+@layer components {
+  /* texto corrido justificado em todo o app; parágrafos de uma linha
+     (labels, números) não mudam porque justify só atua da segunda linha */
   p {
     text-align: justify;
     text-justify: inter-word;
     hyphens: auto;
   }
-}
 
-@layer components {
+  /* foco visível para elementos fora do material glass */
+  a:focus-visible,
+  button:focus-visible:not(.pill):not(.glass):not(.control-round),
+  [tabindex]:focus-visible {
+    outline: var(--focus-ring) solid var(--text);
+    outline-offset: var(--focus-offset);
+  }
+
+  /* cartão: superfície com o raio de superfície */
   .card {
-    @apply bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200;
+    background: var(--surface);
+    border: var(--hairline) solid var(--border);
+    border-radius: var(--radius-surface);
+    padding: var(--space-24);
   }
 
-  .card-flat {
-    @apply bg-white border border-gray-200 rounded-lg p-6;
-  }
-
-  .btn-primary {
-    @apply bg-gray-900 text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 active:bg-gray-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2;
-  }
-
-  .btn-secondary {
-    @apply bg-white text-gray-900 px-6 py-3 rounded-md font-medium border border-gray-300 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2;
-  }
-
-  .input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-md font-mono text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent bg-white transition-shadow duration-150;
-  }
-
+  /* título de seção: a única função da família display */
   .section-title {
-    @apply text-lg font-semibold text-gray-900 mb-4 tracking-tight;
+    font-family: var(--font-display);
+    font-stretch: var(--font-display-stretch);
+    font-weight: var(--weight-light);
+    font-size: var(--text-20);
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-tight);
+    color: var(--text);
   }
 
+  /* metadado: mono 12, sentence case */
   .label {
-    @apply text-xs font-medium text-gray-600 uppercase tracking-wider;
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-12);
+    letter-spacing: var(--tracking-wide);
+    color: var(--muted);
   }
 
   .value {
-    @apply text-sm font-medium text-gray-900;
+    font-size: var(--text-14);
+    font-weight: var(--weight-medium);
+    color: var(--text);
   }
 
-  .tag {
-    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1;
+  /* barra de navegação fixa: chrome de página inteira */
+  .app-nav {
+    position: sticky;
+    top: 0;
+    border-bottom: var(--hairline) solid var(--border);
+    background-color: var(--bg);
   }
 
-  .sticky-header {
-    @apply border-b border-gray-200 bg-white/90 backdrop-blur sticky top-0 z-10;
+  /* rodapé fixo, o espelho da navbar */
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: var(--hairline) solid var(--border);
+    background-color: var(--bg);
   }
 
+  /* barra de modo, como no template da linguagem; --muted no lugar de
+     --secondary porque é texto pequeno */
+  .mode-btn {
+    min-height: var(--hit-min);
+    padding: var(--space-4) var(--space-10);
+    border: var(--hairline) solid transparent;
+    border-radius: var(--radius-control);
+    background: none;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-12);
+    cursor: pointer;
+    transition:
+      color var(--duration-3) var(--ease-standard),
+      border-color var(--duration-3) var(--ease-standard);
+  }
+
+  .mode-btn:hover {
+    color: var(--text);
+  }
+
+  .mode-btn[aria-pressed='true'] {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* medidor: cresce por transform, nunca por width */
+  .meter {
+    height: var(--meter);
+    background: var(--dim);
+    border-radius: var(--radius-control);
+    overflow: hidden;
+  }
+
+  .meter > span {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-control);
+    transform-origin: left;
+  }
+
+  /* tintas de estado: color-mix sobre um token de status, nunca cor nova */
+  .tint-good {
+    background: color-mix(in srgb, var(--state-good) 10%, var(--surface));
+    border-color: color-mix(in srgb, var(--state-good) 35%, var(--border));
+  }
+
+  .tint-warning {
+    background: color-mix(in srgb, var(--state-warning) 10%, var(--surface));
+    border-color: color-mix(in srgb, var(--state-warning) 35%, var(--border));
+  }
+
+  .tint-serious {
+    background: color-mix(in srgb, var(--state-serious) 10%, var(--surface));
+    border-color: color-mix(in srgb, var(--state-serious) 35%, var(--border));
+  }
+
+  .tint-critical {
+    background: color-mix(in srgb, var(--state-critical) 10%, var(--surface));
+    border-color: color-mix(in srgb, var(--state-critical) 35%, var(--border));
+  }
+
+  .tint-neutral {
+    background: var(--dim);
+    border-color: var(--border);
+  }
+
+  /* estado sem cor reservada: ponto e rótulo em tinta apagada */
+  .status-none {
+    color: var(--muted);
+  }
+
+  /* entrada em escada para os blocos de uma página: os filhos herdam o
+     fade-up e o .stagger do patterns escalona os atrasos */
+  .stagger-fade > * {
+    animation: pure-fade-up var(--duration-6) var(--ease-out-soft) both;
+  }
+
+  /* giro do carregador */
+  .spinner {
+    width: var(--space-32);
+    height: var(--space-32);
+    border: var(--stroke) solid var(--border);
+    border-top-color: var(--text);
+    border-radius: var(--radius-circle);
+    animation: pure-spin var(--duration-6) linear infinite;
+  }
+
+  /* tabela: cabeçalho é metadado (mono 12, sentence case), célula é texto */
+  .table-header {
+    font-family: var(--font-mono);
+    font-size: var(--text-12);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-wide);
+    color: var(--muted);
+    text-align: left;
+    padding: var(--space-12) var(--space-16);
+    white-space: nowrap;
+  }
+
+  .table-cell {
+    font-size: var(--text-13);
+    line-height: var(--leading-snug);
+    color: var(--text);
+    padding: var(--space-12) var(--space-16);
+  }
+
+  .table-row {
+    border-top: var(--hairline) solid var(--border);
+  }
+
+  .table-row:hover {
+    background: var(--surface-hover);
+  }
+
+  /* legendas e rótulos do ideograma (SVG injetado pela lib) */
   .ideogram-host #_ideogramLegend {
-    font-family: Ubuntu, system-ui, sans-serif !important;
-    font-size: 11px !important;
-    color: #525252 !important;
+    font-family: var(--font-mono) !important;
+    font-size: var(--text-11) !important;
+    color: var(--chart-ink-muted) !important;
   }
 
   .ideogram-host .chrLabel,
   .ideogram-host text {
-    font-family: Ubuntu, system-ui, sans-serif !important;
-  }
-
-  .tag-pathogenic {
-    @apply tag bg-red-600 text-white;
-  }
-
-  .tag-likely-pathogenic {
-    @apply tag bg-orange-500 text-white;
-  }
-
-  .tag-benign {
-    @apply tag bg-green-600 text-white;
-  }
-
-  .tag-likely-benign {
-    @apply tag bg-green-200 text-green-800;
-  }
-
-  .tag-vus {
-    @apply tag bg-amber-500 text-white;
-  }
-
-  .tag-conflicting {
-    @apply tag bg-amber-100 text-amber-800;
-  }
-
-  .tag-other {
-    @apply tag bg-gray-100 text-gray-600;
-  }
-
-  .divider {
-    @apply border-t border-gray-200;
-  }
-
-  .table-header {
-    @apply text-xs font-medium text-gray-500 uppercase tracking-wider px-4 py-3 text-left;
-  }
-
-  .table-cell {
-    @apply px-4 py-3 text-sm text-gray-700;
-  }
-
-  .table-row {
-    @apply border-t border-gray-100 hover:bg-gray-50 transition-colors duration-100;
+    font-family: var(--font-mono) !important;
+    fill: var(--chart-ink-muted);
   }
 }

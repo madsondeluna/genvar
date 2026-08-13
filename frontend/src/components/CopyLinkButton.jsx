@@ -19,16 +19,16 @@ export default function CopyLinkButton() {
       type="button"
       onClick={handleCopy}
       aria-label="Copiar link da página"
-      className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
+      className="pill pill-sm"
     >
       {copied ? (
         <>
-          <Check className="w-3 h-3" aria-hidden="true" />
+          <Check className="w-12 h-12" aria-hidden="true" />
           Copiado
         </>
       ) : (
         <>
-          <Link2 className="w-3 h-3" aria-hidden="true" />
+          <Link2 className="w-12 h-12" aria-hidden="true" />
           Compartilhar link
         </>
       )}

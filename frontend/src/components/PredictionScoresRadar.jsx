@@ -1,10 +1,11 @@
 // Predições de patogenicidade apresentadas como uma barra por preditor (0 = benigno, 1 = dano).
-// Cada preditor traz seu próprio veredito em palavra, a cor da faixa e o valor bruto, para
+// Cada preditor traz seu próprio veredito em palavra, o token de status e o valor bruto, para
 // leitura direta por leigos. A barra é o score normalizado; o número à direita é o valor bruto.
+// Estado usa --status-*: critical = dano, warning = intermediário, good = benigno.
 
-const RED = { color: '#DC2626', text: 'text-red-600', bg: 'bg-red-50', damaging: true }
-const AMBER = { color: '#D97706', text: 'text-amber-600', bg: 'bg-amber-50', damaging: true }
-const GREEN = { color: '#16A34A', text: 'text-green-600', bg: 'bg-green-50', damaging: false }
+const CRITICAL = { ink: 'var(--state-critical)', tint: 'tint-critical', damaging: true }
+const WARNING = { ink: 'var(--state-warning)', tint: 'tint-warning', damaging: true }
+const GOOD = { ink: 'var(--state-good)', tint: 'tint-good', damaging: false }
 
 const PREDICTORS = [
   {
@@ -13,10 +14,10 @@ const PREDICTORS = [
       'Sorting Intolerant from Tolerant. Prevê se a troca de aminoácido afeta a função da proteína. Quanto menor o valor bruto, mais provável o dano.',
     normalize: (s) => (s == null ? null : 1 - s),
     rawDisplay: (s) => s.toFixed(3),
-    verdict: (s) => (s < 0.05 ? { ...RED, label: 'Deletério' } : { ...GREEN, label: 'Tolerado' }),
+    verdict: (s) => (s < 0.05 ? { ...CRITICAL, label: 'Deletério' } : { ...GOOD, label: 'Tolerado' }),
     thresholds: [
-      { color: '#DC2626', label: 'Deletério (< 0,05)' },
-      { color: '#16A34A', label: 'Tolerado (> 0,05)' },
+      { ink: 'var(--state-critical)', label: 'Deletério (< 0,05)' },
+      { ink: 'var(--state-good)', label: 'Tolerado (> 0,05)' },
     ],
   },
   {
@@ -27,14 +28,14 @@ const PREDICTORS = [
     rawDisplay: (s) => s.toFixed(3),
     verdict: (s) =>
       s > 0.908
-        ? { ...RED, label: 'Provavelmente deletério' }
+        ? { ...CRITICAL, label: 'Provavelmente deletério' }
         : s >= 0.446
-          ? { ...AMBER, label: 'Possivelmente deletério' }
-          : { ...GREEN, label: 'Benigno' },
+          ? { ...WARNING, label: 'Possivelmente deletério' }
+          : { ...GOOD, label: 'Benigno' },
     thresholds: [
-      { color: '#DC2626', label: 'Provavelmente deletério (> 0,908)' },
-      { color: '#D97706', label: 'Possivelmente deletério (0,446 - 0,908)' },
-      { color: '#16A34A', label: 'Benigno (< 0,446)' },
+      { ink: 'var(--state-critical)', label: 'Provavelmente deletério (> 0,908)' },
+      { ink: 'var(--state-warning)', label: 'Possivelmente deletério (0,446 - 0,908)' },
+      { ink: 'var(--state-good)', label: 'Benigno (< 0,446)' },
     ],
   },
   {
@@ -45,14 +46,14 @@ const PREDICTORS = [
     rawDisplay: (s) => `${s.toFixed(1)} Phred`,
     verdict: (s) =>
       s > 20
-        ? { ...RED, label: 'Alto impacto' }
+        ? { ...CRITICAL, label: 'Alto impacto' }
         : s >= 10
-          ? { ...AMBER, label: 'Moderado' }
-          : { ...GREEN, label: 'Baixo impacto' },
+          ? { ...WARNING, label: 'Moderado' }
+          : { ...GOOD, label: 'Baixo impacto' },
     thresholds: [
-      { color: '#DC2626', label: 'Alto impacto (Phred > 20)' },
-      { color: '#D97706', label: 'Moderado (Phred 10 - 20)' },
-      { color: '#16A34A', label: 'Baixo impacto (Phred < 10)' },
+      { ink: 'var(--state-critical)', label: 'Alto impacto (Phred > 20)' },
+      { ink: 'var(--state-warning)', label: 'Moderado (Phred 10 - 20)' },
+      { ink: 'var(--state-good)', label: 'Baixo impacto (Phred < 10)' },
     ],
   },
   {
@@ -63,20 +64,20 @@ const PREDICTORS = [
     rawDisplay: (s) => s.toFixed(3),
     verdict: (s) =>
       s > 0.5
-        ? { ...RED, label: 'Potencialmente patogênica' }
-        : { ...GREEN, label: 'Potencialmente benigna' },
+        ? { ...CRITICAL, label: 'Potencialmente patogênica' }
+        : { ...GOOD, label: 'Potencialmente benigna' },
     thresholds: [
-      { color: '#DC2626', label: 'Potencialmente patogênica (> 0,5)' },
-      { color: '#16A34A', label: 'Potencialmente benigna (< 0,5)' },
+      { ink: 'var(--state-critical)', label: 'Potencialmente patogênica (> 0,5)' },
+      { ink: 'var(--state-good)', label: 'Potencialmente benigna (< 0,5)' },
     ],
   },
 ]
 
 function overallVerdict(avgScore) {
   if (avgScore == null) return null
-  if (avgScore >= 0.6) return { text: 'Potencialmente patogênica', cls: 'text-red-600 bg-red-50' }
-  if (avgScore >= 0.3) return { text: 'Incerta', cls: 'text-amber-600 bg-amber-50' }
-  return { text: 'Potencialmente benigna', cls: 'text-green-600 bg-green-50' }
+  if (avgScore >= 0.6) return { text: 'Potencialmente patogênica', cls: 'status-critical' }
+  if (avgScore >= 0.3) return { text: 'Incerta', cls: 'status-warning' }
+  return { text: 'Potencialmente benigna', cls: 'status-good' }
 }
 
 export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
@@ -102,24 +103,20 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
 
   if (!hasAny) {
     return (
-      <div className="card-flat">
-        <h3 className="section-title">Predições de patogenicidade</h3>
-        <p className="text-sm text-gray-500">Nenhum score de predição disponível para esta variante.</p>
+      <div className="card">
+        <h3 className="section-title mb-8">Predições de patogenicidade</h3>
+        <div className="empty">Nenhum score de predição disponível para esta variante.</div>
       </div>
     )
   }
 
   return (
-    <div className="card-flat">
-      <div className="flex items-center justify-between mb-1">
-        <h3 className="section-title mb-0">Predições de patogenicidade</h3>
-        {verdict && (
-          <span className={`text-xs font-semibold px-2 py-1 rounded ${verdict.cls}`}>
-            {verdict.text}
-          </span>
-        )}
+    <div className="card">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="section-title">Predições de patogenicidade</h3>
+        {verdict && <span className={`status ${verdict.cls} text-12`}>{verdict.text}</span>}
       </div>
-      <p className="text-xs text-gray-600 mb-3">
+      <p className="text-12 text-muted mb-12">
         Cada barra vai de 0 (benigno, verde) a 1 (dano, vermelho). O número à direita é o valor bruto
         do preditor. {damagingCount} de {present.length}{' '}
         {present.length === 1 ? 'preditor disponível indica' : 'preditores disponíveis indicam'} dano.
@@ -129,39 +126,37 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
         {rows.map((r, i) => (
           <div
             key={r.key}
-            className={`flex flex-col gap-1.5 py-4 ${i > 0 ? 'border-t border-gray-100' : 'pt-0'}`}
+            className={`flex flex-col gap-6 py-16 ${i > 0 ? 'border-t border-border' : 'pt-0'}`}
           >
-            <div className="grid grid-cols-[5rem_1fr_auto] items-center gap-2">
-              <span className="text-xs font-semibold text-gray-700">{r.key}</span>
+            <div className="grid grid-cols-[var(--photo-sm)_1fr_auto] items-center gap-8">
+              <span className="text-12 mono text-text">{r.key}</span>
               <div className="min-w-0">
                 {r.available ? (
-                  <span className={`inline-block text-xs font-medium px-1.5 py-0.5 rounded ${r.band.bg} ${r.band.text}`}>
+                  <span className="status text-12" style={{ color: r.band.ink }}>
                     {r.band.label}
                   </span>
                 ) : (
-                  <span className="text-xs text-gray-400">Sem dado</span>
+                  <span className="text-12 text-muted">Sem dado</span>
                 )}
               </div>
-              <span className="text-xs font-semibold text-gray-700 text-right tabular-nums">
+              <span className="text-12 mono num text-text text-right">
                 {r.available ? r.rawText : '-'}
               </span>
             </div>
-            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-700"
+            <div className="meter">
+              <span
                 style={{
-                  width: r.available ? `${Math.min(100, r.norm * 100)}%` : '0%',
-                  backgroundColor: r.available ? r.band.color : '#E5E5E5',
+                  transform: `scaleX(${r.available ? Math.min(1, r.norm) : 0})`,
+                  background: r.available ? r.band.ink : 'var(--border)',
                 }}
               />
             </div>
-            <p className="text-xs text-gray-500 leading-relaxed">{r.description}</p>
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <p className="text-12 text-muted leading-relaxed">{r.description}</p>
+            <div className="flex flex-wrap gap-x-12 gap-y-4">
               {r.thresholds.map((t) => (
-                <div key={t.label} className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: t.color }} />
-                  <span className="text-xs text-gray-500">{t.label}</span>
-                </div>
+                <span key={t.label} className="status text-12" style={{ color: t.ink }}>
+                  <span className="text-muted">{t.label}</span>
+                </span>
               ))}
             </div>
           </div>

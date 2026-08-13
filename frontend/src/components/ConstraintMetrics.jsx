@@ -9,6 +9,9 @@
 //   LOEUF: <= 0.35 restrito, <= 0.6 intermediário, > 0.6 tolerante
 //   lofz:  >= 3.09 restrito, >= 1 intermediário, < 1 tolerante (pode ser negativo)
 //   o/e:   <= 0.5 restrito, <= 0.8 intermediário, > 0.8 tolerante
+//
+// Estado usa token de status: restrito = critical, intermediário = warning,
+// tolerante = good. O medidor cresce por transform, nunca por width.
 
 const ANCHORS = {
   // valor crescente = mais restrito
@@ -49,7 +52,7 @@ function constraintFill(value, metric) {
 
 function constraintBand(value, metric) {
   if (value == null) {
-    return { label: 'Indisponível', bar: '#E5E5E5', text: 'text-gray-400', bg: 'bg-gray-100' }
+    return { label: 'Indisponível', ink: 'var(--muted)', tint: 'tint-neutral' }
   }
   let band
   if (metric === 'pli') band = value >= 0.9 ? 'res' : value >= 0.1 ? 'int' : 'tol'
@@ -57,61 +60,61 @@ function constraintBand(value, metric) {
   else if (metric === 'loeuf') band = value <= 0.35 ? 'res' : value <= 0.6 ? 'int' : 'tol'
   else band = value <= 0.5 ? 'res' : value <= 0.8 ? 'int' : 'tol'
 
-  if (band === 'res') return { label: 'Altamente restrito', bar: '#DC2626', text: 'text-red-600', bg: 'bg-red-50' }
-  if (band === 'int') return { label: 'Intermediário', bar: '#D97706', text: 'text-amber-600', bg: 'bg-amber-50' }
-  return { label: 'Tolerante', bar: '#16A34A', text: 'text-green-600', bg: 'bg-green-50' }
+  if (band === 'res') return { label: 'Altamente restrito', ink: 'var(--state-critical)', tint: 'tint-critical' }
+  if (band === 'int') return { label: 'Intermediário', ink: 'var(--state-warning)', tint: 'tint-warning' }
+  return { label: 'Tolerante', ink: 'var(--state-good)', tint: 'tint-good' }
+}
+
+function Meter({ fill, ink }) {
+  return (
+    <div className="meter">
+      <span style={{ transform: `scaleX(${fill})`, background: ink }} />
+    </div>
+  )
 }
 
 function MetricBar({ label, value, metric, description }) {
   const band = constraintBand(value, metric)
-  const pct = value != null ? constraintFill(value, metric) * 100 : 0
+  const fill = value != null ? constraintFill(value, metric) : 0
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-8">
           <span className="label">{label}</span>
           {value != null && (
-            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${band.bg} ${band.text}`}>
+            <span className="status text-12" style={{ color: band.ink }}>
               {band.label}
             </span>
           )}
         </div>
-        <span className="text-xs font-semibold text-gray-700">
+        <span className="text-12 mono num text-text">
           {value != null ? value.toFixed(4) : 'Indisponível'}
         </span>
       </div>
-      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${pct}%`, backgroundColor: band.bar }}
-        />
-      </div>
-      {description && <p className="text-xs text-gray-400">{description}</p>}
+      <Meter fill={fill} ink={value != null ? band.ink : 'var(--border)'} />
+      {description && <p className="text-12 text-muted">{description}</p>}
     </div>
   )
 }
 
 function ScoreGauge({ label, value, metric, interpretation }) {
   const band = constraintBand(value, metric)
-  const pct = value != null ? constraintFill(value, metric) * 100 : 0
+  const fill = value != null ? constraintFill(value, metric) : 0
 
   return (
-    <div className={`rounded-lg border p-4 ${value != null ? band.bg : 'bg-gray-50'} border-gray-200`}>
-      <p className="label mb-1">{label}</p>
-      <p className={`text-3xl font-bold tracking-tight ${value != null ? band.text : 'text-gray-300'}`}>
+    <div className={`rounded-media border p-16 ${band.tint}`}>
+      <p className="label mb-4">{label}</p>
+      <p className="text-32 font-medium mono num" style={{ color: band.ink }}>
         {value != null ? value.toFixed(4) : 'Indisponível'}
       </p>
-      <p className={`text-xs font-medium mt-1 ${value != null ? band.text : 'text-gray-400'}`}>
+      <p className="text-12 font-medium mt-4" style={{ color: band.ink }}>
         {value != null ? band.label : 'Não disponível'}
       </p>
-      <div className="mt-3 h-1.5 bg-white bg-opacity-60 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${pct}%`, backgroundColor: band.bar }}
-        />
+      <div className="mt-12">
+        <Meter fill={fill} ink={value != null ? band.ink : 'var(--border)'} />
       </div>
-      {interpretation && <p className="text-xs text-gray-500 mt-2">{interpretation}</p>}
+      {interpretation && <p className="text-12 text-muted mt-8">{interpretation}</p>}
     </div>
   )
 }
@@ -119,16 +122,19 @@ function ScoreGauge({ label, value, metric, interpretation }) {
 // Escala direcional: orienta a leitura de todas as barras antes dos números.
 function DirectionScale() {
   return (
-    <div className="mb-4">
+    <div className="mb-16">
       <div
-        className="h-2 rounded-full"
-        style={{ background: 'linear-gradient(to right, #16A34A, #D97706, #DC2626)' }}
+        className="meter"
+        style={{
+          background:
+            'linear-gradient(to right, var(--state-good), var(--state-warning), var(--state-critical))',
+        }}
       />
-      <div className="flex justify-between mt-1">
-        <span className="text-xs text-gray-500">Tolerante (barra vazia)</span>
-        <span className="text-xs text-gray-500">Altamente restrito (barra cheia)</span>
+      <div className="flex justify-between mt-4">
+        <span className="text-12 text-muted">Tolerante (barra vazia)</span>
+        <span className="text-12 text-muted">Altamente restrito (barra cheia)</span>
       </div>
-      <p className="text-xs text-gray-400 mt-1">
+      <p className="text-12 text-muted mt-4">
         Todas as barras seguem esta direção: quanto mais cheia e mais vermelha, mais restrito o
         gene. Genes tolerantes ficam com a barra curta e verde.
       </p>
@@ -142,30 +148,30 @@ export default function ConstraintMetrics({ data }) {
   const { lof_z_score, oe_lof, oe_lof_upper, oe_mis } = data
 
   return (
-    <div className="card-flat">
-      <div className="flex items-start justify-between mb-1">
-        <h3 className="section-title mb-0">Métricas de restrição</h3>
-        <span className="text-xs text-gray-500">gnomAD r4</span>
+    <div className="card">
+      <div className="flex items-start justify-between mb-4">
+        <h3 className="section-title">Métricas de restrição</h3>
+        <span className="text-12 text-muted mono">gnomAD r4</span>
       </div>
-      <p className="text-xs text-gray-600 mb-4">
+      <p className="text-12 text-muted mb-16">
         Mostra se o gene tolera perder função. Variantes de perda de função (LoF) desligam o produto
         do gene; genes importantes acumulam bem menos dessas variantes do que o esperado por acaso, e
         são ditos restritos. Quanto mais restrito, maior a chance de uma mutação grave ali causar
         doença. Métricas calculadas pelo gnomAD (r4).
       </p>
 
-      <div className="mb-4 rounded-md bg-gray-50 border border-gray-200 p-3">
-        <p className="text-xs text-gray-700">
-          <span className="font-semibold">O que é LoF:</span> sigla de loss of function (perda de
-          função). É uma mutação que inativa o gene, fazendo-o parar de produzir sua proteína normal.
-          Genes em que perder a função causa doença tendem a acumular poucas variantes LoF na
-          população saudável.
+      <div className="mb-16 rounded-media bg-dim border border-border p-12">
+        <p className="text-12 text-muted">
+          <span className="font-medium text-text">O que é LoF:</span> sigla de loss of function
+          (perda de função). É uma mutação que inativa o gene, fazendo-o parar de produzir sua
+          proteína normal. Genes em que perder a função causa doença tendem a acumular poucas
+          variantes LoF na população saudável.
         </p>
       </div>
 
       <DirectionScale />
 
-      <div className="mb-5">
+      <div className="mb-20">
         <ScoreGauge
           label="LOEUF (limite superior da razão observado/esperado de LoF)"
           value={oe_lof_upper}
@@ -174,7 +180,7 @@ export default function ConstraintMetrics({ data }) {
         />
       </div>
 
-      <div className="flex flex-col gap-4 mt-4 pt-4 border-t border-gray-100">
+      <div className="flex flex-col gap-16 mt-16 pt-16 border-t border-border">
         <MetricBar
           label="Z-score de LoF"
           value={lof_z_score}

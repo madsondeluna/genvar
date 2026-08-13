@@ -52,9 +52,9 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
 
   if (!variants || variants.length === 0) {
     return (
-      <section className="card-flat" aria-labelledby={`${csvPrefix}-title`}>
-        <h3 id={`${csvPrefix}-title`} className="section-title">{title}</h3>
-        <p className="text-sm text-gray-500">Sem variantes para exibir.</p>
+      <section className="card" aria-labelledby={`${csvPrefix}-title`}>
+        <h3 id={`${csvPrefix}-title`} className="section-title mb-8">{title}</h3>
+        <div className="empty">Sem variantes para exibir.</div>
       </section>
     )
   }
@@ -80,11 +80,11 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
   }
 
   function SortIcon({ col }) {
-    if (sortKey !== col) return <ChevronUp className="w-3 h-3 text-gray-300" aria-hidden="true" />
+    if (sortKey !== col) return <ChevronUp className="w-12 h-12 opacity-40" aria-hidden="true" />
     return sortAsc ? (
-      <ChevronUp className="w-3 h-3 text-gray-700" aria-hidden="true" />
+      <ChevronUp className="w-12 h-12" aria-hidden="true" />
     ) : (
-      <ChevronDown className="w-3 h-3 text-gray-700" aria-hidden="true" />
+      <ChevronDown className="w-12 h-12" aria-hidden="true" />
     )
   }
 
@@ -94,11 +94,11 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
   const titleId = `${csvPrefix}-title`
 
   return (
-    <section className="card-flat" aria-labelledby={titleId}>
-      <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-        <div className="flex items-baseline gap-3">
-          <h3 id={titleId} className="section-title mb-0">{title}</h3>
-          <span className="text-xs text-gray-500">
+    <section className="card" aria-labelledby={titleId}>
+      <div className="flex items-center justify-between gap-12 mb-16 flex-wrap">
+        <div className="flex items-baseline gap-12">
+          <h3 id={titleId} className="section-title">{title}</h3>
+          <span className="text-12 text-muted mono num">
             {isSample
               ? `amostra de ${variants.length.toLocaleString('pt-BR')} ao longo do gene (de ${totalCount.toLocaleString('pt-BR')})`
               : `${sorted.length.toLocaleString('pt-BR')} de ${variants.length.toLocaleString('pt-BR')}`}
@@ -108,20 +108,25 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
         <button
           type="button"
           onClick={handleExport}
-          className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
+          className="pill pill-sm"
           aria-label={`Exportar ${title} como CSV`}
         >
-          <Download className="w-3 h-3" aria-hidden="true" />
+          <Download className="w-12 h-12" aria-hidden="true" />
           Exportar CSV
         </button>
       </div>
 
-      <div className="flex gap-3 mb-4 flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
+      <div className="flex gap-12 mb-16 flex-wrap">
+        <div className="relative flex-1" style={{ minWidth: 'calc(var(--photo-sm) * 2)' }}>
+          <Search
+            className="w-16 h-16 text-muted absolute top-1/2 -translate-y-1/2"
+            style={{ left: 'var(--space-12)' }}
+            aria-hidden="true"
+          />
           <input
             type="search"
-            className="input pl-9 py-1.5 text-sm"
+            className="input"
+            style={{ paddingLeft: 'var(--space-40)' }}
             placeholder="Filtrar por rs ID ou classificação..."
             aria-label="Filtrar variantes"
             value={query}
@@ -131,10 +136,9 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
             }}
           />
         </div>
-        <label className="flex items-center gap-2 text-xs text-gray-600">
-          <span className="sr-only">Filtrar por consequência</span>
+        <span className="select-shell w-auto">
           <select
-            className="input py-1.5 px-2 text-sm w-auto"
+            className="select"
             value={consequenceFilter}
             onChange={(e) => {
               setConsequenceFilter(e.target.value)
@@ -147,12 +151,12 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
               <option key={c} value={c}>{formatConsequence(c)}</option>
             ))}
           </select>
-        </label>
+        </span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-dim">
             <tr>
               {[
                 { key: 'variant_id', label: 'ID da variante' },
@@ -167,7 +171,7 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
                   onClick={() => toggleSort(col.key)}
                   aria-sort={sortKey === col.key ? (sortAsc ? 'ascending' : 'descending') : 'none'}
                 >
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-4">
                     {col.label}
                     <SortIcon col={col.key} />
                   </span>
@@ -178,16 +182,16 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
           <tbody>
             {pageRows.length === 0 ? (
               <tr>
-                <td colSpan={4} className="table-cell text-gray-500 text-center py-6">
+                <td colSpan={4} className="table-cell text-muted text-center py-24">
                   Nenhuma variante corresponde ao filtro atual.
                 </td>
               </tr>
             ) : (
               pageRows.map((v) => (
                 <tr key={`${v.variant_id}-${v.position}`} className="table-row">
-                  <td className="table-cell font-mono text-xs text-gray-700">{v.variant_id}</td>
-                  <td className="table-cell text-gray-600">{formatPosition(v.position)}</td>
-                  <td className="table-cell text-xs text-gray-600">{formatConsequence(v.consequence)}</td>
+                  <td className="table-cell mono text-12">{v.variant_id}</td>
+                  <td className="table-cell mono num text-12 text-muted">{formatPosition(v.position)}</td>
+                  <td className="table-cell text-12 text-muted">{formatConsequence(v.consequence)}</td>
                   <td className="table-cell">
                     <SignificanceTag value={v.clinical_significance} />
                   </td>
@@ -199,21 +203,21 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between mt-16 pt-12 border-t border-border">
           <button
             type="button"
-            className="btn-secondary py-1.5 px-3 text-xs disabled:opacity-40"
+            className="pill pill-solid pill-sm disabled:opacity-40"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={currentPage === 0}
           >
             Anterior
           </button>
-          <span className="text-xs text-gray-600" aria-live="polite">
+          <span className="text-12 text-muted mono num" aria-live="polite">
             Página {currentPage + 1} de {totalPages}
           </span>
           <button
             type="button"
-            className="btn-secondary py-1.5 px-3 text-xs disabled:opacity-40"
+            className="pill pill-solid pill-sm disabled:opacity-40"
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             disabled={currentPage === totalPages - 1}
           >

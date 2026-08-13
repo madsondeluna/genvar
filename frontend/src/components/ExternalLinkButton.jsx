@@ -8,10 +8,10 @@ export default function ExternalLinkButton({ href, label, download = false, aria
       rel={download ? undefined : 'noopener noreferrer'}
       download={download || undefined}
       aria-label={ariaLabel || `Abrir ${label} em nova aba`}
-      className="btn-secondary py-1.5 px-3 text-xs flex items-center gap-1"
+      className="pill pill-sm"
     >
       {label}
-      <ExternalLink className="w-3 h-3" aria-hidden="true" />
+      <ExternalLink className="w-12 h-12" aria-hidden="true" />
     </a>
   )
 }

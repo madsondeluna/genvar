@@ -2,11 +2,11 @@ import { AlertCircle } from 'lucide-react'
 
 export default function ErrorAlert({ message }) {
   return (
-    <div className="flex items-start gap-3 p-4 border border-gray-300 rounded-md bg-gray-50">
-      <AlertCircle className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+    <div className="flex items-start gap-12 p-16 border rounded-media tint-critical" role="alert">
+      <AlertCircle className="w-20 h-20 flex-shrink-0" style={{ color: 'var(--state-critical)' }} aria-hidden="true" />
       <div>
-        <p className="text-sm font-medium text-gray-900">Erro</p>
-        <p className="text-sm text-gray-600 mt-0.5">{message}</p>
+        <p className="text-14 font-medium" style={{ color: 'var(--state-critical)' }}>Erro</p>
+        <p className="text-14 text-muted mt-2">{message}</p>
       </div>
     </div>
   )

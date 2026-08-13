@@ -1,18 +1,23 @@
-const CATEGORY_COLOR = {
-  gene: '#171717',
-  variant: '#2563EB',
-  pathogenic: '#DC2626',
-  vus: '#D97706',
-  benign: '#16A34A',
-  halo: '#FDE68A',
+import { pureToken, resolveColor } from './pureTokens'
+
+// As cores são resolvidas na hora da chamada: a lib do ideograma
+// pinta atributos SVG e não entende var(--token).
+function categoryColors() {
+  return {
+    gene: pureToken('--chart-ink'),
+    halo: resolveColor('color-mix(in srgb, var(--state-warning) 35%, var(--bg))'),
+  }
 }
 
 // Variant marks are sub-pixel at whole-chromosome scale (a 260kb gene is <1px on a 242Mb
 // chromosome), so the ideogram only conveys where the gene sits. Legend reflects that.
-export const GENE_LEGEND = [
-  { label: 'Região do gene', color: CATEGORY_COLOR.halo },
-  { label: 'Locus do gene', color: CATEGORY_COLOR.gene },
-]
+export function geneLegend() {
+  const c = categoryColors()
+  return [
+    { label: 'Região do gene', color: c.halo },
+    { label: 'Locus do gene', color: c.gene },
+  ]
+}
 
 function sanitizeChr(chromosome) {
   if (chromosome == null) return null
@@ -27,7 +32,7 @@ export function buildGeneAnnotation(gene) {
     chr,
     start: gene.start,
     stop: gene.end,
-    color: CATEGORY_COLOR.gene,
+    color: categoryColors().gene,
   }
 }
 
@@ -43,7 +48,7 @@ export function buildGeneAnnotations(gene, { haloPaddingBp = 800_000 } = {}) {
       chr,
       start: Math.max(1, gene.start - haloPaddingBp),
       stop: gene.end + haloPaddingBp,
-      color: CATEGORY_COLOR.halo,
+      color: categoryColors().halo,
     })
   }
 

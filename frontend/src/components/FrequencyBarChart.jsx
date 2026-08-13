@@ -1,17 +1,10 @@
+import { useMemo } from 'react'
 import Plot from 'react-plotly.js'
+import { chartColors, baseLayout, withAlpha, populationColor, CHART_FONT } from '../utils/chartTheme'
 
-// Distinct colors per population for easy differentiation
-const POP_COLORS = {
-  AFR: '#2563EB', // blue
-  AMR: '#D97706', // amber
-  ASJ: '#7C3AED', // violet
-  EAS: '#DC2626', // red
-  FIN: '#0891B2', // cyan
-  NFE: '#059669', // emerald
-  SAS: '#EA580C', // orange
-  MID: '#BE185D', // pink
-  AMI: '#65A30D', // lime
-}
+// Cor identifica a população (slots --chart-1..8, em sequência), a mesma do
+// mapa geográfico. Barras de vidro: preenchimento translúcido, borda sólida.
+// A cor da série fica na marca; o rótulo da legenda fica em tinta de texto.
 
 const POP_DESCRIPTIONS = {
   AFR: 'Africana / Afro-americana',
@@ -26,68 +19,71 @@ const POP_DESCRIPTIONS = {
 }
 
 export default function FrequencyBarChart({ frequencies }) {
+  const { plotData, layout, sorted, legendColors } = useMemo(() => {
+    if (!frequencies || frequencies.length === 0) return {}
+    const c = chartColors()
+    const sorted = [...frequencies].sort((a, b) => b.allele_frequency - a.allele_frequency)
+    const labels = sorted.map((p) => p.population)
+    const values = sorted.map((p) => p.allele_frequency)
+    const edges = sorted.map((p) => populationColor(p.population.toUpperCase(), c))
+    const fills = edges.map((color) => withAlpha(color, 0.45))
+    const texts = sorted.map(
+      (p) =>
+        `<b>${POP_DESCRIPTIONS[p.population] || p.population_name}</b><br>` +
+        `AF: ${p.allele_frequency.toExponential(3)}<br>` +
+        `AC: ${p.allele_count.toLocaleString('pt-BR')} / AN: ${p.allele_number.toLocaleString('pt-BR')}`
+    )
+
+    const plotData = [
+      {
+        type: 'bar',
+        x: labels,
+        y: values,
+        hovertext: texts,
+        hoverinfo: 'text',
+        marker: {
+          color: fills,
+          line: { color: edges, width: 1.5 },
+        },
+      },
+    ]
+
+    const layout = {
+      ...baseLayout(c),
+      yaxis: {
+        type: 'log',
+        title: { text: 'Frequência alélica (escala log)', font: { family: CHART_FONT, size: 11 } },
+        gridcolor: c.grid,
+        tickfont: { family: CHART_FONT, size: 10 },
+        zeroline: false,
+      },
+      xaxis: {
+        tickfont: { family: CHART_FONT, size: 11 },
+        tickangle: 0,
+      },
+      margin: { l: 70, r: 20, t: 20, b: 50 },
+    }
+
+    const legendColors = Object.fromEntries(
+      sorted.map((p) => [p.population, populationColor(p.population.toUpperCase(), c)])
+    )
+
+    return { plotData, layout, sorted, legendColors }
+  }, [frequencies])
+
   if (!frequencies || frequencies.length === 0) {
     return (
-      <div className="card-flat">
-        <h3 className="section-title">Frequências alélicas por população</h3>
-        <p className="text-sm text-gray-500">Sem dados de frequência disponíveis.</p>
+      <div className="card">
+        <h3 className="section-title mb-8">Frequências alélicas por população</h3>
+        <div className="empty">Sem dados de frequência disponíveis.</div>
       </div>
     )
   }
 
-  const sorted = [...frequencies].sort((a, b) => b.allele_frequency - a.allele_frequency)
-  const labels = sorted.map((p) => p.population)
-  const values = sorted.map((p) => p.allele_frequency)
-  const colors = sorted.map((p) => POP_COLORS[p.population] || '#737373')
-  const texts = sorted.map(
-    (p) =>
-      `<b>${POP_DESCRIPTIONS[p.population] || p.population_name}</b><br>` +
-      `AF: ${p.allele_frequency.toExponential(3)}<br>` +
-      `AC: ${p.allele_count.toLocaleString()} / AN: ${p.allele_number.toLocaleString()}`
-  )
-
-  const plotData = [
-    {
-      type: 'bar',
-      x: labels,
-      y: values,
-      text: texts,
-      hoverinfo: 'text',
-      marker: {
-        color: colors,
-        line: { color: 'white', width: 1 },
-        opacity: 0.88,
-      },
-    },
-  ]
-
-  const layout = {
-    yaxis: {
-      type: 'log',
-      title: { text: 'Frequência alélica (escala log)', font: { family: 'Ubuntu', size: 11 } },
-      gridcolor: '#E5E5E5',
-      tickfont: { family: 'Ubuntu', size: 10 },
-      zeroline: false,
-    },
-    xaxis: {
-      tickfont: { family: 'Ubuntu', size: 11 },
-      tickangle: 0,
-    },
-    margin: { l: 70, r: 20, t: 20, b: 50 },
-    paper_bgcolor: 'white',
-    plot_bgcolor: 'white',
-    font: { family: 'Ubuntu', color: '#171717' },
-    hoverlabel: {
-      bgcolor: 'white',
-      bordercolor: '#D4D4D4',
-      font: { family: 'Ubuntu', size: 12, color: '#000000' },
-    },
-  }
-
   return (
-    <div className="card-flat">
-      <h3 className="section-title">Frequências alélicas por população</h3>
-      <p className="text-xs text-gray-600 mb-3">
+    <div className="card">
+      <h3 className="section-title mb-8">Frequências alélicas por população</h3>
+      <p className="text-12 text-muted mb-12">
         Frequência alélica (AC/AN) por população do gnomAD. Escala logarítmica. Passe o mouse para detalhes.
       </p>
 
@@ -98,19 +94,20 @@ export default function FrequencyBarChart({ frequencies }) {
         style={{ width: '100%', height: '300px' }}
       />
 
-      {/* Population legend: grid keeps codes and names aligned in columns */}
-      <div className="mt-4 pt-3 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-2">
+      {/* Códigos e nomes das populações; a cor da série fica na marca */}
+      <div className="mt-16 pt-12 border-t border-border grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-16 gap-y-8">
         {sorted.map((p) => (
-          <div key={p.population} className="flex items-start gap-1.5">
-            <div
-              className="w-2.5 h-2.5 rounded-sm flex-shrink-0 mt-0.5"
-              style={{ backgroundColor: POP_COLORS[p.population] || '#737373' }}
+          <span key={p.population} className="flex items-start gap-6 text-12 text-muted leading-snug">
+            <span
+              className="inline-block flex-shrink-0 w-10 h-10 mt-2"
+              style={{ backgroundColor: legendColors[p.population], borderRadius: 'var(--radius-mark)' }}
+              aria-hidden="true"
             />
-            <span className="text-xs text-gray-500 leading-snug">
-              <span className="font-medium text-gray-700">{p.population}</span>
+            <span>
+              <span className="mono text-text">{p.population}</span>
               {' '}{POP_DESCRIPTIONS[p.population] || p.population_name}
             </span>
-          </div>
+          </span>
         ))}
       </div>
     </div>

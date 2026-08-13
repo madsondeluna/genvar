@@ -25,26 +25,26 @@ export default class ErrorBoundary extends Component {
     if (!this.state.error) return this.props.children
 
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6">
-        <div className="max-w-md w-full border border-gray-200 rounded-lg p-6 flex flex-col gap-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-gray-700 flex-shrink-0 mt-0.5" aria-hidden="true" />
+      <div className="min-h-screen bg-bg flex items-center justify-center px-24">
+        <div className="card max-w-sm w-full flex flex-col gap-16">
+          <div className="flex items-start gap-12">
+            <AlertTriangle
+              className="w-20 h-20 flex-shrink-0"
+              style={{ color: 'var(--state-critical)' }}
+              aria-hidden="true"
+            />
             <div>
-              <p className="text-sm font-semibold text-gray-900">Algo quebrou nesta página.</p>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-14 font-medium text-text">Algo quebrou nesta página.</p>
+              <p className="text-14 text-muted mt-4">
                 {this.state.error?.message || 'Erro inesperado de renderização.'}
               </p>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="btn-primary py-1.5 px-3 text-xs"
-              onClick={this.handleReset}
-            >
+          <div className="flex gap-8">
+            <button type="button" className="pill pill-sm" onClick={this.handleReset}>
               Tentar novamente
             </button>
-            <a href="/" className="btn-secondary py-1.5 px-3 text-xs">
+            <a href="/" className="pill pill-solid pill-sm">
               Voltar para a home
             </a>
           </div>

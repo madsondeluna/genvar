@@ -8,6 +8,46 @@ import { useSearchHistory } from '../hooks/useSearchHistory'
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
 const VARIANT_EXAMPLES = ['rs334', 'rs1800562', 'rs6025', 'rs1799853']
 
+// Casos curados: porta de entrada com contexto clínico real
+const SHOWCASE = [
+  {
+    kind: 'variant',
+    id: 'rs334',
+    name: 'Anemia falciforme',
+    desc: 'Troca E6V na beta-globina (HBB); o exemplo clássico de variante missense patogênica.',
+  },
+  {
+    kind: 'gene',
+    id: 'MLH1',
+    name: 'Síndrome de Lynch',
+    desc: 'Gene de reparo de DNA; variantes de perda de função elevam o risco de câncer colorretal.',
+  },
+  {
+    kind: 'variant',
+    id: 'rs6025',
+    name: 'Fator V de Leiden',
+    desc: 'Variante do gene F5 associada a trombofilia hereditária, a mais comum em europeus.',
+  },
+  {
+    kind: 'gene',
+    id: 'LDLR',
+    name: 'Hipercolesterolemia familiar',
+    desc: 'Receptor de LDL; variantes patogênicas elevam o colesterol desde a infância.',
+  },
+  {
+    kind: 'variant',
+    id: 'rs1800562',
+    name: 'Hemocromatose hereditária',
+    desc: 'C282Y no gene HFE; sobrecarga de ferro com herança recessiva e penetrância variável.',
+  },
+  {
+    kind: 'gene',
+    id: 'VHL',
+    name: 'Doença de von Hippel-Lindau',
+    desc: 'Supressor tumoral; variantes germinativas predispõem a tumores altamente vascularizados.',
+  },
+]
+
 export default function HomePage() {
   const [geneInput, setGeneInput] = useState('')
   const [variantInput, setVariantInput] = useState('')
@@ -58,61 +98,51 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+    <main className="min-h-screen bg-bg">
+      <div className="max-w-lg mx-auto px-24 py-48 pb-96">
 
-        <header className="mb-10">
-          <p className="text-xs font-medium text-gray-600 uppercase tracking-widest mb-3">
-            Explorador de Variantes Genéticas
-          </p>
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight leading-tight mb-3">
-            GenVar Dashboard
-          </h1>
-          <p className="text-gray-600 text-base leading-relaxed text-justify">
-            Integrando as principais fontes públicas de dados genômicos (Ensembl, gnomAD, ClinVar,
-            AlphaFold e UniProt) em uma consulta única, sem alternar entre múltiplos bancos de dados.
-            Pesquise por símbolo de gene ou rs ID (identificador da mutação) para reunir significado
-            clínico, frequências
-            alélicas por população, métricas de restrição gênica e estrutura proteica predita,
-            unindo agilidade e precisão.
+        <header className="mb-48 stagger stagger-fade">
+          <p className="eyebrow mb-12">Explorador de variantes genéticas</p>
+          <h1 className="display display-name mb-12">GenVar Dashboard</h1>
+          <p className="text-15 text-muted leading-normal">
+            Ensembl, gnomAD, ClinVar, AlphaFold e UniProt em uma consulta única. Busque um símbolo
+            de gene ou um rs ID para reunir significado clínico, frequências populacionais,
+            métricas de restrição e estrutura proteica.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-24 mb-48 stagger">
 
-          <section className="card" aria-labelledby="gene-search-title">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
-                <Dna className="w-5 h-5 text-gray-700" aria-hidden="true" />
+          <section className="card fade-up" aria-labelledby="gene-search-title">
+            <div className="flex items-center gap-12 mb-16">
+              <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
+                <Dna className="w-20 h-20 text-muted" aria-hidden="true" />
               </div>
-              <div>
-                <h2 id="gene-search-title" className="text-base font-semibold text-gray-900">Buscar Gene</h2>
-                <p className="text-xs text-gray-600">Símbolo HGNC do gene</p>
-              </div>
+              <h2 id="gene-search-title" className="text-16 font-medium text-text">Buscar gene</h2>
             </div>
-            <form onSubmit={handleGeneSearch} className="flex flex-col gap-3">
-              <label htmlFor="gene-input" className="sr-only">Símbolo do gene</label>
+            <form onSubmit={handleGeneSearch} className="flex flex-col gap-12">
+              <label htmlFor="gene-input" className="field-label">Símbolo HGNC do gene</label>
               <input
                 id="gene-input"
                 type="text"
-                className="input"
+                className="input mono"
                 placeholder="ex.: BRCA1"
                 value={geneInput}
                 onChange={(e) => setGeneInput(e.target.value)}
                 spellCheck={false}
                 autoComplete="off"
               />
-              <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
-                <Search className="w-4 h-4" aria-hidden="true" />
+              <button type="submit" className="pill w-full">
+                <Search className="w-16 h-16" aria-hidden="true" />
                 Buscar gene
               </button>
             </form>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-16 flex flex-wrap gap-8">
               {GENE_EXAMPLES.map((g) => (
                 <button
                   key={g}
                   type="button"
-                  className="text-xs px-2 py-1 border border-gray-200 rounded text-gray-600 hover:border-gray-400 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1 transition-colors"
+                  className="pill pill-solid pill-sm"
                   onClick={() => openGene(g)}
                   onMouseEnter={() => prefetchGene(g)}
                   onFocus={() => prefetchGene(g)}
@@ -124,39 +154,36 @@ export default function HomePage() {
             </div>
           </section>
 
-          <section className="card" aria-labelledby="variant-search-title">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
-                <Activity className="w-5 h-5 text-gray-700" aria-hidden="true" />
+          <section className="card fade-up" aria-labelledby="variant-search-title">
+            <div className="flex items-center gap-12 mb-16">
+              <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
+                <Activity className="w-20 h-20 text-muted" aria-hidden="true" />
               </div>
-              <div>
-                <h2 id="variant-search-title" className="text-base font-semibold text-gray-900">Buscar Variante</h2>
-                <p className="text-xs text-gray-600">Identificador rs do dbSNP</p>
-              </div>
+              <h2 id="variant-search-title" className="text-16 font-medium text-text">Buscar variante</h2>
             </div>
-            <form onSubmit={handleVariantSearch} className="flex flex-col gap-3">
-              <label htmlFor="variant-input" className="sr-only">rs ID da variante</label>
+            <form onSubmit={handleVariantSearch} className="flex flex-col gap-12">
+              <label htmlFor="variant-input" className="field-label">Identificador rs do dbSNP</label>
               <input
                 id="variant-input"
                 type="text"
-                className="input"
+                className="input mono"
                 placeholder="ex.: rs429358"
                 value={variantInput}
                 onChange={(e) => setVariantInput(e.target.value)}
                 spellCheck={false}
                 autoComplete="off"
               />
-              <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
-                <Search className="w-4 h-4" aria-hidden="true" />
+              <button type="submit" className="pill w-full">
+                <Search className="w-16 h-16" aria-hidden="true" />
                 Buscar variante
               </button>
             </form>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-16 flex flex-wrap gap-8">
               {VARIANT_EXAMPLES.map((v) => (
                 <button
                   key={v}
                   type="button"
-                  className="text-xs px-2 py-1 border border-gray-200 rounded text-gray-600 hover:border-gray-400 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1 transition-colors"
+                  className="pill pill-solid pill-sm"
                   onClick={() => openVariant(v)}
                   onMouseEnter={() => prefetchVariant(v)}
                   onFocus={() => prefetchVariant(v)}
@@ -169,24 +196,51 @@ export default function HomePage() {
           </section>
         </div>
 
+        <section className="mb-48 fade-up" aria-labelledby="showcase-title">
+          <h2 id="showcase-title" className="label mb-12">Casos de exemplo</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 stagger">
+            {SHOWCASE.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => (c.kind === 'gene' ? openGene(c.id) : openVariant(c.id))}
+                onMouseEnter={() => (c.kind === 'gene' ? prefetchGene(c.id) : prefetchVariant(c.id))}
+                onFocus={() => (c.kind === 'gene' ? prefetchGene(c.id) : prefetchVariant(c.id))}
+                className="card hover-surface fade-up text-left flex flex-col gap-8 cursor-pointer"
+              >
+                <span className="flex items-center gap-8">
+                  {c.kind === 'gene' ? (
+                    <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
+                  ) : (
+                    <Activity className="w-12 h-12 text-muted" aria-hidden="true" />
+                  )}
+                  <span className="mono text-12 text-muted">{c.id}</span>
+                </span>
+                <span className="text-14 font-medium text-text">{c.name}</span>
+                <span className="text-12 text-muted leading-snug">{c.desc}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
         {entries.length > 0 && (
-          <section className="mb-10" aria-labelledby="recent-title">
-            <div className="flex items-center justify-between mb-3">
-              <h2 id="recent-title" className="label flex items-center gap-2">
-                <Clock className="w-3 h-3" aria-hidden="true" />
+          <section className="fade-up" aria-labelledby="recent-title">
+            <div className="flex items-center gap-16 mb-12">
+              <h2 id="recent-title" className="label flex items-center gap-8">
+                <Clock className="w-12 h-12" aria-hidden="true" />
                 Buscas recentes
               </h2>
               <button
                 type="button"
                 onClick={clear}
-                className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1 rounded"
+                className="link-muted mono text-12 flex items-center gap-4"
                 aria-label="Limpar histórico de busca"
               >
-                <X className="w-3 h-3" aria-hidden="true" />
+                <X className="w-12 h-12" aria-hidden="true" />
                 Limpar
               </button>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-8">
               {entries.map((entry) => (
                 <button
                   key={`${entry.kind}-${entry.value}`}
@@ -195,12 +249,12 @@ export default function HomePage() {
                   onMouseEnter={() =>
                     entry.kind === 'gene' ? prefetchGene(entry.value) : prefetchVariant(entry.value)
                   }
-                  className="text-xs px-2 py-1 border border-gray-200 rounded text-gray-700 hover:border-gray-400 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-1 transition-colors flex items-center gap-1.5"
+                  className="pill pill-solid pill-sm"
                 >
                   {entry.kind === 'gene' ? (
-                    <Dna className="w-3 h-3 text-gray-400" aria-hidden="true" />
+                    <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
                   ) : (
-                    <Activity className="w-3 h-3 text-gray-400" aria-hidden="true" />
+                    <Activity className="w-12 h-12 text-muted" aria-hidden="true" />
                   )}
                   {entry.value}
                 </button>
@@ -209,41 +263,26 @@ export default function HomePage() {
           </section>
         )}
 
-        <div className="border-t border-gray-200 pt-6">
-          <p className="label mb-3">Fontes de dados</p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            {[
-              { name: 'Ensembl', desc: 'Anotação de genes' },
-              { name: 'gnomAD', desc: 'Frequências populacionais' },
-              { name: 'ClinVar', desc: 'Significado clínico' },
-              { name: 'AlphaFold', desc: 'Estrutura proteica' },
-              { name: 'UniProt', desc: 'Banco de proteínas' },
-            ].map((src) => (
-              <div key={src.name} className="flex flex-col gap-1">
-                <p className="text-sm font-semibold text-gray-900">{src.name}</p>
-                <p className="text-xs text-gray-600">{src.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      </div>
 
-        <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col items-center gap-1">
-          <p className="text-xs text-gray-500">
+      <footer className="app-footer">
+        <div className="max-w-lg mx-auto px-24 py-12 flex items-center justify-between gap-24 flex-wrap">
+          <span className="text-12 text-muted mono">
+            Ensembl · gnomAD · ClinVar · AlphaFold · UniProt
+          </span>
+          <span className="text-12 text-muted mono flex items-center gap-16">
             <a
               href="https://github.com/madsondeluna/genvar"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-gray-900"
+              className="link-muted underline underline-offset-2"
             >
               github.com/madsondeluna/genvar
             </a>
-          </p>
-          <p className="text-xs text-gray-500">
-            Projeto de TCC para o MBA em Eng. de Software da USP
-          </p>
+            TCC · MBA em Eng. de Software · USP
+          </span>
         </div>
-
-      </div>
+      </footer>
     </main>
   )
 }
