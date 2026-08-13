@@ -3,7 +3,7 @@ import { pureToken, resolveColor } from './pureTokens'
 // Tema Plotly derivado dos tokens do Pure Design.
 // Tipos e rótulos de dados usam a família mono, como o resto dos metadados.
 
-export const CHART_FONT = "'Spline Sans Mono', monospace"
+export const CHART_FONT = "'Ubuntu', sans-serif"
 
 export function chartColors() {
   return {

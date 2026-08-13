@@ -5,6 +5,22 @@
 /* Camada do app. Nenhum literal de cor, tamanho ou tempo:
    todo valor vem de tokens.css. */
 
+/* Uma família só, Ubuntu, sem mono e sem serifa: prosa, títulos e dados.
+   Números que se comparam continuam alinhados pelo .num (tabular-nums).
+   Ubuntu não tem eixo de largura, então o stretch do display é normal
+   e o peso sobe para o título não sair fino demais. */
+:root {
+  --font-sans: 'Ubuntu', system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+  --font-mono: 'Ubuntu', system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+  --font-display: 'Ubuntu', system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+  --font-display-stretch: normal;
+}
+
+.display,
+.section-title {
+  font-weight: var(--weight-medium);
+}
+
 /* Estado mais vivo: derivado do token por cor relativa, mesma luminância
    (o contraste WCAG se preserva), croma ampliado. Nenhuma cor nova. */
 :root {
