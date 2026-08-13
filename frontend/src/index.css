@@ -96,6 +96,27 @@
     background-color: var(--bg);
   }
 
+  /* barra da home: só a borda e o fundo aparecem no scroll; a marca em si
+     viaja do hero para o centro da barra pelo transform do .brand-morph */
+  .app-nav-morph {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    transition:
+      background-color var(--duration-5) var(--ease-out-soft),
+      border-color var(--duration-5) var(--ease-out-soft);
+  }
+
+  .app-nav-morph[data-scrolled='true'] {
+    background-color: var(--bg);
+    border-bottom-color: var(--border);
+  }
+
+  .brand-morph {
+    transform-origin: left center;
+    transition: transform var(--duration-5) var(--ease-out-soft);
+    will-change: transform;
+  }
+
   /* rodapé fixo, o espelho da navbar */
   .app-footer {
     position: fixed;

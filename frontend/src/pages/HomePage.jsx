@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { Search, Dna, Activity, Clock, X } from 'lucide-react'
 import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
+import BrandMorphNav from '../components/BrandMorphNav'
 
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
 const VARIANT_EXAMPLES = ['rs334', 'rs1800562', 'rs6025', 'rs1799853']
@@ -49,6 +50,7 @@ const SHOWCASE = [
 ]
 
 export default function HomePage() {
+  const heroSlotRef = useRef(null)
   const [geneInput, setGeneInput] = useState('')
   const [variantInput, setVariantInput] = useState('')
   const navigate = useNavigate()
@@ -99,18 +101,15 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-bg">
+      <BrandMorphNav heroSlotRef={heroSlotRef} />
       <div className="max-w-lg mx-auto px-24 py-48 pb-96">
 
         <header className="mb-48 stagger stagger-fade">
           <p className="eyebrow mb-12">Explorador de variantes genéticas</p>
-          <div className="flex items-center gap-16 mb-12">
-            <img
-              src="/brand/genvar-mark.svg"
-              alt="Marca do GenVar"
-              className="w-56 h-56"
-            />
-            <h1 className="display display-name">GenVar Dashboard</h1>
-          </div>
+          {/* o slot reserva o espaço da marca; quem desenha é a barra, que
+              traz o mesmo bloco para cá enquanto a página está no topo */}
+          <h1 className="sr-only">GenVar Dashboard</h1>
+          <div ref={heroSlotRef} className="mb-12" style={{ height: 'var(--space-56)' }} aria-hidden="true" />
           <p className="text-15 text-muted leading-normal">
             Ensembl, gnomAD, ClinVar, AlphaFold e UniProt em uma consulta única. Busque um símbolo
             de gene ou um rs ID para reunir significado clínico, frequências populacionais,
@@ -270,14 +269,58 @@ export default function HomePage() {
           </section>
         )}
 
+        <section className="mt-48 fade-up" aria-labelledby="credits-title">
+          <h2 id="credits-title" className="label mb-12">Créditos do projeto/MVP</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-stretch stagger">
+            <div className="card fade-up h-full flex flex-col gap-8">
+              <p className="label">Autor</p>
+              <p className="text-14 font-medium text-text">Madson A. de Luna Aragão</p>
+              <p className="text-12 text-muted leading-snug">
+                Doutorando em Bioinformática (UFMG), estudante de MBA em Engenharia de Software
+                (USP), especialista em Data Science &amp; Analytics (PUC-Rio), mestre em Genética
+                e Biologia Molecular (UFPE) e biomédico (UFPE).
+              </p>
+            </div>
+            <div className="card fade-up h-full flex flex-col gap-8">
+              <p className="label">Orientação</p>
+              <p className="text-14 font-medium text-text">Marcelo Pereira da Silva</p>
+              <p className="text-12 text-muted leading-snug">
+                Orientador do trabalho. Mestre em Ciência da Computação e doutorando em Ciência
+                da Informação.
+              </p>
+            </div>
+            <div className="card fade-up h-full flex flex-col gap-8">
+              <p className="label">Programa</p>
+              <p className="text-14 font-medium text-text">MBA em Engenharia de Software, USP</p>
+              <p className="text-12 text-muted leading-snug">
+                Este produto é o MVP apresentado como critério para obtenção do título de MBA em
+                Engenharia de Software pela Universidade de São Paulo, em 2026.
+              </p>
+            </div>
+          </div>
+        </section>
+
       </div>
 
       <footer className="app-footer">
-        <div className="max-w-lg mx-auto px-24 py-12 flex items-center justify-between gap-24 flex-wrap">
-          <span className="text-12 text-muted mono">
-            Ensembl · gnomAD · ClinVar · AlphaFold · UniProt
-          </span>
-          <span className="text-12 text-muted mono flex items-center gap-16">
+        <div className="max-w-lg mx-auto px-24 py-12 flex items-center justify-center gap-24 flex-wrap">
+          <span className="text-12 text-muted mono flex items-center justify-center gap-16 flex-wrap">
+            <a
+              href="https://delunalab.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-muted underline underline-offset-2"
+            >
+              delunalab.dev
+            </a>
+            <a
+              href="https://madsondeluna.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-muted underline underline-offset-2"
+            >
+              madsondeluna.com
+            </a>
             <a
               href="https://github.com/madsondeluna/genvar"
               target="_blank"
@@ -286,7 +329,6 @@ export default function HomePage() {
             >
               github.com/madsondeluna/genvar
             </a>
-            TCC · MBA em Eng. de Software · USP
           </span>
         </div>
       </footer>
