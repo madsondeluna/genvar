@@ -7,6 +7,7 @@ export default function PageNav({ inputId, placeholder, ariaLabel, value, onChan
       <div className="max-w-xl mx-auto px-24 py-12 flex items-center justify-between gap-24 flex-wrap">
         <Link to="/" className="link-muted flex items-center gap-8 text-14">
           <ArrowLeft className="w-16 h-16" aria-hidden="true" />
+          <img src="/brand/genvar-mark.svg" alt="" className="w-24 h-24" aria-hidden="true" />
           GenVar
         </Link>
         <form onSubmit={onSubmit} className="flex gap-8 flex-1 max-w-sm" role="search">

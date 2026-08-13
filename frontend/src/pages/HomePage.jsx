@@ -103,7 +103,14 @@ export default function HomePage() {
 
         <header className="mb-48 stagger stagger-fade">
           <p className="eyebrow mb-12">Explorador de variantes genéticas</p>
-          <h1 className="display display-name mb-12">GenVar Dashboard</h1>
+          <div className="flex items-center gap-16 mb-12">
+            <img
+              src="/brand/genvar-mark.svg"
+              alt="Marca do GenVar"
+              className="w-56 h-56"
+            />
+            <h1 className="display display-name">GenVar Dashboard</h1>
+          </div>
           <p className="text-15 text-muted leading-normal">
             Ensembl, gnomAD, ClinVar, AlphaFold e UniProt em uma consulta única. Busque um símbolo
             de gene ou um rs ID para reunir significado clínico, frequências populacionais,
