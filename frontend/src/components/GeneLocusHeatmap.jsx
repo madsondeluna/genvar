@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import Plot from 'react-plotly.js'
-import { chartColors, baseLayout, CHART_FONT } from '../utils/chartTheme'
+import { chartColors, baseLayout, withAlpha, CHART_FONT } from '../utils/chartTheme'
 
 // Classificação clínica é estado, então as pilhas usam --status-*:
 // patogênica = critical, VUS = warning, benigna = good. Nunca um slot de série.
+// Barras de vidro: preenchimento translúcido, borda sólida da mesma cor.
 
 export default function GeneLocusHeatmap({ geneData }) {
   const built = useMemo(() => {
@@ -26,7 +27,7 @@ export default function GeneLocusHeatmap({ geneData }) {
         x: xMb,
         y: bins.map((b) => b.pathogenic),
         width: widthMb,
-        marker: { color: c.critical },
+        marker: { color: withAlpha(c.critical, 0.55), line: { color: c.critical, width: 1 } },
         hovertemplate: hover,
       },
       {
@@ -35,7 +36,7 @@ export default function GeneLocusHeatmap({ geneData }) {
         x: xMb,
         y: bins.map((b) => b.vus),
         width: widthMb,
-        marker: { color: c.warning },
+        marker: { color: withAlpha(c.warning, 0.55), line: { color: c.warning, width: 1 } },
         hovertemplate: hover,
       },
       {
@@ -44,7 +45,7 @@ export default function GeneLocusHeatmap({ geneData }) {
         x: xMb,
         y: bins.map((b) => b.benign),
         width: widthMb,
-        marker: { color: c.good },
+        marker: { color: withAlpha(c.good, 0.55), line: { color: c.good, width: 1 } },
         hovertemplate: hover,
       },
     ]
@@ -72,7 +73,22 @@ export default function GeneLocusHeatmap({ geneData }) {
       margin: { l: 55, r: 20, t: 20, b: 80 },
     }
 
-    return { data, layout }
+    // Resumo da janela plotada: totais por classe e o trecho mais denso
+    const totals = bins.reduce(
+      (acc, b) => {
+        acc.pathogenic += b.pathogenic
+        acc.vus += b.vus
+        acc.benign += b.benign
+        return acc
+      },
+      { pathogenic: 0, vus: 0, benign: 0 }
+    )
+    const hotspot = bins.reduce((best, b) => {
+      const count = b.pathogenic + b.vus + b.benign
+      return count > (best?.count || 0) ? { start: b.start, count } : best
+    }, null)
+
+    return { data, layout, totals, classifiedTotal, hotspot }
   }, [geneData])
 
   if (!geneData) return null
@@ -105,6 +121,40 @@ export default function GeneLocusHeatmap({ geneData }) {
         config={{ responsive: true, displayModeBar: false }}
         style={{ width: '100%', height: '300px' }}
       />
+
+      {/* resumo da janela plotada, derivado dos mesmos bins do gráfico */}
+      <div className="mt-16 pt-12 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-16">
+        <div className="flex flex-col gap-2">
+          <span className="text-18 font-medium mono num text-text">
+            {built.classifiedTotal.toLocaleString('pt-BR')}
+          </span>
+          <span className="label">Classificadas no gráfico</span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-18 font-medium mono num" style={{ color: 'var(--state-critical)' }}>
+            {built.totals.pathogenic.toLocaleString('pt-BR')}
+          </span>
+          <span className="status status-critical text-12">Patogênicas</span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-18 font-medium mono num" style={{ color: 'var(--state-warning)' }}>
+            {built.totals.vus.toLocaleString('pt-BR')}
+          </span>
+          <span className="status status-warning text-12">VUS / Conflitantes</span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-18 font-medium mono num" style={{ color: 'var(--state-good)' }}>
+            {built.totals.benign.toLocaleString('pt-BR')}
+          </span>
+          <span className="status status-good text-12">Benignas</span>
+        </div>
+      </div>
+      {built.hotspot && (
+        <p className="text-12 text-muted mt-12">
+          Trecho mais denso: {(built.hotspot.start / 1_000_000).toFixed(3)} Mb, com{' '}
+          {built.hotspot.count.toLocaleString('pt-BR')} variantes classificadas em {binKb} kb.
+        </p>
+      )}
     </div>
   )
 }
