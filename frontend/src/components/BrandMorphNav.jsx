@@ -22,8 +22,14 @@ export default function BrandMorphNav({ heroSlotRef }) {
       const brand = brandRef.current
       const slot = heroSlotRef.current
       if (!brand || !slot) return
+      // O resize dispara com o brand possivelmente já transformado no estado
+      // hero; medir o retângulo escalado corrompe o offset. Zera o transform
+      // durante a leitura e restaura na mesma tarefa, antes de qualquer paint.
+      const prev = brand.style.transform
+      brand.style.transform = 'none'
       const b = brand.getBoundingClientRect()
       const s = slot.getBoundingClientRect()
+      brand.style.transform = prev
       const scrollY = window.scrollY
       setOffset({
         dx: s.left - b.left,

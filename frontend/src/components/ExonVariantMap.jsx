@@ -140,9 +140,25 @@ export default function ExonVariantMap({ geneData }) {
     const annotations = []
     const boxTop = -trackH * 0.35
     const boxBottom = -trackH * 1.15
+    // Decisão do usuário: os íntrons ganham vermelho para se destacarem do
+    // modelo cinza dos éxons. No eixo exônico viram conectores nos gaps.
+    const intronColor = withAlpha(c.critical, 0.6)
+    const midY = (boxTop + boxBottom) / 2
     if (exonic) {
       const n = scale.mapped.length
       const labelEvery = Math.max(1, Math.ceil(n / 24))
+      scale.mapped.forEach((e, i) => {
+        if (i > 0) {
+          shapes.push({
+            type: 'line',
+            x0: scale.mapped[i - 1].x1,
+            x1: e.x0,
+            y0: midY,
+            y1: midY,
+            line: { color: intronColor, width: 1.5 },
+          })
+        }
+      })
       scale.mapped.forEach((e, i) => {
         shapes.push({
           type: 'rect',
@@ -168,14 +184,13 @@ export default function ExonVariantMap({ geneData }) {
         }
       })
     } else {
-      const midY = (boxTop + boxBottom) / 2
       shapes.push({
         type: 'line',
         x0: geneData.start / 1_000_000,
         x1: geneData.end / 1_000_000,
         y0: midY,
         y1: midY,
-        line: { color: c.inkMuted, width: 1 },
+        line: { color: intronColor, width: 1.5 },
       })
       for (const e of exons) {
         shapes.push({
@@ -277,8 +292,8 @@ export default function ExonVariantMap({ geneData }) {
           ' do transcrito canônico'
         )}
         {axis === 'exons'
-          ? '; no eixo exônico os íntrons são removidos, como nos browsers gnomAD e BRaVa.'
-          : '; no eixo genômico a linha fina entre as caixas são os íntrons.'}
+          ? '; no eixo exônico os íntrons são comprimidos nos conectores vermelhos entre as caixas, como nos browsers gnomAD e BRaVa.'
+          : '; no eixo genômico a linha vermelha entre as caixas são os íntrons.'}
         {sampled &&
           ' Os pontos vêm da amostra de variantes distribuída ao longo do gene, a mesma das tabelas abaixo.'}
         {axis === 'exons' && built.droppedIntronic > 0 && (

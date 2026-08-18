@@ -19,6 +19,7 @@ export default function ChromosomeIdeogram({
   legendItems = null,
   showBandLabels = null,
   expandSinglePointBy = 0,
+  facts = null,
 }) {
   const [containerId] = useState(nextContainerId)
   const [error, setError] = useState(null)
@@ -41,6 +42,20 @@ export default function ChromosomeIdeogram({
     [effectiveAnnotations],
   )
 
+  // Re-renderiza quando a largura do host muda de faixa (rotação do aparelho,
+  // colapso da barra de URL no mobile), para o cromossomo voltar a caber.
+  const [widthBucket, setWidthBucket] = useState(0)
+  useEffect(() => {
+    const el = document.getElementById(containerId)
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver((entries) => {
+      const w = Math.round(entries[0].contentRect.width / 80)
+      setWidthBucket((prev) => (prev === w ? prev : w))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [containerId])
+
   useEffect(() => {
     let cancelled = false
     setLoading(true)
@@ -57,6 +72,12 @@ export default function ChromosomeIdeogram({
 
         const isFocus = Boolean(focusChromosome)
 
+        // O ideogram renderiza com comprimento fixo; num viewport estreito o
+        // cromossomo ficava cortado dentro do card. Ajusta o comprimento à
+        // largura disponível do host, com folga para o rótulo do cromossomo.
+        const fitWidth = Math.max(240, el.clientWidth - 60)
+        const desiredHeight = chrHeight ?? (isFocus ? 700 : 140)
+
         const config = {
           organism: 'human',
           assembly: 'GRCh38',
@@ -66,13 +87,32 @@ export default function ChromosomeIdeogram({
           annotationHeight: annotationHeight ?? (isFocus ? 26 : 12),
           annotationsLayout,
           annotations: effectiveAnnotations,
-          chrHeight: chrHeight ?? (isFocus ? 700 : 140),
+          chrHeight: isFocus ? Math.min(desiredHeight, fitWidth) : desiredHeight,
           chrMargin: chrMargin ?? (isFocus ? 40 : 10),
           chrWidth: isFocus ? 26 : 14,
           showBandLabels: showBandLabels ?? isFocus,
           orientation: isFocus ? 'horizontal' : 'vertical',
           onLoad: () => {
-            if (!cancelled) setLoading(false)
+            if (cancelled) return
+            // O ideogram reserva um SVG bem mais alto que o cromossomo
+            // horizontal desenhado; encolhe o viewBox ao conteúdo real para o
+            // card não carregar um vão vazio acima e abaixo do traço.
+            const svg = el.querySelector('svg')
+            if (svg) {
+              try {
+                const b = svg.getBBox()
+                const pad = 8
+                svg.setAttribute(
+                  'viewBox',
+                  `${b.x - pad} ${b.y - pad} ${b.width + pad * 2} ${b.height + pad * 2}`
+                )
+                svg.setAttribute('width', b.width + pad * 2)
+                svg.setAttribute('height', b.height + pad * 2)
+              } catch {
+                /* svg sem conteúdo mensurável */
+              }
+            }
+            setLoading(false)
           },
         }
 
@@ -97,7 +137,7 @@ export default function ChromosomeIdeogram({
       if (el) el.innerHTML = ''
       ideogramRef.current = null
     }
-  }, [containerId, annotationsKey, focusChromosome, annotationsLayout, annotationHeight, chrHeight, chrMargin, showBandLabels])
+  }, [containerId, annotationsKey, focusChromosome, annotationsLayout, annotationHeight, chrHeight, chrMargin, showBandLabels, widthBucket])
 
   return (
     <section className="card" aria-labelledby={`${containerId}-title`}>
@@ -142,6 +182,18 @@ export default function ChromosomeIdeogram({
 
       {!loading && effectiveAnnotations.length === 0 && (
         <p className="text-12 text-muted mt-8">Sem dados posicionais para exibir.</p>
+      )}
+
+      {facts && facts.length > 0 && (
+        <div className="mt-16 pt-12 border-t border-border grid grid-cols-2 md:grid-cols-3 gap-16">
+          {facts.map((f) => (
+            <div key={f.label} className="flex flex-col gap-2">
+              <span className="text-14 font-medium mono num text-text">{f.value}</span>
+              <span className="label">{f.label}</span>
+              {f.hint && <span className="text-12 text-muted leading-snug">{f.hint}</span>}
+            </div>
+          ))}
+        </div>
       )}
     </section>
   )

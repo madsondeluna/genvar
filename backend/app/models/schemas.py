@@ -65,6 +65,10 @@ class GeneResponse(BaseModel):
     canonical_transcript_id: Optional[str] = None
     exons: List[Exon] = []
 
+    # Contexto citogenetico para o painel posicional do mapa cromossomico
+    cytobands: List[str] = []
+    chromosome_length: Optional[int] = None
+
 
 class PopulationFrequency(BaseModel):
     population: str
@@ -131,3 +135,26 @@ class VariantResponse(BaseModel):
 
     protein_id: Optional[str] = None
     amino_acid_change: Optional[str] = None
+
+
+class MendelianDisease(BaseModel):
+    description: str
+    sources: List[str] = []
+    omim_id: Optional[str] = None
+    orphanet_id: Optional[str] = None
+    inheritance: List[str] = []
+
+
+class GwasTrait(BaseModel):
+    trait: str
+    association_count: int
+    best_p_value: Optional[float] = None
+
+
+class GenePhenotypesResponse(BaseModel):
+    gene_symbol: str
+    mendelian: List[MendelianDisease] = []
+    gwas: List[GwasTrait] = []
+    gwas_trait_total: int = 0
+    gwas_association_total: int = 0
+    gwas_truncated: bool = False

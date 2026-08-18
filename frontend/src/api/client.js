@@ -27,6 +27,12 @@ export const fetchGene = async (symbol) => {
   return data
 }
 
+export const fetchGenePhenotypes = async (symbol) => {
+  // include_associated do Ensembl é pesado; a primeira carga pode passar de 60 s
+  const { data } = await client.get(`/gene/${symbol}/phenotypes`, { timeout: 120000 })
+  return data
+}
+
 export const fetchVariant = async (rsid) => {
   const { data } = await client.get(`/variant/${rsid}`)
   return data
