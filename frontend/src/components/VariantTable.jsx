@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ChevronUp, ChevronDown, Download, Search } from 'lucide-react'
 import SignificanceTag from './SignificanceTag'
 import { formatConsequence, formatPosition } from '../utils/format'
@@ -12,12 +13,54 @@ const CSV_COLUMNS = [
   { label: 'alleles', get: (v) => (v.alleles ? v.alleles.join('/') : '') },
 ]
 
-export default function VariantTable({ variants, title = 'Variantes', maxRows = 500, csvPrefix = 'variantes', totalCount = null }) {
-  const [sortKey, setSortKey] = useState('position')
-  const [sortAsc, setSortAsc] = useState(true)
-  const [page, setPage] = useState(0)
-  const [query, setQuery] = useState('')
-  const [consequenceFilter, setConsequenceFilter] = useState('all')
+// Estado padrão dos controles; só o que difere disto vai para a URL
+const CONTROL_DEFAULTS = { q: '', c: 'all', o: 'position.asc', p: '1' }
+
+export default function VariantTable({
+  variants,
+  title = 'Variantes',
+  maxRows = 500,
+  csvPrefix = 'variantes',
+  totalCount = null,
+  paramPrefix = null,
+}) {
+  // Com paramPrefix, filtros, ordenação e página vivem na query string (?pat_q=...),
+  // então o link copiado reproduz exatamente a vista atual. Sem prefixo, estado local.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [localState, setLocalState] = useState(CONTROL_DEFAULTS)
+  const urlMode = Boolean(paramPrefix)
+
+  const read = (name) =>
+    (urlMode ? searchParams.get(`${paramPrefix}_${name}`) : localState[name]) ?? CONTROL_DEFAULTS[name]
+
+  const query = read('q')
+  const consequenceFilter = read('c')
+  const [sortKey, sortDir] = read('o').split('.')
+  const sortAsc = sortDir !== 'desc'
+  const page = Math.max(0, (parseInt(read('p'), 10) || 1) - 1)
+
+  function updateControls(changes) {
+    if (urlMode) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [name, value] of Object.entries(changes)) {
+            const key = `${paramPrefix}_${name}`
+            if (value === CONTROL_DEFAULTS[name]) next.delete(key)
+            else next.set(key, value)
+          }
+          return next
+        },
+        { replace: true }
+      )
+    } else {
+      setLocalState((s) => ({ ...s, ...changes }))
+    }
+  }
+
+  const setQuery = (v) => updateControls({ q: v, p: '1' })
+  const setConsequenceFilter = (v) => updateControls({ c: v, p: '1' })
+  const setPage = (idx) => updateControls({ p: String(idx + 1) })
   const PAGE_SIZE = 20
 
   const limited = useMemo(() => (variants || []).slice(0, maxRows), [variants, maxRows])
@@ -64,13 +107,8 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
   const pageRows = sorted.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE)
 
   function toggleSort(key) {
-    if (sortKey === key) {
-      setSortAsc(!sortAsc)
-    } else {
-      setSortKey(key)
-      setSortAsc(true)
-    }
-    setPage(0)
+    const nextAsc = sortKey === key ? !sortAsc : true
+    updateControls({ o: `${key}.${nextAsc ? 'asc' : 'desc'}`, p: '1' })
   }
 
   function handleExport() {
@@ -130,20 +168,14 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
             placeholder="Filtrar por rs ID ou classificação..."
             aria-label="Filtrar variantes"
             value={query}
-            onChange={(e) => {
-              setQuery(e.target.value)
-              setPage(0)
-            }}
+            onChange={(e) => setQuery(e.target.value)}
           />
         </div>
         <span className="select-shell w-auto">
           <select
             className="select"
             value={consequenceFilter}
-            onChange={(e) => {
-              setConsequenceFilter(e.target.value)
-              setPage(0)
-            }}
+            onChange={(e) => setConsequenceFilter(e.target.value)}
             aria-label="Filtrar por consequência"
           >
             <option value="all">Todas as consequências</option>
@@ -207,7 +239,7 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
           <button
             type="button"
             className="pill pill-solid pill-sm disabled:opacity-40"
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            onClick={() => setPage(Math.max(0, currentPage - 1))}
             disabled={currentPage === 0}
           >
             Anterior
@@ -218,7 +250,7 @@ export default function VariantTable({ variants, title = 'Variantes', maxRows = 
           <button
             type="button"
             className="pill pill-solid pill-sm disabled:opacity-40"
-            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            onClick={() => setPage(Math.min(totalPages - 1, currentPage + 1))}
             disabled={currentPage === totalPages - 1}
           >
             Próxima

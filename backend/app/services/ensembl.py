@@ -78,6 +78,51 @@ async def get_gene_variants(gene_id: str, limit: int | None = None) -> List[Dict
         return variants[:limit] if limit else variants
 
 
+def _transcript_rank(t: Dict[str, Any]) -> tuple:
+    """Canônico do Ensembl primeiro (coincide com o MANE Select na maioria dos genes
+    codificantes desde a release 110), depois protein_coding, depois o mais longo."""
+    return (
+        1 if t.get("is_canonical") == 1 else 0,
+        1 if t.get("biotype") == "protein_coding" else 0,
+        (t.get("end") or 0) - (t.get("start") or 0),
+    )
+
+
+async def get_canonical_exons(gene_id: str) -> Dict[str, Any]:
+    """Éxons do transcrito canônico do gene, para o mapa de variantes por éxon."""
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/lookup/id/{gene_id}"
+        response = await _ensembl_get(client, url, params={"expand": 1}, timeout=60.0)
+
+        if response.status_code in (400, 404):
+            return {}
+
+        response.raise_for_status()
+        data = response.json()
+
+        transcripts = data.get("Transcript") or []
+        if not transcripts:
+            return {}
+
+        best = max(transcripts, key=_transcript_rank)
+        exons = sorted(
+            (
+                {"start": e["start"], "end": e["end"]}
+                for e in best.get("Exon") or []
+                if e.get("start") and e.get("end")
+            ),
+            key=lambda e: e["start"],
+        )
+        if not exons:
+            return {}
+
+        return {
+            "transcript_id": best.get("id"),
+            "is_canonical": best.get("is_canonical") == 1,
+            "exons": exons,
+        }
+
+
 def _tc_rank(tc: Dict[str, Any]) -> tuple:
     """Rank transcript consequences so the canonical protein_coding one with scores wins.
 
@@ -190,3 +235,110 @@ async def get_vep_annotation(rsid: str) -> Optional[Dict[str, Any]]:
         }
 
         return result
+
+
+# Fontes de associacao gene-doenca com curadoria manual; tudo mais (ClinVar por
+# variante, HGMD, dbGaP) fica de fora do painel mendeliano.
+MENDELIAN_SOURCES = {"MIM morbid", "Orphanet", "GenCC", "G2P", "DDG2P"}
+
+# Termos HPO de modo de heranca que a curadoria Orphanet embute nas acessoes
+# ontologicas de cada doenca. So mapeamos os modos classicos e inequivocos.
+HP_INHERITANCE = {
+    "HP:0000006": "autossômica dominante",
+    "HP:0000007": "autossômica recessiva",
+    "HP:0001417": "ligada ao X",
+    "HP:0001419": "ligada ao X recessiva",
+    "HP:0001423": "ligada ao X dominante",
+    "HP:0001427": "mitocondrial",
+    "HP:0001450": "ligada ao Y",
+    "HP:0001426": "multifatorial",
+}
+
+
+def _display_case(description: str) -> str:
+    """MIM morbid vem em caixa alta; rebaixa sem tocar no que ja esta misto."""
+    if description.isupper():
+        return description.capitalize()
+    return description
+
+
+async def get_gene_diseases(gene_symbol: str) -> List[Dict[str, Any]]:
+    """Associacoes gene-doenca com curadoria clinica (OMIM, Orphanet, GenCC, G2P),
+    agregadas pelo Ensembl. Sem include_associated: o payload por variante e pesado
+    demais (dezenas de milhares de entradas ClinVar) e o GWAS vem do proprio catalogo."""
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/phenotype/gene/homo_sapiens/{gene_symbol}"
+        # Este endpoint do Ensembl oscila entre 2 s e ~100 s para o mesmo gene.
+        # Tentativa unica com timeout longo: com os retries de 30 s o total
+        # passava de 90 s e o painel caia por timeout mesmo com o dado vindo.
+        response = await client.get(url, headers=HEADERS, timeout=100.0)
+
+        if response.status_code in (400, 404):
+            return []
+
+        response.raise_for_status()
+        entries = response.json()
+
+    mendelian: Dict[str, Dict[str, Any]] = {}
+    for e in entries:
+        if e.get("source") not in MENDELIAN_SOURCES:
+            continue
+        description = (e.get("description") or "").strip()
+        if not description:
+            continue
+        key = description.lower()
+        item = mendelian.setdefault(
+            key,
+            {
+                "description": _display_case(description),
+                "sources": [],
+                "omim_id": None,
+                "orphanet_id": None,
+                "inheritance": [],
+            },
+        )
+        source = e.get("source")
+        if source not in item["sources"]:
+            item["sources"].append(source)
+        for acc in e.get("ontology_accessions") or []:
+            mode = HP_INHERITANCE.get(acc)
+            if mode and mode not in item["inheritance"]:
+                item["inheritance"].append(mode)
+            if acc.startswith("Orphanet:") and not item["orphanet_id"]:
+                item["orphanet_id"] = acc.split(":", 1)[1]
+        if source == "MIM morbid" and not item["omim_id"]:
+            ext = (e.get("attributes") or {}).get("external_id")
+            if ext and str(ext).isdigit():
+                item["omim_id"] = str(ext)
+
+    def _rank(item: Dict[str, Any]) -> tuple:
+        # OMIM/Orphanet primeiro (curadoria clinica classica), depois GenCC/G2P
+        classic = "MIM morbid" in item["sources"] or "Orphanet" in item["sources"]
+        return (0 if classic else 1, item["description"].lower())
+
+    return sorted(mendelian.values(), key=_rank)
+
+
+async def get_cytogenetic_context(chromosome: str, start: int, end: int) -> Dict[str, Any]:
+    """Banda(s) citogenetica(s) que o gene ocupa e o comprimento do cromossomo,
+    para o painel posicional do mapa cromossomico."""
+    async with httpx.AsyncClient() as client:
+        band_url = f"{BASE_URL}/overlap/region/human/{chromosome}:{start}-{end}"
+        assembly_url = f"{BASE_URL}/info/assembly/homo_sapiens/{chromosome}"
+        band_resp, assembly_resp = await asyncio.gather(
+            _ensembl_get(client, band_url, params={"feature": "band"}),
+            _ensembl_get(client, assembly_url),
+        )
+
+    cytobands: List[str] = []
+    if band_resp is not None and band_resp.status_code == 200:
+        for b in band_resp.json():
+            band_id = b.get("id")
+            if band_id and band_id not in cytobands:
+                cytobands.append(band_id)
+
+    chromosome_length = None
+    if assembly_resp is not None and assembly_resp.status_code == 200:
+        chromosome_length = assembly_resp.json().get("length")
+
+    return {"cytobands": cytobands, "chromosome_length": chromosome_length}

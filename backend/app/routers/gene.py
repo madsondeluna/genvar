@@ -1,8 +1,8 @@
 import asyncio
 import math
 from fastapi import APIRouter
-from app.models.schemas import GeneResponse, GeneVariant, VariantBin
-from app.services import ensembl, gnomad, uniprot, alphafold
+from app.models.schemas import GeneResponse, GenePhenotypesResponse, GeneVariant, VariantBin
+from app.services import ensembl, gnomad, gwas_catalog, uniprot, alphafold
 from app.utils.validators import validate_gene_symbol, classify_clinical_significance
 from app.utils.cache import cache_get, cache_set
 
@@ -14,6 +14,8 @@ router = APIRouter()
 TABLE_SAMPLE_CAP = 200
 # Target number of bins for the positional distribution; bin size is rounded to whole kb.
 TARGET_BINS = 120
+# Quantas caracteristicas GWAS o painel de fenotipos mostra
+GWAS_PANEL_CAP = 12
 
 
 def _parse_variant_row(v: dict) -> GeneVariant:
@@ -59,7 +61,7 @@ def _build_distribution(rows_by_category: dict, gene_start: int, gene_end: int) 
 @router.get("/{gene_symbol}", response_model=GeneResponse)
 async def get_gene_data(gene_symbol: str):
     symbol = validate_gene_symbol(gene_symbol)
-    cache_key = f"gene:v3:{symbol}"
+    cache_key = f"gene:v5:{symbol}"
 
     cached = cache_get(cache_key)
     if cached:
@@ -70,15 +72,21 @@ async def get_gene_data(gene_symbol: str):
 
     gene_id = gene_info["gene_id"]
 
-    # Parallel: variants + constraint + uniprot
+    # Parallel: variants + constraint + uniprot + exons
     variants_task = ensembl.get_gene_variants(gene_id)
     constraint_task = gnomad.get_gene_constraint(symbol)
     uniprot_task = uniprot.get_uniprot_id(symbol)
+    exons_task = ensembl.get_canonical_exons(gene_id)
+    cyto_task = ensembl.get_cytogenetic_context(
+        str(gene_info["chromosome"]), gene_info["start"], gene_info["end"]
+    )
 
-    variants, constraint, uniprot_id = await asyncio.gather(
+    variants, constraint, uniprot_id, exon_data, cyto = await asyncio.gather(
         variants_task,
         constraint_task,
         uniprot_task,
+        exons_task,
+        cyto_task,
         return_exceptions=True,
     )
 
@@ -90,6 +98,10 @@ async def get_gene_data(gene_symbol: str):
         constraint = {}
     if isinstance(uniprot_id, Exception):
         uniprot_id = None
+    if isinstance(exon_data, Exception):
+        exon_data = {}
+    if isinstance(cyto, Exception):
+        cyto = {}
 
     # AlphaFold needs uniprot_id
     alphafold_data = None
@@ -162,10 +174,50 @@ async def get_gene_data(gene_symbol: str):
         uniprot_id=uniprot_id if isinstance(uniprot_id, str) else None,
         alphafold_pdb_url=alphafold_data.get("pdb_url") if alphafold_data else None,
         alphafold_pae_url=alphafold_data.get("pae_image_url") if alphafold_data else None,
+        canonical_transcript_id=exon_data.get("transcript_id"),
+        exons=exon_data.get("exons", []),
+        cytobands=cyto.get("cytobands", []),
+        chromosome_length=cyto.get("chromosome_length"),
     )
 
     # Don't cache a degraded result: if the Ensembl variant fetch failed transiently, caching
     # the empty list would pin "no variants" for the whole TTL even after Ensembl recovers.
     if not variants_failed:
+        cache_set(cache_key, result.model_dump())
+    return result
+
+
+@router.get("/{gene_symbol}/phenotypes", response_model=GenePhenotypesResponse)
+async def get_gene_phenotypes(gene_symbol: str):
+    """Doencas mendelianas curadas (Ensembl) + sinais GWAS (GWAS Catalog),
+    carregados em separado da pagina do gene para nao atrasar a carga principal."""
+    symbol = validate_gene_symbol(gene_symbol)
+    cache_key = f"genephen:v2:{symbol}"
+
+    cached = cache_get(cache_key)
+    if cached:
+        return GenePhenotypesResponse(**cached)
+
+    mendelian, gwas = await asyncio.gather(
+        ensembl.get_gene_diseases(symbol),
+        gwas_catalog.get_gene_associations(symbol),
+        return_exceptions=True,
+    )
+    degraded = isinstance(mendelian, Exception) or isinstance(gwas, Exception)
+    if isinstance(mendelian, Exception):
+        mendelian = []
+    if isinstance(gwas, Exception):
+        gwas = {"traits": [], "association_total": 0, "truncated": False}
+
+    result = GenePhenotypesResponse(
+        gene_symbol=symbol,
+        mendelian=mendelian,
+        gwas=gwas["traits"][:GWAS_PANEL_CAP],
+        gwas_trait_total=len(gwas["traits"]),
+        gwas_association_total=gwas["association_total"],
+        gwas_truncated=gwas["truncated"],
+    )
+    # Nao pinar no cache um resultado com uma das fontes fora do ar
+    if not degraded:
         cache_set(cache_key, result.model_dump())
     return result

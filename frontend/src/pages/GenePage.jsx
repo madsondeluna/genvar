@@ -10,11 +10,63 @@ import ProteinViewer from '../components/ProteinViewer'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import CopyLinkButton from '../components/CopyLinkButton'
 import ChromosomeIdeogram from '../components/ChromosomeIdeogram'
+import ExonVariantMap from '../components/ExonVariantMap'
+import GenePhenotypes from '../components/GenePhenotypes'
 import PageNav from '../components/PageNav'
 import { GenePageSkeleton } from '../components/Skeleton'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import { stripEnsemblSource } from '../utils/format'
 import { buildGeneAnnotations, geneLegend } from '../utils/ideogramAnnotations'
+
+// Dados posicionais exatos exibidos sob o ideograma: banda citogenética,
+// coordenadas em pb e a fração do cromossomo que o gene ocupa.
+function buildLocusFacts(data) {
+  const facts = []
+  if (data.cytobands?.length) {
+    facts.push({
+      label: 'Banda citogenética',
+      value: `${data.chromosome}${data.cytobands.join('-')}`,
+      hint: 'Banda G onde o gene se localiza, na nomenclatura ISCN.',
+    })
+  }
+  if (data.start && data.end) {
+    facts.push({
+      label: 'Coordenadas (GRCh38)',
+      value: `${data.start.toLocaleString('pt-BR')} - ${data.end.toLocaleString('pt-BR')} pb`,
+      hint: 'Primeiro e último par de bases do gene no cromossomo.',
+    })
+  }
+  if (data.chromosome_length) {
+    facts.push({
+      label: 'Comprimento do cromossomo',
+      value: `${(data.chromosome_length / 1_000_000).toFixed(1)} Mb`,
+      hint: `${data.chromosome_length.toLocaleString('pt-BR')} pares de base.`,
+    })
+    if (data.start) {
+      const pct = ((data.start + data.end) / 2 / data.chromosome_length) * 100
+      facts.push({
+        label: 'Posição relativa',
+        value: `${pct.toFixed(1)}% do cromossomo`,
+        hint: 'Distância do início do cromossomo até o centro do gene.',
+      })
+    }
+  }
+  if (data.exons?.length) {
+    facts.push({
+      label: 'Éxons (transcrito canônico)',
+      value: String(data.exons.length),
+      hint: data.canonical_transcript_id || undefined,
+    })
+  }
+  if (data.total_variants) {
+    facts.push({
+      label: 'Densidade de variantes',
+      value: `${Math.round(data.total_variants / ((data.end - data.start) / 1000)).toLocaleString('pt-BR')} por kb`,
+      hint: 'Variantes catalogadas divididas pela extensão do gene.',
+    })
+  }
+  return facts
+}
 
 function InfoRow({ label, value, hint }) {
   // Explicit null/empty check so falsy-but-valid values (0, strand=-1) are still rendered
@@ -216,14 +268,20 @@ export default function GenePage() {
               </div>
             </section>
 
-            <ChromosomeIdeogram
-              annotations={buildGeneAnnotations(data)}
-              title={`Cromossomo ${data.chromosome}`}
-              description="Posição do gene no cromossomo, com os rótulos das bandas G."
-              focusChromosome={data.chromosome}
-              legendItems={geneLegend()}
-              expandSinglePointBy={200_000}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+              <ChromosomeIdeogram
+                annotations={buildGeneAnnotations(data)}
+                title={`Cromossomo ${data.chromosome}`}
+                description="Posição do gene no cromossomo, com os rótulos das bandas G."
+                focusChromosome={data.chromosome}
+                legendItems={geneLegend()}
+                expandSinglePointBy={200_000}
+                facts={buildLocusFacts(data)}
+              />
+              <GenePhenotypes symbol={data.gene_symbol} />
+            </div>
+
+            <ExonVariantMap geneData={data} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
               <ConstraintMetrics data={data} />
@@ -277,6 +335,7 @@ export default function GenePage() {
                   title="Variantes patogênicas"
                   csvPrefix={`${data.gene_symbol}-patogenicas`}
                   totalCount={data.pathogenic_count}
+                  paramPrefix="pat"
                 />
               )}
               {data.vus_variants?.length > 0 && (
@@ -285,6 +344,7 @@ export default function GenePage() {
                   title="Variantes de significado incerto"
                   csvPrefix={`${data.gene_symbol}-vus`}
                   totalCount={data.vus_count}
+                  paramPrefix="vus"
                 />
               )}
               {data.benign_variants?.length > 0 && (
@@ -293,6 +353,7 @@ export default function GenePage() {
                   title="Variantes benignas"
                   csvPrefix={`${data.gene_symbol}-benignas`}
                   totalCount={data.benign_count}
+                  paramPrefix="ben"
                 />
               )}
             </div>
