@@ -59,7 +59,7 @@ def _build_distribution(rows_by_category: dict, gene_start: int, gene_end: int) 
 @router.get("/{gene_symbol}", response_model=GeneResponse)
 async def get_gene_data(gene_symbol: str):
     symbol = validate_gene_symbol(gene_symbol)
-    cache_key = f"gene:v3:{symbol}"
+    cache_key = f"gene:v4:{symbol}"
 
     cached = cache_get(cache_key)
     if cached:
@@ -70,15 +70,17 @@ async def get_gene_data(gene_symbol: str):
 
     gene_id = gene_info["gene_id"]
 
-    # Parallel: variants + constraint + uniprot
+    # Parallel: variants + constraint + uniprot + exons
     variants_task = ensembl.get_gene_variants(gene_id)
     constraint_task = gnomad.get_gene_constraint(symbol)
     uniprot_task = uniprot.get_uniprot_id(symbol)
+    exons_task = ensembl.get_canonical_exons(gene_id)
 
-    variants, constraint, uniprot_id = await asyncio.gather(
+    variants, constraint, uniprot_id, exon_data = await asyncio.gather(
         variants_task,
         constraint_task,
         uniprot_task,
+        exons_task,
         return_exceptions=True,
     )
 
@@ -90,6 +92,8 @@ async def get_gene_data(gene_symbol: str):
         constraint = {}
     if isinstance(uniprot_id, Exception):
         uniprot_id = None
+    if isinstance(exon_data, Exception):
+        exon_data = {}
 
     # AlphaFold needs uniprot_id
     alphafold_data = None
@@ -162,6 +166,8 @@ async def get_gene_data(gene_symbol: str):
         uniprot_id=uniprot_id if isinstance(uniprot_id, str) else None,
         alphafold_pdb_url=alphafold_data.get("pdb_url") if alphafold_data else None,
         alphafold_pae_url=alphafold_data.get("pae_image_url") if alphafold_data else None,
+        canonical_transcript_id=exon_data.get("transcript_id"),
+        exons=exon_data.get("exons", []),
     )
 
     # Don't cache a degraded result: if the Ensembl variant fetch failed transiently, caching

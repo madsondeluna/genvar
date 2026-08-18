@@ -78,6 +78,51 @@ async def get_gene_variants(gene_id: str, limit: int | None = None) -> List[Dict
         return variants[:limit] if limit else variants
 
 
+def _transcript_rank(t: Dict[str, Any]) -> tuple:
+    """Canônico do Ensembl primeiro (coincide com o MANE Select na maioria dos genes
+    codificantes desde a release 110), depois protein_coding, depois o mais longo."""
+    return (
+        1 if t.get("is_canonical") == 1 else 0,
+        1 if t.get("biotype") == "protein_coding" else 0,
+        (t.get("end") or 0) - (t.get("start") or 0),
+    )
+
+
+async def get_canonical_exons(gene_id: str) -> Dict[str, Any]:
+    """Éxons do transcrito canônico do gene, para o mapa de variantes por éxon."""
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/lookup/id/{gene_id}"
+        response = await _ensembl_get(client, url, params={"expand": 1}, timeout=60.0)
+
+        if response.status_code in (400, 404):
+            return {}
+
+        response.raise_for_status()
+        data = response.json()
+
+        transcripts = data.get("Transcript") or []
+        if not transcripts:
+            return {}
+
+        best = max(transcripts, key=_transcript_rank)
+        exons = sorted(
+            (
+                {"start": e["start"], "end": e["end"]}
+                for e in best.get("Exon") or []
+                if e.get("start") and e.get("end")
+            ),
+            key=lambda e: e["start"],
+        )
+        if not exons:
+            return {}
+
+        return {
+            "transcript_id": best.get("id"),
+            "is_canonical": best.get("is_canonical") == 1,
+            "exons": exons,
+        }
+
+
 def _tc_rank(tc: Dict[str, Any]) -> tuple:
     """Rank transcript consequences so the canonical protein_coding one with scores wins.
 

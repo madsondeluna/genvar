@@ -11,6 +11,11 @@ class GeneVariant(BaseModel):
     alleles: Optional[List[str]] = None
 
 
+class Exon(BaseModel):
+    start: int
+    end: int
+
+
 class VariantBin(BaseModel):
     start: int
     pathogenic: int = 0
@@ -55,6 +60,10 @@ class GeneResponse(BaseModel):
     uniprot_id: Optional[str] = None
     alphafold_pdb_url: Optional[str] = None
     alphafold_pae_url: Optional[str] = None
+
+    # Exons do transcrito canonico (Ensembl), para o mapa de variantes por exon
+    canonical_transcript_id: Optional[str] = None
+    exons: List[Exon] = []
 
 
 class PopulationFrequency(BaseModel):

@@ -10,6 +10,7 @@ import ProteinViewer from '../components/ProteinViewer'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import CopyLinkButton from '../components/CopyLinkButton'
 import ChromosomeIdeogram from '../components/ChromosomeIdeogram'
+import ExonVariantMap from '../components/ExonVariantMap'
 import PageNav from '../components/PageNav'
 import { GenePageSkeleton } from '../components/Skeleton'
 import { useSearchHistory } from '../hooks/useSearchHistory'
@@ -230,6 +231,8 @@ export default function GenePage() {
               <GeneLocusHeatmap geneData={data} />
             </div>
 
+            <ExonVariantMap geneData={data} />
+
             {data.alphafold_pae_url && (
               <section className="card" aria-labelledby="structure-title">
                 <h3 id="structure-title" className="section-title mb-16">Estrutura proteica (AlphaFold)</h3>
@@ -277,6 +280,7 @@ export default function GenePage() {
                   title="Variantes patogênicas"
                   csvPrefix={`${data.gene_symbol}-patogenicas`}
                   totalCount={data.pathogenic_count}
+                  paramPrefix="pat"
                 />
               )}
               {data.vus_variants?.length > 0 && (
@@ -285,6 +289,7 @@ export default function GenePage() {
                   title="Variantes de significado incerto"
                   csvPrefix={`${data.gene_symbol}-vus`}
                   totalCount={data.vus_count}
+                  paramPrefix="vus"
                 />
               )}
               {data.benign_variants?.length > 0 && (
@@ -293,6 +298,7 @@ export default function GenePage() {
                   title="Variantes benignas"
                   csvPrefix={`${data.gene_symbol}-benignas`}
                   totalCount={data.benign_count}
+                  paramPrefix="ben"
                 />
               )}
             </div>
