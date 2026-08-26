@@ -1,0 +1,98 @@
+/* Pure Design: camada liquid glass (aditiva).
+   Nao redefine tokens de cor/tema: deriva translucidez e brilho dos tokens
+   existentes com color-mix, entao funciona em todos os temas (claro, paper,
+   deep-blue, dark). Importada por ultimo e fora de @layer para vencer o
+   patterns.css nao-camadado. Microanimacoes respeitam prefers-reduced-motion. */
+
+:root {
+  --glass-blur: 20px;
+  --glass-surface: color-mix(in srgb, var(--surface) 60%, transparent);
+  --glass-surface-strong: color-mix(in srgb, var(--surface) 78%, transparent);
+  --glass-surface-dim: color-mix(in srgb, var(--surface) 45%, transparent);
+  --glass-sheen: inset 0 var(--hairline) 0 color-mix(in srgb, var(--bg) 70%, transparent);
+  --glass-shadow:
+    0 1px 1px color-mix(in srgb, var(--text) 6%, transparent),
+    0 14px 36px -16px color-mix(in srgb, var(--text) 30%, transparent);
+  --glass-shadow-lift:
+    0 1px 1px color-mix(in srgb, var(--text) 7%, transparent),
+    0 30px 56px -20px color-mix(in srgb, var(--text) 38%, transparent);
+  /* brilhos ambientais derivados da paleta de status e do acento */
+  --glass-blob-a: color-mix(in srgb, var(--accent) 24%, transparent);
+  --glass-blob-b: color-mix(in srgb, var(--status-good) 20%, transparent);
+  --glass-blob-c: color-mix(in srgb, var(--status-serious) 16%, transparent);
+}
+
+/* Fundo com brilhos suaves atras do vidro */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20vmax;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(36vmax 36vmax at 16% 10%, var(--glass-blob-a), transparent 60%),
+    radial-gradient(32vmax 32vmax at 86% 18%, var(--glass-blob-b), transparent 62%),
+    radial-gradient(38vmax 38vmax at 72% 94%, var(--glass-blob-c), transparent 60%);
+  filter: saturate(118%);
+  animation: glass-drift 36s var(--ease-out-soft, ease-in-out) infinite alternate;
+}
+
+@keyframes glass-drift { to { transform: translate3d(2%, -2%, 0) rotate(1.5deg); } }
+
+/* Cartao de vidro */
+.card {
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+  transition:
+    transform var(--duration-4, .2s) var(--ease-out-soft, ease),
+    box-shadow var(--duration-4, .2s) var(--ease-out-soft, ease),
+    background var(--duration-4, .2s) var(--ease-out-soft, ease);
+}
+
+/* Cartoes clicaveis ganham elevacao (o app marca com .hover-surface) */
+.hover-surface:hover,
+a.card:hover,
+button.card:hover {
+  transform: translateY(-4px);
+  background: var(--glass-surface-strong);
+  box-shadow: var(--glass-shadow-lift), var(--glass-sheen);
+}
+
+/* Barras e rodape de vidro */
+.app-nav,
+.app-footer {
+  background-color: var(--glass-surface-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  box-shadow: var(--glass-sheen);
+}
+/* a home mantem a barra transparente ate rolar; ao rolar, vira vidro */
+.app-nav-morph { background-color: transparent; box-shadow: none; }
+.app-nav-morph[data-scrolled='true'] { background-color: var(--glass-surface-strong); }
+
+/* Pills e campos translucidos */
+.pill {
+  background: var(--glass-surface);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: var(--glass-sheen);
+  transition:
+    transform var(--duration-3, .15s) var(--ease-standard, ease),
+    background var(--duration-3, .15s) var(--ease-standard, ease);
+}
+.pill:hover { transform: translateY(-1px); }
+.pill-solid { background: var(--glass-surface-dim); }
+
+.input {
+  background: var(--glass-surface-dim);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--glass-sheen);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; }
+  .card, .pill { transition: none; }
+}
