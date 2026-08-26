@@ -18,7 +18,7 @@ mais uma regra no Cloudflare que roteia `/beta/*` para o frontend beta.
 
 ## Passos (painel, feitos por voce)
 
-1. Mergear o PR #7 na branch `beta`.
+1. A branch `beta` ja carrega toda a Fase 4 (merge feito). Nada a fazer aqui.
 
 2. No Render, criar os servicos beta a partir de `deploy/render-beta.yaml`
    (branch `beta`). Sao 3: `genvar-cache-beta`, `genvar-backend-beta`,
