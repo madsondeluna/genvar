@@ -1,7 +1,7 @@
 // Carregadores dos dados de associacao (burden), servidos como JSON estatico
 // em public/data/burden (amostra de demonstracao; em producao o ETL gera o
 // conjunto completo). Cache em memoria, imutavel por release.
-import { CHR_ORDER } from './constants'
+import { CHR_ORDER, ANCESTRIES } from './constants'
 
 const BASE = `${import.meta.env.BASE_URL}data/burden`
 const _cache = new Map()
@@ -20,6 +20,13 @@ export const loadGenes = () => getJSON(`${BASE}/genes.json`)
 export const loadPhenotypes = () => getJSON(`${BASE}/phenotypes.json`)
 export const loadBiobanks = () => getJSON(`${BASE}/biobanks.json`)
 export const loadAllResults = (anc) => getJSON(`${BASE}/all_results.${anc || 'All'}.json`)
+
+// Todos os resultados por ancestria, para montar o forest cross-ancestry de um
+// gene. Retorna um mapa ancestria -> tabela colunar.
+export function loadAllAncestries() {
+  return Promise.all(ANCESTRIES.map((a) => loadAllResults(a).then((d) => [a, d])))
+    .then((pairs) => Object.fromEntries(pairs))
+}
 
 // Layout do genoma: concatena os cromossomos de ponta a ponta a partir das
 // posicoes de genes.json. O span de cada cromossomo e o maior 'end' observado.

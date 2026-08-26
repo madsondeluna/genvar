@@ -1,17 +1,38 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { Activity, ExternalLink } from 'lucide-react'
+import { Activity, ExternalLink, X } from 'lucide-react'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ManhattanPlot from '../burden/ManhattanPlot'
 import FilterBar from '../burden/FilterBar'
-import { loadGenes, loadPhenotypes, loadAllResults, buildGenomeLayout } from '../burden/data'
+import ForestPlot from '../burden/ForestPlot'
+import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, buildGenomeLayout } from '../burden/data'
+import { seFromBetaLp, heterogeneity, i2Tier } from '../burden/stats'
 import {
-  TESTS, MASK_LABEL, ANCESTRY_LABEL, DEFAULTS,
+  TESTS, MASK_LABEL, ANCESTRY_LABEL, ANCESTRY_SHORT, ANCESTRY_COLOR, DEFAULTS,
   LP_CAUCHY, LP_BONFERRONI, LP_SUGGEST,
 } from '../burden/constants'
+
+const BURDEN_TEST = TESTS.indexOf('Burden')
+// Ancestrias que entram como estudos no forest (a 'All' e a meta; non_EUR e um
+// agrupamento, nao um estudo).
+const STUDY_ANC = ['EUR', 'AFR', 'AMR', 'EAS', 'SAS']
+
+// Localiza a linha (gene, fenotipo, mascara, maf, teste) numa tabela colunar.
+function findRow(tbl, geneIdx, phenoIdx, maskIndex, mafIndex, testIdx) {
+  if (!tbl) return null
+  const n = tbl.lp.length
+  for (let i = 0; i < n; i++) {
+    if (tbl.gene_idx[i] === geneIdx && tbl.pheno_idx[i] === phenoIdx &&
+        tbl.mask_idx[i] === maskIndex && tbl.maf_idx[i] === mafIndex &&
+        tbl.test_idx[i] === testIdx) {
+      return { beta: tbl.beta[i], lp: tbl.lp[i] }
+    }
+  }
+  return null
+}
 
 // Pagina de associacao por burden: Manhattan genome-wide filtravel por
 // ancestria, mascara, MAF e teste, com dados de ancestria latina (AMR) e
@@ -29,7 +50,6 @@ function tierOf(lp) {
 const fmtP = (lp) => Math.pow(10, -lp).toExponential(1)
 
 export default function AssociationPage() {
-  const navigate = useNavigate()
   const [filters, setFilters] = useState({
     ancestry: DEFAULTS.ancestry,
     maskIndex: DEFAULTS.maskIndex,
@@ -37,6 +57,8 @@ export default function AssociationPage() {
     test: DEFAULTS.test,
     phenoIndex: 'all',
   })
+  // Gene + fenotipo selecionados para o forest cross-ancestry.
+  const [selected, setSelected] = useState(null)
 
   const genesQ = useQuery({ queryKey: ['burden', 'genes'], queryFn: loadGenes, staleTime: Infinity })
   const phenosQ = useQuery({ queryKey: ['burden', 'phenotypes'], queryFn: loadPhenotypes, staleTime: Infinity })
@@ -84,10 +106,38 @@ export default function AssociationPage() {
   const loading = genesQ.isLoading || phenosQ.isLoading || resultsQ.isLoading
   const error = genesQ.error || phenosQ.error || resultsQ.error
 
-  const openGene = (p) => {
-    const sym = genes?.symbols?.[p.geneIdx]
-    if (sym) navigate(`/gene/${sym}`)
-  }
+  // Seleciona um gene + fenotipo (do plot ou da tabela) para o forest.
+  const select = (p) => setSelected({ geneIdx: p.geneIdx, phenoIdx: p.phenoIdx })
+
+  // Carrega todas as ancestrias so quando ha selecao (para o forest).
+  const allAncQ = useQuery({
+    queryKey: ['burden', 'allAncestries'],
+    queryFn: loadAllAncestries,
+    enabled: !!selected,
+    staleTime: Infinity,
+  })
+
+  // Monta o modelo do forest: efeito Burden por ancestria com IC de 95%
+  // (se reconstruido de beta e p), meta pela linha 'All' e heterogeneidade I^2.
+  const forest = useMemo(() => {
+    if (!selected || !allAncQ.data) return null
+    const byAnc = allAncQ.data
+    const mk = (anc) => {
+      const row = findRow(byAnc[anc], selected.geneIdx, selected.phenoIdx, filters.maskIndex, filters.mafIndex, BURDEN_TEST)
+      if (!row) return null
+      const se = seFromBetaLp(row.beta, row.lp)
+      return {
+        anc, label: ANCESTRY_SHORT[anc], color: ANCESTRY_COLOR[anc],
+        beta: row.beta, se, lo: row.beta - 1.96 * se, hi: row.beta + 1.96 * se,
+      }
+    }
+    const studies = STUDY_ANC.map(mk).filter(Boolean)
+    const metaRaw = mk('All')
+    const meta = metaRaw ? { ...metaRaw, isMeta: true } : null
+    if (!studies.length && !meta) return { empty: true }
+    const het = heterogeneity(studies)
+    return { studies, meta, het }
+  }, [selected, allAncQ.data, filters.maskIndex, filters.mafIndex])
 
   return (
     <main className="min-h-screen bg-bg">
@@ -137,7 +187,7 @@ export default function AssociationPage() {
                 genes={genes}
                 layout={layout}
                 phenos={phenos}
-                onSelect={openGene}
+                onSelect={select}
               />
 
               {/* legenda dos limiares: o que e um sinal forte ou fraco */}
@@ -159,9 +209,22 @@ export default function AssociationPage() {
                 tracejada vermelha o sinal é robusto mesmo corrigindo todos os
                 testes; entre as duas linhas é significativo por gene; abaixo da
                 faixa cinza o resultado não se distingue do esperado ao acaso.
-                Clique num ponto para abrir o gene.
+                Clique num ponto para ver o efeito por ancestria.
               </p>
             </section>
+
+            {selected && (
+              <ForestSection
+                selected={selected}
+                genes={genes}
+                phenos={phenos}
+                maskIndex={filters.maskIndex}
+                mafIndex={filters.mafIndex}
+                forest={forest}
+                loading={allAncQ.isLoading}
+                onClose={() => setSelected(null)}
+              />
+            )}
 
             <section className="flex flex-col gap-12">
               <div className="flex items-baseline justify-between gap-16 flex-wrap">
@@ -195,13 +258,19 @@ export default function AssociationPage() {
                           <tr
                             key={`${p.geneIdx}-${p.phenoIdx}-${i}`}
                             className="table-row cursor-pointer"
-                            onClick={() => openGene(p)}
+                            onClick={() => select(p)}
+                            title="Ver efeito por ancestria"
                           >
                             <td className="table-cell">
-                              <span className="mono font-medium flex items-center gap-6">
+                              <Link
+                                to={`/gene/${sym}`}
+                                className="mono font-medium flex items-center gap-6 hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                                title={`Abrir a pagina do gene ${sym}`}
+                              >
                                 {sym}
                                 <ExternalLink className="w-12 h-12 text-muted" aria-hidden="true" />
-                              </span>
+                              </Link>
                             </td>
                             <td className="table-cell">{ph}</td>
                             <td className="table-cell num">{p.beta.toFixed(3)}</td>
@@ -223,6 +292,114 @@ export default function AssociationPage() {
         )}
       </div>
     </main>
+  )
+}
+
+// Forest cross-ancestry do gene + fenotipo selecionado, com metrica de
+// heterogeneidade (I^2) e a sua escala do que e bom ou ruim.
+function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, loading, onClose }) {
+  const sym = genes.symbols[selected.geneIdx]
+  const ph = phenos[selected.phenoIdx]?.name || ''
+  const het = forest && !forest.empty ? forest.het : null
+  const tier = het ? i2Tier(het.i2) : null
+
+  return (
+    <section className="card flex flex-col gap-16">
+      <div className="flex items-start justify-between gap-16">
+        <div>
+          <h2 className="section-title">Efeito por ancestria</h2>
+          <p className="text-13 text-muted mt-4">
+            <Link to={`/gene/${sym}`} className="mono font-medium hover:underline">{sym}</Link>
+            {ph ? <> · {ph}</> : null} · {MASK_LABEL[maskIndex]} · teste Burden
+          </p>
+        </div>
+        <button
+          type="button"
+          className="pill pill-sm"
+          onClick={onClose}
+          aria-label="Fechar o forest"
+        >
+          <X className="w-12 h-12" aria-hidden="true" />
+          Fechar
+        </button>
+      </div>
+
+      {loading && <LoadingSpinner message="Carregando efeito por ancestria..." />}
+
+      {!loading && forest?.empty && (
+        <p className="text-14 text-muted">
+          Sem estimativa de efeito Burden para este gene e fenótipo nesta máscara.
+          Troque a máscara ou escolha outro sinal.
+        </p>
+      )}
+
+      {!loading && forest && !forest.empty && (
+        <>
+          <ForestPlot studies={forest.studies} meta={forest.meta} />
+
+          {het && forest.studies.length >= 2 && (
+            <div className="flex flex-col gap-8">
+              <div className="flex items-center justify-between gap-16 flex-wrap">
+                <span className="label">Heterogeneidade entre ancestrias (I²)</span>
+                <span className={`pill pill-sm tint-${tier.key}`}>
+                  {het.i2.toFixed(0)}% · {tier.label}
+                </span>
+              </div>
+              {/* escala do bom ao ruim: baixa (consistente) a alta (diverge) */}
+              <I2Scale i2={het.i2} />
+              <p className="text-12 text-muted leading-snug">
+                O I² mede quanto os efeitos divergem entre as ancestrias além do
+                acaso. Abaixo de 25% os resultados são consistentes (o efeito
+                genético se transfere entre populações); acima de 75% divergem
+                bastante, sinal de que o efeito depende da ancestria e a meta deve
+                ser lida com cautela.
+              </p>
+            </div>
+          )}
+
+          <p className="text-12 text-muted leading-snug">
+            Cada quadrado é a estimativa de efeito (beta) do teste Burden numa
+            ancestria; a reta é o intervalo de confiança de 95%, reconstruído de
+            beta e p. O losango é a meta-análise (todas as ancestrias). Quando o
+            intervalo cruza a linha do zero, o efeito não é distinguível de nulo
+            naquela população. AMR é a ancestria latina/miscigenada das Américas.
+          </p>
+        </>
+      )}
+    </section>
+  )
+}
+
+// Escala visual do I^2: faixa de 0 a 100% com marcador na posicao atual.
+function I2Scale({ i2 }) {
+  const stops = [
+    { to: 25, key: 'good' },
+    { to: 50, key: 'warning' },
+    { to: 75, key: 'serious' },
+    { to: 100, key: 'critical' },
+  ]
+  let prev = 0
+  return (
+    <div className="relative" style={{ height: 10 }}>
+      <div className="flex" style={{ height: 6, borderRadius: 'var(--radius-control)', overflow: 'hidden' }}>
+        {stops.map((s) => {
+          const w = s.to - prev; prev = s.to
+          return (
+            <span
+              key={s.key}
+              style={{ width: `${w}%`, background: `var(--state-${s.key})`, opacity: 0.55 }}
+            />
+          )
+        })}
+      </div>
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute', top: -2, left: `${Math.min(100, Math.max(0, i2))}%`,
+          width: 2, height: 10, background: 'var(--text)', transform: 'translateX(-1px)',
+        }}
+      />
+    </div>
   )
 }
 

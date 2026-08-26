@@ -16,6 +16,17 @@ export const ANCESTRY_LABEL = {
   non_EUR: 'Nao europeia',
 }
 
+// Rotulo curto por ancestria, para colunas estreitas (forest).
+export const ANCESTRY_SHORT = {
+  All: 'Meta (todas)',
+  EUR: 'Europeia',
+  AFR: 'Africana',
+  AMR: 'Latina (AMR)',
+  EAS: 'Leste Asiatico',
+  SAS: 'Sul da Asia',
+  non_EUR: 'Nao europeia',
+}
+
 // Cor por ancestria (AMR verde). Usada no forest e nas legendas; os plots
 // resolvem via canvas/SVG (valores concretos).
 export const ANCESTRY_COLOR = {
