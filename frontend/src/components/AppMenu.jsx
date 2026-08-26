@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Dna, Layers, Activity, BarChart3, User, Stethoscope } from 'lucide-react'
+import { Home, Dna, Network, Layers, Activity, BarChart3, User, Stethoscope } from 'lucide-react'
 import { useViewMode, setViewMode } from '../hooks/useViewMode'
 
 // Menu de seções compartilhado entre as barras (páginas internas e home).
@@ -7,6 +7,7 @@ import { useViewMode, setViewMode } from '../hooks/useViewMode'
 const LINKS = [
   { to: '/', label: 'Início', icon: Home, end: true },
   { to: '/doencas', label: 'Doenças Raras', icon: Dna },
+  { to: '/paineis', label: 'Painéis', icon: Network },
   { to: '/associacao', label: 'Associação', icon: BarChart3 },
   { to: '/produtos', label: 'Produtos', icon: Layers },
   { to: '/status', label: 'Status', icon: Activity },

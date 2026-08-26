@@ -65,6 +65,22 @@ export const fetchDiseaseVariants = async (id) => {
   return data
 }
 
+export const fetchPanels = async ({ q = '', category = 'all', page = 1, page_size = 30 } = {}) => {
+  const { data } = await client.get('/panel', { params: { q, category, page, page_size } })
+  return data
+}
+
+export const fetchPanelStats = async () => {
+  const { data } = await client.get('/panel/stats')
+  return data
+}
+
+export const fetchPanel = async (id) => {
+  // O detalhe agrega constraint (LOEUF/pLI) de varios genes ao vivo; folga no timeout.
+  const { data } = await client.get(`/panel/${id}`, { timeout: 90000 })
+  return data
+}
+
 export const fetchSourcesHealth = async () => {
   // Pinga as 7 fontes externas; pode demorar ate os timeouts das sondas.
   const { data } = await client.get('/health/sources', { timeout: 30000 })

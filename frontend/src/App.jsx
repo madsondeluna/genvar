@@ -13,6 +13,8 @@ const VariantPage = lazy(() => import('./pages/VariantPage'))
 const DiseasesPage = lazy(() => import('./pages/DiseasesPage'))
 const DiseasePage = lazy(() => import('./pages/DiseasePage'))
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
+const PanelsPage = lazy(() => import('./pages/PanelsPage'))
+const PanelPage = lazy(() => import('./pages/PanelPage'))
 const AssociationPage = lazy(() => import('./pages/AssociationPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 
@@ -39,6 +41,8 @@ export default function App() {
               <Route path="/variant/:rsid" element={<VariantPage />} />
               <Route path="/doencas" element={<DiseasesPage />} />
               <Route path="/doenca/:id" element={<DiseasePage />} />
+              <Route path="/paineis" element={<PanelsPage />} />
+              <Route path="/painel/:id" element={<PanelPage />} />
               <Route path="/produtos" element={<ProductsPage />} />
               <Route path="/associacao" element={<AssociationPage />} />
               <Route path="/status" element={<StatusPage />} />

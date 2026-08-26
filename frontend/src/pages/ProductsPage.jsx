@@ -26,8 +26,8 @@ const LINES = [
     icon: Network,
     name: 'Doenças multigênicas',
     tag: 'Multigênico',
-    status: { label: 'Em breve', tint: 'tint-warning' },
-    to: null,
+    status: { label: 'Beta disponível', tint: 'tint-good' },
+    to: '/paineis',
     desc: 'Painéis de genes e visão digênica/oligogênica para condições em que mais de um gene '
         + 'contribui para o fenótipo, com priorização por evidência.',
     bullets: [
