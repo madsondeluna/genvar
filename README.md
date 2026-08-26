@@ -544,6 +544,7 @@ Endpoints do módulo de Doenças Raras (beta).
 |---|---|
 | `GET /api/disease` | Lista do catálogo curado (`DiseaseSummary`): id, nome, categoria, herança, genes e resumo. Servida direto do catálogo, sem chamadas externas. |
 | `GET /api/disease/{id}` | Detalhe (`DiseaseDetail`): metadados curados mais `causal_genes` com a restrição da gnomAD (LOEUF, pLI) obtida ao vivo. Retorna 404 para id fora do catálogo. Resultado degradado (constraint indisponível) não é fixado no cache. |
+| `GET /api/disease/{id}/variants` | Variantes patogênicas por gene causal (`DiseaseVariantsResponse`): para cada gene, contagem e amostra de variantes classificadas como patogênicas pelo ClinVar (via overlap do Ensembl). Carregado em separado do detalhe. Retorna 404 para id fora do catálogo. |
 
 Exemplo (`GET /api/disease/hipercolesterolemia-familiar`):
 

@@ -1,7 +1,15 @@
 import asyncio
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import DiseaseSummary, DiseaseDetail, CausalGene
-from app.services import gnomad
+from app.models.schemas import (
+    DiseaseSummary,
+    DiseaseDetail,
+    CausalGene,
+    DiseasePathogenicGene,
+    DiseaseVariantsResponse,
+    GeneVariant,
+)
+from app.services import gnomad, ensembl
+from app.utils.validators import classify_clinical_significance
 from app.data.rare_diseases import all_diseases, get_disease
 from app.utils.cache import cache_get, cache_set
 
@@ -12,6 +20,8 @@ router = APIRouter()
 # A variacao clinica profunda (variantes patogenicas, estrutura) fica na pagina
 # de gene existente, alcancada pelo link em cada gene causal.
 MAX_ENRICHED_GENES = 6
+# Amostra de variantes patogenicas por gene na secao de variantes da doenca.
+PATHOGENIC_SAMPLE_CAP = 25
 
 
 def _summary(d: dict) -> DiseaseSummary:
@@ -85,5 +95,75 @@ async def get_disease_detail(disease_id: str):
     # So cacheia se pelo menos um gene trouxe constraint; caso contrario a gnomAD
     # pode ter falhado transitoriamente e nao queremos pinar um resultado degradado.
     if any(g.constraint_available for g in result.causal_genes) or not genes:
+        cache_set(cache_key, result.model_dump())
+    return result
+
+
+def _sample_across(rows: list, cap: int = PATHOGENIC_SAMPLE_CAP) -> list:
+    """Amostra uniforme por indice, preservando a ordem posicional do Ensembl."""
+    if len(rows) <= cap:
+        return rows
+    step = len(rows) / cap
+    return [rows[int(i * step)] for i in range(cap)]
+
+
+async def _pathogenic_for_gene(symbol: str) -> DiseasePathogenicGene:
+    """Variantes patogenicas de um gene causal, via overlap do Ensembl.
+
+    O overlap traz clinical_significance inline, entao classificamos sem
+    enriquecimento por variante. A pagina de gene completa segue sendo a fonte
+    aprofundada; aqui mostramos so uma amostra representativa das patogenicas.
+    """
+    info = await ensembl.get_gene_info(symbol)
+    gene_id = info["gene_id"]
+    variants = await ensembl.get_gene_variants(gene_id)
+
+    pathogenic = []
+    for v in variants:
+        sig_list = v.get("clinical_significance", [])
+        sig = sig_list[0] if sig_list else ""
+        if classify_clinical_significance(sig) != "pathogenic":
+            continue
+        pathogenic.append(
+            GeneVariant(
+                variant_id=v.get("id", ""),
+                position=v.get("start", 0),
+                consequence=v.get("consequence_type", "unknown"),
+                clinical_significance=sig,
+                alleles=v.get("alleles"),
+            )
+        )
+
+    return DiseasePathogenicGene(
+        symbol=symbol,
+        pathogenic_count=len(pathogenic),
+        variants=_sample_across(pathogenic),
+    )
+
+
+@router.get("/{disease_id}/variants", response_model=DiseaseVariantsResponse)
+async def get_disease_variants(disease_id: str):
+    """Variantes patogenicas por gene causal da doenca (ClinVar via Ensembl)."""
+    d = get_disease(disease_id)
+    if not d:
+        raise HTTPException(status_code=404, detail="Doenca nao encontrada no catalogo")
+
+    cache_key = f"diseasevars:v1:{disease_id}"
+    cached = cache_get(cache_key)
+    if cached:
+        return DiseaseVariantsResponse(**cached)
+
+    genes = d.get("genes", [])[:MAX_ENRICHED_GENES]
+    settled = await asyncio.gather(
+        *[_pathogenic_for_gene(g) for g in genes], return_exceptions=True
+    )
+
+    gene_results = [g for g in settled if isinstance(g, DiseasePathogenicGene)]
+    degraded = len(gene_results) < len(genes)
+
+    result = DiseaseVariantsResponse(id=disease_id, genes=gene_results, degraded=degraded)
+
+    # Nao pinar no cache se todos os genes falharam (Ensembl fora do ar).
+    if gene_results or not genes:
         cache_set(cache_key, result.model_dump())
     return result
