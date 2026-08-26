@@ -40,6 +40,7 @@ def test_detail_has_brazil_context_when_curated():
     assert body["raras_url"].endswith("/doenca/anemia-falciforme")
     assert body["sus"]["pcdt"] is True
     assert body["newborn"]["covered"] is True
+    assert body["prevalence_br"]  # epidemiologia BR curada
 
 
 def test_detail_brazil_context_absent_when_not_curated():

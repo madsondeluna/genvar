@@ -102,6 +102,7 @@ async def get_disease_detail(disease_id: str):
         )
     nb_raw = br_context.get_newborn(d["id"])
     newborn = NewbornInfo(**nb_raw) if nb_raw else None
+    prevalence_br = br_context.get_prevalence_br(d["id"])
 
     result = DiseaseDetail(
         id=d["id"],
@@ -121,6 +122,7 @@ async def get_disease_detail(disease_id: str):
         raras_url=raras_url,
         sus=sus,
         newborn=newborn,
+        prevalence_br=prevalence_br,
     )
 
     # So cacheia se pelo menos um gene trouxe constraint; caso contrario a gnomAD

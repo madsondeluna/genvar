@@ -139,6 +139,13 @@ export default function VariantPage() {
                   value={<span className="mono num">{formatAF(data.gnomad_global_af)}</span>}
                   hint="Frequência do alelo alterado na população (AF)."
                 />
+                {data.abraom_af != null && (
+                  <InfoRow
+                    label="AF Brasil (ABraOM)"
+                    value={<span className="mono num">{formatAF(data.abraom_af)}</span>}
+                    hint="Frequência do alelo em coorte brasileira (ABraOM/DNA do Brasil). A gnomAD sub-representa a ancestralidade brasileira."
+                  />
+                )}
                 <InfoRow
                   label="AC global"
                   value={<span className="mono num">{formatInteger(data.gnomad_ac)}</span>}

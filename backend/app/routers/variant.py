@@ -2,6 +2,7 @@ import asyncio
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import VariantResponse, PopulationFrequency
 from app.services import ensembl, gnomad, clinvar, myvariant
+from app.data.br_frequencies import get_br_freq
 from app.utils.validators import validate_rsid
 from app.utils.cache import cache_get, cache_set
 
@@ -128,6 +129,7 @@ async def get_variant_data(variant_id: str):
         gnomad_global_af=gnomad_data.get("global_af") if isinstance(gnomad_data, dict) else None,
         gnomad_ac=gnomad_data.get("global_ac") if isinstance(gnomad_data, dict) else None,
         gnomad_an=gnomad_data.get("global_an") if isinstance(gnomad_data, dict) else None,
+        abraom_af=get_br_freq(rsid),
         clinvar_significance=clinvar_data.get("significance") if isinstance(clinvar_data, dict) else None,
         clinvar_review_status=clinvar_data.get("review_status") if isinstance(clinvar_data, dict) else None,
         clinvar_conditions=conditions,
