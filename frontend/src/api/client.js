@@ -81,6 +81,21 @@ export const fetchPanel = async (id) => {
   return data
 }
 
+export const fetchPgsScores = async ({ q = '', category = 'all' } = {}) => {
+  const { data } = await client.get('/pgs', { params: { q, category } })
+  return data
+}
+
+export const fetchPgsScore = async (id) => {
+  const { data } = await client.get(`/pgs/${id}`, { timeout: 60000 })
+  return data
+}
+
+export const fetchPgsInterplay = async () => {
+  const { data } = await client.get('/pgs/interplay')
+  return data
+}
+
 export const fetchSourcesHealth = async () => {
   // Pinga as 7 fontes externas; pode demorar ate os timeouts das sondas.
   const { data } = await client.get('/health/sources', { timeout: 30000 })

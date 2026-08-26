@@ -15,6 +15,7 @@ const DiseasePage = lazy(() => import('./pages/DiseasePage'))
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
 const PanelsPage = lazy(() => import('./pages/PanelsPage'))
 const PanelPage = lazy(() => import('./pages/PanelPage'))
+const PolygenicPage = lazy(() => import('./pages/PolygenicPage'))
 const AssociationPage = lazy(() => import('./pages/AssociationPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/doenca/:id" element={<DiseasePage />} />
               <Route path="/paineis" element={<PanelsPage />} />
               <Route path="/painel/:id" element={<PanelPage />} />
+              <Route path="/poligenico" element={<PolygenicPage />} />
               <Route path="/produtos" element={<ProductsPage />} />
               <Route path="/associacao" element={<AssociationPage />} />
               <Route path="/status" element={<StatusPage />} />

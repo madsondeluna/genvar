@@ -41,8 +41,8 @@ const LINES = [
     icon: Layers,
     name: 'Fatores poligênicos',
     tag: 'Poligênico / PGS',
-    status: { label: 'Em breve', tint: 'tint-warning' },
-    to: null,
+    status: { label: 'Beta disponível', tint: 'tint-good' },
+    to: '/poligenico',
     desc: 'Escores poligênicos (PGS) e distribuições de risco por ancestria, integrados ao '
         + 'PGS Catalog, com interpretação individual calibrada.',
     bullets: [
