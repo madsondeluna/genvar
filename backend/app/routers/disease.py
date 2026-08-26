@@ -8,10 +8,13 @@ from app.models.schemas import (
     DiseasePathogenicGene,
     DiseaseVariantsResponse,
     GeneVariant,
+    SusInfo,
+    NewbornInfo,
 )
 from app.services import gnomad, ensembl
 from app.utils.validators import classify_clinical_significance
-from app.data.rare_diseases import get_disease, search_diseases
+from app.data.rare_diseases import get_disease, search_diseases, _slugify
+from app.data import br_context
 from app.utils.cache import cache_get, cache_set
 
 router = APIRouter()
@@ -82,6 +85,24 @@ async def get_disease_detail(disease_id: str):
     causal = await asyncio.gather(*[_enrich_gene(g) for g in genes])
 
     example = d.get("example") or {}
+
+    # Ponte com a enciclopedia patient-first (raras.org) por slug do nome.
+    raras_url = f"https://raras.org/doenca/{_slugify(d['name'])}"
+
+    # Contexto brasileiro curado (SUS e triagem neonatal).
+    sus_raw = br_context.get_sus(d["id"])
+    sus = None
+    if sus_raw:
+        sus = SusInfo(
+            pcdt=sus_raw.get("pcdt", False),
+            pcdt_name=sus_raw.get("pcdt_name"),
+            pcdt_url=br_context.PCDT_SEARCH if sus_raw.get("pcdt") else None,
+            tests=sus_raw.get("tests", []),
+            note=sus_raw.get("note"),
+        )
+    nb_raw = br_context.get_newborn(d["id"])
+    newborn = NewbornInfo(**nb_raw) if nb_raw else None
+
     result = DiseaseDetail(
         id=d["id"],
         name=d["name"],
@@ -97,6 +118,9 @@ async def get_disease_detail(disease_id: str):
         causal_genes=list(causal),
         example_kind=example.get("kind"),
         example_id=example.get("id"),
+        raras_url=raras_url,
+        sus=sus,
+        newborn=newborn,
     )
 
     # So cacheia se pelo menos um gene trouxe constraint; caso contrario a gnomAD

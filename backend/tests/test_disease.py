@@ -34,6 +34,23 @@ def test_unknown_disease_returns_404():
     assert r.status_code == 404
 
 
+def test_detail_has_brazil_context_when_curated():
+    with patch("app.services.gnomad.get_gene_constraint", new=AsyncMock(return_value={})):
+        body = client.get("/api/disease/anemia-falciforme").json()
+    assert body["raras_url"].endswith("/doenca/anemia-falciforme")
+    assert body["sus"]["pcdt"] is True
+    assert body["newborn"]["covered"] is True
+
+
+def test_detail_brazil_context_absent_when_not_curated():
+    with patch("app.services.gnomad.get_gene_constraint", new=AsyncMock(return_value={})):
+        body = client.get("/api/disease/sindrome-de-marfan").json()
+    # sem curadoria BR: campos ausentes, mas raras_url sempre presente
+    assert body["sus"] is None
+    assert body["newborn"] is None
+    assert body["raras_url"].endswith("/doenca/sindrome-de-marfan")
+
+
 def test_detail_enriches_causal_genes_with_constraint():
     fake_constraint = {
         "pli": 0.98,
