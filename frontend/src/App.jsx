@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import HomePage from './pages/HomePage'
 import ErrorBoundary from './components/ErrorBoundary'
 import LoadingSpinner from './components/LoadingSpinner'
+import MedicalDisclaimer from './components/MedicalDisclaimer'
 
 // Gene e variante carregam Plotly e NGL, que respondem por quase todo o peso do
 // bundle. A home não usa nenhum dos dois, então as rotas entram sob demanda.
@@ -41,6 +42,7 @@ export default function App() {
               <Route path="/status" element={<StatusPage />} />
             </Routes>
           </Suspense>
+          <MedicalDisclaimer />
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
