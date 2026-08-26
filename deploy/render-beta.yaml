@@ -1,0 +1,71 @@
+# Blueprint de deploy da BETA, isolado do TCC.
+#
+# NAO substitui o render.yaml de producao. Use este arquivo para criar servicos
+# NOVOS no Render (nomes distintos), apontando para a branch da beta. O root
+# genvar.delunalab.dev (TCC) e os servicos genvar / genvar-backend nao sao tocados.
+#
+# Fluxo: mergear o PR #7 na branch `beta`, depois criar estes servicos com
+# branch: beta. A exposicao em genvar.delunalab.dev/beta e feita no Cloudflare
+# (ver deploy/cloudflare-beta-worker.js e DEPLOY_BETA.md).
+
+services:
+  - type: redis
+    name: genvar-cache-beta
+    plan: free
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: genvar-backend-beta
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: beta
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: CACHE_TTL_SECONDS
+        value: "3600"
+      - key: ENSEMBL_MAX_VARIANTS
+        value: "500"
+      - key: LOG_LEVEL
+        value: INFO
+      # A pagina beta e servida sob https://genvar.delunalab.dev/beta (mesmo host
+      # do TCC via Cloudflare), entao a origem CORS e esse dominio.
+      - key: ALLOWED_ORIGINS
+        value: https://genvar.delunalab.dev,https://genvar-beta.onrender.com
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: genvar-cache-beta
+          property: connectionString
+
+  - type: web
+    runtime: static
+    name: genvar-beta
+    branch: beta
+    rootDir: frontend
+    # Build com base /beta/ e publicacao aninhada em beta/, para o site servir
+    # os arquivos em /beta/* (o Cloudflare encaminha /beta/* preservando o caminho).
+    buildCommand: >-
+      npm ci && VITE_BASE_PATH=/beta/ npm run build &&
+      rm -rf public_beta && mkdir -p public_beta/beta && cp -r dist/. public_beta/beta/
+    staticPublishPath: public_beta
+    autoDeploy: true
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: VITE_API_URL
+        value: https://genvar-backend-beta.onrender.com/api
+    headers:
+      - path: /beta/assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /beta/*
+        destination: /beta/index.html

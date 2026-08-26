@@ -91,7 +91,7 @@ export default function BrandMorphNav({ heroSlotRef }) {
               : undefined
           }
         >
-          <img src="/brand/genvar-mark.svg" alt="Marca do GenVar" className="w-24 h-24" />
+          <img src={`${import.meta.env.BASE_URL}brand/genvar-mark.svg`} alt="Marca do GenVar" className="w-24 h-24" />
           GenVar Dashboard
         </Link>
       </div>
