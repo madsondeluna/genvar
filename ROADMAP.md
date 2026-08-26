@@ -8,12 +8,12 @@ seguinte. O foco inicial é doenças e mutações raras (monogênico).
 
 ## Contexto
 
-Concorrentes recentes (por exemplo, o BRaVa browser) mostram resultados de
-*burden* de variantes raras por gene, com *forest plots* e *Manhattan plots*,
-sobre um back-end estático e um conjunto pequeno de fenótipos. O GenVar já vai
-além em pontos-chave: backend real (FastAPI + Redis), agregação de múltiplas
-fontes (Ensembl, gnomAD, ClinVar, AlphaFold, UniProt, dbNSFP, GWAS Catalog) e
-resolução de variante única, que o concorrente não tem.
+Navegadores recentes de variantes raras mostram resultados de *burden* por
+gene, com *forest plots* e *Manhattan plots*, sobre um back-end estático e um
+conjunto pequeno de fenótipos. O GenVar já vai além em pontos-chave: backend
+real (FastAPI + Redis), agregação de múltiplas fontes (Ensembl, gnomAD,
+ClinVar, AlphaFold, UniProt, dbNSFP, GWAS Catalog) e resolução de variante
+única, que os navegadores só de burden não têm.
 
 O diferencial estratégico é a lacuna que ninguém cobre bem: unir o raro
 (monogênico) com o poligênico (PGS) na mesma experiência, com uma camada de
@@ -75,14 +75,15 @@ O grande diferencial: trazer o comum e poligênico para o lado do raro.
   penetrância de variantes raras na mesma tela de doença.
 - PheWAS por escore poligênico.
 
-## Fase 4: Camada de burden (estilo BRaVa, e além)
+## Fase 4: Camada de burden
 
 - Ingestão de sumários de associação por *burden* (SAIGE-GENE, Meta-SAIGE),
   com ETL em Python/Polars para JSON colunar.
 - *Forest plots* cross-ancestry (PheWAS por gene) e *Manhattan plot* por
-  fenótipo, para igualar o concorrente.
-- Diferencial: manter a variante única e a camada de doença e poligênico que o
-  concorrente não oferece.
+  fenótipo, com dados por ancestria (inclusive latina/miscigenada das Américas
+  e mundial).
+- Diferencial: manter a variante única e a camada de doença e poligênico que os
+  navegadores só de burden não oferecem.
 
 ## Fase 5: SaaS
 

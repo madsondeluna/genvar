@@ -4,7 +4,7 @@ import Plot from 'react-plotly.js'
 import { chartColors, baseLayout, withAlpha, CHART_FONT } from '../utils/chartTheme'
 
 // Mapa lollipop das variantes clinicamente classificadas sobre o modelo do gene,
-// no padrão dos browsers de variantes raras (gnomAD, BRaVa): eixo alternável entre
+// no padrão dos browsers de variantes raras (por exemplo, gnomAD): eixo alternável entre
 // a coordenada genômica e os éxons do transcrito canônico com os íntrons removidos.
 // Classificação clínica é estado, então as hastes usam --state-*, nunca slot de série.
 
@@ -292,7 +292,7 @@ export default function ExonVariantMap({ geneData }) {
           ' do transcrito canônico'
         )}
         {axis === 'exons'
-          ? '; no eixo exônico os íntrons são comprimidos nos conectores vermelhos entre as caixas, como nos browsers gnomAD e BRaVa.'
+          ? '; no eixo exônico os íntrons são comprimidos nos conectores vermelhos entre as caixas, como nos browsers de variantes raras.'
           : '; no eixo genômico a linha vermelha entre as caixas são os íntrons.'}
         {sampled &&
           ' Os pontos vêm da amostra de variantes distribuída ao longo do gene, a mesma das tabelas abaixo.'}

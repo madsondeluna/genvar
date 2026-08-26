@@ -1,7 +1,7 @@
 # API Testing Report - GenVar Dashboard
 
 Date: 2026-03-18
-Tested by: Claude Code (automated testing before implementation)
+Tested by: automated endpoint probing before implementation
 
 ---
 
