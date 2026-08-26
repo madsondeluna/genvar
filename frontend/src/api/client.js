@@ -50,4 +50,11 @@ export const fetchDisease = async (id) => {
   return data
 }
 
+export const fetchDiseaseVariants = async (id) => {
+  // Busca variantes patogenicas de varios genes causais no Ensembl; carga
+  // separada do detalhe e pode passar de 60 s na primeira vez.
+  const { data } = await client.get(`/disease/${id}/variants`, { timeout: 120000 })
+  return data
+}
+
 export default client

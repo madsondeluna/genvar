@@ -200,3 +200,18 @@ class DiseaseDetail(BaseModel):
     causal_genes: List[CausalGene] = []
     example_kind: Optional[str] = None
     example_id: Optional[str] = None
+
+
+class DiseasePathogenicGene(BaseModel):
+    """Variantes patogenicas de um gene causal (via overlap do Ensembl)."""
+    symbol: str
+    pathogenic_count: int = 0
+    variants: List[GeneVariant] = []
+
+
+class DiseaseVariantsResponse(BaseModel):
+    """Pagina /doenca/{id}: variantes patogenicas agrupadas por gene causal.
+    Carregada em separado do detalhe para nao atrasar a pagina."""
+    id: str
+    genes: List[DiseasePathogenicGene] = []
+    degraded: bool = False
