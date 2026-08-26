@@ -93,6 +93,9 @@ class VariantResponse(BaseModel):
     gnomad_ac: Optional[int] = None
     gnomad_an: Optional[int] = None
 
+    # Frequencia em coorte brasileira (ABraOM / DNA do Brasil), quando disponivel
+    abraom_af: Optional[float] = None
+
     clinvar_significance: Optional[str] = None
     clinvar_review_status: Optional[str] = None
     clinvar_conditions: List[str] = []
@@ -227,6 +230,7 @@ class DiseaseDetail(BaseModel):
     raras_url: Optional[str] = None
     sus: Optional[SusInfo] = None
     newborn: Optional[NewbornInfo] = None
+    prevalence_br: Optional[str] = None
 
 
 class DiseasePathogenicGene(BaseModel):

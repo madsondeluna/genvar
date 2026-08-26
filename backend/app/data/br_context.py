@@ -74,9 +74,23 @@ NEWBORN: Dict[str, Dict[str, Any]] = {
 }
 
 
+# Prevalencia/epidemiologia no Brasil (curado; a fonte de referencia e a rede
+# RARAS/Atlas Brasileiro de Doencas Raras, raras.org.br). Texto curto por doenca.
+PREVALENCE_BR: Dict[str, str] = {
+    "anemia-falciforme": "Uma das doencas geneticas mais comuns no Brasil, com maior frequencia no Nordeste; cerca de 1 em 1.000 nascidos vivos em algumas regioes.",
+    "fibrose-cistica": "Incidencia estimada em torno de 1 em 7.000 nascidos vivos no Brasil, com variacao regional.",
+    "fenilcetonuria": "Detectada pelo teste do pezinho; incidencia aproximada de 1 em 25.000 nascidos vivos no Brasil.",
+    "atrofia-muscular-espinhal": "Rara; entrou no rol de terapias de alto custo do SUS, com registros crescentes apos a ampliacao da triagem.",
+}
+
+
 def get_sus(disease_id: str) -> Optional[Dict[str, Any]]:
     return SUS.get(disease_id)
 
 
 def get_newborn(disease_id: str) -> Optional[Dict[str, Any]]:
     return NEWBORN.get(disease_id)
+
+
+def get_prevalence_br(disease_id: str) -> Optional[str]:
+    return PREVALENCE_BR.get(disease_id)

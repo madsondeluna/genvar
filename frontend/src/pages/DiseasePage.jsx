@@ -173,8 +173,8 @@ function PathogenicVariantsSection({ id }) {
 // Contexto brasileiro: cobertura no SUS (PCDT e exames) e triagem neonatal, mais
 // o link para o raras.org fica no cabecalho. So aparece quando ha dado curado.
 function BrazilContext({ data }) {
-  const { sus, newborn } = data
-  if (!sus && !newborn) return null
+  const { sus, newborn, prevalence_br } = data
+  if (!sus && !newborn && !prevalence_br) return null
   return (
     <section className="card mb-24" aria-labelledby="brasil-title">
       <div className="flex items-start justify-between mb-4">
@@ -188,6 +188,14 @@ function BrazilContext({ data }) {
         Cobertura no sistema publico e rastreio neonatal (curado; confirme sempre com a fonte
         oficial). O botao raras.org, no topo, leva a informacao e comunidade para pacientes.
       </p>
+
+      {prevalence_br && (
+        <div className="rounded-media border border-border p-16 mb-12">
+          <span className="label mb-4">Epidemiologia no Brasil</span>
+          <p className="text-13 text-text leading-snug">{prevalence_br}</p>
+          <p className="text-12 text-muted mt-4">Fonte de referencia: rede RARAS / Atlas Brasileiro (raras.org.br).</p>
+        </div>
+      )}
 
       {newborn && (
         <div className="rounded-media border border-border p-16 mb-12 flex items-start gap-12">
