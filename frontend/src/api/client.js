@@ -57,4 +57,10 @@ export const fetchDiseaseVariants = async (id) => {
   return data
 }
 
+export const fetchSourcesHealth = async () => {
+  // Pinga as 7 fontes externas; pode demorar ate os timeouts das sondas.
+  const { data } = await client.get('/health/sources', { timeout: 30000 })
+  return data
+}
+
 export default client

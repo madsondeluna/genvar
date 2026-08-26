@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Dna, Layers } from 'lucide-react'
+import { Home, Dna, Layers, Activity } from 'lucide-react'
 
 // Menu de seções compartilhado entre as barras (páginas internas e home).
 // Um único ponto de verdade para os destinos de topo do produto.
@@ -7,6 +7,7 @@ const LINKS = [
   { to: '/', label: 'Início', icon: Home, end: true },
   { to: '/doencas', label: 'Doenças Raras', icon: Dna },
   { to: '/produtos', label: 'Produtos', icon: Layers },
+  { to: '/status', label: 'Status', icon: Activity },
 ]
 
 export default function AppMenu({ className = '' }) {

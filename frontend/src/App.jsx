@@ -12,6 +12,7 @@ const VariantPage = lazy(() => import('./pages/VariantPage'))
 const DiseasesPage = lazy(() => import('./pages/DiseasesPage'))
 const DiseasePage = lazy(() => import('./pages/DiseasePage'))
 const ProductsPage = lazy(() => import('./pages/ProductsPage'))
+const StatusPage = lazy(() => import('./pages/StatusPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,7 @@ export default function App() {
               <Route path="/doencas" element={<DiseasesPage />} />
               <Route path="/doenca/:id" element={<DiseasePage />} />
               <Route path="/produtos" element={<ProductsPage />} />
+              <Route path="/status" element={<StatusPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
