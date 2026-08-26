@@ -8,7 +8,8 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import ManhattanPlot from '../burden/ManhattanPlot'
 import FilterBar from '../burden/FilterBar'
 import ForestPlot from '../burden/ForestPlot'
-import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, buildGenomeLayout } from '../burden/data'
+import BiobankMap from '../burden/BiobankMap'
+import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, loadBiobanks, buildGenomeLayout } from '../burden/data'
 import { seFromBetaLp, heterogeneity, i2Tier } from '../burden/stats'
 import {
   TESTS, MASK_LABEL, ANCESTRY_LABEL, ANCESTRY_SHORT, ANCESTRY_COLOR, DEFAULTS,
@@ -62,6 +63,7 @@ export default function AssociationPage() {
 
   const genesQ = useQuery({ queryKey: ['burden', 'genes'], queryFn: loadGenes, staleTime: Infinity })
   const phenosQ = useQuery({ queryKey: ['burden', 'phenotypes'], queryFn: loadPhenotypes, staleTime: Infinity })
+  const biobanksQ = useQuery({ queryKey: ['burden', 'biobanks'], queryFn: loadBiobanks, staleTime: Infinity })
   const resultsQ = useQuery({
     queryKey: ['burden', 'results', filters.ancestry],
     queryFn: () => loadAllResults(filters.ancestry),
@@ -288,10 +290,87 @@ export default function AssociationPage() {
                 </div>
               )}
             </section>
+
+            {biobanksQ.data?.biobanks && (
+              <BiobankSection biobanks={biobanksQ.data.biobanks} />
+            )}
           </>
         )}
       </div>
     </main>
+  )
+}
+
+// Mapa mundial dos biobancos e a camada de cobertura por ancestria, com
+// destaque para AMR (latina/miscigenada das Americas).
+function BiobankSection({ biobanks }) {
+  const totals = {}
+  let grand = 0
+  for (const b of biobanks) {
+    for (const [k, v] of Object.entries(b.ancestry_n || {})) {
+      totals[k] = (totals[k] || 0) + (v || 0)
+      grand += v || 0
+    }
+  }
+  // ordem de exibicao: AMR primeiro para dar destaque, depois por tamanho.
+  const order = Object.keys(totals).sort((a, b) => {
+    if (a === 'AMR') return -1
+    if (b === 'AMR') return 1
+    return totals[b] - totals[a]
+  })
+  const amr = totals.AMR || 0
+  const fmt = (n) => n.toLocaleString('pt-BR')
+
+  return (
+    <section className="card flex flex-col gap-16">
+      <div className="flex items-baseline justify-between gap-16 flex-wrap">
+        <h2 className="section-title">Biobancos e ancestrias</h2>
+        <p className="label">{biobanks.length} biobancos · {fmt(grand)} amostras</p>
+      </div>
+
+      <BiobankMap biobanks={biobanks} />
+
+      <div className="flex flex-col gap-8">
+        <span className="label">Cobertura por ancestria (amostras somadas)</span>
+        {/* barra empilhada da composicao global por ancestria */}
+        <div className="flex" style={{ height: 10, borderRadius: 'var(--radius-control)', overflow: 'hidden' }}>
+          {order.map((k) => (
+            <span
+              key={k}
+              title={`${ANCESTRY_LABEL[k] || k}: ${fmt(totals[k])}`}
+              style={{ width: `${(totals[k] / grand) * 100}%`, background: ANCESTRY_COLOR[k] || 'var(--muted)' }}
+            />
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-x-16 gap-y-6">
+          {order.map((k) => (
+            <span key={k} className="flex items-center gap-6 text-12 text-muted">
+              <span aria-hidden="true" style={{
+                width: 10, height: 10, borderRadius: 2, background: ANCESTRY_COLOR[k] || 'var(--muted)',
+                display: 'inline-block',
+              }} />
+              {ANCESTRY_LABEL[k] || k}: {fmt(totals[k])}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="tint-good card flex flex-col gap-4">
+        <span className="label">Camada latina (AMR)</span>
+        <p className="text-14 text-text">
+          {fmt(amr)} amostras de ancestria latina/miscigenada das Américas
+          ({((amr / grand) * 100).toFixed(1)}% do total), distribuídas entre os
+          biobancos com essa cobertura. É a base que permite estimar o efeito
+          nessa população no forest cross-ancestry.
+        </p>
+      </div>
+
+      <p className="text-12 text-muted leading-snug">
+        Cada marcador é um biobanco na sua coordenada real, com o tamanho
+        proporcional à amostra e a cor da ancestria predominante. Passe o mouse
+        para ver país, tamanho e as principais ancestrias.
+      </p>
+    </section>
   )
 }
 
