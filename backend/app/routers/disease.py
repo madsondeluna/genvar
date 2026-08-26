@@ -3,6 +3,8 @@ from fastapi import APIRouter, HTTPException
 from app.models.schemas import (
     DiseaseSummary,
     DiseaseListResponse,
+    DiseaseStatsResponse,
+    CountItem,
     DiseaseDetail,
     CausalGene,
     DiseasePathogenicGene,
@@ -13,7 +15,7 @@ from app.models.schemas import (
 )
 from app.services import gnomad, ensembl
 from app.utils.validators import classify_clinical_significance
-from app.data.rare_diseases import get_disease, search_diseases, _slugify
+from app.data.rare_diseases import get_disease, search_diseases, all_diseases, _slugify
 from app.data import br_context
 from app.utils.cache import cache_get, cache_set
 
@@ -49,6 +51,41 @@ async def list_diseases(
     return DiseaseListResponse(
         items=[_summary(d) for d in items], total=total, page=max(1, page),
         page_size=max(1, min(100, page_size)),
+    )
+
+
+# Rotulos das facetas de heranca, na ordem canonica, para o panorama do hub.
+_INH_LABELS = [
+    ("AD", "Autossomica dominante"), ("AR", "Autossomica recessiva"),
+    ("XLR", "Ligada ao X recessiva"), ("XLD", "Ligada ao X dominante"),
+    ("XL", "Ligada ao X"),
+]
+
+
+@router.get("/stats", response_model=DiseaseStatsResponse)
+async def disease_stats():
+    """Contagens por heranca e por categoria, para os graficos do hub.
+    Registrado antes de /{disease_id} para nao ser capturado pela rota de id."""
+    items = all_diseases()
+    inh_counts = {code: 0 for code, _ in _INH_LABELS}
+    cat_counts: dict[str, int] = {}
+    for d in items:
+        code = d.get("inheritance")
+        if code in inh_counts:
+            inh_counts[code] += 1
+        cat = d.get("category") or "Outras"
+        cat_counts[cat] = cat_counts.get(cat, 0) + 1
+
+    by_inheritance = [
+        CountItem(key=code, label=label, count=inh_counts[code])
+        for code, label in _INH_LABELS if inh_counts[code] > 0
+    ]
+    by_category = [
+        CountItem(key=name, label=name, count=n)
+        for name, n in sorted(cat_counts.items(), key=lambda kv: kv[1], reverse=True)
+    ]
+    return DiseaseStatsResponse(
+        total=len(items), by_inheritance=by_inheritance, by_category=by_category
     )
 
 

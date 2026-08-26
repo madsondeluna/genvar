@@ -46,6 +46,11 @@ export const fetchDiseases = async ({ q = '', inheritance = 'all', page = 1, pag
   return data
 }
 
+export const fetchDiseaseStats = async () => {
+  const { data } = await client.get('/disease/stats')
+  return data
+}
+
 export const fetchDisease = async (id) => {
   // O detalhe enriquece genes causais ao vivo (constraint gnomAD); a 1a carga
   // pode ser mais lenta, por isso a folga no timeout.

@@ -6,6 +6,7 @@ import { fetchDiseases } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
+import CatalogOverview from '../components/CatalogOverview'
 import { inheritanceMeta, INHERITANCE_ORDER } from '../utils/inheritance'
 
 const PAGE_SIZE = 30
@@ -100,6 +101,8 @@ export default function DiseasesPage() {
             })}
           </div>
         </div>
+
+        <CatalogOverview />
 
         {error && <ErrorAlert message={error.message} />}
         {isFetching && items.length === 0 && <LoadingSpinner />}
