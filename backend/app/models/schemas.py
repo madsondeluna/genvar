@@ -264,3 +264,23 @@ class HealthSourcesResponse(BaseModel):
     ok_count: int
     total: int
     sources: List[SourceHealth] = []
+
+
+class EndpointHealth(BaseModel):
+    name: str
+    method: str
+    path: str
+    ok: bool
+    status: Optional[int] = None
+    latency_ms: Optional[float] = None
+    external: bool = False
+    detail: Optional[str] = None
+
+
+class EndpointsHealthResponse(BaseModel):
+    all_ok: bool
+    ok_count: int
+    total: int
+    internal_ok_count: int = 0
+    internal_total: int = 0
+    endpoints: List[EndpointHealth] = []

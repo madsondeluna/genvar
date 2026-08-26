@@ -175,6 +175,33 @@ def test_health_sources_all_ok_when_upstreams_respond():
     assert {s["name"] for s in body["sources"]} >= {"Ensembl", "gnomAD", "ClinVar"}
 
 
+def test_health_endpoints_reports_status():
+    from unittest.mock import MagicMock
+
+    def fake_client():
+        mc = AsyncMock()
+        mc.__aenter__ = AsyncMock(return_value=mc)
+        mc.__aexit__ = AsyncMock(return_value=None)
+        resp = MagicMock()
+        resp.status_code = 200
+        mc.request = AsyncMock(return_value=resp)
+        return mc
+
+    with patch("app.routers.health.httpx.AsyncClient", return_value=fake_client()), \
+         patch("app.routers.health.cache_get", return_value=None), \
+         patch("app.routers.health.cache_set", return_value=None):
+        r = client.get("/api/health/endpoints")
+
+    assert r.status_code == 200
+    body = r.json()
+    assert body["all_ok"] is True
+    assert body["total"] == 8
+    assert body["internal_total"] == 3 and body["internal_ok_count"] == 3
+    # cada endpoint traz o rotulo interno/externo
+    assert any(e["external"] for e in body["endpoints"])
+    assert any(not e["external"] for e in body["endpoints"])
+
+
 def test_health_sources_marks_failures():
     from unittest.mock import MagicMock
 
