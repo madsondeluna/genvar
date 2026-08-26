@@ -1,8 +1,13 @@
 import asyncio
 import time
 import httpx
-from fastapi import APIRouter
-from app.models.schemas import SourceHealth, HealthSourcesResponse
+from fastapi import APIRouter, Request
+from app.models.schemas import (
+    SourceHealth,
+    HealthSourcesResponse,
+    EndpointHealth,
+    EndpointsHealthResponse,
+)
 from app.utils.cache import cache_get, cache_set
 
 router = APIRouter()
@@ -80,4 +85,72 @@ async def check_sources():
         sources=list(results),
     )
     cache_set(CACHE_KEY, result.model_dump(), ttl=CACHE_TTL)
+    return result
+
+
+# --- Status dos nossos proprios endpoints (auto-sonda) ---
+
+# external=True: o endpoint depende de fontes externas (passa em producao,
+# falha no sandbox porque o egress e bloqueado). external=False: interno, sem
+# dependencia de rede (deve passar sempre).
+ENDPOINTS = [
+    {"name": "Raiz", "method": "GET", "path": "/", "external": False},
+    {"name": "Health", "method": "GET", "path": "/health", "external": False},
+    {"name": "Catalogo de doencas", "method": "GET", "path": "/api/disease?page_size=1", "external": False},
+    {"name": "Detalhe de doenca", "method": "GET", "path": "/api/disease/anemia-falciforme", "external": True},
+    {"name": "Variantes por doenca", "method": "GET", "path": "/api/disease/anemia-falciforme/variants", "external": True},
+    {"name": "Gene", "method": "GET", "path": "/api/gene/BRCA1", "external": True},
+    {"name": "Fenotipos do gene", "method": "GET", "path": "/api/gene/BRCA1/phenotypes", "external": True},
+    {"name": "Variante", "method": "GET", "path": "/api/variant/rs334", "external": True},
+]
+
+ENDPOINT_TIMEOUT = 8.0
+ENDPOINTS_CACHE_KEY = "health:endpoints:v1"
+ENDPOINTS_CACHE_TTL = 30
+
+
+async def _probe_endpoint(client: httpx.AsyncClient, base: str, spec: dict) -> EndpointHealth:
+    url = base.rstrip("/") + spec["path"]
+    t0 = time.perf_counter()
+    try:
+        resp = await client.request(spec["method"], url, timeout=ENDPOINT_TIMEOUT)
+        ms = round((time.perf_counter() - t0) * 1000, 1)
+        ok = 200 <= resp.status_code < 300
+        return EndpointHealth(
+            name=spec["name"], method=spec["method"], path=spec["path"],
+            ok=ok, status=resp.status_code, latency_ms=ms, external=spec["external"],
+            detail=None if ok else f"HTTP {resp.status_code}",
+        )
+    except Exception as e:
+        ms = round((time.perf_counter() - t0) * 1000, 1)
+        return EndpointHealth(
+            name=spec["name"], method=spec["method"], path=spec["path"],
+            ok=False, status=None, latency_ms=ms, external=spec["external"],
+            detail=type(e).__name__,
+        )
+
+
+@router.get("/endpoints", response_model=EndpointsHealthResponse)
+async def check_endpoints(request: Request):
+    """Auto-sonda os proprios endpoints da API, contra este servidor. Os
+    internos devem responder sempre; os que dependem de fontes externas passam
+    em producao e falham no sandbox (egress bloqueado). Cache 30 s."""
+    cached = cache_get(ENDPOINTS_CACHE_KEY)
+    if cached:
+        return EndpointsHealthResponse(**cached)
+
+    base = str(request.base_url)
+    async with httpx.AsyncClient() as client:
+        results = await asyncio.gather(*[_probe_endpoint(client, base, s) for s in ENDPOINTS])
+
+    internal = [r for r in results if not r.external]
+    result = EndpointsHealthResponse(
+        all_ok=all(r.ok for r in results),
+        ok_count=sum(1 for r in results if r.ok),
+        total=len(results),
+        internal_ok_count=sum(1 for r in internal if r.ok),
+        internal_total=len(internal),
+        endpoints=list(results),
+    )
+    cache_set(ENDPOINTS_CACHE_KEY, result.model_dump(), ttl=ENDPOINTS_CACHE_TTL)
     return result

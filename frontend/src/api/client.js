@@ -66,4 +66,10 @@ export const fetchSourcesHealth = async () => {
   return data
 }
 
+export const fetchEndpointsHealth = async () => {
+  // Auto-sonda os nossos endpoints; alguns dependem de fontes externas.
+  const { data } = await client.get('/health/endpoints', { timeout: 30000 })
+  return data
+}
+
 export default client
