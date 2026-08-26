@@ -11,6 +11,16 @@ import { useScrolled } from '../hooks/useScrolled'
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
 const VARIANT_EXAMPLES = ['rs334', 'rs1800562', 'rs6025', 'rs1799853']
 
+// Atalhos para o módulo de Doenças Raras (ids do catálogo em rare_diseases.py)
+const DISEASE_SHORTCUTS = [
+  { id: 'sindrome-de-lynch', name: 'Síndrome de Lynch' },
+  { id: 'hipercolesterolemia-familiar', name: 'Hipercolesterolemia familiar' },
+  { id: 'anemia-falciforme', name: 'Anemia falciforme' },
+  { id: 'von-hippel-lindau', name: 'von Hippel-Lindau' },
+  { id: 'hemocromatose-hereditaria', name: 'Hemocromatose hereditária' },
+  { id: 'fibrose-cistica', name: 'Fibrose cística' },
+]
+
 // Casos curados: porta de entrada com contexto clínico real
 const SHOWCASE = [
   {
@@ -100,6 +110,10 @@ export default function HomePage() {
   function openVariant(rsid) {
     push('variant', rsid)
     navigate(`/variant/${rsid}`)
+  }
+
+  function openDisease(id) {
+    navigate(`/doenca/${id}`)
   }
 
   return (
@@ -205,6 +219,33 @@ export default function HomePage() {
             </div>
           </section>
         </div>
+
+        <section className="mb-48 fade-up" aria-labelledby="diseases-title">
+          <div className="flex items-center justify-between gap-16 mb-12 flex-wrap">
+            <h2 id="diseases-title" className="label">Comece por uma doença</h2>
+            <button
+              type="button"
+              onClick={() => navigate('/doencas')}
+              className="link-muted mono text-12"
+            >
+              Ver todas
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-8">
+            {DISEASE_SHORTCUTS.map((d) => (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => openDisease(d.id)}
+                className="pill pill-solid pill-sm"
+                aria-label={`Abrir a doença ${d.name}`}
+              >
+                <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
+                {d.name}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <section className="mb-48 fade-up" aria-labelledby="showcase-title">
           <h2 id="showcase-title" className="label mb-12">Casos de exemplo</h2>

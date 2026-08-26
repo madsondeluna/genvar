@@ -62,6 +62,15 @@ O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o ba
 - Ideograma cromossômico com a posição da variante destacada.
 - Histórico de buscas recentes armazenado em `localStorage`, com prefetch ao passar o mouse sobre exemplos da página inicial.
 
+### Doenças Raras (beta)
+
+Módulo de doenças e mutações raras (monogênicas), primeiro passo rumo a uma plataforma SaaS que unirá o monogênico, o multigênico e o poligênico. Detalhes de evolução em `ROADMAP.md`.
+
+- Hub `/doencas`: catálogo curado de doenças monogênicas em PT-BR, com busca por doença, categoria ou gene e facetas por padrão de herança (AD, AR, XLR, XLD, XL).
+- Detalhe `/doenca/:id`: metadados curados (herança, prevalência, referências Orphanet, OMIM, MONDO, sinais clínicos) mais um painel de genes causais com a restrição gênica (LOEUF, pLI) obtida ao vivo da gnomAD e link para a página de gene completa.
+- Aba `/produtos`: apresentação das linhas do produto (raras/monogênico, multigênico, poligênico) e de como o risco raro e o poligênico se relacionam.
+- Fonte de dados: catálogo curado em `backend/app/data/rare_diseases.py` enriquecido pelo serviço da gnomAD já existente. A camada de burden e associação (estilo consórcios) entra em fase posterior do roadmap.
+
 
 ## A aplicação
 
@@ -524,6 +533,34 @@ Retorna anotação completa de uma variante a partir do rs ID do dbSNP.
   "interpro_domains": [],
   "clinvar_variation_id": "441269",
   "cosmic_ids": []
+}
+```
+
+### GET /api/disease e GET /api/disease/{id}
+
+Endpoints do módulo de Doenças Raras (beta).
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /api/disease` | Lista do catálogo curado (`DiseaseSummary`): id, nome, categoria, herança, genes e resumo. Servida direto do catálogo, sem chamadas externas. |
+| `GET /api/disease/{id}` | Detalhe (`DiseaseDetail`): metadados curados mais `causal_genes` com a restrição da gnomAD (LOEUF, pLI) obtida ao vivo. Retorna 404 para id fora do catálogo. Resultado degradado (constraint indisponível) não é fixado no cache. |
+
+Exemplo (`GET /api/disease/hipercolesterolemia-familiar`):
+
+```json
+{
+  "id": "hipercolesterolemia-familiar",
+  "name": "Hipercolesterolemia familiar",
+  "category": "Cardiometabolico",
+  "inheritance": "AD",
+  "prevalence": "~1:250",
+  "genes": ["LDLR", "APOB", "PCSK9"],
+  "causal_genes": [
+    { "symbol": "LDLR", "pli": 0.0, "loeuf": 0.71, "constraint_available": true }
+  ],
+  "orphanet": "391665",
+  "omim": "143890",
+  "mondo": "MONDO:0007750"
 }
 ```
 
