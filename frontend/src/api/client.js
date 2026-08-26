@@ -38,8 +38,11 @@ export const fetchVariant = async (rsid) => {
   return data
 }
 
-export const fetchDiseases = async () => {
-  const { data } = await client.get('/disease')
+export const fetchDiseases = async ({ q = '', inheritance = 'all', page = 1, page_size = 30 } = {}) => {
+  // Busca e paginacao no servidor: aguenta o catalogo completo do Orphanet.
+  const { data } = await client.get('/disease', {
+    params: { q, inheritance, page, page_size },
+  })
   return data
 }
 

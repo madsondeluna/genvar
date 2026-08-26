@@ -69,7 +69,13 @@ Módulo de doenças e mutações raras (monogênicas), primeiro passo rumo a uma
 - Hub `/doencas`: catálogo curado de doenças monogênicas em PT-BR, com busca por doença, categoria ou gene e facetas por padrão de herança (AD, AR, XLR, XLD, XL).
 - Detalhe `/doenca/:id`: metadados curados (herança, prevalência, referências Orphanet, OMIM, MONDO, sinais clínicos) mais um painel de genes causais com a restrição gênica (LOEUF, pLI) obtida ao vivo da gnomAD e link para a página de gene completa.
 - Aba `/produtos`: apresentação das linhas do produto (raras/monogênico, multigênico, poligênico) e de como o risco raro e o poligênico se relacionam.
-- Fonte de dados: catálogo curado em `backend/app/data/rare_diseases.py` enriquecido pelo serviço da gnomAD já existente. A camada de burden e associação (estilo consórcios) entra em fase posterior do roadmap.
+- Fonte de dados: catálogo completo gerado do Orphanet (`backend/scripts/build_catalog.py` produz `backend/app/data/rare_diseases.json` com todas as doenças raras que têm gene causal), mesclado com a curadoria PT-BR de `rare_diseases.py` (que tem prioridade). Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD. A camada de burden e associação entra em fase posterior do roadmap.
+
+Para gerar o catálogo completo (onde a rede é aberta):
+
+```
+cd backend && python -m scripts.build_catalog
+```
 
 
 ## A aplicação
@@ -542,7 +548,7 @@ Endpoints do módulo de Doenças Raras (beta).
 
 | Endpoint | Resposta |
 |---|---|
-| `GET /api/disease` | Lista do catálogo curado (`DiseaseSummary`): id, nome, categoria, herança, genes e resumo. Servida direto do catálogo, sem chamadas externas. |
+| `GET /api/disease` | Catálogo paginado (`DiseaseListResponse`: `items`, `total`, `page`, `page_size`), com busca e faceta no servidor via `q`, `inheritance`, `page`, `page_size`. Aguenta o catálogo completo do Orphanet. |
 | `GET /api/disease/{id}` | Detalhe (`DiseaseDetail`): metadados curados mais `causal_genes` com a restrição da gnomAD (LOEUF, pLI) obtida ao vivo. Retorna 404 para id fora do catálogo. Resultado degradado (constraint indisponível) não é fixado no cache. |
 | `GET /api/disease/{id}/variants` | Variantes patogênicas por gene causal (`DiseaseVariantsResponse`): para cada gene, contagem e amostra de variantes classificadas como patogênicas pelo ClinVar (via overlap do Ensembl). Carregado em separado do detalhe. Retorna 404 para id fora do catálogo. |
 

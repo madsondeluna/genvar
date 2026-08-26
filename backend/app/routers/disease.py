@@ -2,6 +2,7 @@ import asyncio
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import (
     DiseaseSummary,
+    DiseaseListResponse,
     DiseaseDetail,
     CausalGene,
     DiseasePathogenicGene,
@@ -10,7 +11,7 @@ from app.models.schemas import (
 )
 from app.services import gnomad, ensembl
 from app.utils.validators import classify_clinical_significance
-from app.data.rare_diseases import all_diseases, get_disease
+from app.data.rare_diseases import get_disease, search_diseases
 from app.utils.cache import cache_get, cache_set
 
 router = APIRouter()
@@ -36,10 +37,16 @@ def _summary(d: dict) -> DiseaseSummary:
     )
 
 
-@router.get("", response_model=list[DiseaseSummary])
-async def list_diseases():
-    """Catalogo curado de doencas raras para o hub. Estatico e barato."""
-    return [_summary(d) for d in all_diseases()]
+@router.get("", response_model=DiseaseListResponse)
+async def list_diseases(
+    q: str = "", inheritance: str = "all", page: int = 1, page_size: int = 30
+):
+    """Catalogo de doencas raras com busca e paginacao no servidor."""
+    items, total = search_diseases(q=q, inheritance=inheritance, page=page, page_size=page_size)
+    return DiseaseListResponse(
+        items=[_summary(d) for d in items], total=total, page=max(1, page),
+        page_size=max(1, min(100, page_size)),
+    )
 
 
 async def _enrich_gene(symbol: str) -> CausalGene:

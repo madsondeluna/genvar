@@ -9,7 +9,11 @@ e conhecido com seguranca, o campo fica em None e a UI cai para uma busca por
 nome. Ampliar este catalogo e o primeiro item da Fase 1 do ROADMAP.
 """
 
-from typing import Optional, List, Dict, Any
+import json
+import re
+import unicodedata
+from pathlib import Path
+from typing import Optional, List, Dict, Any, Tuple
 
 # Padroes de heranca usados nas facetas do hub:
 #   AD  autossomica dominante   AR  autossomica recessiva
@@ -336,13 +340,91 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     },
 ]
 
-# Indice por id para lookup O(1) no router de detalhe.
-_BY_ID: Dict[str, Dict[str, Any]] = {d["id"]: d for d in RARE_DISEASES}
+# A lista acima e a CURADORIA em PT-BR (nomes, descricoes, HPO, exemplos). O
+# catalogo COMPLETO vem de um dataset gerado do Orphanet por
+# scripts/build_catalog.py, salvo em rare_diseases.json ao lado deste arquivo.
+# Em runtime mesclamos: a curadoria tem prioridade (por codigo Orphanet); as
+# demais doencas do Orphanet entram em seguida. Sem o JSON, roda so a semente.
+CURATED_DISEASES = RARE_DISEASES
+_JSON_PATH = Path(__file__).parent / "rare_diseases.json"
+
+_ALL: Optional[List[Dict[str, Any]]] = None
+_BY_ID: Optional[Dict[str, Dict[str, Any]]] = None
+
+
+def _slugify(name: str) -> str:
+    s = unicodedata.normalize("NFD", name or "").encode("ascii", "ignore").decode()
+    s = re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+    return s or "doenca"
+
+
+def _normalize(s: str) -> str:
+    return unicodedata.normalize("NFD", s or "").encode("ascii", "ignore").decode().lower()
+
+
+def _load() -> List[Dict[str, Any]]:
+    global _ALL, _BY_ID
+    if _ALL is not None:
+        return _ALL
+
+    merged: List[Dict[str, Any]] = list(CURATED_DISEASES)
+    curated_orpha = {d.get("orphanet") for d in CURATED_DISEASES if d.get("orphanet")}
+    seen_ids = {d["id"] for d in merged}
+
+    if _JSON_PATH.exists():
+        try:
+            generated = json.loads(_JSON_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            generated = []
+        for g in generated:
+            # a curadoria PT-BR vence por codigo Orphanet
+            if g.get("orphanet") and g["orphanet"] in curated_orpha:
+                continue
+            gid = g.get("id") or _slugify(g.get("name", ""))
+            base, n = gid, 2
+            while gid in seen_ids:
+                gid = f"{base}-{n}"
+                n += 1
+            g["id"] = gid
+            # defaults para o shape do DiseaseSummary
+            g.setdefault("category", "Doenca rara")
+            g.setdefault("inheritance", "")
+            g.setdefault("genes", [])
+            g.setdefault("short", "")
+            seen_ids.add(gid)
+            merged.append(g)
+
+    _ALL = merged
+    _BY_ID = {d["id"]: d for d in merged}
+    return _ALL
 
 
 def all_diseases() -> List[Dict[str, Any]]:
-    return RARE_DISEASES
+    return _load()
 
 
 def get_disease(disease_id: str) -> Optional[Dict[str, Any]]:
+    _load()
     return _BY_ID.get(disease_id)
+
+
+def search_diseases(
+    q: str = "", inheritance: str = "all", page: int = 1, page_size: int = 30
+) -> Tuple[List[Dict[str, Any]], int]:
+    """Busca e paginacao no servidor, para aguentar um catalogo grande."""
+    items = _load()
+    if inheritance and inheritance != "all":
+        items = [d for d in items if d.get("inheritance") == inheritance]
+    ql = _normalize(q)
+    if ql:
+        items = [
+            d for d in items
+            if ql in _normalize(
+                f"{d.get('name','')} {d.get('category','')} {d.get('short','')} {' '.join(d.get('genes',[]))}"
+            )
+        ]
+    total = len(items)
+    page = max(1, page)
+    page_size = max(1, min(100, page_size))
+    start = (page - 1) * page_size
+    return items[start:start + page_size], total

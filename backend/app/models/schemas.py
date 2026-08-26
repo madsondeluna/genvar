@@ -173,6 +173,14 @@ class DiseaseSummary(BaseModel):
     prevalence: Optional[str] = None
 
 
+class DiseaseListResponse(BaseModel):
+    """Lista paginada do catalogo para o hub (busca no servidor)."""
+    items: List[DiseaseSummary] = []
+    total: int = 0
+    page: int = 1
+    page_size: int = 30
+
+
 class CausalGene(BaseModel):
     """Gene causal com constraint enriquecido ao vivo pela gnomAD."""
     symbol: str
