@@ -8,6 +8,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import SignificanceTag from '../components/SignificanceTag'
 import { inheritanceMeta } from '../utils/inheritance'
+import { useViewMode } from '../hooks/useViewMode'
 
 // Variantes do Ensembl trazem o id do dbSNP; so linkamos para a pagina de
 // variante quando o id e um rsID valido.
@@ -230,8 +231,31 @@ function BrazilContext({ data }) {
   )
 }
 
+// Modo paciente: bloco simples com os genes envolvidos, sem jargao tecnico.
+function GenesForPatients({ data }) {
+  return (
+    <section className="card mb-24" aria-labelledby="genes-simples-title">
+      <h2 id="genes-simples-title" className="section-title mb-4 flex items-center gap-8">
+        <Dna className="w-16 h-16 text-muted" aria-hidden="true" />
+        Genes envolvidos
+      </h2>
+      <p className="text-13 text-muted leading-normal mb-16">
+        Alteracoes nestes genes podem causar a doenca. O diagnostico e a interpretacao devem ser
+        feitos por um profissional de saude ou geneticista. Para informacao e apoio, use o botao
+        raras.org no topo.
+      </p>
+      <div className="flex flex-wrap gap-8">
+        {data.genes.map((g) => (
+          <Link key={g} to={`/gene/${g}`} className="pill pill-solid pill-sm mono">{g}</Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function DiseasePage() {
   const { id } = useParams()
+  const mode = useViewMode()
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['disease', id],
@@ -311,7 +335,11 @@ export default function DiseasePage() {
               </div>
             </header>
 
+            {/* Modo paciente: visao simples dos genes */}
+            {mode === 'paciente' && <GenesForPatients data={data} />}
+
             {/* Genes causais: dado vivo (constraint gnomAD) */}
+            {mode === 'profissional' && (
             <section className="mb-24" aria-labelledby="causal-title">
               <div className="flex items-start justify-between mb-4">
                 <h2 id="causal-title" className="section-title">Genes causais</h2>
@@ -328,12 +356,13 @@ export default function DiseasePage() {
                 ))}
               </div>
             </section>
+            )}
 
             {/* Contexto brasileiro: SUS e triagem neonatal */}
             <BrazilContext data={data} />
 
-            {/* Variantes patogênicas por gene causal (assíncrono) */}
-            <PathogenicVariantsSection id={id} />
+            {/* Variantes patogênicas por gene causal (assíncrono, só no modo profissional) */}
+            {mode === 'profissional' && <PathogenicVariantsSection id={id} />}
 
             {/* Sinais clínicos (HPO) */}
             {data.hpo.length > 0 && (
