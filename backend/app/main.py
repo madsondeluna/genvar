@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
-from app.routers import gene, variant, disease, panel, health
+from app.routers import gene, variant, disease, panel, pgs, health
 
 logging.basicConfig(
     level=getattr(logging, settings.log_level.upper(), logging.INFO),
@@ -41,6 +41,7 @@ app.include_router(gene.router, prefix="/api/gene", tags=["gene"])
 app.include_router(variant.router, prefix="/api/variant", tags=["variant"])
 app.include_router(disease.router, prefix="/api/disease", tags=["disease"])
 app.include_router(panel.router, prefix="/api/panel", tags=["panel"])
+app.include_router(pgs.router, prefix="/api/pgs", tags=["pgs"])
 app.include_router(health.router, prefix="/api/health", tags=["health"])
 
 

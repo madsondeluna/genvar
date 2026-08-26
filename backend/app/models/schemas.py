@@ -306,6 +306,55 @@ class PanelDetail(BaseModel):
     degraded: bool = False
 
 
+# --- Poligenico (escores PGS) ---
+
+class PgsSummary(BaseModel):
+    id: str
+    trait: str
+    category: str
+    citation: str = ""
+    n_variants: Optional[int] = None
+    short: Optional[str] = None
+
+
+class PgsListResponse(BaseModel):
+    items: List[PgsSummary] = []
+    total: int = 0
+    by_category: List[CountItem] = []
+
+
+class PgsPublication(BaseModel):
+    title: Optional[str] = None
+    author: Optional[str] = None
+    journal: Optional[str] = None
+    year: Optional[str] = None
+    doi: Optional[str] = None
+
+
+class PgsScoreDetail(BaseModel):
+    id: str
+    trait: str
+    category: str
+    citation: str = ""
+    short: Optional[str] = None
+    n_variants: Optional[int] = None
+    publication: Optional[PgsPublication] = None
+    ancestry_dev: dict = {}
+    pgs_catalog_url: str
+    live: bool = False
+
+
+class InterplayItem(BaseModel):
+    condition: str
+    monogenic: List[str] = []
+    disease_id: Optional[str] = None
+    note: str
+
+
+class InterplayResponse(BaseModel):
+    items: List[InterplayItem] = []
+
+
 # --- Saude das fontes externas ---
 
 class SourceHealth(BaseModel):
