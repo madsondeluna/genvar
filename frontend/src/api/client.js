@@ -38,4 +38,16 @@ export const fetchVariant = async (rsid) => {
   return data
 }
 
+export const fetchDiseases = async () => {
+  const { data } = await client.get('/disease')
+  return data
+}
+
+export const fetchDisease = async (id) => {
+  // O detalhe enriquece genes causais ao vivo (constraint gnomAD); a 1a carga
+  // pode ser mais lenta, por isso a folga no timeout.
+  const { data } = await client.get(`/disease/${id}`, { timeout: 90000 })
+  return data
+}
+
 export default client

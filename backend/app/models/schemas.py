@@ -158,3 +158,45 @@ class GenePhenotypesResponse(BaseModel):
     gwas_trait_total: int = 0
     gwas_association_total: int = 0
     gwas_truncated: bool = False
+
+
+# --- Modulo de Doencas Raras (monogenico) ---
+
+class DiseaseSummary(BaseModel):
+    """Cartao de doenca no hub /doencas (servido direto do catalogo curado)."""
+    id: str
+    name: str
+    category: str
+    inheritance: str
+    genes: List[str] = []
+    short: str
+    prevalence: Optional[str] = None
+
+
+class CausalGene(BaseModel):
+    """Gene causal com constraint enriquecido ao vivo pela gnomAD."""
+    symbol: str
+    pli: Optional[float] = None
+    # LOEUF = limite superior do intervalo de oe_lof; quanto menor, mais restrito
+    loeuf: Optional[float] = None
+    oe_lof: Optional[float] = None
+    oe_mis: Optional[float] = None
+    constraint_available: bool = False
+
+
+class DiseaseDetail(BaseModel):
+    """Pagina /doenca/{id}: metadados curados + genes causais enriquecidos."""
+    id: str
+    name: str
+    category: str
+    inheritance: str
+    short: str
+    prevalence: Optional[str] = None
+    hpo: List[str] = []
+    orphanet: Optional[str] = None
+    omim: Optional[str] = None
+    mondo: Optional[str] = None
+    genes: List[str] = []
+    causal_genes: List[CausalGene] = []
+    example_kind: Optional[str] = None
+    example_id: Optional[str] = None

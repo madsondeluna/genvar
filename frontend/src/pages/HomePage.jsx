@@ -5,6 +5,7 @@ import { Search, Dna, Activity, Clock, X } from 'lucide-react'
 import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import BrandMorphNav from '../components/BrandMorphNav'
+import AppMenu from '../components/AppMenu'
 import { useScrolled } from '../hooks/useScrolled'
 
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
@@ -117,6 +118,7 @@ export default function HomePage() {
             de gene ou um rs ID para reunir significado clínico, frequências populacionais,
             métricas de restrição e estrutura proteica.
           </p>
+          <AppMenu className="mt-16" />
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 mb-48 stagger">

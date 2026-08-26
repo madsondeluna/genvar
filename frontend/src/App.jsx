@@ -9,6 +9,9 @@ import LoadingSpinner from './components/LoadingSpinner'
 // bundle. A home não usa nenhum dos dois, então as rotas entram sob demanda.
 const GenePage = lazy(() => import('./pages/GenePage'))
 const VariantPage = lazy(() => import('./pages/VariantPage'))
+const DiseasesPage = lazy(() => import('./pages/DiseasesPage'))
+const DiseasePage = lazy(() => import('./pages/DiseasePage'))
+const ProductsPage = lazy(() => import('./pages/ProductsPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +34,9 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/gene/:symbol" element={<GenePage />} />
               <Route path="/variant/:rsid" element={<VariantPage />} />
+              <Route path="/doencas" element={<DiseasesPage />} />
+              <Route path="/doenca/:id" element={<DiseasePage />} />
+              <Route path="/produtos" element={<ProductsPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
