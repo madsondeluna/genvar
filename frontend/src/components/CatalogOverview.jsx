@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { BarChart3 } from 'lucide-react'
+import Icon from './Icon'
 import { fetchDiseaseStats } from '../api/client'
 
 // Panorama do catalogo: barras horizontais de magnitude (contagem), uma so cor
@@ -46,7 +46,7 @@ export default function CatalogOverview() {
     <section className="card mb-24" aria-labelledby="overview-title">
       <div className="flex items-start justify-between mb-16">
         <h2 id="overview-title" className="section-title flex items-center gap-8">
-          <BarChart3 className="w-16 h-16 text-muted" aria-hidden="true" />
+          <Icon name="chart-bar" className="text-muted" />
           Panorama do catálogo
         </h2>
         <span className="text-12 text-muted mono">{data.total} doenças</span>

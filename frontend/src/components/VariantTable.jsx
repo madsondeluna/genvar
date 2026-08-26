@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ChevronUp, ChevronDown, Download, Search } from 'lucide-react'
+import Icon from './Icon'
 import SignificanceTag from './SignificanceTag'
 import { formatConsequence, formatPosition } from '../utils/format'
 import { toCsv, downloadCsv } from '../utils/csv'
@@ -118,11 +118,11 @@ export default function VariantTable({
   }
 
   function SortIcon({ col }) {
-    if (sortKey !== col) return <ChevronUp className="w-12 h-12 opacity-40" aria-hidden="true" />
+    if (sortKey !== col) return <Icon name="chevron-up" className="opacity-40" />
     return sortAsc ? (
-      <ChevronUp className="w-12 h-12" aria-hidden="true" />
+      <Icon name="chevron-up" />
     ) : (
-      <ChevronDown className="w-12 h-12" aria-hidden="true" />
+      <Icon name="chevron-down" />
     )
   }
 
@@ -149,18 +149,14 @@ export default function VariantTable({
           className="pill pill-sm"
           aria-label={`Exportar ${title} como CSV`}
         >
-          <Download className="w-12 h-12" aria-hidden="true" />
+          <Icon name="download" />
           Exportar CSV
         </button>
       </div>
 
       <div className="flex gap-12 mb-16 flex-wrap">
         <div className="relative flex-1" style={{ minWidth: 'calc(var(--photo-sm) * 2)' }}>
-          <Search
-            className="w-16 h-16 text-muted absolute top-1/2 -translate-y-1/2"
-            style={{ left: 'var(--space-12)' }}
-            aria-hidden="true"
-          />
+          <Icon name="search" className="text-muted absolute top-1/2 -translate-y-1/2" style={{ left: 'var(--space-12)' }} />
           <input
             type="search"
             className="input"

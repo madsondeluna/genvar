@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { Dna, Search, FlaskConical } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchDiseases } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -51,7 +51,7 @@ export default function DiseasesPage() {
 
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <FlaskConical className="w-12 h-12" aria-hidden="true" />
+            <Icon name="molecule" />
             Doenças Raras · beta
           </p>
           <h1 className="display mb-12">Doenças e mutações raras</h1>
@@ -64,7 +64,7 @@ export default function DiseasesPage() {
 
         <div className="card mb-24 flex flex-col gap-16">
           <div className="flex items-center gap-8">
-            <Search className="w-16 h-16 text-muted" aria-hidden="true" />
+            <Icon name="search" className="text-muted" />
             <label htmlFor="disease-search" className="sr-only">Buscar doença ou gene</label>
             <input
               id="disease-search"
@@ -127,10 +127,7 @@ export default function DiseasesPage() {
                         <span className={`pill pill-sm ${m.tint}`} title={m.label}>{m.short}</span>
                       )}
                     </span>
-                    <span className="text-16 font-medium text-text flex items-center gap-8">
-                      <Dna className="w-16 h-16 text-muted flex-shrink-0" aria-hidden="true" />
-                      {d.name}
-                    </span>
+                    <span className="text-16 font-medium text-text">{d.name}</span>
                     {d.short && <span className="text-12 text-muted leading-snug">{d.short}</span>}
                     <span className="flex flex-wrap gap-6 mt-4">
                       {d.genes.slice(0, 5).map((g) => (

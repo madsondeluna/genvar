@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Sparkles, ExternalLink, GitBranch, Dna } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchPgsScores, fetchPgsInterplay } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -36,7 +36,7 @@ export default function PolygenicPage() {
 
         <header>
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <Sparkles className="w-12 h-12" aria-hidden="true" />
+            <Icon name="sparkle" />
             Poligênico · beta
           </p>
           <h1 className="display mb-12">Escores poligênicos e penetrância</h1>
@@ -60,7 +60,7 @@ export default function PolygenicPage() {
           <div className="flex flex-col gap-12">
             {interplay.map((it) => (
               <div key={it.condition} className="card tint-serious flex items-start gap-12">
-                <GitBranch className="w-20 h-20 flex-shrink-0" style={{ color: 'var(--state-serious)' }} aria-hidden="true" />
+                <Icon name="branch" size="md" style={{ color: 'var(--state-serious)' }} />
                 <div className="flex flex-col gap-8">
                   <span className="flex items-center gap-8 flex-wrap">
                     {it.disease_id ? (
@@ -126,16 +126,13 @@ export default function PolygenicPage() {
                   <span className="eyebrow">{s.category}</span>
                   <span className="pill pill-sm tint-neutral mono">{s.id}</span>
                 </span>
-                <span className="text-16 font-medium text-text flex items-center gap-8">
-                  <Sparkles className="w-14 h-14 text-muted flex-shrink-0" aria-hidden="true" />
-                  {s.trait}
-                </span>
+                <span className="text-16 font-medium text-text">{s.trait}</span>
                 {s.short && <span className="text-12 text-muted leading-snug">{s.short}</span>}
                 <span className="flex items-center justify-between gap-8 mt-4">
                   <span className="label">{s.citation}</span>
                   <span className="text-12 text-muted flex items-center gap-4">
                     {s.n_variants != null ? `${s.n_variants.toLocaleString('pt-BR')} variantes` : 'ver no PGS Catalog'}
-                    <ExternalLink className="w-12 h-12" aria-hidden="true" />
+                    <Icon name="external" />
                   </span>
                 </span>
               </a>

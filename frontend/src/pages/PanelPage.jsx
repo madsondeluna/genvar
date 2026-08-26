@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Network, ArrowLeft, GitBranch, Dna } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchPanel } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -24,10 +24,7 @@ function GeneCard({ g }) {
       className="card hover-surface flex flex-col gap-8 cursor-pointer"
     >
       <span className="flex items-center justify-between gap-8">
-        <span className="mono font-medium text-text flex items-center gap-6">
-          <Dna className="w-14 h-14 text-muted" aria-hidden="true" />
-          {g.symbol}
-        </span>
+        <span className="mono font-medium text-text">{g.symbol}</span>
         <span className={`pill pill-sm tint-${band.key === 'neutral' ? 'neutral' : band.key}`}>
           {band.label}
         </span>
@@ -64,7 +61,7 @@ export default function PanelPage() {
       <PageNav />
       <div className="max-w-2xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
         <Link to="/paineis" className="pill pill-sm self-start">
-          <ArrowLeft className="w-12 h-12" aria-hidden="true" />
+          <Icon name="arrow-left" />
           Painéis
         </Link>
 
@@ -75,7 +72,7 @@ export default function PanelPage() {
           <>
             <header>
               <p className="eyebrow mb-8 flex items-center gap-8">
-                <Network className="w-12 h-12" aria-hidden="true" />
+                <Icon name="branch" />
                 {data.category}
               </p>
               <h1 className="display mb-12">{data.name}</h1>
@@ -93,7 +90,7 @@ export default function PanelPage() {
 
             {data.digenic && (
               <section className="card tint-warning flex items-start gap-12">
-                <GitBranch className="w-20 h-20 flex-shrink-0" style={{ color: 'var(--state-warning)' }} aria-hidden="true" />
+                <Icon name="branch" size="md" style={{ color: 'var(--state-warning)' }} />
                 <div>
                   <p className="label mb-4">Herança digênica / oligogênica</p>
                   <p className="text-14 text-text leading-snug">{data.digenic}</p>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search } from 'lucide-react'
+import Icon from './Icon'
 import { fetchDiseases } from '../api/client'
 
 // Busca unificada: reconhece variante (rsID), doenca (catalogo) ou gene (HGNC)
@@ -51,7 +51,7 @@ export default function UnifiedSearch({ initialValue = '', full = false, placeho
         autoComplete="off"
       />
       <button type="submit" className="pill" aria-label="Buscar" disabled={busy}>
-        <Search className="w-16 h-16" aria-hidden="true" />
+        <Icon name="search" />
       </button>
     </form>
   )

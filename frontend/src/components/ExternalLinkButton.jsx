@@ -1,5 +1,4 @@
-import { ExternalLink } from 'lucide-react'
-
+import Icon from './Icon'
 export default function ExternalLinkButton({ href, label, download = false, ariaLabel }) {
   return (
     <a
@@ -11,7 +10,7 @@ export default function ExternalLinkButton({ href, label, download = false, aria
       className="pill pill-sm"
     >
       {label}
-      <ExternalLink className="w-12 h-12" aria-hidden="true" />
+      <Icon name="external" />
     </a>
   )
 }

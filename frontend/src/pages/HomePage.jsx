@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { Search, Dna, Activity, Clock, X } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import BrandMorphNav from '../components/BrandMorphNav'
@@ -139,7 +139,7 @@ export default function HomePage() {
         <section className="card fade-up mb-24" aria-labelledby="unified-search-title">
           <div className="flex items-center gap-12 mb-16">
             <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
-              <Search className="w-20 h-20 text-muted" aria-hidden="true" />
+              <Icon name="search" size="md" className="text-muted" />
             </div>
             <h2 id="unified-search-title" className="text-16 font-medium text-text">Busca unificada</h2>
           </div>
@@ -156,7 +156,7 @@ export default function HomePage() {
           <section className="card fade-up" aria-labelledby="gene-search-title">
             <div className="flex items-center gap-12 mb-16">
               <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
-                <Dna className="w-20 h-20 text-muted" aria-hidden="true" />
+                <Icon name="helix" size="md" className="text-muted" />
               </div>
               <h2 id="gene-search-title" className="text-16 font-medium text-text">Buscar gene</h2>
             </div>
@@ -173,7 +173,7 @@ export default function HomePage() {
                 autoComplete="off"
               />
               <button type="submit" className="pill w-full">
-                <Search className="w-16 h-16" aria-hidden="true" />
+                <Icon name="search" />
                 Buscar gene
               </button>
             </form>
@@ -197,7 +197,7 @@ export default function HomePage() {
           <section className="card fade-up" aria-labelledby="variant-search-title">
             <div className="flex items-center gap-12 mb-16">
               <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
-                <Activity className="w-20 h-20 text-muted" aria-hidden="true" />
+                <Icon name="chart-line" size="md" className="text-muted" />
               </div>
               <h2 id="variant-search-title" className="text-16 font-medium text-text">Buscar variante</h2>
             </div>
@@ -214,7 +214,7 @@ export default function HomePage() {
                 autoComplete="off"
               />
               <button type="submit" className="pill w-full">
-                <Search className="w-16 h-16" aria-hidden="true" />
+                <Icon name="search" />
                 Buscar variante
               </button>
             </form>
@@ -256,7 +256,7 @@ export default function HomePage() {
                 className="pill pill-solid pill-sm"
                 aria-label={`Abrir a doença ${d.name}`}
               >
-                <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
+                <Icon name="helix" className="text-muted" />
                 {d.name}
               </button>
             ))}
@@ -277,9 +277,9 @@ export default function HomePage() {
               >
                 <span className="flex items-center gap-8">
                   {c.kind === 'gene' ? (
-                    <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
+                    <Icon name="helix" className="text-muted" />
                   ) : (
-                    <Activity className="w-12 h-12 text-muted" aria-hidden="true" />
+                    <Icon name="chart-line" className="text-muted" />
                   )}
                   <span className="mono text-12 text-muted">{c.id}</span>
                 </span>
@@ -294,7 +294,7 @@ export default function HomePage() {
           <section className="fade-up" aria-labelledby="recent-title">
             <div className="flex items-center gap-16 mb-12">
               <h2 id="recent-title" className="label flex items-center gap-8">
-                <Clock className="w-12 h-12" aria-hidden="true" />
+                <Icon name="clock" />
                 Buscas recentes
               </h2>
               <button
@@ -303,7 +303,7 @@ export default function HomePage() {
                 className="link-muted mono text-12 flex items-center gap-4"
                 aria-label="Limpar histórico de busca"
               >
-                <X className="w-12 h-12" aria-hidden="true" />
+                <Icon name="close" />
                 Limpar
               </button>
             </div>
@@ -319,9 +319,9 @@ export default function HomePage() {
                   className="pill pill-solid pill-sm"
                 >
                   {entry.kind === 'gene' ? (
-                    <Dna className="w-12 h-12 text-muted" aria-hidden="true" />
+                    <Icon name="helix" className="text-muted" />
                   ) : (
-                    <Activity className="w-12 h-12 text-muted" aria-hidden="true" />
+                    <Icon name="chart-line" className="text-muted" />
                   )}
                   {entry.value}
                 </button>

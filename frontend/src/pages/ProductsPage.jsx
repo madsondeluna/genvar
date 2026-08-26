@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Dna, Layers, Network, ArrowRight, Sparkles } from 'lucide-react'
+import Icon from '../components/Icon'
 import PageNav from '../components/PageNav'
 
 // Aba Produtos (marketing, sem auth): apresenta as linhas do GenVar rumo a SaaS
@@ -7,7 +7,7 @@ import PageNav from '../components/PageNav'
 const LINES = [
   {
     id: 'raras',
-    icon: Dna,
+    icon: 'helix',
     name: 'Doenças e mutações raras',
     tag: 'Monogênico',
     status: { label: 'Beta disponível', tint: 'tint-good' },
@@ -23,7 +23,7 @@ const LINES = [
   },
   {
     id: 'multigenico',
-    icon: Network,
+    icon: 'branch',
     name: 'Doenças multigênicas',
     tag: 'Multigênico',
     status: { label: 'Beta disponível', tint: 'tint-good' },
@@ -38,7 +38,7 @@ const LINES = [
   },
   {
     id: 'poligenico',
-    icon: Layers,
+    icon: 'sparkle',
     name: 'Fatores poligênicos',
     tag: 'Poligênico / PGS',
     status: { label: 'Beta disponível', tint: 'tint-good' },
@@ -65,7 +65,7 @@ export default function ProductsPage() {
 
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <Sparkles className="w-12 h-12" aria-hidden="true" />
+            <Icon name="sparkle" />
             Produtos
           </p>
           <h1 className="display mb-12">Do gene ao risco, em um só lugar</h1>
@@ -77,12 +77,11 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-32 stagger">
           {LINES.map((l) => {
-            const Icon = l.icon
             const card = (
               <>
                 <span className="flex items-center justify-between gap-8 mb-4">
                   <span className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
-                    <Icon className="w-20 h-20 text-muted" aria-hidden="true" />
+                    <Icon name={l.icon} size="md" className="text-muted" />
                   </span>
                   <StatusBadge status={l.status} />
                 </span>
@@ -98,7 +97,7 @@ export default function ProductsPage() {
                 </span>
                 {l.to && (
                   <span className="pill pill-sm mt-8 self-start">
-                    Explorar <ArrowRight className="w-12 h-12" aria-hidden="true" />
+                    Explorar <Icon name="arrow-right" />
                   </span>
                 )}
               </>
@@ -155,6 +154,7 @@ export default function ProductsPage() {
             comparados com dados públicos de consórcios. O roadmap detalhado está em
             {' '}<span className="mono">ROADMAP.md</span> no repositório.
           </p>
+          <Link to="/planos" className="pill pill-solid self-start mt-16">Ver planos e acesso</Link>
         </section>
       </div>
     </main>

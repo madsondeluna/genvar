@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Dna, Activity, ArrowRight, ArrowLeft, Stethoscope, FlaskConical, ShieldCheck, Baby } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchDisease, fetchDiseaseVariants } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -39,11 +39,8 @@ function CausalGeneCard({ gene }) {
   return (
     <Link to={`/gene/${gene.symbol}`} className="card hover-surface flex flex-col gap-8 cursor-pointer">
       <span className="flex items-center justify-between gap-8">
-        <span className="text-15 font-medium text-text flex items-center gap-8">
-          <Dna className="w-16 h-16 text-muted" aria-hidden="true" />
-          <span className="mono">{gene.symbol}</span>
-        </span>
-        <ArrowRight className="w-14 h-14 text-muted" aria-hidden="true" />
+        <span className="text-15 font-medium text-text mono">{gene.symbol}</span>
+        <Icon name="arrow-right" className="text-muted" />
       </span>
       {gene.constraint_available ? (
         <div className="flex flex-col gap-6">
@@ -75,7 +72,7 @@ function VariantRow({ v }) {
       <td className="py-8 pr-12">
         {isRsid ? (
           <Link to={`/variant/${v.variant_id}`} className="link-muted mono text-13 inline-flex items-center gap-4">
-            <Activity className="w-12 h-12" aria-hidden="true" />
+            <Icon name="chart-line" />
             {v.variant_id}
           </Link>
         ) : (
@@ -105,7 +102,7 @@ function PathogenicVariantsSection({ id }) {
     <section className="mb-24" aria-labelledby="pathogenic-title">
       <div className="flex items-start justify-between mb-4">
         <h2 id="pathogenic-title" className="section-title flex items-center gap-8">
-          <FlaskConical className="w-16 h-16 text-muted" aria-hidden="true" />
+          <Icon name="molecule" className="text-muted" />
           Variantes patogênicas
         </h2>
         <span className="text-12 text-muted mono">ClinVar via Ensembl</span>
@@ -130,8 +127,7 @@ function PathogenicVariantsSection({ id }) {
             {genesWithHits.map((g) => (
               <div key={g.symbol} className="card">
                 <div className="flex items-center justify-between gap-8 mb-12">
-                  <Link to={`/gene/${g.symbol}`} className="text-15 font-medium text-text mono inline-flex items-center gap-8">
-                    <Dna className="w-16 h-16 text-muted" aria-hidden="true" />
+                  <Link to={`/gene/${g.symbol}`} className="text-15 font-medium text-text mono hover:underline">
                     {g.symbol}
                   </Link>
                   <span className="label">
@@ -179,7 +175,7 @@ function BrazilContext({ data }) {
     <section className="card mb-24" aria-labelledby="brasil-title">
       <div className="flex items-start justify-between mb-4">
         <h2 id="brasil-title" className="section-title flex items-center gap-8">
-          <ShieldCheck className="w-16 h-16 text-muted" aria-hidden="true" />
+          <Icon name="shield" className="text-muted" />
           No Brasil
         </h2>
         <span className="text-12 text-muted mono">SUS e triagem</span>
@@ -199,7 +195,7 @@ function BrazilContext({ data }) {
 
       {newborn && (
         <div className="rounded-media border border-border p-16 mb-12 flex items-start gap-12">
-          <Baby className="w-16 h-16 flex-shrink-0" style={{ color: 'var(--state-good)' }} aria-hidden="true" />
+          <Icon name="user" style={{ color: 'var(--state-good)' }} />
           <div>
             <p className="value flex items-center gap-8">
               Triagem neonatal
@@ -244,7 +240,7 @@ function GenesForPatients({ data }) {
   return (
     <section className="card mb-24" aria-labelledby="genes-simples-title">
       <h2 id="genes-simples-title" className="section-title mb-4 flex items-center gap-8">
-        <Dna className="w-16 h-16 text-muted" aria-hidden="true" />
+        <Icon name="helix" className="text-muted" />
         Genes envolvidos
       </h2>
       <p className="text-13 text-muted leading-normal mb-16">
@@ -279,7 +275,7 @@ export default function DiseasePage() {
       <PageNav />
       <div className="max-w-xl mx-auto px-24 py-32 pb-96">
         <Link to="/doencas" className="link-muted text-12 mono mb-16 inline-flex items-center gap-4">
-          <ArrowLeft className="w-12 h-12" aria-hidden="true" />
+          <Icon name="arrow-left" />
           Doenças Raras
         </Link>
 
@@ -336,7 +332,7 @@ export default function DiseasePage() {
                     to={data.example_kind === 'gene' ? `/gene/${data.example_id}` : `/variant/${data.example_id}`}
                     className="pill pill-sm"
                   >
-                    <Activity className="w-12 h-12" aria-hidden="true" />
+                    <Icon name="chart-line" />
                     Exemplo: {data.example_id}
                   </Link>
                 )}
@@ -376,7 +372,7 @@ export default function DiseasePage() {
             {data.hpo.length > 0 && (
               <section className="card" aria-labelledby="hpo-title">
                 <h2 id="hpo-title" className="section-title mb-4 flex items-center gap-8">
-                  <Stethoscope className="w-16 h-16 text-muted" aria-hidden="true" />
+                  <Icon name="shield" className="text-muted" />
                   Sinais e manifestações
                 </h2>
                 <p className="text-12 text-muted mb-16">

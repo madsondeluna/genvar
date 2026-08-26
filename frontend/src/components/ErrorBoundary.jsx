@@ -1,6 +1,5 @@
 import { Component } from 'react'
-import { AlertTriangle } from 'lucide-react'
-
+import Icon from './Icon'
 export default class ErrorBoundary extends Component {
   constructor(props) {
     super(props)
@@ -28,11 +27,7 @@ export default class ErrorBoundary extends Component {
       <div className="min-h-screen bg-bg flex items-center justify-center px-24">
         <div className="card max-w-sm w-full flex flex-col gap-16">
           <div className="flex items-start gap-12">
-            <AlertTriangle
-              className="w-20 h-20 flex-shrink-0"
-              style={{ color: 'var(--state-critical)' }}
-              aria-hidden="true"
-            />
+            <Icon name="alert" size="md" style={{ color: 'var(--state-critical)' }} />
             <div>
               <p className="text-14 font-medium text-text">Algo quebrou nesta página.</p>
               <p className="text-14 text-muted mt-4">

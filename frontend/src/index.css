@@ -23,6 +23,21 @@
   font-weight: var(--weight-medium);
 }
 
+/* Icones da linguagem Pure (sprite public/pure/icons.svg via <use>). A
+   espessura vem do token --stroke, igual ao anel do spinner e a marca do
+   checkbox; tres tamanhos e nada mais. */
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+  inline-size: var(--text-20);
+  block-size: var(--text-20);
+  stroke-width: var(--stroke);
+  color: inherit;
+}
+.icon-sm { inline-size: var(--text-16); block-size: var(--text-16); }
+.icon-lg { inline-size: var(--text-24); block-size: var(--text-24); }
+
 /* Estado mais vivo: derivado do token por cor relativa, mesma luminância
    (o contraste WCAG se preserva), croma ampliado. Nenhuma cor nova. */
 :root {

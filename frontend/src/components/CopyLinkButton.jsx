@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Link2, Check } from 'lucide-react'
-
+import Icon from './Icon'
 export default function CopyLinkButton() {
   const [copied, setCopied] = useState(false)
 
@@ -23,12 +22,12 @@ export default function CopyLinkButton() {
     >
       {copied ? (
         <>
-          <Check className="w-12 h-12" aria-hidden="true" />
+          <Icon name="check" />
           Copiado
         </>
       ) : (
         <>
-          <Link2 className="w-12 h-12" aria-hidden="true" />
+          <Icon name="link" />
           Compartilhar link
         </>
       )}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { Activity, ExternalLink, X } from 'lucide-react'
+import Icon from '../components/Icon'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -11,6 +11,7 @@ import ForestPlot from '../burden/ForestPlot'
 import BiobankMap from '../burden/BiobankMap'
 import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, loadBiobanks, loadProvenance, buildGenomeLayout } from '../burden/data'
 import { seFromBetaLp, heterogeneity, i2Tier } from '../burden/stats'
+import { toCsv, downloadCsv } from '../utils/csv'
 import {
   TESTS, MASK_LABEL, ANCESTRY_LABEL, ANCESTRY_SHORT, ANCESTRY_COLOR, DEFAULTS,
   LP_CAUCHY, LP_BONFERRONI, LP_SUGGEST,
@@ -113,6 +114,22 @@ export default function AssociationPage() {
   // Seleciona um gene + fenotipo (do plot ou da tabela) para o forest.
   const select = (p) => setSelected({ geneIdx: p.geneIdx, phenoIdx: p.phenoIdx })
 
+  // Exporta o conjunto filtrado (todas as associacoes) para CSV.
+  const exportCsv = () => {
+    const sorted = [...points].sort((a, b) => b.lp - a.lp)
+    const columns = [
+      { label: 'gene', get: (p) => genes.symbols[p.geneIdx] },
+      { label: 'fenotipo', get: (p) => phenos[p.phenoIdx]?.name || '' },
+      { label: 'beta', get: (p) => p.beta.toFixed(4) },
+      { label: 'p', get: (p) => Math.pow(10, -p.lp).toExponential(2) },
+      { label: 'evidencia', get: (p) => tierOf(p.lp).label },
+    ]
+    downloadCsv(
+      `genvar-associacao-${filters.ancestry}-${filters.test}.csv`,
+      toCsv(sorted, columns),
+    )
+  }
+
   // Carrega todas as ancestrias so quando ha selecao (para o forest).
   const allAncQ = useQuery({
     queryKey: ['burden', 'allAncestries'],
@@ -151,7 +168,7 @@ export default function AssociationPage() {
 
         <header>
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <Activity className="w-12 h-12" aria-hidden="true" />
+            <Icon name="chart-line" />
             Associação por burden · beta
           </p>
           <h1 className="display mb-12">Associação gene-fenótipo</h1>
@@ -242,7 +259,15 @@ export default function AssociationPage() {
             <section className="flex flex-col gap-12">
               <div className="flex items-baseline justify-between gap-16 flex-wrap">
                 <h2 className="section-title">Maiores sinais</h2>
-                <p className="label">{points.length} associações no filtro</p>
+                <span className="flex items-center gap-12">
+                  <p className="label">{points.length} associações no filtro</p>
+                  {points.length > 0 && (
+                    <button type="button" className="pill pill-sm" onClick={exportCsv}>
+                      <Icon name="download" />
+                      Exportar CSV
+                    </button>
+                  )}
+                </span>
               </div>
 
               {topHits.length === 0 ? (
@@ -277,12 +302,11 @@ export default function AssociationPage() {
                             <td className="table-cell">
                               <Link
                                 to={`/gene/${sym}`}
-                                className="mono font-medium flex items-center gap-6 hover:underline"
+                                className="mono font-medium hover:underline"
                                 onClick={(e) => e.stopPropagation()}
                                 title={`Abrir a pagina do gene ${sym}`}
                               >
                                 {sym}
-                                <ExternalLink className="w-12 h-12 text-muted" aria-hidden="true" />
                               </Link>
                             </td>
                             <td className="table-cell">{ph}</td>
@@ -409,7 +433,7 @@ function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, l
           onClick={onClose}
           aria-label="Fechar o forest"
         >
-          <X className="w-12 h-12" aria-hidden="true" />
+          <Icon name="close" />
           Fechar
         </button>
       </div>

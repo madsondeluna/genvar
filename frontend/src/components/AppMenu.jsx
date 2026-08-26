@@ -1,17 +1,18 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Dna, Network, Sparkles, Layers, Activity, BarChart3, User, Stethoscope } from 'lucide-react'
+import Icon from './Icon'
 import { useViewMode, setViewMode } from '../hooks/useViewMode'
 
 // Menu de seções compartilhado entre as barras (páginas internas e home).
-// Um único ponto de verdade para os destinos de topo do produto.
+// Um único ponto de verdade para os destinos de topo do produto. Icones da
+// linguagem Pure (nomes do sprite).
 const LINKS = [
-  { to: '/', label: 'Início', icon: Home, end: true },
-  { to: '/doencas', label: 'Doenças Raras', icon: Dna },
-  { to: '/paineis', label: 'Painéis', icon: Network },
-  { to: '/poligenico', label: 'Poligênico', icon: Sparkles },
-  { to: '/associacao', label: 'Associação', icon: BarChart3 },
-  { to: '/produtos', label: 'Produtos', icon: Layers },
-  { to: '/status', label: 'Status', icon: Activity },
+  { to: '/', label: 'Início', icon: 'grid', end: true },
+  { to: '/doencas', label: 'Doenças Raras', icon: 'helix' },
+  { to: '/paineis', label: 'Painéis', icon: 'branch' },
+  { to: '/poligenico', label: 'Poligênico', icon: 'sparkle' },
+  { to: '/associacao', label: 'Associação', icon: 'chart-bar' },
+  { to: '/produtos', label: 'Produtos', icon: 'list' },
+  { to: '/status', label: 'Status', icon: 'chart-line' },
 ]
 
 // Alterna o modo de leitura global (linguagem simples x tecnico completo).
@@ -26,7 +27,7 @@ function ModeToggle() {
         aria-pressed={mode === 'paciente'}
         title="Linguagem simples, para pacientes e familias"
       >
-        <User className="w-12 h-12" aria-hidden="true" />
+        <Icon name="user" />
         Paciente
       </button>
       <button
@@ -36,7 +37,7 @@ function ModeToggle() {
         aria-pressed={mode === 'profissional'}
         title="Detalhe tecnico completo, para profissionais"
       >
-        <Stethoscope className="w-12 h-12" aria-hidden="true" />
+        <Icon name="shield" />
         Profissional
       </button>
     </div>
@@ -46,7 +47,7 @@ function ModeToggle() {
 export default function AppMenu({ className = '' }) {
   return (
     <nav className={`flex items-center gap-8 flex-wrap ${className}`} aria-label="Seções">
-      {LINKS.map(({ to, label, icon: Icon, end }) => (
+      {LINKS.map(({ to, label, icon, end }) => (
         <NavLink
           key={to}
           to={to}
@@ -55,7 +56,7 @@ export default function AppMenu({ className = '' }) {
             `pill pill-sm ${isActive ? 'pill-solid' : ''}`
           }
         >
-          <Icon className="w-12 h-12" aria-hidden="true" />
+          <Icon name={icon} />
           {label}
         </NavLink>
       ))}

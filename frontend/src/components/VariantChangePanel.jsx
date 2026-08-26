@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import Icon from './Icon'
 import { parseProteinChange } from '../utils/protein'
 import { formatConsequence } from '../utils/format'
 
@@ -46,7 +46,7 @@ function ChangeRow({ refValue, refSub, altValue, altSub, altTone }) {
     <div className="flex items-stretch gap-8">
       <Box caption="Referência" value={refValue} sub={refSub} tone="neutral" />
       <div className="flex items-center text-muted" aria-hidden="true">
-        <ArrowRight className="w-20 h-20" />
+        <Icon name="arrow-right" size="md" />
       </div>
       <Box caption="Variante" value={altValue} sub={altSub} tone={altTone} />
     </div>

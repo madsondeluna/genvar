@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Activity, RefreshCw, Server } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchSourcesHealth, fetchEndpointsHealth } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -34,7 +34,7 @@ export default function StatusPage() {
 
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <Activity className="w-12 h-12" aria-hidden="true" />
+            <Icon name="chart-line" />
             Status
           </p>
           <h1 className="display mb-12">Saúde do sistema</h1>
@@ -53,7 +53,7 @@ export default function StatusPage() {
             disabled={busy}
             aria-label="Recarregar status"
           >
-            <RefreshCw className="w-12 h-12" aria-hidden="true" />
+            <Icon name="refresh" />
             {busy ? 'Verificando...' : 'Recarregar'}
           </button>
         </div>
@@ -62,7 +62,7 @@ export default function StatusPage() {
         <section className="mb-24" aria-labelledby="services-title">
           <div className="flex items-center justify-between gap-16 mb-12 flex-wrap">
             <h2 id="services-title" className="section-title flex items-center gap-8">
-              <Server className="w-16 h-16 text-muted" aria-hidden="true" />
+              <Icon name="database" className="text-muted" />
               Serviços da API
             </h2>
             {endpoints.data && (
@@ -119,7 +119,7 @@ export default function StatusPage() {
         <section aria-labelledby="sources-title">
           <div className="flex items-center justify-between gap-16 mb-12 flex-wrap">
             <h2 id="sources-title" className="section-title flex items-center gap-8">
-              <Activity className="w-16 h-16 text-muted" aria-hidden="true" />
+              <Icon name="chart-line" className="text-muted" />
               Fontes externas
             </h2>
             {sources.data && (

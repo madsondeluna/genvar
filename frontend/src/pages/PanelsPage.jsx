@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
-import { Network, Search, Layers } from 'lucide-react'
+import Icon from '../components/Icon'
 import { fetchPanels, fetchPanelStats } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -40,7 +40,7 @@ export default function PanelsPage() {
 
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">
-            <Layers className="w-12 h-12" aria-hidden="true" />
+            <Icon name="list" />
             Multigênico · beta
           </p>
           <h1 className="display mb-12">Painéis de genes</h1>
@@ -59,7 +59,7 @@ export default function PanelsPage() {
 
         <div className="card mb-24 flex flex-col gap-16">
           <div className="flex items-center gap-8">
-            <Search className="w-16 h-16 text-muted" aria-hidden="true" />
+            <Icon name="search" className="text-muted" />
             <label htmlFor="panel-search" className="sr-only">Buscar painel ou gene</label>
             <input
               id="panel-search"
@@ -110,10 +110,7 @@ export default function PanelsPage() {
                     <span className="eyebrow">{p.category}</span>
                     <span className="pill pill-sm tint-neutral">{p.gene_count} genes</span>
                   </span>
-                  <span className="text-16 font-medium text-text flex items-center gap-8">
-                    <Network className="w-16 h-16 text-muted flex-shrink-0" aria-hidden="true" />
-                    {p.name}
-                  </span>
+                  <span className="text-16 font-medium text-text">{p.name}</span>
                   {p.short && <span className="text-12 text-muted leading-snug">{p.short}</span>}
                   <span className="flex flex-wrap gap-6 mt-4">
                     {p.genes.slice(0, 6).map((g) => (
