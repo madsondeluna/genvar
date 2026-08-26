@@ -1,6 +1,7 @@
 import asyncio
 import math
-from fastapi import APIRouter
+import httpx
+from fastapi import APIRouter, HTTPException
 from app.models.schemas import GeneResponse, GenePhenotypesResponse, GeneVariant, VariantBin
 from app.services import ensembl, gnomad, gwas_catalog, uniprot, alphafold
 from app.utils.validators import validate_gene_symbol, classify_clinical_significance
@@ -67,8 +68,12 @@ async def get_gene_data(gene_symbol: str):
     if cached:
         return GeneResponse(**cached)
 
-    # Fetch gene info first (needed for other calls)
-    gene_info = await ensembl.get_gene_info(symbol)
+    # Fetch gene info first (needed for other calls). Uma falha de rede/proxy da
+    # fonte externa vira 503 controlado, nunca um 500 sem tratamento.
+    try:
+        gene_info = await ensembl.get_gene_info(symbol)
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="Fonte externa (Ensembl) indisponivel no momento. Tente novamente em instantes.")
 
     gene_id = gene_info["gene_id"]
 

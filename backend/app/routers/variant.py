@@ -1,4 +1,5 @@
 import asyncio
+import httpx
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import VariantResponse, PopulationFrequency
 from app.services import ensembl, gnomad, clinvar, myvariant
@@ -64,7 +65,11 @@ async def get_variant_data(variant_id: str):
     if cached:
         return VariantResponse(**cached)
 
-    vep = await ensembl.get_vep_annotation(rsid)
+    # Falha de rede/proxy da fonte externa vira 503 controlado, nunca 500 cru.
+    try:
+        vep = await ensembl.get_vep_annotation(rsid)
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="Fonte externa (Ensembl) indisponivel no momento. Tente novamente em instantes.")
     if not vep:
         raise HTTPException(status_code=404, detail=f"Variant not found: {rsid}")
 
