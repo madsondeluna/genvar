@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchVariant } from '../api/client'
 import ErrorAlert from '../components/ErrorAlert'
@@ -43,8 +43,6 @@ function InfoRow({ label, value, hint }) {
 
 export default function VariantPage() {
   const { rsid } = useParams()
-  const navigate = useNavigate()
-  const [searchInput, setSearchInput] = useState('')
   const { push } = useSearchHistory()
 
   const { data, isLoading, error } = useQuery({
@@ -58,22 +56,9 @@ export default function VariantPage() {
     if (data?.variant_id) push('variant', data.variant_id)
   }, [data?.variant_id, push])
 
-  function handleSearch(e) {
-    e.preventDefault()
-    const val = searchInput.trim().toLowerCase()
-    if (val) navigate(`/variant/${val}`)
-  }
-
   return (
     <main className="min-h-screen bg-bg">
-      <PageNav
-        inputId="variant-nav-search"
-        placeholder="Buscar variante..."
-        ariaLabel="Buscar variante"
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        onSubmit={handleSearch}
-      />
+      <PageNav initialQuery={rsid} />
 
       <div className="max-w-xl mx-auto px-24 py-24">
 

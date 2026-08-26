@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchGene } from '../api/client'
 import ErrorAlert from '../components/ErrorAlert'
@@ -98,8 +98,6 @@ function StatCard({ label, value, hint, statusClass }) {
 
 export default function GenePage() {
   const { symbol } = useParams()
-  const navigate = useNavigate()
-  const [searchInput, setSearchInput] = useState('')
   const { push } = useSearchHistory()
 
   const { data, isLoading, error } = useQuery({
@@ -113,22 +111,9 @@ export default function GenePage() {
     if (data?.gene_symbol) push('gene', data.gene_symbol)
   }, [data?.gene_symbol, push])
 
-  function handleSearch(e) {
-    e.preventDefault()
-    const val = searchInput.trim().toUpperCase()
-    if (val) navigate(`/gene/${val}`)
-  }
-
   return (
     <main className="min-h-screen bg-bg">
-      <PageNav
-        inputId="gene-nav-search"
-        placeholder="Buscar gene..."
-        ariaLabel="Buscar gene"
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        onSubmit={handleSearch}
-      />
+      <PageNav initialQuery={symbol} />
 
       <div className="max-w-xl mx-auto px-24 py-24">
 

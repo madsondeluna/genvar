@@ -125,3 +125,52 @@ def test_disease_variants_degrades_when_ensembl_fails():
 def test_disease_variants_unknown_returns_404():
     r = client.get("/api/disease/nao-existe/variants")
     assert r.status_code == 404
+
+
+# --- /api/health/sources ---
+
+def test_health_sources_all_ok_when_upstreams_respond():
+    from unittest.mock import MagicMock
+
+    def fake_client():
+        mc = AsyncMock()
+        mc.__aenter__ = AsyncMock(return_value=mc)
+        mc.__aexit__ = AsyncMock(return_value=None)
+        resp = MagicMock()
+        resp.status_code = 200
+        mc.request = AsyncMock(return_value=resp)
+        return mc
+
+    with patch("app.routers.health.httpx.AsyncClient", return_value=fake_client()), \
+         patch("app.routers.health.cache_get", return_value=None), \
+         patch("app.routers.health.cache_set", return_value=None):
+        r = client.get("/api/health/sources")
+
+    assert r.status_code == 200
+    body = r.json()
+    assert body["all_ok"] is True
+    assert body["total"] == body["ok_count"] == 7
+    assert {s["name"] for s in body["sources"]} >= {"Ensembl", "gnomAD", "ClinVar"}
+
+
+def test_health_sources_marks_failures():
+    from unittest.mock import MagicMock
+
+    def fake_client():
+        mc = AsyncMock()
+        mc.__aenter__ = AsyncMock(return_value=mc)
+        mc.__aexit__ = AsyncMock(return_value=None)
+        resp = MagicMock()
+        resp.status_code = 503
+        mc.request = AsyncMock(return_value=resp)
+        return mc
+
+    with patch("app.routers.health.httpx.AsyncClient", return_value=fake_client()), \
+         patch("app.routers.health.cache_get", return_value=None), \
+         patch("app.routers.health.cache_set", return_value=None):
+        r = client.get("/api/health/sources")
+
+    body = r.json()
+    assert body["all_ok"] is False
+    assert body["ok_count"] == 0
+    assert all(s["ok"] is False for s in body["sources"])
