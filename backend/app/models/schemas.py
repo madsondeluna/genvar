@@ -184,6 +184,19 @@ class DiseaseListResponse(BaseModel):
     page_size: int = 30
 
 
+class CountItem(BaseModel):
+    key: str
+    label: str
+    count: int
+
+
+class DiseaseStatsResponse(BaseModel):
+    """Panorama do catalogo para as visualizacoes do hub."""
+    total: int = 0
+    by_inheritance: List[CountItem] = []
+    by_category: List[CountItem] = []
+
+
 class CausalGene(BaseModel):
     """Gene causal com constraint enriquecido ao vivo pela gnomAD."""
     symbol: str
