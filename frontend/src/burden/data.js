@@ -3,7 +3,11 @@
 // conjunto completo). Cache em memoria, imutavel por release.
 import { CHR_ORDER, ANCESTRIES } from './constants'
 
-const BASE = `${import.meta.env.BASE_URL}data/burden`
+// Fonte dos dados de burden. Por padrao os JSON sao servidos do proprio site
+// (public/data/burden). Em producao, aponte VITE_BURDEN_DATA_URL para o host do
+// dataset completo (ex.: um bucket estatico) sem rebuildar o resto do app.
+const CONFIGURED = import.meta.env.VITE_BURDEN_DATA_URL
+const BASE = (CONFIGURED && CONFIGURED.replace(/\/$/, '')) || `${import.meta.env.BASE_URL}data/burden`
 const _cache = new Map()
 
 function getJSON(url) {
@@ -19,6 +23,9 @@ function getJSON(url) {
 export const loadGenes = () => getJSON(`${BASE}/genes.json`)
 export const loadPhenotypes = () => getJSON(`${BASE}/phenotypes.json`)
 export const loadBiobanks = () => getJSON(`${BASE}/biobanks.json`)
+// Procedencia do dado (fonte, versao, data). Opcional: degrada para null se o
+// arquivo nao existir (amostra sem provenance.json).
+export const loadProvenance = () => getJSON(`${BASE}/provenance.json`).catch(() => null)
 export const loadAllResults = (anc) => getJSON(`${BASE}/all_results.${anc || 'All'}.json`)
 
 // Todos os resultados por ancestria, para montar o forest cross-ancestry de um

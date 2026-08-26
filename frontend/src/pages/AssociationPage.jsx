@@ -9,7 +9,7 @@ import ManhattanPlot from '../burden/ManhattanPlot'
 import FilterBar from '../burden/FilterBar'
 import ForestPlot from '../burden/ForestPlot'
 import BiobankMap from '../burden/BiobankMap'
-import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, loadBiobanks, buildGenomeLayout } from '../burden/data'
+import { loadGenes, loadPhenotypes, loadAllResults, loadAllAncestries, loadBiobanks, loadProvenance, buildGenomeLayout } from '../burden/data'
 import { seFromBetaLp, heterogeneity, i2Tier } from '../burden/stats'
 import {
   TESTS, MASK_LABEL, ANCESTRY_LABEL, ANCESTRY_SHORT, ANCESTRY_COLOR, DEFAULTS,
@@ -29,7 +29,8 @@ function findRow(tbl, geneIdx, phenoIdx, maskIndex, mafIndex, testIdx) {
     if (tbl.gene_idx[i] === geneIdx && tbl.pheno_idx[i] === phenoIdx &&
         tbl.mask_idx[i] === maskIndex && tbl.maf_idx[i] === mafIndex &&
         tbl.test_idx[i] === testIdx) {
-      return { beta: tbl.beta[i], lp: tbl.lp[i] }
+      // se real quando o ETL o inclui; senao null (reconstruido de beta+p).
+      return { beta: tbl.beta[i], lp: tbl.lp[i], se: tbl.se ? tbl.se[i] : null }
     }
   }
   return null
@@ -64,6 +65,7 @@ export default function AssociationPage() {
   const genesQ = useQuery({ queryKey: ['burden', 'genes'], queryFn: loadGenes, staleTime: Infinity })
   const phenosQ = useQuery({ queryKey: ['burden', 'phenotypes'], queryFn: loadPhenotypes, staleTime: Infinity })
   const biobanksQ = useQuery({ queryKey: ['burden', 'biobanks'], queryFn: loadBiobanks, staleTime: Infinity })
+  const provQ = useQuery({ queryKey: ['burden', 'provenance'], queryFn: loadProvenance, staleTime: Infinity })
   const resultsQ = useQuery({
     queryKey: ['burden', 'results', filters.ancestry],
     queryFn: () => loadAllResults(filters.ancestry),
@@ -127,7 +129,8 @@ export default function AssociationPage() {
     const mk = (anc) => {
       const row = findRow(byAnc[anc], selected.geneIdx, selected.phenoIdx, filters.maskIndex, filters.mafIndex, BURDEN_TEST)
       if (!row) return null
-      const se = seFromBetaLp(row.beta, row.lp)
+      // se real do dado quando disponivel; senao reconstruido de beta e p.
+      const se = (row.se != null && row.se > 0) ? row.se : seFromBetaLp(row.beta, row.lp)
       return {
         anc, label: ANCESTRY_SHORT[anc], color: ANCESTRY_COLOR[anc],
         beta: row.beta, se, lo: row.beta - 1.96 * se, hi: row.beta + 1.96 * se,
@@ -159,6 +162,14 @@ export default function AssociationPage() {
             associação com o fenótipo. Ajuste os filtros para ver a máscara
             funcional, o limite de frequência e o teste estatístico.
           </p>
+          {provQ.data?.source && (
+            <p className="label mt-8">
+              Fonte: {provQ.data.source}
+              {provQ.data.version ? ` · ${provQ.data.version}` : ''}
+              {provQ.data.date ? ` · atualizado em ${provQ.data.date}` : ''}
+              {provQ.data.scope ? ` · ${provQ.data.scope}` : ''}
+            </p>
+          )}
         </header>
 
         {error && <ErrorAlert message={error.message} />}
