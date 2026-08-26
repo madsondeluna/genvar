@@ -261,6 +261,51 @@ class DiseaseVariantsResponse(BaseModel):
     degraded: bool = False
 
 
+# --- Paineis de genes (multigenico) ---
+
+class PanelSummary(BaseModel):
+    id: str
+    name: str
+    category: str
+    inheritance: str = ""
+    genes: List[str] = []
+    gene_count: int = 0
+    short: Optional[str] = None
+
+
+class PanelListResponse(BaseModel):
+    items: List[PanelSummary] = []
+    total: int = 0
+    page: int = 1
+    page_size: int = 30
+
+
+class PanelStatsResponse(BaseModel):
+    total: int = 0
+    total_genes: int = 0
+    by_category: List[CountItem] = []
+
+
+class PanelCondition(BaseModel):
+    name: str
+    disease_id: Optional[str] = None
+
+
+class PanelDetail(BaseModel):
+    id: str
+    name: str
+    category: str
+    inheritance: str = ""
+    short: Optional[str] = None
+    digenic: Optional[str] = None
+    genes: List[str] = []
+    conditions: List[PanelCondition] = []
+    # Constraint agregado por gene (LOEUF/pLI ao vivo), reusando CausalGene.
+    panel_genes: List[CausalGene] = []
+    constrained_count: int = 0
+    degraded: bool = False
+
+
 # --- Saude das fontes externas ---
 
 class SourceHealth(BaseModel):
