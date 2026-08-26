@@ -1,27 +1,36 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { Search } from 'lucide-react'
 import { fetchDiseases } from '../api/client'
-import { resolveSearch } from '../utils/search'
 
-// Busca unificada: um campo que reconhece gene (HGNC), variante (rsID) ou doença
-// (catálogo) e leva para a rota certa. Usa o catálogo de doenças (cacheado) para
-// casar nomes; se ainda não carregou, cai para gene/variante/hub sem travar.
+// Busca unificada: reconhece variante (rsID), doenca (catalogo) ou gene (HGNC)
+// e leva para a rota certa. Escalavel: nao carrega o catalogo inteiro; faz uma
+// checagem leve no servidor (page_size pequeno) para decidir o destino.
 export default function UnifiedSearch({ initialValue = '', full = false, placeholder }) {
   const [value, setValue] = useState(initialValue)
+  const [busy, setBusy] = useState(false)
   const navigate = useNavigate()
 
-  const { data: diseases } = useQuery({
-    queryKey: ['diseases'],
-    queryFn: fetchDiseases,
-    staleTime: 1000 * 60 * 30,
-  })
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    const target = resolveSearch(value, diseases || [])
-    if (target) navigate(target)
+    const v = value.trim()
+    if (!v) return
+    if (/^rs\d+$/i.test(v)) return navigate(`/variant/${v.toLowerCase()}`)
+
+    setBusy(true)
+    try {
+      const res = await fetchDiseases({ q: v, page_size: 5 })
+      if (res.total === 1) return navigate(`/doenca/${res.items[0].id}`)
+      if (res.total > 1) return navigate(`/doencas?q=${encodeURIComponent(v)}`)
+    } catch {
+      // se a checagem falhar, cai para as heuristicas abaixo
+    } finally {
+      setBusy(false)
+    }
+
+    // sem doenca correspondente: trata como simbolo de gene, senao vai ao hub
+    if (/^[A-Za-z][A-Za-z0-9.\-]{0,49}$/.test(v)) return navigate(`/gene/${v.toUpperCase()}`)
+    navigate(`/doencas?q=${encodeURIComponent(v)}`)
   }
 
   return (
@@ -41,7 +50,7 @@ export default function UnifiedSearch({ initialValue = '', full = false, placeho
         spellCheck={false}
         autoComplete="off"
       />
-      <button type="submit" className="pill" aria-label="Buscar">
+      <button type="submit" className="pill" aria-label="Buscar" disabled={busy}>
         <Search className="w-16 h-16" aria-hidden="true" />
       </button>
     </form>

@@ -13,16 +13,20 @@ from app.data.rare_diseases import all_diseases
 client = TestClient(app)
 
 
-def test_list_diseases_returns_full_catalog():
-    r = client.get("/api/disease")
+def test_list_diseases_paginated_and_searchable():
+    r = client.get("/api/disease?page=1&page_size=10")
     assert r.status_code == 200
     body = r.json()
-    assert len(body) == len(all_diseases())
+    assert body["total"] == len(all_diseases())
+    assert len(body["items"]) == 10
+    assert body["page"] == 1
     # shape do DiseaseSummary
-    first = body[0]
+    first = body["items"][0]
     for key in ("id", "name", "category", "inheritance", "genes", "short"):
         assert key in first
-    assert isinstance(first["genes"], list)
+    # busca no servidor (por gene) e faceta por heranca
+    assert client.get("/api/disease?q=LDLR").json()["total"] >= 1
+    assert client.get("/api/disease?inheritance=AR").json()["total"] >= 1
 
 
 def test_unknown_disease_returns_404():

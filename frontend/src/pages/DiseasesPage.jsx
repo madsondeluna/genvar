@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { Dna, Search, FlaskConical } from 'lucide-react'
 import { fetchDiseases } from '../api/client'
 import PageNav from '../components/PageNav'
@@ -8,37 +8,40 @@ import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { inheritanceMeta, INHERITANCE_ORDER } from '../utils/inheritance'
 
-// Hub do módulo de Doenças Raras (beta): catálogo curado com busca por nome/gene
-// e facetas por padrão de herança. Cada cartão leva ao detalhe /doenca/{id}.
+const PAGE_SIZE = 30
+
+// Hub do modulo de Doencas Raras: busca e facetas resolvidas no servidor, com
+// paginacao "carregar mais", para aguentar o catalogo completo do Orphanet.
 export default function DiseasesPage() {
   const [searchParams] = useSearchParams()
-  // A busca unificada pode cair aqui com ?q=; pre-preenche o filtro.
   const [query, setQuery] = useState(searchParams.get('q') || '')
+  const [debounced, setDebounced] = useState(query.trim())
   const [inh, setInh] = useState('all')
+  const [page, setPage] = useState(1)
+  const [items, setItems] = useState([])
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['diseases'],
-    queryFn: fetchDiseases,
-    staleTime: 1000 * 60 * 30,
+  // debounce da busca; qualquer mudanca volta para a pagina 1
+  useEffect(() => {
+    const t = setTimeout(() => { setDebounced(query.trim()); setPage(1) }, 300)
+    return () => clearTimeout(t)
+  }, [query])
+  useEffect(() => { setPage(1) }, [inh])
+
+  const { data, isFetching, error } = useQuery({
+    queryKey: ['diseases', debounced, inh, page],
+    queryFn: () => fetchDiseases({ q: debounced, inheritance: inh, page, page_size: PAGE_SIZE }),
+    placeholderData: keepPreviousData,
+    staleTime: 1000 * 60 * 10,
   })
 
-  const diseases = data || []
+  // acumula as paginas; a pagina 1 reinicia a lista (nova busca/faceta)
+  useEffect(() => {
+    if (!data) return
+    setItems((prev) => (data.page === 1 ? data.items : [...prev, ...data.items]))
+  }, [data])
 
-  // Facetas de herança presentes no catálogo, na ordem canônica.
-  const facets = useMemo(() => {
-    const present = new Set(diseases.map((d) => d.inheritance))
-    return INHERITANCE_ORDER.filter((code) => present.has(code))
-  }, [diseases])
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    return diseases.filter((d) => {
-      if (inh !== 'all' && d.inheritance !== inh) return false
-      if (!q) return true
-      const hay = `${d.name} ${d.category} ${d.genes.join(' ')}`.toLowerCase()
-      return hay.includes(q)
-    })
-  }, [diseases, query, inh])
+  const total = data?.total ?? 0
+  const hasMore = items.length < total
 
   return (
     <main className="min-h-screen bg-bg">
@@ -52,13 +55,12 @@ export default function DiseasesPage() {
           </p>
           <h1 className="display mb-12">Doenças e mutações raras</h1>
           <p className="text-15 text-muted leading-normal">
-            Catálogo curado de doenças monogênicas com genes causais, padrão de herança e
-            referências (Orphanet, OMIM, MONDO). Cada doença conecta aos genes e variantes já
-            reunidos pelo GenVar a partir de Ensembl, gnomAD e ClinVar.
+            Catálogo de doenças monogênicas com genes causais, padrão de herança e referências
+            (Orphanet, OMIM, MONDO). Cada doença conecta aos genes e variantes reunidos pelo GenVar
+            a partir de Ensembl, gnomAD e ClinVar.
           </p>
         </header>
 
-        {/* Busca + facetas */}
         <div className="card mb-24 flex flex-col gap-16">
           <div className="flex items-center gap-8">
             <Search className="w-16 h-16 text-muted" aria-hidden="true" />
@@ -82,7 +84,7 @@ export default function DiseasesPage() {
             >
               Todas
             </button>
-            {facets.map((code) => {
+            {INHERITANCE_ORDER.map((code) => {
               const m = inheritanceMeta(code)
               return (
                 <button
@@ -99,32 +101,34 @@ export default function DiseasesPage() {
           </div>
         </div>
 
-        {isLoading && <LoadingSpinner />}
         {error && <ErrorAlert message={error.message} />}
+        {isFetching && items.length === 0 && <LoadingSpinner />}
 
-        {!isLoading && !error && (
+        {!error && (items.length > 0 || !isFetching) && (
           <>
             <p className="label mb-12">
-              {filtered.length} {filtered.length === 1 ? 'doença' : 'doenças'}
+              {total} {total === 1 ? 'doença' : 'doenças'}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 stagger">
-              {filtered.map((d) => {
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+              {items.map((d) => {
                 const m = inheritanceMeta(d.inheritance)
                 return (
                   <Link
                     key={d.id}
                     to={`/doenca/${d.id}`}
-                    className="card hover-surface fade-up flex flex-col gap-8 cursor-pointer"
+                    className="card hover-surface flex flex-col gap-8 cursor-pointer"
                   >
                     <span className="flex items-center justify-between gap-8">
                       <span className="eyebrow">{d.category}</span>
-                      <span className={`pill pill-sm ${m.tint}`} title={m.label}>{m.short}</span>
+                      {d.inheritance && (
+                        <span className={`pill pill-sm ${m.tint}`} title={m.label}>{m.short}</span>
+                      )}
                     </span>
                     <span className="text-16 font-medium text-text flex items-center gap-8">
                       <Dna className="w-16 h-16 text-muted flex-shrink-0" aria-hidden="true" />
                       {d.name}
                     </span>
-                    <span className="text-12 text-muted leading-snug">{d.short}</span>
+                    {d.short && <span className="text-12 text-muted leading-snug">{d.short}</span>}
                     <span className="flex flex-wrap gap-6 mt-4">
                       {d.genes.slice(0, 5).map((g) => (
                         <span key={g} className="pill pill-solid pill-sm mono">{g}</span>
@@ -134,10 +138,24 @@ export default function DiseasesPage() {
                 )
               })}
             </div>
-            {filtered.length === 0 && (
+
+            {items.length === 0 && (
               <p className="text-14 text-muted mt-16">
                 Nenhuma doença corresponde ao filtro. Ajuste a busca ou o padrão de herança.
               </p>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center mt-24">
+                <button
+                  type="button"
+                  className="pill"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={isFetching}
+                >
+                  {isFetching ? 'Carregando...' : `Carregar mais (${items.length}/${total})`}
+                </button>
+              </div>
             )}
           </>
         )}
