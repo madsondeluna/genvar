@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Dna, Activity, ArrowRight, Stethoscope } from 'lucide-react'
+import { Dna, Activity, ArrowRight, ArrowLeft, Stethoscope } from 'lucide-react'
 import { fetchDisease } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -44,14 +44,14 @@ function CausalGeneCard({ gene }) {
           <div className="flex justify-between items-center">
             <span className="label">LOEUF</span>
             <span className="text-12 mono num text-text">
-              {gene.loeuf != null ? gene.loeuf.toFixed(3) : '—'}
+              {gene.loeuf != null ? gene.loeuf.toFixed(3) : 'n/d'}
             </span>
           </div>
           <span className="status text-12" style={{ color: band.ink }}>{band.label}</span>
           <div className="flex justify-between items-center mt-4">
             <span className="label">pLI</span>
             <span className="text-12 mono num text-text">
-              {gene.pli != null ? gene.pli.toFixed(3) : '—'}
+              {gene.pli != null ? gene.pli.toFixed(3) : 'n/d'}
             </span>
           </div>
         </div>
@@ -79,7 +79,8 @@ export default function DiseasePage() {
       <PageNav />
       <div className="max-w-xl mx-auto px-24 py-32 pb-96">
         <Link to="/doencas" className="link-muted text-12 mono mb-16 inline-flex items-center gap-4">
-          ← Doenças Raras
+          <ArrowLeft className="w-12 h-12" aria-hidden="true" />
+          Doenças Raras
         </Link>
 
         {isLoading && <LoadingSpinner />}
@@ -135,7 +136,7 @@ export default function DiseasePage() {
               </div>
             </header>
 
-            {/* Genes causais — dado vivo (constraint gnomAD) */}
+            {/* Genes causais: dado vivo (constraint gnomAD) */}
             <section className="mb-24" aria-labelledby="causal-title">
               <div className="flex items-start justify-between mb-4">
                 <h2 id="causal-title" className="section-title">Genes causais</h2>
@@ -143,7 +144,7 @@ export default function DiseasePage() {
               </div>
               <p className="text-12 text-muted mb-16">
                 Restrição de cada gene causal, medida pela gnomAD. LOEUF baixo (e pLI alto) indica
-                genes que toleram pouco perder função — onde variantes graves têm mais chance de
+                genes que toleram pouco perder função, onde variantes graves têm mais chance de
                 causar doença. Clique num gene para ver variantes, estrutura e frequências.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">

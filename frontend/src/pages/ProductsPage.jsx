@@ -71,7 +71,7 @@ export default function ProductsPage() {
           <h1 className="display mb-12">Do gene ao risco, em um só lugar</h1>
           <p className="text-15 text-muted leading-normal">
             O GenVar começa pelas doenças e mutações raras e evolui para uma plataforma que une o
-            monogênico, o multigênico e o poligênico — a base genética completa de uma condição.
+            monogênico, o multigênico e o poligênico: a base genética completa de uma condição.
           </p>
         </header>
 
@@ -119,7 +119,7 @@ export default function ProductsPage() {
           <p className="text-14 text-muted leading-normal mb-16">
             Uma mesma doença raramente é só monogênica ou só poligênica. Uma variante rara de grande
             efeito define o principal risco, mas o <span className="text-text font-medium">fundo
-            poligênico</span> — a soma de muitas variantes comuns de pequeno efeito — modula quem, de
+            poligênico</span>, a soma de muitas variantes comuns de pequeno efeito, modula quem, de
             fato, adoece. É por isso que portadores da mesma mutação têm evoluções diferentes.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
