@@ -6,6 +6,7 @@ import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
 import BrandMorphNav from '../components/BrandMorphNav'
 import AppMenu from '../components/AppMenu'
+import UnifiedSearch from '../components/UnifiedSearch'
 import { useScrolled } from '../hooks/useScrolled'
 
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
@@ -135,6 +136,21 @@ export default function HomePage() {
           <AppMenu className="mt-16" />
         </header>
 
+        <section className="card fade-up mb-24" aria-labelledby="unified-search-title">
+          <div className="flex items-center gap-12 mb-16">
+            <div className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
+              <Search className="w-20 h-20 text-muted" aria-hidden="true" />
+            </div>
+            <h2 id="unified-search-title" className="text-16 font-medium text-text">Busca unificada</h2>
+          </div>
+          <UnifiedSearch full placeholder="Gene (ex.: BRCA1), variante (ex.: rs334) ou doença (ex.: Lynch)" />
+          <p className="text-12 text-muted mt-12">
+            Um só campo: reconhece símbolo de gene, rs ID de variante ou nome de doença e leva para
+            a página certa.
+          </p>
+        </section>
+
+        <p className="label mb-12">Busca específica</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 mb-48 stagger">
 
           <section className="card fade-up" aria-labelledby="gene-search-title">

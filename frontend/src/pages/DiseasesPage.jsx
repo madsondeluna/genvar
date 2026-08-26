@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Dna, Search, FlaskConical } from 'lucide-react'
 import { fetchDiseases } from '../api/client'
@@ -11,7 +11,9 @@ import { inheritanceMeta, INHERITANCE_ORDER } from '../utils/inheritance'
 // Hub do módulo de Doenças Raras (beta): catálogo curado com busca por nome/gene
 // e facetas por padrão de herança. Cada cartão leva ao detalhe /doenca/{id}.
 export default function DiseasesPage() {
-  const [query, setQuery] = useState('')
+  const [searchParams] = useSearchParams()
+  // A busca unificada pode cair aqui com ?q=; pre-preenche o filtro.
+  const [query, setQuery] = useState(searchParams.get('q') || '')
   const [inh, setInh] = useState('all')
 
   const { data, isLoading, error } = useQuery({

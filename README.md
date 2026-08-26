@@ -565,6 +565,14 @@ Exemplo (`GET /api/disease/hipercolesterolemia-familiar`):
 }
 ```
 
+### GET /api/health/sources
+
+Valida as fontes externas: pinga cada upstream (Ensembl, gnomAD, ClinVar,
+AlphaFold, UniProt, MyVariant, GWAS Catalog) com uma consulta conhecida e
+reporta `ok`, código HTTP e latência por fonte (`HealthSourcesResponse`).
+Resultado cacheado por 60 s. Útil para checar em produção se todas as APIs estão
+respondendo (ex.: `curl https://genvar-backend.onrender.com/api/health/sources`).
+
 ### GET / e GET /health
 
 | Endpoint | Resposta |

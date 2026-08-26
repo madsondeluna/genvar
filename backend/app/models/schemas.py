@@ -215,3 +215,21 @@ class DiseaseVariantsResponse(BaseModel):
     id: str
     genes: List[DiseasePathogenicGene] = []
     degraded: bool = False
+
+
+# --- Saude das fontes externas ---
+
+class SourceHealth(BaseModel):
+    name: str
+    host: str
+    ok: bool
+    status: Optional[int] = None
+    latency_ms: Optional[float] = None
+    detail: Optional[str] = None
+
+
+class HealthSourcesResponse(BaseModel):
+    all_ok: bool
+    ok_count: int
+    total: int
+    sources: List[SourceHealth] = []
