@@ -192,6 +192,21 @@ class CausalGene(BaseModel):
     constraint_available: bool = False
 
 
+class SusInfo(BaseModel):
+    """Cobertura no SUS: protocolo (PCDT) e exames relevantes."""
+    pcdt: bool = False
+    pcdt_name: Optional[str] = None
+    pcdt_url: Optional[str] = None
+    tests: List[str] = []
+    note: Optional[str] = None
+
+
+class NewbornInfo(BaseModel):
+    """Triagem neonatal (teste do pezinho)."""
+    covered: bool = False
+    note: Optional[str] = None
+
+
 class DiseaseDetail(BaseModel):
     """Pagina /doenca/{id}: metadados curados + genes causais enriquecidos."""
     id: str
@@ -208,6 +223,10 @@ class DiseaseDetail(BaseModel):
     causal_genes: List[CausalGene] = []
     example_kind: Optional[str] = None
     example_id: Optional[str] = None
+    # Contexto brasileiro e ponte com a enciclopedia patient-first
+    raras_url: Optional[str] = None
+    sus: Optional[SusInfo] = None
+    newborn: Optional[NewbornInfo] = None
 
 
 class DiseasePathogenicGene(BaseModel):

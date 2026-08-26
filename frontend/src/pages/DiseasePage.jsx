@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Dna, Activity, ArrowRight, ArrowLeft, Stethoscope, FlaskConical } from 'lucide-react'
+import { Dna, Activity, ArrowRight, ArrowLeft, Stethoscope, FlaskConical, ShieldCheck, Baby } from 'lucide-react'
 import { fetchDisease, fetchDiseaseVariants } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
@@ -169,6 +169,67 @@ function PathogenicVariantsSection({ id }) {
   )
 }
 
+// Contexto brasileiro: cobertura no SUS (PCDT e exames) e triagem neonatal, mais
+// o link para o raras.org fica no cabecalho. So aparece quando ha dado curado.
+function BrazilContext({ data }) {
+  const { sus, newborn } = data
+  if (!sus && !newborn) return null
+  return (
+    <section className="card mb-24" aria-labelledby="brasil-title">
+      <div className="flex items-start justify-between mb-4">
+        <h2 id="brasil-title" className="section-title flex items-center gap-8">
+          <ShieldCheck className="w-16 h-16 text-muted" aria-hidden="true" />
+          No Brasil
+        </h2>
+        <span className="text-12 text-muted mono">SUS e triagem</span>
+      </div>
+      <p className="text-12 text-muted mb-16">
+        Cobertura no sistema publico e rastreio neonatal (curado; confirme sempre com a fonte
+        oficial). O botao raras.org, no topo, leva a informacao e comunidade para pacientes.
+      </p>
+
+      {newborn && (
+        <div className="rounded-media border border-border p-16 mb-12 flex items-start gap-12">
+          <Baby className="w-16 h-16 flex-shrink-0" style={{ color: 'var(--state-good)' }} aria-hidden="true" />
+          <div>
+            <p className="value flex items-center gap-8">
+              Triagem neonatal
+              <span className={`pill pill-sm ${newborn.covered ? 'tint-good' : 'tint-neutral'}`}>
+                {newborn.covered ? 'Rastreada' : 'Nao rastreada'}
+              </span>
+            </p>
+            {newborn.note && <p className="text-12 text-muted leading-snug mt-4">{newborn.note}</p>}
+          </div>
+        </div>
+      )}
+
+      {sus && (
+        <div className="rounded-media border border-border p-16">
+          <p className="value flex items-center gap-8 mb-8">
+            Protocolo no SUS (PCDT)
+            <span className={`pill pill-sm ${sus.pcdt ? 'tint-good' : 'tint-warning'}`}>
+              {sus.pcdt ? 'Disponivel' : 'Sem PCDT especifico'}
+            </span>
+          </p>
+          {sus.pcdt_name && <p className="text-13 text-text mb-8">{sus.pcdt_name}</p>}
+          {sus.tests.length > 0 && (
+            <div className="mb-8">
+              <span className="label mb-4">Exames</span>
+              <span className="flex flex-wrap gap-6">
+                {sus.tests.map((t) => (
+                  <span key={t} className="pill pill-solid pill-sm">{t}</span>
+                ))}
+              </span>
+            </div>
+          )}
+          {sus.note && <p className="text-12 text-muted leading-snug mb-8">{sus.note}</p>}
+          {sus.pcdt_url && <ExternalLinkButton href={sus.pcdt_url} label="Protocolos (PCDT)" />}
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function DiseasePage() {
   const { id } = useParams()
 
@@ -231,6 +292,13 @@ export default function DiseasePage() {
                     label="MONDO"
                   />
                 )}
+                {data.raras_url && (
+                  <ExternalLinkButton
+                    href={data.raras_url}
+                    label="raras.org"
+                    ariaLabel="Abrir a doença no raras.org (informações e comunidade para pacientes)"
+                  />
+                )}
                 {data.example_id && (
                   <Link
                     to={data.example_kind === 'gene' ? `/gene/${data.example_id}` : `/variant/${data.example_id}`}
@@ -260,6 +328,9 @@ export default function DiseasePage() {
                 ))}
               </div>
             </section>
+
+            {/* Contexto brasileiro: SUS e triagem neonatal */}
+            <BrazilContext data={data} />
 
             {/* Variantes patogênicas por gene causal (assíncrono) */}
             <PathogenicVariantsSection id={id} />
