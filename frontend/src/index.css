@@ -39,6 +39,16 @@
 .status-serious { color: var(--state-serious); }
 .status-critical { color: var(--state-critical); }
 
+/* Em telas estreitas o texto justificado abre vãos grandes entre palavras
+   (colunas curtas sem boa hifenização). No mobile alinhamos à esquerda; o
+   justificado do desktop fica preservado. Fora de @layer para vencer o base. */
+@media (max-width: 640px) {
+  p {
+    text-align: left;
+    hyphens: manual;
+  }
+}
+
 @layer components {
   /* texto corrido justificado em todo o app; parágrafos de uma linha
      (labels, números) não mudam porque justify só atua da segunda linha */
