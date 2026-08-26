@@ -1,6 +1,8 @@
-/* Pure Design 1.4.2. Ordem obrigatória: theme (tailwind + tokens), patterns. */
+/* Pure Design 1.4.2. Ordem obrigatória: theme (tailwind + tokens), patterns.
+   glass: camada liquid glass aditiva, por último para vencer o patterns. */
 @import './pure/theme.css';
 @import './pure/patterns.css';
+@import './pure/glass.css';
 
 /* Camada do app. Nenhum literal de cor, tamanho ou tempo:
    todo valor vem de tokens.css. */
