@@ -3,7 +3,7 @@ import Icon from '../components/Icon'
 import PageNav from '../components/PageNav'
 import NgsPipeline from '../components/NgsPipeline'
 import VcfReport from '../components/VcfReport'
-import { lerVCF } from '../vcf/parse'
+import { lerVCF, extrairDoZip } from '../vcf/parse'
 import { resumo, indiceDeGenes, geneDaPosicao } from '../vcf/metricas'
 
 // Anotação de VCF, inteira no navegador.
@@ -29,6 +29,12 @@ export default function VcfPage() {
     if (!arquivo) return
     setEstado('lendo'); setErro(null); setDados(null); setProgresso(null)
     try {
+      let extras = 0
+      if (/\.zip$/i.test(arquivo.name)) {
+        const r = await extrairDoZip(arquivo)
+        arquivo = r.arquivo
+        extras = r.outros
+      }
       const genesJson = await fetch(`${import.meta.env.BASE_URL}data/burden/genes.json`).then((r) => r.json())
       const indice = indiceDeGenes(genesJson)
 
@@ -43,6 +49,7 @@ export default function VcfPage() {
 
       setDados({
         nome: arquivo.name,
+        outrosNoZip: extras,
         tamanho: arquivo.size,
         meta,
         variantes,
@@ -118,7 +125,7 @@ export default function VcfPage() {
             <input
               ref={inputRef}
               type="file"
-              accept=".vcf,.gz,text/plain"
+              accept=".vcf,.gz,.zip,text/plain,application/zip"
               className="sr-only"
               id="vcf-input"
               onChange={(e) => processar(e.target.files?.[0])}
@@ -127,7 +134,7 @@ export default function VcfPage() {
               <span className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
                 <Icon name="upload" size="md" className="text-muted" />
               </span>
-              <p className="text-15 text-text">Arraste o VCF aqui, ou escolha um arquivo</p>
+              <p className="text-15 text-text">Arraste o VCF ou o zip aqui, ou escolha um arquivo</p>
               <label htmlFor="vcf-input" className="pill pill-solid" style={{ cursor: 'pointer' }}>
                 <Icon name="folder" />
                 Escolher arquivo
@@ -144,7 +151,7 @@ export default function VcfPage() {
 
             <ul className="flex flex-col gap-8" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {[
-                ['Formatos', '.vcf e .vcf.gz, VCFv4.x'],
+                ['Formatos', '.vcf, .vcf.gz e .zip com um VCF dentro'],
                 ['Teto', `${TETO_VARIANTES.toLocaleString('pt-BR')} variantes`],
                 ['Onde roda', 'no seu navegador, sem upload'],
                 ['O que sai daqui', 'nada: o arquivo não é enviado'],

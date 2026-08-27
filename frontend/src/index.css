@@ -560,6 +560,31 @@
 
 .ngs-perde { color: var(--muted); display: flex; align-items: flex-start; gap: var(--space-6); }
 
+/* O cartão do fluxo virou botão: reseta o que o navegador põe num <button> e
+   mantém o texto alinhado à esquerda, que é o padrão de leitura e não o
+   centrado que o botão traz de fábrica. */
+button.ngs-cartao {
+  inline-size: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ngs-ver { color: var(--series); display: flex; align-items: center; gap: var(--space-4); }
+
+/* Janela do exemplo. Largura de leitura, não de tela: o conteúdo é uma amostra
+   de arquivo, e amostra larga demais vira rolagem horizontal. */
+.ngs-janela {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-24);
+  inline-size: min(52rem, 100%);
+  max-block-size: calc(100vh - var(--space-96));
+  overflow-y: auto;
+}
+
 @media (max-width: 768px) {
   .ngs-etapa { grid-template-columns: var(--space-32) minmax(0, 1fr); }
   .ngs-marca { inline-size: var(--space-32); block-size: var(--space-32); }
@@ -601,4 +626,17 @@
 .faixa-numeros {
   padding: 0;
   overflow: hidden;
+}
+
+/* Exemplo de arquivo genômico: quebra em vez de rolar. Linha de FASTQ, de SAM
+   e de VCF anotado passa fácil de 200 caracteres, e rolagem horizontal esconde
+   exatamente o que o exemplo existe para mostrar. A quebra é por caractere
+   porque o conteúdo não tem espaço onde quebrar: é sequência e campo separado
+   por tabulação. A tabulação vira quatro espaços para as colunas continuarem
+   distinguíveis depois da quebra. */
+.code-wrap {
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-x: visible;
+  tab-size: 4;
 }

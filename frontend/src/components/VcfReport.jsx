@@ -33,6 +33,26 @@ function Ficha({ rotulo, valor, nota, slot }) {
 export default function VcfReport({ dados }) {
   const { meta, variantes, metricas, nome, tamanho, lidos, truncado } = dados
   const [aba, setAba] = useState('qualidade')
+  const [pdf, setPdf] = useState('parado')  // parado | gerando | erro
+
+  // A biblioteca de PDF pesa centenas de KB e entra por import dinâmico: quem
+  // só olha o relatório na tela não paga por ela no carregamento da página.
+  async function baixarPDF() {
+    setPdf('gerando')
+    try {
+      const { gerarPDF } = await import('../vcf/pdf.jsx')
+      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${nome.replace(/\.(vcf|gz|zip)$/gi, '')}-genvar.pdf`
+      document.body.appendChild(a); a.click(); a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 2000)
+      setPdf('parado')
+    } catch (e) {
+      setPdf('erro')
+    }
+  }
 
   const dp = useMemo(() => histograma(variantes, 'dp'), [variantes])
   const qual = useMemo(() => histograma(variantes, 'qual'), [variantes])
@@ -83,7 +103,8 @@ export default function VcfReport({ dados }) {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-8 mb-16" role="tablist" aria-label="Seções do relatório">
+        <div className="flex items-center justify-between gap-16 flex-wrap mb-16">
+        <div className="flex flex-wrap gap-8" role="tablist" aria-label="Seções do relatório">
           {[['qualidade', 'Qualidade'], ['distribuicao', 'Distribuição'], ['genes', 'Genes'], ['tabela', 'Variantes']].map(([k, r]) => (
             <button
               key={k}
@@ -96,6 +117,15 @@ export default function VcfReport({ dados }) {
               {r}
             </button>
           ))}
+        </div>
+
+        <span className="flex items-center gap-12 flex-wrap">
+          <button type="button" className="pill pill-solid" onClick={baixarPDF} disabled={pdf === 'gerando'}>
+            <Icon name="download" />
+            {pdf === 'gerando' ? 'Montando o PDF...' : 'Baixar relatório em PDF'}
+          </button>
+          {pdf === 'erro' && <span className="field-error" role="alert">Não foi possível montar o PDF.</span>}
+        </span>
         </div>
 
         {aba === 'qualidade' && (

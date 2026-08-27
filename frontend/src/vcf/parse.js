@@ -122,6 +122,31 @@ function expandirAlts(campos, meta) {
   }))
 }
 
+// Um .zip é um contêiner, não um fluxo comprimido: DecompressionStream lê
+// gzip e deflate crus, e não o índice de entradas do ZIP. A biblioteca entra
+// por import dinâmico, e só quando o arquivo é mesmo um zip.
+export async function extrairDoZip(arquivo) {
+  const { default: JSZip } = await import('jszip')
+  const zip = await JSZip.loadAsync(arquivo)
+  const entradas = Object.values(zip.files).filter((f) => !f.dir)
+  const vcfs = entradas.filter((f) => /\.vcf(\.gz)?$/i.test(f.name) && !/^__MACOSX\//.test(f.name))
+  if (!vcfs.length) {
+    const nomes = entradas.map((f) => f.name).slice(0, 4).join(', ')
+    throw new Error(
+      entradas.length
+        ? `O zip não tem nenhum .vcf dentro. Encontrei: ${nomes}${entradas.length > 4 ? '...' : ''}.`
+        : 'O zip está vazio.',
+    )
+  }
+  // mais de um VCF: fica com o maior, que é o conjunto completo em quase todo
+  // pacote de laboratório, e o relatório diz qual foi escolhido
+  vcfs.sort((a, b) => (b._data?.uncompressedSize || 0) - (a._data?.uncompressedSize || 0))
+  const escolhido = vcfs[0]
+  const conteudo = await escolhido.async('blob')
+  const nome = escolhido.name.split('/').pop()
+  return { arquivo: new File([conteudo], nome, { type: 'text/plain' }), outros: vcfs.length - 1 }
+}
+
 // Lê o arquivo em fluxo, linha a linha. Um genoma passa de 4 milhões de
 // variantes e o texto inteiro não cabe confortavelmente em memória; o fluxo
 // mantém o pico baixo e permite relatar progresso.

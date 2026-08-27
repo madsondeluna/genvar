@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.8.1",
     "@tanstack/react-query": "^5.17.0",
     "axios": "^1.6.0",
     "ideogram": "^1.53.0",
+    "jszip": "^3.10.1",
     "ngl": "^2.4.0",
     "plotly.js": "^2.27.0",
     "react": "^18.2.0",
