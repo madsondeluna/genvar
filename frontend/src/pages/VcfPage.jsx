@@ -67,27 +67,29 @@ export default function VcfPage() {
       <PageNav />
       <div className="max-w-xl mx-auto px-24 py-32 pb-96 stagger stagger-fade">
 
-        <header className="mb-48 grid gap-48 items-end about-split">
-          <div className="flex flex-col gap-12" style={{ maxWidth: 'var(--measure-prose)' }}>
-            <p className="eyebrow flex items-center gap-8">
-              <Icon name="file" />
-              Do sequenciador ao significado
-            </p>
-            <h1 className="display text-40">VCF: chamada de variantes</h1>
-          </div>
-          <div className="flex flex-col gap-12" style={{ maxWidth: 'var(--measure-wide)' }}>
-            <p className={PAR}>
-              Um VCF lista as posições em que uma amostra difere do genoma de referência. Ele não
-              é o sequenciamento: é o último arquivo de uma cadeia, e o que ele pode responder
-              depende do que cada etapa anterior guardou e do que descartou.
-            </p>
-            <p className={PAR}>
-              <strong className="text-text font-medium">O arquivo não sai do seu computador.</strong>{' '}
-              A leitura acontece no navegador; só coordenada e identificador de variante chegam às
-              bases públicas, e nenhum dos dois identifica uma pessoa.
-            </p>
-          </div>
+        <header className="mb-24">
+          <p className="eyebrow mb-8 flex items-center gap-8">
+            <Icon name="file" />
+            Do sequenciador ao significado
+          </p>
+          <h1 className="display text-40">VCF: chamada de variantes</h1>
         </header>
+
+        {/* A abertura ocupa a faixa em duas colunas: o que o arquivo é, e o
+            que acontece com ele aqui. Ficava na coluna direita do cabeçalho,
+            onde competia com o título em vez de introduzir a página. */}
+        <div className="grid gap-24 about-cards mb-96">
+          <p className={PAR}>
+            Um VCF lista as posições em que uma amostra difere do genoma de referência. Ele não é
+            o sequenciamento: é o último arquivo de uma cadeia, e o que ele pode responder depende
+            do que cada etapa anterior guardou e do que descartou.
+          </p>
+          <p className={PAR}>
+            <strong className="text-text font-medium">O arquivo não sai do seu computador.</strong>{' '}
+            A leitura acontece no navegador; só coordenada e identificador de variante chegam às
+            bases públicas, e nenhum dos dois identifica uma pessoa.
+          </p>
+        </div>
 
         <section className="mb-96" aria-labelledby="fluxo-title">
           <h2 id="fluxo-title" className="section-title mb-8">Como se chega a um VCF</h2>

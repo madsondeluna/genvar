@@ -547,6 +547,9 @@
 }
 
 .ngs-cartao {
+  /* .card-glass da linguagem não traz padding: só o .card do app traz. Sem
+     isto o texto encosta na borda do vidro. */
+  padding: var(--space-16) var(--space-24);
   display: grid;
   grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
   gap: var(--space-12) var(--space-24);
