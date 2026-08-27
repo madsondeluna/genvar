@@ -21,6 +21,7 @@ const AssociationPage = lazy(() => import('./pages/AssociationPage'))
 const SourcesPage = lazy(() => import('./pages/SourcesPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const ContributePage = lazy(() => import('./pages/ContributePage'))
+const VcfPage = lazy(() => import('./pages/VcfPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 
 const queryClient = new QueryClient({
@@ -56,6 +57,7 @@ export default function App() {
               <Route path="/fontes" element={<SourcesPage />} />
               <Route path="/sobre" element={<AboutPage />} />
               <Route path="/colabore" element={<ContributePage />} />
+              <Route path="/vcf" element={<VcfPage />} />
             </Routes>
           </Suspense>
           <MedicalDisclaimer />

@@ -446,7 +446,8 @@
 .about-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 /* Prosa curta dentro de cartão estreito não se justifica: a coluna é curta
-   demais e o justificado abre vãos entre as palavras. */
+   demais e o justificado abre vãos entre as palavras. Acima de 60 caracteres
+   por linha o justificado volta a fechar bem, e aí vale a regra geral do app. */
 .about-left { text-align: left; }
 
 @media (max-width: 768px) {
@@ -489,4 +490,112 @@
   line-height: var(--leading-relaxed);
   overflow-x: auto;
   overscroll-behavior-x: contain;
+}
+
+/* Fluxo do sequenciamento, em coluna. Antes era uma faixa horizontal de cinco
+   cartões: em 1232px o quinto ficava cortado, e cortado no meio lê como defeito
+   e não como "role para o lado". Coluna também é o que a linguagem prescreve
+   para fluxo, pela mesma razão: ordem fixa não precisa de tela livre.
+
+   A haste liga as etapas por borda de pseudo-elemento, e não por caixa: caixa
+   entre nós entraria na contagem de filhos e quebraria o :first-child e o
+   :last-child que apagam as pontas da linha. */
+.ngs-fluxo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ngs-etapa {
+  display: grid;
+  grid-template-columns: var(--space-48) minmax(0, 1fr);
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.ngs-trilho {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-self: stretch;
+}
+
+.ngs-trilho::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--hairline);
+  background: var(--border);
+}
+
+.ngs-etapa:first-child .ngs-trilho::before { inset-block-start: var(--space-24); }
+.ngs-etapa:last-child  .ngs-trilho::before { inset-block-end: calc(100% - var(--space-24)); }
+
+.ngs-marca {
+  position: relative;
+  inline-size: var(--space-48);
+  block-size: var(--space-48);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-circle);
+  background: color-mix(in srgb, var(--series) 16%, var(--bg));
+  border: var(--hairline) solid color-mix(in srgb, var(--series) 40%, var(--border));
+  color: var(--series);
+}
+
+.ngs-cartao {
+  display: grid;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+  gap: var(--space-12) var(--space-24);
+  align-items: start;
+}
+
+.ngs-cabeca { grid-row: span 2; display: flex; flex-direction: column; gap: var(--space-4); }
+
+.ngs-perde { color: var(--muted); display: flex; align-items: flex-start; gap: var(--space-6); }
+
+@media (max-width: 768px) {
+  .ngs-etapa { grid-template-columns: var(--space-32) minmax(0, 1fr); }
+  .ngs-marca { inline-size: var(--space-32); block-size: var(--space-32); }
+  .ngs-cartao { grid-template-columns: minmax(0, 1fr); }
+  .ngs-cabeca { grid-row: auto; }
+}
+
+@media (max-width: 768px) {
+  .ngs-fluxo { grid-auto-columns: minmax(15rem, 1fr); }
+}
+
+/* Área de soltar arquivo. Traço tracejado é a convenção universal do alvo de
+   arraste, e é o único lugar do app onde ela cabe. */
+.vcf-solta {
+  border-style: dashed;
+  padding: var(--space-48) var(--space-24);
+}
+
+/* Histograma em barras. Cresce por block-size numa faixa de altura fixa, e não
+   por width: a barra é vertical e a regra de medidor da linguagem fala de
+   crescimento horizontal. */
+.histo {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  block-size: var(--space-96);
+  padding-block-start: var(--space-4);
+}
+
+.histo-barra {
+  flex: 1 1 0;
+  min-block-size: var(--hairline);
+  border-radius: var(--radius-2) var(--radius-2) 0 0;
+}
+
+/* Faixa de números. O .glass-panel da linguagem já traz borda e raio próprios;
+   envolvê-lo num .card punha um quadro dentro do outro. Aqui ele É a
+   superfície, e o padding do cartão sai. */
+.faixa-numeros {
+  padding: 0;
+  overflow: hidden;
 }

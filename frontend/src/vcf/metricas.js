@@ -1,0 +1,95 @@
+// Métricas de um conjunto de variantes. Tudo é derivado do próprio VCF, sem
+// rede: são os números que um laboratório olha primeiro para decidir se o
+// arquivo presta antes de interpretar qualquer variante.
+
+import { CHR_ORDER } from '../burden/constants'
+
+// Exoma humano fica perto de 3,0 e genoma perto de 2,0. Abaixo de 1,5 o
+// conjunto costuma carregar chamada falsa em excesso: transversão é mais rara
+// que transição na biologia, então ruído aleatório puxa a razão para baixo.
+export const TITV_ESPERADO = { exoma: [2.8, 3.3], genoma: [1.9, 2.1] }
+
+export function resumo(variantes) {
+  const t = { total: variantes.length, passa: 0, tipos: {}, cromossomos: {}, zigosidade: {},
+              transicoes: 0, transversoes: 0, comRsid: 0, filtros: {} }
+  for (const v of variantes) {
+    if (v.passa) t.passa += 1
+    t.tipos[v.tipo] = (t.tipos[v.tipo] || 0) + 1
+    t.cromossomos[v.chrom] = (t.cromossomos[v.chrom] || 0) + 1
+    t.zigosidade[v.zigosidade] = (t.zigosidade[v.zigosidade] || 0) + 1
+    t.filtros[v.filtro] = (t.filtros[v.filtro] || 0) + 1
+    if (v.transicao === true) t.transicoes += 1
+    else if (v.transicao === false) t.transversoes += 1
+    if (v.rsid) t.comRsid += 1
+  }
+  t.titv = t.transversoes ? t.transicoes / t.transversoes : null
+  // Fração já catalogada no dbSNP. Baixa demais indica ruído; alta demais num
+  // conjunto que deveria ter achado novo indica filtro agressivo.
+  t.fracaoConhecida = t.total ? t.comRsid / t.total : 0
+  return t
+}
+
+// Histograma de um campo numérico, em faixas de largura fixa. Serve para
+// profundidade e qualidade, que são as duas distribuições que revelam
+// cobertura irregular antes de qualquer interpretação clínica.
+export function histograma(variantes, campo, { faixas = 20, max = null } = {}) {
+  const vals = variantes.map((v) => v[campo]).filter((x) => x != null && Number.isFinite(x))
+  if (!vals.length) return { faixas: [], n: 0 }
+  const topo = max ?? Math.min(Math.max(...vals), quantil(vals, 0.99))
+  const largura = topo / faixas || 1
+  const bins = Array.from({ length: faixas }, (_, i) => ({
+    de: +(i * largura).toFixed(1), ate: +((i + 1) * largura).toFixed(1), n: 0,
+  }))
+  for (const v of vals) {
+    const i = Math.min(faixas - 1, Math.floor(v / largura))
+    if (i >= 0) bins[i].n += 1
+  }
+  return { faixas: bins, n: vals.length, mediana: quantil(vals, 0.5), media: vals.reduce((a, b) => a + b, 0) / vals.length }
+}
+
+export function quantil(vals, q) {
+  const s = [...vals].sort((a, b) => a - b)
+  const i = (s.length - 1) * q
+  const lo = Math.floor(i), hi = Math.ceil(i)
+  return lo === hi ? s[lo] : s[lo] + (s[hi] - s[lo]) * (i - lo)
+}
+
+// Densidade por cromossomo, na ordem canônica. Um pico isolado costuma ser
+// região de baixa mapeabilidade, não descoberta biológica.
+export function porCromossomo(variantes) {
+  const c = {}
+  for (const v of variantes) c[v.chrom] = (c[v.chrom] || 0) + 1
+  return CHR_ORDER.filter((k) => c[k]).map((k) => ({ chr: k, n: c[k] }))
+}
+
+// Índice de genes por coordenada, montado do genes.json da camada de burden
+// (20.033 genes com cromossomo, início e fim). Busca binária por cromossomo:
+// varredura linear sobre 20 mil genes vezes 100 mil variantes não termina.
+export function indiceDeGenes(genesJson) {
+  const porChr = {}
+  const { symbols, chr, start, end } = genesJson
+  for (let i = 0; i < symbols.length; i += 1) {
+    const c = String(chr[i]).replace(/^chr/i, '')
+    ;(porChr[c] ||= []).push({ s: symbols[i], a: start[i], b: end[i] })
+  }
+  for (const c of Object.keys(porChr)) porChr[c].sort((x, y) => x.a - y.a)
+  return porChr
+}
+
+export function geneDaPosicao(indice, chrom, pos) {
+  const lista = indice[chrom]
+  if (!lista) return null
+  let lo = 0, hi = lista.length - 1, achado = null
+  while (lo <= hi) {
+    const m = (lo + hi) >> 1
+    if (lista[m].a > pos) hi = m - 1
+    else { if (pos <= lista[m].b) achado = lista[m].s; lo = m + 1 }
+  }
+  if (achado) return achado
+  // genes se sobrepõem: a busca acima acha o de menor início que contém a
+  // posição, e um vizinho pode contê-la também. Confere os anteriores.
+  for (let i = Math.max(0, lo - 6); i < Math.min(lista.length, lo + 1); i += 1) {
+    if (pos >= lista[i].a && pos <= lista[i].b) return lista[i].s
+  }
+  return null
+}

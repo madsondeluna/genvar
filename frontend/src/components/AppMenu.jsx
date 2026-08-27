@@ -11,6 +11,7 @@ const LINKS = [
   { to: '/paineis', label: 'Painéis', icon: 'branch' },
   { to: '/poligenico', label: 'Poligênico', icon: 'sparkle' },
   { to: '/associacao', label: 'Associação', icon: 'chart-bar' },
+  { to: '/vcf', label: 'VCF', icon: 'file' },
   { to: '/produtos', label: 'Produtos', icon: 'list' },
   { to: '/status', label: 'Status', icon: 'chart-line' },
   { to: '/fontes', label: 'Fontes', icon: 'book' },

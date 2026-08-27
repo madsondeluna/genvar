@@ -1,0 +1,170 @@
+// Leitor de VCF, inteiro no navegador. O arquivo NUNCA sai da máquina: um VCF
+// é dado genético de pessoa identificável, e processar localmente é o que
+// dispensa base legal, retenção e aviso de incidente. As APIs só recebem
+// coordenada e rsID, que não identificam ninguém.
+//
+// Especificação: VCFv4.x (https://samtools.github.io/hts-specs/VCFv4.3.pdf).
+// Colunas fixas: CHROM POS ID REF ALT QUAL FILTER INFO [FORMAT amostra...]
+
+export const COLUNAS_FIXAS = ['CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO']
+
+// Purinas e pirimidinas: a razão transição/transversão é o controle de
+// qualidade mais barato de um VCF. Exoma humano fica perto de 3,0 e genoma
+// perto de 2,0; muito abaixo disso indica ruído de chamada.
+const PURINA = new Set(['A', 'G'])
+const PIRIMIDINA = new Set(['C', 'T'])
+
+export function tipoDaVariante(ref, alt) {
+  if (ref.length === 1 && alt.length === 1) return 'SNV'
+  if (ref.length === alt.length) return 'MNV'
+  if (alt.startsWith('<') || alt.includes('[') || alt.includes(']')) return 'estrutural'
+  return alt.length > ref.length ? 'inserção' : 'deleção'
+}
+
+export function ehTransicao(ref, alt) {
+  if (ref.length !== 1 || alt.length !== 1) return null
+  return (PURINA.has(ref) && PURINA.has(alt)) || (PIRIMIDINA.has(ref) && PIRIMIDINA.has(alt))
+}
+
+// GT vem como 0/1, 1|1, ./. e variações. O separador diz se a fase é conhecida.
+export function zigosidade(gt) {
+  if (!gt || gt === '.' || gt === './.' || gt === '.|.') return 'ausente'
+  const alelos = gt.split(/[/|]/)
+  if (alelos.some((a) => a === '.')) return 'parcial'
+  const unicos = new Set(alelos)
+  if (unicos.size === 1) return alelos[0] === '0' ? 'homozigoto ref' : 'homozigoto alt'
+  return 'heterozigoto'
+}
+
+function parseInfo(campo) {
+  const out = {}
+  if (!campo || campo === '.') return out
+  for (const par of campo.split(';')) {
+    const i = par.indexOf('=')
+    if (i === -1) out[par] = true
+    else out[par.slice(0, i)] = par.slice(i + 1)
+  }
+  return out
+}
+
+// Cabeçalho: metadados que dizem de onde o arquivo veio. É o que permite ao
+// relatório afirmar o build de referência em vez de supor, e supor errado
+// desloca toda coordenada em milhões de bases.
+function parseCabecalho(linhas) {
+  const meta = { contigs: [], filtros: [], amostras: [], infoDefs: {}, formatDefs: {} }
+  for (const l of linhas) {
+    if (l.startsWith('##reference=')) meta.referencia = l.slice(12).trim()
+    else if (l.startsWith('##fileformat=')) meta.fileformat = l.slice(13).trim()
+    else if (l.startsWith('##source=')) meta.chamador = l.slice(9).trim()
+    else if (l.startsWith('##fileDate=')) meta.data = l.slice(11).trim()
+    else if (l.startsWith('##contig=')) {
+      const id = /ID=([^,>]+)/.exec(l)?.[1]
+      const len = /length=(\d+)/.exec(l)?.[1]
+      const assembly = /assembly=([^,>]+)/.exec(l)?.[1]
+      if (id) meta.contigs.push({ id, length: len ? +len : null, assembly })
+    } else if (l.startsWith('##FILTER=')) {
+      const id = /ID=([^,>]+)/.exec(l)?.[1]
+      const desc = /Description="([^"]*)"/.exec(l)?.[1]
+      if (id) meta.filtros.push({ id, desc })
+    } else if (l.startsWith('##INFO=')) {
+      const id = /ID=([^,>]+)/.exec(l)?.[1]
+      const desc = /Description="([^"]*)"/.exec(l)?.[1]
+      if (id) meta.infoDefs[id] = desc || ''
+    } else if (l.startsWith('##FORMAT=')) {
+      const id = /ID=([^,>]+)/.exec(l)?.[1]
+      const desc = /Description="([^"]*)"/.exec(l)?.[1]
+      if (id) meta.formatDefs[id] = desc || ''
+    } else if (l.startsWith('#CHROM')) {
+      const cols = l.slice(1).split('\t')
+      meta.amostras = cols.slice(9)
+      meta.colunas = cols
+    }
+  }
+  // o build vem do ##reference ou do assembly dos contigs; sem nenhum dos dois
+  // o relatório diz "não declarado" em vez de chutar
+  const ref = (meta.referencia || '') + ' ' + (meta.contigs[0]?.assembly || '')
+  if (/GRCh38|hg38/i.test(ref)) meta.build = 'GRCh38'
+  else if (/GRCh37|hg19/i.test(ref)) meta.build = 'GRCh37'
+  else meta.build = null
+  return meta
+}
+
+// Uma linha de VCF pode carregar vários ALT separados por vírgula. Cada um é
+// uma variante distinta, e contá-los como uma só subestima o total.
+function expandirAlts(campos, meta) {
+  const [chrom, pos, id, ref, altBruto, qual, filtro, info, formato, ...amostras] = campos
+  const infoObj = parseInfo(info)
+  const chaves = formato ? formato.split(':') : []
+  const porAmostra = amostras.map((a, i) => {
+    const vals = a.split(':')
+    const o = {}
+    chaves.forEach((k, j) => { o[k] = vals[j] })
+    return { nome: meta.amostras[i] || `amostra${i + 1}`, ...o }
+  })
+  return altBruto.split(',').map((alt) => ({
+    chrom: chrom.replace(/^chr/i, ''),
+    pos: +pos,
+    id: id && id !== '.' ? id : null,
+    rsid: (id || '').split(';').find((x) => /^rs\d+$/i.test(x)) || null,
+    ref,
+    alt,
+    qual: qual === '.' ? null : parseFloat(qual),
+    filtro: filtro || '.',
+    passa: filtro === 'PASS' || filtro === '.',
+    tipo: tipoDaVariante(ref, alt),
+    transicao: ehTransicao(ref, alt),
+    info: infoObj,
+    amostras: porAmostra,
+    gt: porAmostra[0]?.GT || null,
+    zigosidade: zigosidade(porAmostra[0]?.GT),
+    dp: porAmostra[0]?.DP ? +porAmostra[0].DP : (infoObj.DP ? +infoObj.DP : null),
+    gq: porAmostra[0]?.GQ ? parseFloat(porAmostra[0].GQ) : null,
+  }))
+}
+
+// Lê o arquivo em fluxo, linha a linha. Um genoma passa de 4 milhões de
+// variantes e o texto inteiro não cabe confortavelmente em memória; o fluxo
+// mantém o pico baixo e permite relatar progresso.
+export async function lerVCF(arquivo, { onProgresso, limite = 0 } = {}) {
+  const gz = /\.gz$/i.test(arquivo.name)
+  let stream = arquivo.stream()
+  if (gz) {
+    if (typeof DecompressionStream === 'undefined') {
+      throw new Error('Este navegador não descompacta .gz. Envie o VCF descompactado.')
+    }
+    stream = stream.pipeThrough(new DecompressionStream('gzip'))
+  }
+  const leitor = stream.pipeThrough(new TextDecoderStream()).getReader()
+
+  const cabecalho = []
+  const variantes = []
+  let meta = null
+  let resto = ''
+  let lidos = 0
+  let bytes = 0
+
+  for (;;) {
+    const { done, value } = await leitor.read()
+    if (done) break
+    bytes += value.length
+    const linhas = (resto + value).split('\n')
+    resto = linhas.pop()
+    for (const linha of linhas) {
+      if (!linha) continue
+      if (linha.startsWith('#')) { cabecalho.push(linha); continue }
+      if (!meta) meta = parseCabecalho(cabecalho)
+      const campos = linha.split('\t')
+      if (campos.length < 8) continue
+      lidos += 1
+      if (!limite || variantes.length < limite) variantes.push(...expandirAlts(campos, meta))
+    }
+    if (onProgresso) onProgresso({ lidos, bytes, variantes: variantes.length })
+  }
+  if (resto && !resto.startsWith('#')) {
+    if (!meta) meta = parseCabecalho(cabecalho)
+    const campos = resto.split('\t')
+    if (campos.length >= 8) { lidos += 1; variantes.push(...expandirAlts(campos, meta)) }
+  }
+  if (!meta) meta = parseCabecalho(cabecalho)
+  return { meta, variantes, lidos, truncado: !!limite && lidos > limite }
+}
