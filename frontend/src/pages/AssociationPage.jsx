@@ -50,7 +50,14 @@ function tierOf(lp) {
   return { key: 'neutral', label: 'Nao significativo' }
 }
 
-const fmtP = (lp) => Math.pow(10, -lp).toExponential(1)
+// O menor double positivo é 4,9e-324, então todo p abaixo disso chega aqui
+// grudado nesse valor. Imprimi-lo como se fosse a medida é afirmar precisão que
+// o formato não tem: 74 linhas do conjunto atual estão nesse teto, com p reais
+// que diferem por ordens de grandeza e foram todos achatados no mesmo número.
+// Acima do teto o que se pode dizer é o limite, não o valor.
+const LP_TETO = 320
+const noTeto = (lp) => lp >= LP_TETO
+const fmtP = (lp) => (noTeto(lp) ? '< 1e-320' : Math.pow(10, -lp).toExponential(1))
 
 export default function AssociationPage() {
   const [filters, setFilters] = useState({
@@ -121,7 +128,8 @@ export default function AssociationPage() {
       { label: 'gene', get: (p) => genes.symbols[p.geneIdx] },
       { label: 'fenotipo', get: (p) => phenos[p.phenoIdx]?.name || '' },
       { label: 'beta', get: (p) => p.beta.toFixed(4) },
-      { label: 'p', get: (p) => Math.pow(10, -p.lp).toExponential(2) },
+      { label: 'p', get: (p) => fmtP(p.lp) },
+      { label: 'menos_log10_p', get: (p) => p.lp.toFixed(2) },
       { label: 'evidencia', get: (p) => tierOf(p.lp).label },
     ]
     downloadCsv(
@@ -179,13 +187,44 @@ export default function AssociationPage() {
             associação com o fenótipo. Ajuste os filtros para ver a máscara
             funcional, o limite de frequência e o teste estatístico.
           </p>
-          {provQ.data?.source && (
+          {provQ.data?.fonte && (
             <p className="label mt-8">
-              Fonte: {provQ.data.source}
-              {provQ.data.version ? ` · ${provQ.data.version}` : ''}
-              {provQ.data.date ? ` · atualizado em ${provQ.data.date}` : ''}
-              {provQ.data.scope ? ` · ${provQ.data.scope}` : ''}
+              Fonte: {provQ.data.fonte}
+              {provQ.data.versao ? ` · ${provQ.data.versao}` : ''}
+              {provQ.data.data ? ` · atualizado em ${provQ.data.data}` : ''}
+              {provQ.data.escopo ? ` · ${provQ.data.escopo}` : ''}
             </p>
+          )}
+
+          {/* Procedência ausente é um achado, não um campo em branco. A página
+              inteira defende FAIR: esconder a lacuna aqui seria o defeito que ela
+              denuncia. */}
+          {provQ.data && !provQ.data.fonte && provQ.data.fonte_pendente && (
+            <div className="card tint-warning mt-16 flex items-start gap-10">
+              <Icon name="alert" className="text-muted mt-2" />
+              <div className="flex flex-col gap-8">
+                <p className="text-13 leading-snug about-left">
+                  <strong className="text-text font-medium">Procedência não registrada.</strong>{' '}
+                  {provQ.data.fonte_pendente}
+                </p>
+                <ul className="flex flex-col gap-4" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                  {[
+                    ['Formato', provQ.data.verificado_no_arquivo?.formato],
+                    ['Escopo', provQ.data.escopo],
+                    ['Genes', provQ.data.verificado_no_arquivo?.genes?.toLocaleString('pt-BR')],
+                    ['Fenótipos', provQ.data.verificado_no_arquivo?.fenotipos],
+                    ['Biobancos', provQ.data.verificado_no_arquivo?.biobancos?.join(', ')],
+                    ['Erro-padrão do efeito', provQ.data.verificado_no_arquivo?.erro_padrao_do_efeito],
+                    ['Teto de precisão', provQ.data.verificado_no_arquivo?.teto_de_precisao],
+                  ].filter(([, v]) => v).map(([k, v]) => (
+                    <li key={k} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: 'minmax(0,11rem) 1fr' }}>
+                      <span className="label">{k}</span>
+                      <span className="text-12">{v}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           )}
         </header>
 
@@ -229,7 +268,7 @@ export default function AssociationPage() {
                   Significância por gene (Cauchy, p &lt; 2,5e-6)
                 </ThresholdKey>
                 <ThresholdKey color="var(--muted)">
-                  Sugestivo a partir de p &lt; 1e-4; abaixo disso, ruído esperado
+                  Sugestivo a partir de p &lt; 1e-4, que é também o piso do arquivo
                 </ThresholdKey>
               </div>
 
@@ -237,9 +276,21 @@ export default function AssociationPage() {
                 Como ler: o eixo vertical é -log10(p), então quanto mais alto o
                 ponto, mais improvável que a associação seja acaso. Acima da linha
                 tracejada vermelha o sinal é robusto mesmo corrigindo todos os
-                testes; entre as duas linhas é significativo por gene; abaixo da
-                faixa cinza o resultado não se distingue do esperado ao acaso.
-                Clique num ponto para ver o efeito por ancestria.
+                testes; entre as duas linhas é significativo por gene. Clique num
+                ponto para ver o efeito por ancestria.
+              </p>
+              <p className="text-12 leading-snug">
+                <strong className="text-text font-medium">
+                  Este recorte guarda apenas os testes com p ≤ 1e-4.
+                </strong>{' '}
+                Um Manhattan completo mostra uma nuvem densa de pontos não
+                significativos, e é o contraste com ela que dá escala aos picos.
+                Aqui a nuvem não existe: ela foi cortada na geração do arquivo,
+                não pelos filtros da tela. Nenhum ponto visível é ruído, e nenhuma
+                ausência de ponto significa gene testado e negativo, porque o gene
+                testado e negativo simplesmente não está no arquivo. O conjunto
+                completo, sem corte, roda pelo mesmo ETL com a opção que inclui
+                todos os genes.
               </p>
             </section>
 

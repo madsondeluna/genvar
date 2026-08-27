@@ -125,10 +125,11 @@ export default function ManhattanPlot({ points, genes, layout, phenos, onSelect 
       const p = points[best.i]
       const g = genes.symbols[p.geneIdx]
       const ph = phenos?.[p.phenoIdx]?.name || ''
-      const pval = Math.pow(10, -p.lp)
+      // Abaixo de 4,9e-324 o double satura: o que se pode dizer é o limite.
+      const pval = p.lp >= 320 ? '< 1e-320' : Math.pow(10, -p.lp).toExponential(1)
       setTip({
         x: best.sx, y: best.sy,
-        text: `${g}${ph ? ' · ' + ph : ''} · p=${pval.toExponential(1)}`,
+        text: `${g}${ph ? ' · ' + ph : ''} · p=${pval}`,
         i: best.i,
       })
     } else if (tip) {
