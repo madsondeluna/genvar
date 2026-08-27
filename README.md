@@ -145,10 +145,10 @@ cd backend && python -m etl.pgscatalog
 - Mapa mundial dos biobancos por coordenada real, com a cobertura por ancestria e o destaque da camada latina (AMR).
 - Dados: JSON colunar servido em `frontend/public/data/burden`, gerado pelo ETL `backend/scripts/build_burden.py` a partir de sumários gene-based públicos (formato SAIGE-GENE e Meta-SAIGE). A fonte é configurável por `VITE_BURDEN_DATA_URL` para apontar ao dataset completo hospedado em produção. Detalhes em `DATA_BURDEN.md`.
 
-#### Produtos, planos e status
+#### Produtos, fontes e status
 
 - Aba `/produtos`: as três linhas do produto (raras e monogênico, multigênico, poligênico), a seção "O que já está no ar" com os volumes lidos da API em tempo de renderização, e a relação entre o risco raro e o poligênico.
-- Página `/planos`: estrutura de planos pretendida (Free, Pro, Enterprise) e uma nota sobre a API pública. Autenticação e cobrança não fazem parte do beta público.
+- Página `/planos`: rota herdada de uma versão anterior, com uma estrutura de planos que não corresponde à estratégia atual. Nenhuma página do app aponta para ela, e ela está marcada como órfã no mapa do site em `docs/sitemap.mmd`. O projeto é gratuito e sem plano pago, conforme a seção Estratégia de produto.
 - Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda.
 - Página `/fontes`: as oito fontes de dados com licença, uso, citação formal e data de extração dos catálogos.
 
@@ -1305,6 +1305,75 @@ Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_RE
 7. **MyVariant.info**: preferir HGVS genômico (`chr{chr}:g.{pos}{ref}>{alt}`) quando há coordenadas do VEP. Em caso de falha, o sistema recorre à busca por `dbsnp.rsid`.
 
 As chaves de cache são versionadas (`gene:v3:`, `variant:v3:`) para invalidar respostas antigas após mudanças no schema.
+
+
+## Estratégia de produto
+
+O GenVar é gratuito e de código aberto. Não há plano pago, conta de usuário nem cobrança prevista. O código é MIT e os dados vêm de bases públicas, cada uma sob a sua licença.
+
+### Para quem
+
+| Público | Uso |
+|---|---|
+| Geneticista clínico e residente | consultar doença, gene e variante em português, com restrição gênica e significância do ClinVar na mesma tela |
+| Pesquisador de genética humana | catálogo consultável por API, sem raspagem de portal |
+| Estudante e professor | material de aula com dado real e fonte citável |
+| Paciente e família | catálogo de doenças raras em português, com sinais clínicos e o que existe no SUS |
+
+### O que já está disponível
+
+| Recurso | Estado |
+|---|---|
+| Catálogo de doenças raras (3.739) | disponível |
+| Painéis de genes (434) | disponível |
+| Escores poligênicos (6.982) | disponível |
+| Associação por burden (44 fenótipos, 20.033 genes) | disponível |
+| Enriquecimento ao vivo de gnomAD, ClinVar, Ensembl, AlphaFold e UniProt | disponível |
+| Interface em português, incluindo nomes de doença e fenótipos | disponível |
+| API HTTP pública, sem chave | disponível |
+| Quatro modos de cor e operação por teclado | disponível |
+
+### O que diferencia
+
+A agregação de bases públicas em uma interface única não é original: Varsome, Franklin, MARRVEL e a Open Targets Platform fazem isso, com mais recursos. O que o GenVar tem e essas ferramentas não têm:
+
+1. Interface e conteúdo em português do Brasil, incluindo 94% dos nomes de doença pela tradução oficial do Orphanet e os fenótipos HPO pela tradução oficial do HPO.
+2. Contexto do sistema de saúde brasileiro: cobertura no SUS, protocolo PCDT e triagem neonatal por doença.
+3. Frequência alélica em coorte brasileira, ao lado da gnomAD, que sub-representa ancestralidade admixada.
+4. A ponte entre o raro e o poligênico na mesma tela, com o fundo poligênico modulando a penetrância de uma variante monogênica.
+
+Os itens 1 e 4 estão implementados. Os itens 2 e 3 são a lacuna declarada abaixo.
+
+### Lacunas conhecidas
+
+Números medidos, não estimados:
+
+| Lacuna | Situação |
+|---|---|
+| Contexto SUS e PCDT | 8 de 3.739 doenças (0,2%) |
+| Triagem neonatal | 4 doenças |
+| Prevalência brasileira | 4 doenças |
+| Frequência alélica brasileira (ABraOM) | 0 variantes; a camada existe e está vazia |
+| Limite de taxa na API | ausente |
+| Contas, exportação e dados próprios | fora do escopo do beta |
+
+A camada brasileira é o que separa o GenVar de um agregador a mais, e ela está 0,2% construída. Enquanto isso não mudar, a posição defensável do projeto é a de ferramenta em português, não a de ferramenta brasileira.
+
+### Fontes candidatas, verificadas
+
+Alcançáveis e sem chave de acesso, testadas:
+
+| Fonte | O que acrescenta | Volume |
+|---|---|---|
+| ABraOM (coorte SABE) | frequência alélica brasileira | 609 exomas, 50 MB |
+| Open Targets Platform | associação gene-doença com escore de evidência e fármacos ligados ao alvo | 1.359 associações só para BRCA1 |
+| openFDA | eventos adversos notificados de medicamentos | API pública |
+| NCBI E-utilities | artigos de revisão por doença | API pública |
+| BiPMed | variantes de coortes brasileiras | portal público |
+
+### Contribuição
+
+O repositório aceita contribuição. Os pontos de entrada com maior efeito são os dados brasileiros: cada doença com protocolo no SUS mapeada, cada frequência de coorte nacional integrada, cada tradução de fenótipo revisada por quem trabalha na clínica.
 
 
 ## Licença
