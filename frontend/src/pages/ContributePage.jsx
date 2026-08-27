@@ -240,18 +240,70 @@ export default function ContributePage() {
         </section>
 
         <section aria-labelledby="regras-title">
-          <h2 id="regras-title" className="section-title mb-16">Como funciona</h2>
-          <div className="card glass-panel" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))' }}>
-            <div><span className="text-13 text-text">Código MIT</span><span className="text-12">o seu também</span></div>
-            <div><span className="text-13 text-text">Dados por fonte</span><span className="text-12">cada um sob a sua licença</span></div>
-            <div><span className="text-13 text-text">Crédito nominal</span><span className="text-12">quem contribui aparece</span></div>
-            <div><span className="text-13 text-text">Sem exclusividade</span><span className="text-12">entra e sai quando quiser</span></div>
+          <div className="grid gap-48 items-start about-split">
+            <div className="flex flex-col gap-12" style={{ maxWidth: 'var(--measure-prose)' }}>
+              <h2 id="regras-title" className="section-title">Como contribuir</h2>
+              <p className="text-14 leading-normal">
+                O caminho é o mesmo para todas as frentes: um pull request contra a branch
+                <span className="mono"> beta</span>. Não há revisão de duas pessoas nem CI
+                obrigatória ainda, então a suíte local é o que separa uma mudança boa de uma
+                regressão silenciosa.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-16">
+              <article className="card flex flex-col gap-8">
+                <span className="label">Antes de abrir o PR</span>
+                <pre className="code-block text-12 mono" style={{ margin: 0, overflowX: 'auto' }}>
+{`cd backend && pytest          # 51 unitários, sem rede
+cd frontend && npm run build  # o bundle tem de compilar`}
+                </pre>
+                <p className="text-13 leading-snug about-left">
+                  Os 12 testes marcados como <span className="mono">integration</span> ficam de
+                  fora por padrão: eles batem em Ensembl, gnomAD e ClinVar de verdade e reprovam
+                  quando um serviço de terceiro muda ou limita a taxa, o que não diz nada sobre o
+                  seu código.
+                </p>
+              </article>
+
+              <article className="card flex flex-col gap-8">
+                <span className="label">Mudança de catálogo</span>
+                <p className="text-13 leading-snug about-left">
+                  Nunca edite os JSON em <span className="mono">app/data/</span> na mão: eles são
+                  gerados. Corrija o ETL da fonte e rode
+                  <span className="mono"> python -m etl.orphanet</span>,
+                  <span className="mono"> etl.panelapp</span> ou
+                  <span className="mono"> etl.pgscatalog</span>. As páginas cruas ficam em cache,
+                  então rodar de novo não repete rede e o resultado é o mesmo para qualquer
+                  pessoa. Uma edição manual se perde na próxima execução.
+                </p>
+              </article>
+
+              <article className="card flex flex-col gap-8">
+                <span className="label">Licença do que você escrever</span>
+                <p className="text-13 leading-snug about-left">
+                  Código entra sob MIT. Dado é outra história: um arquivo derivado de uma fonte
+                  herda a licença dela, e nem todas são permissivas. O ABraOM, por exemplo, é
+                  ODbL, que obriga a redistribuir qualquer derivado sob ODbL, e por isso o GenVar
+                  liga para lá em vez de copiar o número. Ao trazer fonte nova, a licença dela
+                  entra em <span className="mono">routers/sources.py</span> antes do dado entrar
+                  no app.
+                </p>
+              </article>
+
+              <article className="card flex flex-col gap-8">
+                <span className="label">Crédito</span>
+                <p className="text-13 leading-snug about-left">
+                  O histórico do git é o registro: o commit fica com a sua autoria e o
+                  <span className="mono"> git log</span> é a lista de quem fez o quê. Contribuição
+                  de curadoria, que não vira commit de código, entra como coautoria no commit que
+                  aplica a curadoria.
+                </p>
+              </article>
+            </div>
           </div>
-          <p className="text-13 mt-16" style={{ maxWidth: 'var(--measure-wide)' }}>
-            Antes de abrir a inscrição, vale ler as <Link to="/fontes" className="link-muted underline underline-offset-2">fontes e licenças</Link> e o
-            que já está <Link to="/sobre" className="link-muted underline underline-offset-2">documentado no projeto</Link>.
-          </p>
         </section>
+
       </div>
     </main>
   )

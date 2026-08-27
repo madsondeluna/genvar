@@ -475,3 +475,18 @@
     top: var(--scroll-offset);
   }
 }
+
+/* Bloco de comando. A camada de agente da linguagem tem um, mas ela existe
+   para interface onde um modelo escreve na tela, que não é o caso aqui:
+   importar o arquivo inteiro por uma classe sairia mais caro que a classe.
+   Rola no lugar do corpo quando a linha é mais longa que a caixa. */
+.code-block {
+  padding: var(--space-12);
+  border-radius: var(--radius-field);
+  background: var(--dim);
+  border: var(--hairline) solid var(--border);
+  color: var(--text);
+  line-height: var(--leading-relaxed);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}

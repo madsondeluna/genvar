@@ -327,36 +327,8 @@ export default function HomePage() {
           </section>
         )}
 
-        <section className="mt-48 fade-up" aria-labelledby="credits-title">
-          <h2 id="credits-title" className="label mb-12">Créditos do projeto/MVP</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-stretch stagger">
-            <div className="card fade-up h-full flex flex-col gap-8">
-              <p className="label">Autor</p>
-              <p className="text-14 font-medium text-text">Madson A. de Luna Aragão</p>
-              <p className="text-12 leading-snug">
-                Doutorando em Bioinformática (UFMG), estudante de MBA em Engenharia de Software
-                (USP), especialista em Data Science &amp; Analytics (PUC-Rio), mestre em Genética
-                e Biologia Molecular (UFPE) e biomédico (UFPE).
-              </p>
-            </div>
-            <div className="card fade-up h-full flex flex-col gap-8">
-              <p className="label">Orientação</p>
-              <p className="text-14 font-medium text-text">Marcelo Pereira da Silva</p>
-              <p className="text-12 leading-snug">
-                Orientador do trabalho. Mestre em Ciência da Computação e doutorando em Ciência
-                da Informação.
-              </p>
-            </div>
-            <div className="card fade-up h-full flex flex-col gap-8">
-              <p className="label">Programa</p>
-              <p className="text-14 font-medium text-text">MBA em Engenharia de Software, USP</p>
-              <p className="text-12 leading-snug">
-                Este produto é o MVP apresentado como critério para obtenção do título de MBA em
-                Engenharia de Software pela Universidade de São Paulo, em 2026.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* Os créditos saíram daqui: a página Sobre os tem por inteiro,
+            com formação, orientação e o enquadramento do MVP. */}
 
       </div>
 
