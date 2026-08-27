@@ -892,3 +892,21 @@ button.ngs-cartao {
   .gene-linha { min-block-size: var(--hit-min-touch); }
   .th-ordenar { min-block-size: var(--hit-min-touch); }
 }
+
+/* Introducao de secao em duas colunas. O paragrafo ficava travado em 640px
+   dentro de uma faixa de 1232 e sobrava meia pagina vazia a direita; solta-lo
+   na faixa inteira daria linha de ~150 caracteres, que e o dobro do que se le
+   sem perder a linha na volta. Duas colunas resolvem os dois: a faixa e
+   ocupada e cada coluna fica em ~75 caracteres.
+
+   Abaixo do ponto de quebra volta a ser uma coluna so, porque duas colunas de
+   180px seriam piores que a sobra que isto veio corrigir. */
+.texto-colunas {
+  columns: 2;
+  column-gap: var(--space-48);
+  max-inline-size: none;
+}
+
+@media (max-width: 768px) {
+  .texto-colunas { columns: 1; }
+}

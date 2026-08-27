@@ -136,7 +136,7 @@ export default function VcfPage() {
 
         <section className="mb-96" aria-labelledby="fluxo-title">
           <h2 id="fluxo-title" className="section-title mb-8">Como se chega a um VCF</h2>
-          <p className={`${PAR} mb-24`} style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className={`${PAR} texto-colunas mb-24`}>
             Cinco etapas, e cada uma guarda uma coisa e perde outra. A linha apagada de cada etapa
             é a perda, porque é ela que explica o que o arquivo final não consegue responder: um
             VCF registra onde a amostra difere da referência, e nada sobre onde ela é igual, e é
@@ -147,7 +147,7 @@ export default function VcfPage() {
 
         <section className="mb-96" aria-labelledby="upload-title">
           <h2 id="upload-title" className="section-title mb-8">Analise o seu arquivo</h2>
-          <p className={`${PAR} mb-24`} style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className={`${PAR} texto-colunas mb-24`}>
             A leitura acontece aqui, no navegador. Nenhum byte do arquivo é enviado a servidor
             nenhum, e é isso que dispensa cadastro, consentimento e retenção: VCF é dado genético
             de pessoa identificável, e o que não sobe não precisa ser protegido em trânsito.
