@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Histograma, BarrasNomeadas } from './Grafico'
+import TabelaVariantes from './TabelaVariantes'
+import AchadosClinicos from './AchadosClinicos'
 import Icon from './Icon'
-import { histograma, porCromossomo, TITV_ESPERADO } from '../vcf/metricas'
+import { histograma, porCromossomo, espectroSubstituicao, TITV_ESPERADO } from '../vcf/metricas'
 import { seriesStyle } from '../utils/seriesSlot'
 
 // Relatório do VCF. Tudo aqui é derivado do arquivo, sem rede: são as métricas
@@ -9,16 +11,6 @@ import { seriesStyle } from '../utils/seriesSlot'
 
 const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
 const pct = (n) => `${(n * 100).toFixed(1)}%`
-
-// Barra horizontal. Cresce por transform, nunca por width, que é a regra da
-// linguagem para medidor.
-function Barra({ valor, max, slot }) {
-  return (
-    <span className="meter" role="img" aria-label={`${valor} de ${max}`}>
-      <span style={{ transform: `scaleX(${max ? valor / max : 0})`, background: `var(--chart-${slot || 1})` }} />
-    </span>
-  )
-}
 
 function Ficha({ rotulo, valor, nota, slot }) {
   return (
@@ -30,9 +22,9 @@ function Ficha({ rotulo, valor, nota, slot }) {
   )
 }
 
-export default function VcfReport({ dados }) {
+export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarVUS }) {
   const { meta, variantes, metricas, nome, tamanho, lidos, truncado, genesMapeados } = dados
-  const [aba, setAba] = useState('qualidade')
+  const [aba, setAba] = useState('clinica')
   const [pdf, setPdf] = useState('parado')  // parado | gerando | erro
 
   // A biblioteca de PDF pesa centenas de KB e entra por import dinâmico: quem
@@ -41,7 +33,7 @@ export default function VcfReport({ dados }) {
     setPdf('gerando')
     try {
       const { gerarPDF } = await import('../vcf/pdf.jsx')
-      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo })
+      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo, resumoCli, anotacao })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -57,6 +49,7 @@ export default function VcfReport({ dados }) {
   const dp = useMemo(() => histograma(variantes, 'dp'), [variantes])
   const qual = useMemo(() => histograma(variantes, 'qual'), [variantes])
   const cromo = useMemo(() => porCromossomo(variantes), [variantes])
+  const espectro = useMemo(() => espectroSubstituicao(variantes), [variantes])
   const maxCromo = Math.max(1, ...cromo.map((c) => c.n))
 
   // Genes com mais variantes: a lista que responde "onde isso se concentra".
@@ -76,12 +69,12 @@ export default function VcfReport({ dados }) {
         <h2 id="rel-title" className="section-title mb-8">Relatório</h2>
         <p className="text-14 leading-normal mb-24" style={{ maxWidth: 'var(--measure-wide)' }}>
           <span className="mono">{nome}</span>, {fmt(Math.round(tamanho / 1024))} KB.{' '}
-          {meta.build
-            ? <>Referência <strong className="text-text font-medium">{meta.build}</strong>
-              {meta.buildDeduzido
-                ? ', deduzida do comprimento do cromossomo 1, porque o cabeçalho não a declara.'
-                : ', declarada no cabeçalho.'}</>
-            : <>O cabeçalho <strong className="text-text font-medium">não declara o build</strong> de referência e o comprimento dos contigs não permite deduzi-lo.</>}
+          Referência <strong className="text-text font-medium">{meta.build}</strong>
+          {meta.buildPresumido
+            ? ', presumida: o cabeçalho não a declara e os contigs não permitem deduzi-la. GRCh38 é o padrão da indústria desde 2017 e o build de toda base pública corrente.'
+            : meta.buildDeduzido
+              ? ', deduzida do comprimento do cromossomo 1, porque o cabeçalho não a declara.'
+              : ', declarada no cabeçalho.'}
           {meta.chamador && <> Chamador: <span className="mono">{meta.chamador}</span>.</>}
           {truncado && <> O arquivo excede o teto de leitura e o relatório cobre as primeiras {fmt(lidos)} linhas.</>}
         </p>
@@ -94,13 +87,27 @@ export default function VcfReport({ dados }) {
           <Ficha slot={5} valor={fmt(meta.amostras.length)} rotulo="amostras" nota={meta.amostras.join(', ').slice(0, 20) || 'sem genótipo'} />
         </div>
 
+        {meta.buildPresumido && genesMapeados && (
+          <div className="card tint-warning mb-24 flex items-start gap-10">
+            <Icon name="alert" className="text-muted mt-2" />
+            <p className="text-13 leading-snug about-left">
+              O arquivo <strong className="text-text font-medium">não diz</strong> contra qual
+              genoma de referência foi chamado, e os contigs não permitem deduzir. O relatório
+              seguiu em <span className="mono">GRCh38</span>, que é o padrão da indústria e o build
+              do ClinVar, do gnomAD v4 e do Ensembl. Se o arquivo for GRCh37, o gene e a anotação
+              por coordenada saem trocados: entre os dois builds o deslocamento chega a milhões de
+              bases. O casamento por rsID não depende disso e continua válido nos dois casos.
+            </p>
+          </div>
+        )}
+
         {!genesMapeados && (
           <div className="card tint-warning mb-24 flex items-start gap-10">
             <Icon name="alert" className="text-muted mt-2" />
             <p className="text-13 leading-snug about-left">
               O cruzamento com genes foi <strong className="text-text font-medium">desligado</strong> para
               este arquivo. As coordenadas de gene que o GenVar distribui são GRCh38, e este VCF
-              {meta.build ? <> está em <span className="mono">{meta.build}</span></> : <> não declara o build</>}.
+              está em <span className="mono">{meta.build}</span>.
               Entre GRCh37 e GRCh38 o deslocamento chega a milhões de bases: só no BRCA1 são
               1.847.983. Cruzar assim não erra por pouco, troca o gene inteiro, e gene errado com
               cara de certo é pior que gene nenhum. As métricas de qualidade abaixo não dependem
@@ -123,7 +130,7 @@ export default function VcfReport({ dados }) {
 
         <div className="flex items-center justify-between gap-16 flex-wrap mb-16">
         <div className="flex flex-wrap gap-8" role="tablist" aria-label="Seções do relatório">
-          {[['qualidade', 'Qualidade'], ['distribuicao', 'Distribuição'], ['genes', 'Genes'], ['tabela', 'Variantes']].map(([k, r]) => (
+          {[['clinica', 'Achados clínicos'], ['qualidade', 'Qualidade'], ['distribuicao', 'Distribuição'], ['genes', 'Genes'], ['tabela', 'Variantes']].map(([k, r]) => (
             <button
               key={k}
               type="button"
@@ -157,7 +164,7 @@ export default function VcfReport({ dados }) {
                 Quantas leituras cobrem cada posição. Abaixo de 10× a chamada de heterozigoto fica
                 pouco confiável: o alelo menos representado pode simplesmente não ter sido lido.
               </p>
-              <Histo h={dp} slot={1} unidade="×" />
+              <Histograma h={dp} slot={1} unidade="×" rotuloX="profundidade de leitura, em número de leituras por posição" />
             </article>
 
             <article className="card flex flex-col gap-12">
@@ -169,7 +176,7 @@ export default function VcfReport({ dados }) {
                 Escala Phred: 30 significa uma chance em mil de a variante não existir; 20, uma em
                 cem. O acúmulo de chamadas em qualidade baixa é o sinal mais direto de ruído.
               </p>
-              <Histo h={qual} slot={2} />
+              <Histograma h={qual} slot={2} rotuloX="qualidade da chamada, em escala Phred" />
             </article>
 
             <article className="card flex flex-col gap-8">
@@ -177,15 +184,15 @@ export default function VcfReport({ dados }) {
               <p className="text-12 leading-snug about-left">
                 O que o programa que gerou o arquivo marcou como aprovado ou suspeito.
               </p>
-              <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                {Object.entries(metricas.filtros).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([f, n]) => (
-                  <li key={f} className="grid items-center gap-12" style={{ gridTemplateColumns: 'minmax(0,9rem) 1fr auto' }}>
-                    <span className="text-12 mono truncate">{f === '.' ? 'sem filtro' : f}</span>
-                    <Barra valor={n} max={metricas.total} slot={f === 'PASS' ? 4 : 8} />
-                    <span className="text-12 mono num">{fmt(n)}</span>
-                  </li>
-                ))}
-              </ul>
+              <BarrasNomeadas
+                itens={Object.entries(metricas.filtros).sort((a, b) => b[1] - a[1]).slice(0, 6)
+                  .map(([f, n]) => ({ rotulo: f === '.' ? 'sem filtro' : f, n, slot: f === 'PASS' ? 4 : 8 }))}
+                max={metricas.total}
+                total={metricas.total}
+                slot={8}
+                colunaRotulo="9rem"
+                rotuloX="variantes marcadas com esse filtro"
+              />
             </article>
 
             <article className="card flex flex-col gap-8">
@@ -195,15 +202,14 @@ export default function VcfReport({ dados }) {
                 é constante numa amostra sadia; desvio grande indica consanguinidade, perda de
                 heterozigosidade ou erro de chamada.
               </p>
-              <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                {Object.entries(metricas.zigosidade).sort((a, b) => b[1] - a[1]).map(([z, n]) => (
-                  <li key={z} className="grid items-center gap-12" style={{ gridTemplateColumns: 'minmax(0,9rem) 1fr auto' }}>
-                    <span className="text-12 truncate">{z}</span>
-                    <Barra valor={n} max={metricas.total} slot={3} />
-                    <span className="text-12 mono num">{fmt(n)}</span>
-                  </li>
-                ))}
-              </ul>
+              <BarrasNomeadas
+                itens={Object.entries(metricas.zigosidade).sort((a, b) => b[1] - a[1]).map(([z, n]) => ({ rotulo: z, n }))}
+                max={metricas.total}
+                total={metricas.total}
+                slot={3}
+                colunaRotulo="9rem"
+                rotuloX="variantes com essa zigosidade"
+              />
             </article>
           </div>
         )}
@@ -215,15 +221,32 @@ export default function VcfReport({ dados }) {
               <p className="text-12 leading-snug about-left">
                 Um pico isolado costuma ser região de baixa mapeabilidade, não descoberta.
               </p>
-              <ul className="flex flex-col gap-4" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                {cromo.map((c) => (
-                  <li key={c.chr} className="grid items-center gap-12" style={{ gridTemplateColumns: '2.5rem 1fr auto' }}>
-                    <span className="text-12 mono">{c.chr}</span>
-                    <Barra valor={c.n} max={maxCromo} slot={1} />
-                    <span className="text-12 mono num">{fmt(c.n)}</span>
-                  </li>
-                ))}
-              </ul>
+              <BarrasNomeadas
+                itens={cromo.map((c) => ({ rotulo: c.chr, n: c.n }))}
+                max={maxCromo}
+                total={metricas.total}
+                slot={1}
+                colunaRotulo="2.5rem"
+                rotuloX="variantes no cromossomo"
+              />
+            </article>
+
+            <article className="card flex flex-col gap-8">
+              <h3 className="text-16 font-medium text-text">Troca de base</h3>
+              <p className="text-12 leading-snug about-left">
+                As seis classes de substituição. Como a fita é dupla, C&gt;A e G&gt;T são o mesmo
+                evento visto de lados opostos, e a convenção é contar pela pirimidina. O perfil é
+                assinatura de processo: C&gt;T em excesso é desaminação de citosina metilada, que
+                toda amostra humana tem; C&gt;A em excesso costuma ser oxidação de guanina no
+                preparo da biblioteca, ou seja, bancada e não biologia.
+              </p>
+              <BarrasNomeadas
+                itens={espectro.classes.map((c, i) => ({ rotulo: c.rotulo.replace('>', '→'), n: c.n, slot: (i % 8) + 1 }))}
+                total={espectro.n}
+                slot={1}
+                colunaRotulo="4rem"
+                rotuloX="substituições dessa classe"
+              />
             </article>
 
             <article className="card flex flex-col gap-8">
@@ -232,15 +255,15 @@ export default function VcfReport({ dados }) {
                 Troca de uma base (SNV), inserção, deleção ou bloco. Indel é mais difícil de chamar
                 que SNV, então excesso deles também aponta ruído.
               </p>
-              <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                {Object.entries(metricas.tipos).sort((a, b) => b[1] - a[1]).map(([t, n], i) => (
-                  <li key={t} className="grid items-center gap-12" style={{ gridTemplateColumns: 'minmax(0,7rem) 1fr auto' }}>
-                    <span className="text-12 truncate">{t}</span>
-                    <Barra valor={n} max={metricas.total} slot={(i % 8) + 1} />
-                    <span className="text-12 mono num">{fmt(n)}</span>
-                  </li>
-                ))}
-              </ul>
+              <BarrasNomeadas
+                itens={Object.entries(metricas.tipos).sort((a, b) => b[1] - a[1])
+                  .map(([t, n], i) => ({ rotulo: t, n, slot: (i % 8) + 1 }))}
+                max={metricas.total}
+                total={metricas.total}
+                slot={1}
+                colunaRotulo="7rem"
+                rotuloX="variantes desse tipo"
+              />
             </article>
           </div>
         )}
@@ -261,94 +284,42 @@ export default function VcfReport({ dados }) {
             {genesMapeados && porGene.length === 0 && (
               <p className="text-13">Nenhuma variante caiu dentro de um gene conhecido.</p>
             )}
-            <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {porGene.map(([g, n], i) => (
-                <li key={g} className="grid items-center gap-12" style={{ gridTemplateColumns: 'minmax(0,8rem) 1fr auto auto' }}>
-                  <Link to={`/gene/${g}`} className="text-13 mono link-muted underline underline-offset-2 truncate">{g}</Link>
-                  <Barra valor={n} max={porGene[0][1]} slot={(i % 8) + 1} />
-                  <span className="text-12 mono num">{fmt(n)}</span>
-                  <Icon name="arrow-right" className="text-muted" />
-                </li>
-              ))}
-            </ul>
+            {porGene.length > 0 && (
+              <BarrasNomeadas
+                itens={porGene.map(([g, n], i) => ({ rotulo: g, n, slot: (i % 8) + 1 }))}
+                max={porGene[0][1]}
+                slot={1}
+                colunaRotulo="8rem"
+                href={(it) => `/gene/${it.rotulo}`}
+                rotuloX="variantes dentro do gene"
+              />
+            )}
           </article>
         )}
 
-        {aba === 'tabela' && <TabelaVariantes variantes={variantes} />}
+        {aba === 'clinica' && (
+          resumoCli
+            ? (
+              <AchadosClinicos
+                variantes={variantes}
+                resumoCli={resumoCli}
+                anotacao={anotacao}
+                vus={vus}
+                onCarregarVUS={onCarregarVUS}
+              />
+            )
+            : <p className="text-13">Consultando o ClinVar...</p>
+        )}
+
+        {aba === 'tabela' && (
+          <TabelaVariantes
+            variantes={variantes}
+            dados={dados}
+            resumoCli={resumoCli}
+            temAnotacao={!!resumoCli}
+          />
+        )}
       </section>
     </>
-  )
-}
-
-function Histo({ h, slot, unidade = '' }) {
-  if (!h.n) return <p className="text-12">O arquivo não traz esse campo.</p>
-  const max = Math.max(...h.faixas.map((f) => f.n))
-  return (
-    <div className="histo" role="img" aria-label={`Histograma, mediana ${h.mediana?.toFixed(1)}${unidade}`}>
-      {h.faixas.map((f) => (
-        <span
-          key={f.de}
-          className="histo-barra"
-          style={{ blockSize: `${max ? (f.n / max) * 100 : 0}%`, background: `var(--chart-${slot})` }}
-          title={`${f.de}–${f.ate}${unidade}: ${f.n.toLocaleString('pt-BR')}`}
-        />
-      ))}
-    </div>
-  )
-}
-
-function TabelaVariantes({ variantes }) {
-  const [pagina, setPagina] = useState(0)
-  const porPagina = 25
-  const total = Math.ceil(variantes.length / porPagina)
-  const fatia = variantes.slice(pagina * porPagina, (pagina + 1) * porPagina)
-  return (
-    <article className="card flex flex-col gap-12">
-      <span className="flex items-baseline justify-between gap-16 flex-wrap">
-        <h3 className="text-16 font-medium text-text">Variantes</h3>
-        <span className="label">{fmt(variantes.length)} no total</span>
-      </span>
-      <div className="table-scroll">
-        <table className="w-full text-left">
-          <thead>
-            <tr>
-              {['Posição', 'Ref', 'Alt', 'Tipo', 'Gene', 'Qual', 'Prof', 'Genótipo', 'rsID'].map((c) => (
-                <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {fatia.map((v, i) => (
-              <tr key={`${v.chrom}-${v.pos}-${v.alt}-${i}`} className="border-t border-border">
-                <td className="px-16 py-12 mono text-12 whitespace-nowrap">{v.chrom}:{fmt(v.pos)}</td>
-                <td className="px-16 py-12 mono text-12">{v.ref.slice(0, 10)}</td>
-                <td className="px-16 py-12 mono text-12">{v.alt.slice(0, 10)}</td>
-                <td className="px-16 py-12 text-12 whitespace-nowrap">{v.tipo}</td>
-                <td className="px-16 py-12 text-12 mono">
-                  {v.gene ? <Link to={`/gene/${v.gene}`} className="link-muted underline underline-offset-2">{v.gene}</Link> : '—'}
-                </td>
-                <td className="px-16 py-12 mono num text-12 text-right">{v.qual != null ? v.qual.toFixed(0) : '—'}</td>
-                <td className="px-16 py-12 mono num text-12 text-right">{v.dp ?? '—'}</td>
-                <td className="px-16 py-12 text-12 whitespace-nowrap">{v.zigosidade}</td>
-                <td className="px-16 py-12 mono text-12">
-                  {v.rsid ? <Link to={`/variant/${v.rsid}`} className="link-muted underline underline-offset-2">{v.rsid}</Link> : '—'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {total > 1 && (
-        <span className="flex items-center gap-8 flex-wrap">
-          <button type="button" className="pill pill-sm" disabled={pagina === 0} onClick={() => setPagina((p) => p - 1)}>
-            <Icon name="arrow-left" /> Anterior
-          </button>
-          <span className="label">{pagina + 1} de {fmt(total)}</span>
-          <button type="button" className="pill pill-sm" disabled={pagina >= total - 1} onClick={() => setPagina((p) => p + 1)}>
-            Próxima <Icon name="arrow-right" />
-          </button>
-        </span>
-      )}
-    </article>
   )
 }

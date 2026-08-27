@@ -93,3 +93,28 @@ export function geneDaPosicao(indice, chrom, pos) {
   }
   return null
 }
+
+// Espectro de substituição, as seis classes canônicas. Como a fita é dupla,
+// C>A e G>T são a mesma troca vista de lados opostos: colapsar em pirimidina
+// (C ou T) é a convenção, e sem ela o mesmo evento aparece em duas barras.
+//
+// O perfil é assinatura de processo: excesso de C>T em CpG é desaminação
+// espontânea de citosina metilada, o relógio molecular de qualquer amostra
+// humana; excesso de C>A costuma ser oxidação de guanina durante o preparo da
+// biblioteca, ou seja, artefato de bancada e não biologia.
+const COMPLEMENTO = { A: 'T', T: 'A', C: 'G', G: 'C' }
+export const CLASSES_SUBST = ['C>A', 'C>G', 'C>T', 'T>A', 'T>C', 'T>G']
+
+export function espectroSubstituicao(variantes) {
+  const c = Object.fromEntries(CLASSES_SUBST.map((k) => [k, 0]))
+  let n = 0
+  for (const v of variantes) {
+    if (v.ref?.length !== 1 || v.alt?.length !== 1) continue
+    let [r, a] = [v.ref.toUpperCase(), v.alt.toUpperCase()]
+    if (!COMPLEMENTO[r] || !COMPLEMENTO[a] || r === a) continue
+    if (r === 'A' || r === 'G') { r = COMPLEMENTO[r]; a = COMPLEMENTO[a] }
+    const k = `${r}>${a}`
+    if (k in c) { c[k] += 1; n += 1 }
+  }
+  return { classes: CLASSES_SUBST.map((k) => ({ rotulo: k, n: c[k] })), n }
+}

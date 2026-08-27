@@ -606,19 +606,180 @@ button.ngs-cartao {
 /* Histograma em barras. Cresce por block-size numa faixa de altura fixa, e não
    por width: a barra é vertical e a regra de medidor da linguagem fala de
    crescimento horizontal. */
+/* Gráficos do relatório de VCF.
+
+   Eixo e leitura, que é o que faltava: a barra guardava o número no `title`
+   do navegador, que o teclado e o leitor de tela não alcançam. Agora cada
+   barra é um botão, e apontar ou tabular escreve na linha de leitura.
+
+   A barra tinge no estado ativo; nada se desloca. Só `background-color` e
+   `opacity` transicionam, e ambas são nomeadas. */
+.grafico {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.grafico-leitura {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  min-block-size: var(--space-16);
+  font-size: var(--text-12);
+  font-family: var(--font-mono);
+  line-height: var(--leading-tight);
+}
+
+.grafico-corpo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-8);
+}
+
+.grafico-eixo-y {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  block-size: var(--space-96);
+  font-size: var(--text-11);
+  font-family: var(--font-mono);
+  color: var(--muted);
+  line-height: 1;
+}
+
+.grafico-area {
+  position: relative;
+}
+
+/* Três fios horizontais alinhados às marcas do eixo Y: topo pela .grafico-grade,
+   meio e base pelos pseudo-elementos. Ficam atrás das barras, sem ponteiro. */
+.grafico-grade {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: var(--hairline);
+  background: var(--chart-grid);
+  pointer-events: none;
+}
+
+.grafico-area::before,
+.grafico-area::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  block-size: var(--hairline);
+  background: var(--chart-grid);
+  pointer-events: none;
+}
+
+.grafico-area::before { inset-block-start: 50%; }
+.grafico-area::after { inset-block-end: 0; }
+
+.grafico-eixo-x {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-11);
+  font-family: var(--font-mono);
+  color: var(--muted);
+  line-height: 1;
+}
+
+/* A lista de barras nomeadas tem uma coluna de rótulo antes do gráfico; o
+   eixo horizontal precisa começar onde o gráfico começa, não onde o cartão
+   começa. */
+.grafico-eixo-x-recuado {
+  margin-inline-start: calc(var(--col) + var(--space-12));
+  margin-inline-end: calc(var(--space-48) + var(--space-12));
+}
+
+.grafico-legenda {
+  font-size: var(--text-11);
+  color: var(--muted);
+  line-height: var(--leading-snug);
+  text-align: start;
+}
+
 .histo {
   display: flex;
   align-items: flex-end;
   gap: var(--space-2);
   block-size: var(--space-96);
-  padding-block-start: var(--space-4);
 }
 
 .histo-barra {
   flex: 1 1 0;
+  min-inline-size: var(--space-2);
+  block-size: var(--h);
   min-block-size: var(--hairline);
   border-radius: var(--radius-2) var(--radius-2) 0 0;
+  background: var(--cor);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  align-self: flex-end;
+  opacity: 0.82;
+  transition: opacity var(--duration-2) var(--ease-out-soft);
 }
+
+.histo-barra:hover,
+.histo-barra.is-ativo { opacity: 1; }
+
+.histo-barra:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+  opacity: 1;
+}
+
+.barras {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.barras-linha {
+  display: grid;
+  grid-template-columns: minmax(0, var(--col)) 1fr var(--space-48);
+  align-items: center;
+  gap: var(--space-12);
+}
+
+/* O alvo é a faixa inteira, não só o pedaço pintado: mirar num valor pequeno
+   com o ponteiro seria impossível se o alvo tivesse a largura do valor. */
+.barra-alvo {
+  display: block;
+  inline-size: 100%;
+  block-size: var(--space-16);
+  border: 0;
+  padding: 0;
+  background: var(--dim);
+  border-radius: var(--radius-2);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.barra-alvo:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+}
+
+.barra-preenche {
+  display: block;
+  block-size: 100%;
+  inline-size: var(--w);
+  min-inline-size: var(--hairline);
+  background: var(--cor);
+  border-radius: var(--radius-2);
+  opacity: 0.82;
+  transition: opacity var(--duration-2) var(--ease-out-soft);
+}
+
+.barra-alvo:hover .barra-preenche,
+.barra-alvo.is-ativo .barra-preenche { opacity: 1; }
 
 /* Faixa de números. O .glass-panel da linguagem já traz borda e raio próprios;
    envolvê-lo num .card punha um quadro dentro do outro. Aqui ele É a
@@ -639,4 +800,95 @@ button.ngs-cartao {
   word-break: break-all;
   overflow-x: visible;
   tab-size: 4;
+}
+
+/* Filtros da tabela de variantes. Grade que se adensa sozinha: são nove
+   controles, e num cartão de 1232px eles cabem em três linhas, num de 375
+   em nove. Nenhuma consulta de largura decide isso. */
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: var(--space-12);
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.filtro-largo { grid-column: span 2; }
+
+@media (max-width: 768px) {
+  .filtro-largo { grid-column: span 1; }
+}
+
+/* Cabeçalho ordenável. O ícone fica sempre presente para a linha não mudar de
+   altura ao ordenar, e a cor separa a coluna ativa das outras. */
+.th-ordenar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.th-ordenar:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+}
+
+.th-ordenar .icon { color: var(--muted); }
+
+[aria-sort='ascending'] .th-ordenar,
+[aria-sort='descending'] .th-ordenar { color: var(--text); }
+
+[aria-sort='ascending'] .th-ordenar .icon,
+[aria-sort='descending'] .th-ordenar .icon { color: var(--text); }
+
+/* Gene com achado: a linha inteira é o alvo, e ela abre a lista de variantes
+   daquele gene sem animar altura. */
+.gene-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  inline-size: 100%;
+  min-block-size: var(--hit-min);
+  padding: var(--space-6) var(--space-8);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-field);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--duration-2) var(--ease-out-soft);
+}
+
+.gene-linha:hover,
+.gene-linha.is-ativo { background: var(--dim); }
+
+.gene-linha:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+}
+
+.gene-detalhe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  list-style: none;
+  margin: var(--space-6) 0 var(--space-12);
+  padding: var(--space-8) var(--space-12);
+  border-inline-start: var(--stroke) solid var(--border);
+  --surface-context: var(--surface);
+}
+
+@media (pointer: coarse) {
+  .gene-linha { min-block-size: var(--hit-min-touch); }
+  .th-ordenar { min-block-size: var(--hit-min-touch); }
 }

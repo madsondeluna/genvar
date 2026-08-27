@@ -10,8 +10,10 @@ coisa que o parser le esta presente e correta:
     nao deduzido pelo comprimento do cromossomo 1)
   - contigs com os comprimentos GRCh38, na ordem canonica
   - FILTER=PASS em toda linha, QUAL alto, DP e GQ presentes
-  - posicoes SORTEADAS DENTRO de genes reais do conjunto que a pagina carrega,
-    para que o mapeamento por coordenada tenha o que devolver
+  - um nucleo de variantes REAIS do ClinVar (coordenada, rsID, REF e ALT como
+    o NCBI publica), para que o cruzamento por rsID e o por coordenada tenham
+    os dois o que devolver, e o relatorio saia com achado de verdade
+  - o resto sorteado DENTRO de genes reais do conjunto que a pagina carrega
   - Ti/Tv alvo 2.1, que o valor esperado de exoma humano e a faixa que a propria pagina usa como referencia
 
 Semente fixa: rodar duas vezes da o mesmo arquivo.
@@ -23,6 +25,12 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 GENES = RAIZ / 'frontend/public/data/burden/genes.json'
 SAIDA = RAIZ / 'frontend/public/exemplo-grch38.vcf'
+CLINVAR = RAIZ / 'frontend/public/data/clinvar'
+
+# Quantas variantes reais do ClinVar entram, por camada. Numeros pequenos de
+# proposito: um exoma real tem poucas patogenicas e muitas benignas, e um
+# arquivo de exemplo que invertesse isso ensinaria a ler errado.
+DO_CLINVAR = {'aviso': 40, 'incerta': 260, 'benigna': 700}
 
 # GRCh38.p14, sequencias primarias.
 CONTIGS = [
@@ -49,6 +57,39 @@ def transversao(ref):
     return rng.choice([b for b in BASES if b != ref and b != TRANSICAO[ref]])
 
 
+def do_clinvar():
+    """Amostra variantes reais dos turnos que o proprio site distribui."""
+    import gzip as gz
+    fora = []
+    for camada, quantas in DO_CLINVAR.items():
+        por_chrom = max(1, quantas // 24)
+        for chrom in [c for c, _ in CONTIGS if c != 'MT']:
+            arq = CLINVAR / f'{camada}-{chrom}.json.gz'
+            if not arq.exists():
+                continue
+            with gz.open(arq, 'rt') as fh:
+                t = json.load(fh)
+            n = t['n']
+            if not n:
+                continue
+            refs = t['ref'].split(',')
+            alts = t['alt'].split(',')
+            # posDelta e cumulativo: reconstruir a posicao exige somar do inicio.
+            pos = []
+            acc = 0
+            for d in t['posDelta']:
+                acc += d
+                pos.append(acc)
+            escolhidos = rng.sample(range(n), min(por_chrom, n))
+            for i in escolhidos:
+                if len(refs[i]) > 20 or len(alts[i]) > 20:
+                    continue
+                rs = t['rs'][i]
+                fora.append((chrom, pos[i], refs[i], alts[i],
+                             f'rs{rs}' if rs else '.', t['genes'][t['geneIdx'][i]]))
+    return fora
+
+
 def main():
     g = json.loads(GENES.read_text())
     genes = [
@@ -60,13 +101,24 @@ def main():
     # Ti/Tv 2.1 significa 21 transicoes para 10 transversoes.
     p_transicao = TITV / (1 + TITV)
 
-    linhas = []
-    for i in range(N_VARIANTES):
-        simbolo, chrom, ini, fim = genes[rng.randrange(len(genes))]
-        pos = rng.randint(ini + 1, fim - 1)
-        ref = rng.choice(BASES)
+    reais = do_clinvar()
+    print(f'{len(reais)} variantes reais do ClinVar entraram no exemplo')
 
-        if rng.random() < FRACAO_INDEL:
+    linhas = []
+    for i in range(N_VARIANTES + len(reais)):
+        real = reais[i] if i < len(reais) else None
+        if real:
+            chrom, pos, ref, alt, rsid, simbolo = real
+            tipo = 'SNV' if len(ref) == 1 and len(alt) == 1 else ('INS' if len(alt) > len(ref) else 'DEL')
+        else:
+            simbolo, chrom, ini, fim = genes[rng.randrange(len(genes))]
+            pos = rng.randint(ini + 1, fim - 1)
+            ref = rng.choice(BASES)
+            rsid = f'rs{9_000_000 + i * 7}'
+
+        if real:
+            pass
+        elif rng.random() < FRACAO_INDEL:
             # Indel curto, sempre com a base ancora que o formato exige.
             n = rng.choice([1, 1, 1, 2, 2, 3, 4, 6])
             cauda = ''.join(rng.choice(BASES) for _ in range(n))
@@ -96,7 +148,6 @@ def main():
             pl = f'{int(qual)},{gq},0'
 
         info = f'DP={dp};AF={alt_reads / dp:.3f};TIPO={tipo};GENE={simbolo}'
-        rsid = f'rs{9_000_000 + i * 7}'
         linhas.append((
             ORDEM[chrom], pos,
             f'{chrom}\t{pos}\t{rsid}\t{ref}\t{alt}\t{qual}\tPASS\t{info}'

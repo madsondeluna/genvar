@@ -5,6 +5,7 @@ import NgsPipeline from '../components/NgsPipeline'
 import VcfReport from '../components/VcfReport'
 import { lerVCF, extrairDoZip } from '../vcf/parse'
 import { resumo, indiceDeGenes, geneDaPosicao } from '../vcf/metricas'
+import { anotar, resumoClinico } from '../vcf/clinvar'
 
 // Anotação de VCF, inteira no navegador.
 //
@@ -22,12 +23,16 @@ export default function VcfPage() {
   const [estado, setEstado] = useState('vazio')  // vazio | lendo | pronto | erro
   const [progresso, setProgresso] = useState(null)
   const [dados, setDados] = useState(null)
+  const [anotacao, setAnotacao] = useState(null)
+  const [resumoCli, setResumoCli] = useState(null)
+  const [vus, setVus] = useState(false)
   const [erro, setErro] = useState(null)
   const inputRef = useRef(null)
 
   const processar = useCallback(async (arquivo) => {
     if (!arquivo) return
     setEstado('lendo'); setErro(null); setDados(null); setProgresso(null)
+    setAnotacao(null); setResumoCli(null); setVus(false)
     try {
       let extras = 0
       if (/\.zip$/i.test(arquivo.name)) {
@@ -53,7 +58,7 @@ export default function VcfPage() {
         for (const v of variantes) v.gene = geneDaPosicao(indice, v.chrom, v.pos)
       }
 
-      setDados({
+      const alvo = {
         nome: arquivo.name,
         outrosNoZip: extras,
         tamanho: arquivo.size,
@@ -63,13 +68,33 @@ export default function VcfPage() {
         truncado,
         metricas: resumo(variantes),
         genesMapeados: podeMapear,
-      })
+      }
+      setDados(alvo)
       setEstado('pronto')
+
+      // A anotação clínica vem DEPOIS de a tela existir. São megabytes de
+      // ClinVar por cromossomo: prender o relatório inteiro nisso deixaria o
+      // usuário olhando um carregando enquanto as métricas de qualidade, que
+      // não dependem de rede nenhuma, já estavam prontas.
+      const info = await anotar(variantes, { camadas: ['aviso'], build: meta.build })
+      setAnotacao(info)
+      setResumoCli(resumoClinico(variantes))
     } catch (e) {
       setErro(e.message || String(e))
       setEstado('erro')
     }
   }, [])
+
+  // A camada de significado incerto tem 2,3 milhões de registros e só entra a
+  // pedido: baixá-la por padrão custaria dezenas de megabytes para uma leitura
+  // que, por definição, não conclui nada.
+  const carregarVUS = useCallback(async () => {
+    if (!dados) return
+    const info = await anotar(dados.variantes, { camadas: ['incerta'], build: dados.meta.build })
+    setAnotacao((a) => ({ ...a, casadas: (a?.casadas || 0) + info.casadas }))
+    setResumoCli(resumoClinico(dados.variantes))
+    setVus(true)
+  }, [dados])
 
   const aoSoltar = useCallback((e) => {
     e.preventDefault()
@@ -173,7 +198,15 @@ export default function VcfPage() {
           </div>
         </section>
 
-        {estado === 'pronto' && dados && <VcfReport dados={dados} />}
+        {estado === 'pronto' && dados && (
+          <VcfReport
+            dados={dados}
+            anotacao={anotacao}
+            resumoCli={resumoCli}
+            vus={vus}
+            onCarregarVUS={carregarVUS}
+          />
+        )}
       </div>
     </main>
   )

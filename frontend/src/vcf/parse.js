@@ -94,7 +94,15 @@ function parseCabecalho(linhas) {
     const chr1 = meta.contigs.find((c) => c.id === '1' || c.id === 'chr1')
     if (chr1?.length === 248956422) { meta.build = 'GRCh38'; meta.buildDeduzido = true }
     else if (chr1?.length === 249250621) { meta.build = 'GRCh37'; meta.buildDeduzido = true }
-    else meta.build = null
+    else {
+      // Sem declaração e sem contig que sirva: assume GRCh38, que é o que a
+      // indústria usa desde 2017 e o build de toda base pública corrente
+      // (ClinVar, gnomAD v4, Ensembl). Assumir é diferente de saber, então a
+      // presunção sai marcada e o relatório a repete na tela: um GRCh37 mudo
+      // cai aqui e sairia com gene trocado sem ninguém perceber.
+      meta.build = 'GRCh38'
+      meta.buildPresumido = true
+    }
   }
   return meta
 }
