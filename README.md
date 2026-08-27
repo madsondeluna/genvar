@@ -62,20 +62,52 @@ O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o ba
 - Ideograma cromossômico com a posição da variante destacada.
 - Histórico de buscas recentes armazenado em `localStorage`, com prefetch ao passar o mouse sobre exemplos da página inicial.
 
-### Doenças Raras (beta)
+### Plataforma beta: da doença rara ao poligênico
 
-Módulo de doenças e mutações raras (monogênicas), primeiro passo rumo a uma plataforma SaaS que unirá o monogênico, o multigênico e o poligênico. Detalhes de evolução em `ROADMAP.md`.
+Além da busca por gene e por variante, a plataforma reúne um conjunto de módulos que cobrem a genética do monogênico ao poligênico, servidos sob rotas próprias e por uma navegação compartilhada. O plano de evolução está em `ROADMAP.md`. Todos os módulos seguem a mesma disciplina de design (tokens e ícones da linguagem Pure) e um aviso médico global.
 
-- Hub `/doencas`: catálogo curado de doenças monogênicas em PT-BR, com busca por doença, categoria ou gene e facetas por padrão de herança (AD, AR, XLR, XLD, XL).
-- Detalhe `/doenca/:id`: metadados curados (herança, prevalência, referências Orphanet, OMIM, MONDO, sinais clínicos) mais um painel de genes causais com a restrição gênica (LOEUF, pLI) obtida ao vivo da gnomAD e link para a página de gene completa.
-- Aba `/produtos`: apresentação das linhas do produto (raras/monogênico, multigênico, poligênico) e de como o risco raro e o poligênico se relacionam.
-- Fonte de dados: catálogo completo gerado do Orphanet (`backend/scripts/build_catalog.py` produz `backend/app/data/rare_diseases.json` com todas as doenças raras que têm gene causal), mesclado com a curadoria PT-BR de `rare_diseases.py` (que tem prioridade). Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD. A camada de burden e associação entra em fase posterior do roadmap.
+#### Doenças raras (monogênico)
+
+- Hub `/doencas`: catálogo curado de doenças monogênicas em PT-BR, com busca por doença, categoria ou gene e facetas por padrão de herança (AD, AR, XLR, XLD, XL). Um painel de panorama mostra a distribuição por herança e por categoria.
+- Detalhe `/doenca/:id`: metadados curados (herança, prevalência, referências Orphanet, OMIM, MONDO, sinais clínicos), um painel de genes causais com a restrição gênica (LOEUF, pLI) obtida ao vivo da gnomAD e link para a página de gene, uma seção de variantes patogênicas por gene (via overlap do Ensembl com o ClinVar) e o contexto Brasil (cobertura SUS/PCDT, triagem neonatal, prevalência nacional e link para a raras.org).
+- Fonte de dados: catálogo completo gerado do Orphanet (`backend/scripts/build_catalog.py` produz `backend/app/data/rare_diseases.json` com todas as doenças raras que têm gene causal), mesclado com a curadoria PT-BR de `rare_diseases.py` (que tem prioridade por código Orphanet). Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD.
 
 Para gerar o catálogo completo (onde a rede é aberta):
 
 ```
 cd backend && python -m scripts.build_catalog
 ```
+
+#### Painéis de genes (multigênico)
+
+- Hub `/paineis`: catálogo curado de painéis de genes, com busca por painel, categoria ou gene e facetas por categoria. Cada painel agrupa os genes que, juntos, respondem por uma condição ou por condições relacionadas.
+- Detalhe `/painel/:id`: a restrição (LOEUF, pLI) de cada gene do painel obtida ao vivo da gnomAD, com a faixa do que é restrito ou tolerante e uma contagem de genes restritos a perda de função; a visão digênica ou oligogênica em destaque quando pertinente (por exemplo, herança digênica GJB2/GJB6 na surdez, ou PRPH2/ROM1 na retinose pigmentar); e as condições relacionadas com link para a doença.
+- Fonte de dados: catálogo curado em `backend/app/data/gene_panels.py` (câncer de mama e ovário, colorretal e Lynch, cardiomiopatias, arritmias, hipercolesterolemia familiar, surdez, retinopatias, epilepsias), enriquecido ao vivo pela gnomAD.
+
+#### Poligênico e escores PGS
+
+- Página `/poligenico`: escores poligênicos (PGS) e, sobretudo, a relação entre o raro e o poligênico. Um escore poligênico soma o efeito de muitas variantes comuns de pequeno efeito para estimar a predisposição a um traço ou doença.
+- Seção "Raro x poligênico": como o fundo poligênico modula a penetrância de uma variante rara monogênica, com exemplos documentados (LDL e hipercolesterolemia familiar, BRCA e câncer de mama, doença arterial coronariana, MODY frente ao diabetes tipo 2). Cada exemplo liga os genes à página de gene e a condição à página de doença.
+- Escores: semente curada de escores públicos notáveis em `backend/app/data/polygenic.py`, enriquecida ao vivo pela API pública do PGS Catalog (número de variantes, publicação, ancestrias das amostras). Cada card abre a página canônica do escore no PGS Catalog.
+
+#### Associação por burden
+
+- Página `/associacao`: reproduz e organiza a análise de burden de variantes raras por gene, meta-analisada por ancestria (inclusive a ancestria latina e miscigenada das Américas, AMR, e mundial).
+- Manhattan plot em canvas com filtros de fenótipo, ancestria, máscara funcional, limite de MAF e teste estatístico (Burden, SKAT, SKAT-O), com linhas de limiar (Bonferroni, Cauchy, sugestivo) e uma tabela de maiores sinais exportável em CSV.
+- Forest plot cross-ancestry por gene, com o efeito (beta) e o intervalo de confiança de 95% por ancestria, o losango da meta-análise e a heterogeneidade entre ancestrias (I quadrado, com a escala do que é consistente ou divergente).
+- Mapa mundial dos biobancos por coordenada real, com a cobertura por ancestria e o destaque da camada latina (AMR).
+- Dados: JSON colunar servido em `frontend/public/data/burden`, gerado pelo ETL `backend/scripts/build_burden.py` a partir de sumários gene-based públicos (formato SAIGE-GENE e Meta-SAIGE). A fonte é configurável por `VITE_BURDEN_DATA_URL` para apontar ao dataset completo hospedado em produção. Detalhes em `DATA_BURDEN.md`.
+
+#### Produtos, planos e status
+
+- Aba `/produtos`: apresentação das três linhas do produto (raras e monogênico, multigênico, poligênico) e da relação entre o risco raro e o poligênico.
+- Página `/planos`: estrutura de planos pretendida (Free, Pro, Enterprise) e uma nota sobre a API pública. Autenticação e cobrança não fazem parte do beta público.
+- Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda.
+
+#### Modo de leitura e aviso médico
+
+- Modo paciente ou profissional (alternado na navegação): o modo paciente prioriza a linguagem simples e o profissional expõe o detalhe técnico completo.
+- Aviso médico global e persistente: a aplicação é para fins de informação e pesquisa e não substitui avaliação, diagnóstico ou aconselhamento médico.
 
 
 ## A aplicação
@@ -97,7 +129,7 @@ As imagens abaixo mostram a interface do GenVar em uso, a partir de consultas re
 
 ## Bancos de dados e APIs integrados
 
-O sistema consome cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt), descritas nas subseções 1 a 5, e um agregador de escores preditivos, o MyVariant.info, que reúne o dbNSFP e outras fontes. A página de gene usa quatro bases (Ensembl, gnomAD, UniProt e AlphaFold); a de variante usa três (Ensembl, gnomAD e ClinVar) somadas ao MyVariant.info. No gene, a significância clínica do ClinVar chega pela resposta do Ensembl, sem chamada direta.
+O sistema consome cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt), descritas nas subseções 1 a 5, e um agregador de escores preditivos, o MyVariant.info, que reúne o dbNSFP e outras fontes. A página de gene usa quatro bases (Ensembl, gnomAD, UniProt e AlphaFold); a de variante usa três (Ensembl, gnomAD e ClinVar) somadas ao MyVariant.info. No gene, a significância clínica do ClinVar chega pela resposta do Ensembl, sem chamada direta. Os módulos beta acrescentam mais duas fontes públicas, descritas na subseção 6 e na nota seguinte: o GWAS Catalog (associações comuns por gene) e o PGS Catalog (escores poligênicos), além do release estático de sumários de burden que alimenta a página de associação.
 
 ### 1. Ensembl REST API
 
@@ -250,6 +282,16 @@ Campos extraídos e mapeados para o `VariantResponse`:
 
 **Nota técnica**: a chamada é feita em paralelo com gnomAD e ClinVar via `asyncio.gather()`. Erros ou respostas 404 caem em `{}` graciosamente, sem bloquear a resposta. A API aceita tanto HGVS genômico quanto rs ID. O sistema tenta HGVS primeiro (mais preciso quando há coordenadas do VEP) e utiliza rs ID como fallback.
 
+### 6. PGS Catalog API
+
+- **O que é**: catálogo público de escores poligênicos (Polygenic Score Catalog, do EBI), com metadados de cada escore: número de variantes, publicação de origem e ancestrias das amostras de desenvolvimento e avaliação.
+- **Uso no GenVar**: o módulo poligênico (`/poligenico`) parte de uma semente curada de escores notáveis e enriquece cada escore ao vivo pela API do PGS Catalog (`backend/app/services/pgs_catalog.py`). O detalhe canônico de cada escore fica na página do PGS Catalog.
+- **Endpoint base**: `https://www.pgscatalog.org/rest`.
+
+### Dados de burden (release estático público)
+
+Diferente das bases acima, os sumários de associação por burden de variantes raras (formato SAIGE-GENE e Meta-SAIGE) são publicados como um release estático de estatísticas-resumo, não como uma API ao vivo. O ETL `backend/scripts/build_burden.py` converte esse release nos JSON colunares que o módulo `/associacao` consome, incluindo o erro-padrão do efeito Burden para os intervalos de confiança do forest plot. Manter atualizado significa rerodar o ETL quando sai uma versão nova. Detalhes de formato e execução em `DATA_BURDEN.md`.
+
 
 ## Arquitetura do sistema
 
@@ -324,7 +366,7 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | react-plotly.js | 2.6 | Wrapper React para Plotly.js. |
 | ideogram | 1.53 | Ideograma cromossômico humano com bandeamento G (GRCh38). |
 | NGL | 2.4 | Visualizador 3D de estruturas moleculares (PDB) no browser. |
-| Lucide React | 0.294 | Ícones SVG. |
+| Ícones Pure | sprite | Biblioteca de ícones da linguagem de design (sprite SVG em `public/pure/icons.svg`, 65 ícones, currentColor, espessura pelo token da linguagem), consumida pelo componente `Icon`. |
 | react-router-dom | 6.20 | Roteamento client-side (SPA). |
 | Google Fonts | Ubuntu e Ubuntu Mono | Tipografia sans-serif para prosa, mono para identificadores. |
 
@@ -352,6 +394,10 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 | `ProteinViewer` | Visualizador 3D interativo | Estrutura AlphaFold (PDB) colorida por pLDDT, representações Cartoon, Superfície, Bola e Bastão, Fita | NGL |
 | `VariantTable` | Tabela com ordenação, filtro, paginação e exportação CSV | Lista de variantes classificadas por categoria clínica | React |
 | `SignificanceTag` | Badge colorido | Classificação ClinVar unificada | React |
+| `ManhattanPlot` | Manhattan em canvas | Associação gene-fenótipo por burden (-log10 p por posição genômica), com linhas de limiar | Canvas nativo |
+| `ForestPlot` | Forest plot cross-ancestry | Efeito Burden por ancestria com intervalo de confiança de 95% e losango da meta-análise | SVG nativo |
+| `BiobankMap` | Mapa mundial equiretangular | Biobancos por coordenada real, dimensionados pela amostra e coloridos pela ancestria predominante | SVG nativo |
+| `CatalogOverview` | Barras horizontais | Distribuição do catálogo de doenças por herança e por categoria | CSS nativo |
 
 **Normalização dos escores de patogenicidade nas barras:**
 
@@ -373,60 +419,91 @@ genvar-dashboard/
 │   │   ├── config.py                Configurações via variáveis de ambiente.
 │   │   ├── routers/
 │   │   │   ├── gene.py              GET /api/gene/{symbol}, agregação paralela.
-│   │   │   └── variant.py           GET /api/variant/{rsid}, agregação paralela.
+│   │   │   ├── variant.py           GET /api/variant/{rsid}, agregação paralela.
+│   │   │   ├── disease.py           /api/disease: catálogo, detalhe e variantes por doença.
+│   │   │   ├── panel.py             /api/panel: painéis de genes (multigênico).
+│   │   │   ├── pgs.py               /api/pgs: escores poligênicos e relação raro x poligênico.
+│   │   │   └── health.py            /api/health/sources e /api/health/endpoints.
 │   │   ├── services/
 │   │   │   ├── ensembl.py           Cliente Ensembl REST API.
 │   │   │   ├── gnomad.py            Cliente gnomAD GraphQL API.
 │   │   │   ├── clinvar.py           Cliente ClinVar E-utilities (busca em lote).
 │   │   │   ├── alphafold.py         Cliente AlphaFold REST API.
 │   │   │   ├── uniprot.py           Cliente UniProt REST API.
-│   │   │   └── myvariant.py         Cliente MyVariant.info (dbNSFP agregado).
+│   │   │   ├── myvariant.py         Cliente MyVariant.info (dbNSFP agregado).
+│   │   │   ├── gwas_catalog.py      Cliente GWAS Catalog (associações por gene).
+│   │   │   └── pgs_catalog.py       Cliente PGS Catalog (detalhe de escore poligênico).
+│   │   ├── data/
+│   │   │   ├── rare_diseases.py     Catálogo curado de doenças raras e loader do JSON do Orphanet.
+│   │   │   ├── gene_panels.py       Catálogo curado de painéis de genes (multigênico).
+│   │   │   ├── polygenic.py         Semente de escores PGS e relação raro x poligênico.
+│   │   │   ├── br_context.py        Contexto Brasil: SUS/PCDT e triagem neonatal.
+│   │   │   └── br_frequencies.py    Frequência alélica brasileira (ABraOM).
+│   │   ├── scripts/
+│   │   │   ├── build_catalog.py     ETL do catálogo completo de doenças (Orphanet).
+│   │   │   └── build_burden.py      ETL dos sumários de burden para JSON colunar.
 │   │   ├── models/
-│   │   │   └── schemas.py           Modelos Pydantic v2 (GeneResponse, VariantResponse).
+│   │   │   └── schemas.py           Modelos Pydantic v2 (gene, variante, doença, painel, PGS, saúde).
 │   │   └── utils/
 │   │       ├── cache.py             Helpers Redis, fallback gracioso.
 │   │       └── validators.py        Validação de entrada e classificação clínica.
 │   └── tests/
 │       ├── test_apis.py             Testes de integração com APIs reais.
-│       └── test_services.py         Testes unitários com mocks.
+│       ├── test_services.py         Testes unitários com mocks.
+│       ├── test_disease.py          Testes do módulo de doenças (mocks).
+│       └── test_build_catalog.py    Testes do ETL do catálogo.
 ├── frontend/
+│   ├── public/
+│   │   ├── pure/icons.svg           Sprite de ícones da linguagem Pure.
+│   │   └── data/burden/             JSON colunar de burden (genes, fenótipos, biobancos, resultados).
 │   ├── src/
 │   │   ├── api/
-│   │   │   └── client.js            Instância Axios e interceptors de erro.
+│   │   │   └── client.js            Axios e fetchers (gene, variante, doença, painel, PGS, saúde).
 │   │   ├── components/
-│   │   │   ├── ChromosomeIdeogram.jsx
-│   │   │   ├── GeographicVariantMap.jsx
-│   │   │   ├── FrequencyBarChart.jsx
-│   │   │   ├── PredictionScoresRadar.jsx
-│   │   │   ├── PredictionDetails.jsx
-│   │   │   ├── GeneLocusHeatmap.jsx
-│   │   │   ├── ConstraintMetrics.jsx
-│   │   │   ├── ProteinViewer.jsx
-│   │   │   ├── VariantTable.jsx
-│   │   │   ├── VariantChangePanel.jsx
-│   │   │   ├── SignificanceTag.jsx
-│   │   │   ├── ExternalLinkButton.jsx
-│   │   │   ├── CopyLinkButton.jsx
-│   │   │   ├── Skeleton.jsx
-│   │   │   ├── ErrorBoundary.jsx
-│   │   │   ├── LoadingSpinner.jsx
-│   │   │   └── ErrorAlert.jsx
+│   │   │   ├── Icon.jsx             Componente de ícone que consome o sprite do Pure.
+│   │   │   ├── AppMenu.jsx          Navegação de seções compartilhada e modo de leitura.
+│   │   │   ├── PageNav.jsx, BrandMorphNav.jsx
+│   │   │   ├── UnifiedSearch.jsx    Busca unificada (gene, variante ou doença).
+│   │   │   ├── CatalogOverview.jsx  Panorama do catálogo de doenças.
+│   │   │   ├── MedicalDisclaimer.jsx  Aviso médico global.
+│   │   │   ├── ChromosomeIdeogram.jsx, GeographicVariantMap.jsx, FrequencyBarChart.jsx
+│   │   │   ├── PredictionScoresRadar.jsx, PredictionDetails.jsx, GeneLocusHeatmap.jsx
+│   │   │   ├── ConstraintMetrics.jsx, ProteinViewer.jsx, ExonVariantMap.jsx
+│   │   │   ├── VariantTable.jsx, VariantChangePanel.jsx, SignificanceTag.jsx
+│   │   │   ├── ExternalLinkButton.jsx, CopyLinkButton.jsx, Skeleton.jsx
+│   │   │   └── ErrorBoundary.jsx, LoadingSpinner.jsx, ErrorAlert.jsx
+│   │   ├── burden/
+│   │   │   ├── constants.js         Arrays canônicos (ancestrias, máscaras, MAFs, testes) e limiares.
+│   │   │   ├── data.js              Carregadores dos JSON colunares e layout do genoma.
+│   │   │   ├── stats.js             Erro-padrão, IC de 95% e heterogeneidade (I quadrado).
+│   │   │   ├── ManhattanPlot.jsx    Manhattan em canvas.
+│   │   │   ├── ForestPlot.jsx       Forest plot cross-ancestry em SVG.
+│   │   │   ├── FilterBar.jsx        Filtros de ancestria, máscara, MAF e teste.
+│   │   │   └── BiobankMap.jsx       Mapa mundial dos biobancos.
 │   │   ├── hooks/
-│   │   │   └── useSearchHistory.js  Histórico de buscas em localStorage.
+│   │   │   ├── useSearchHistory.js  Histórico de buscas em localStorage.
+│   │   │   └── useViewMode.js       Modo de leitura global (paciente ou profissional).
 │   │   ├── pages/
-│   │   │   ├── HomePage.jsx         Página inicial com busca por gene e variante.
-│   │   │   ├── GenePage.jsx         Dashboard completo de gene.
-│   │   │   └── VariantPage.jsx      Dashboard completo de variante.
+│   │   │   ├── HomePage.jsx, GenePage.jsx, VariantPage.jsx
+│   │   │   ├── DiseasesPage.jsx, DiseasePage.jsx    Doenças raras (hub e detalhe).
+│   │   │   ├── PanelsPage.jsx, PanelPage.jsx        Painéis de genes (hub e detalhe).
+│   │   │   ├── PolygenicPage.jsx                    Poligênico e relação raro x poligênico.
+│   │   │   ├── AssociationPage.jsx                  Associação por burden.
+│   │   │   ├── ProductsPage.jsx, PlansPage.jsx      Produtos e planos.
+│   │   │   └── StatusPage.jsx                       Saúde das fontes e endpoints.
+│   │   ├── pure/
+│   │   │   ├── theme.css, patterns.css              Tokens e padrões da linguagem Pure.
+│   │   │   └── glass.css                            Camada liquid glass aditiva.
 │   │   ├── utils/
-│   │   │   ├── format.js            Formatadores e classificação de significância.
-│   │   │   ├── conditions.js        Normalização das condições clínicas do ClinVar.
-│   │   │   ├── protein.js           Formatação das mudanças moleculares (DNA e proteína).
+│   │   │   ├── format.js, conditions.js, protein.js
 │   │   │   ├── csv.js               Exportação de tabelas para CSV.
-│   │   │   └── ideogramAnnotations.js   Montagem de anotações para o ideograma.
-│   │   ├── App.jsx                  Roteamento, QueryClient, ErrorBoundary global.
-│   │   └── index.css                Tailwind base e componentes customizados.
+│   │   │   ├── inheritance.js       Rótulos de padrão de herança.
+│   │   │   ├── pureTokens.js        Resolve tokens Pure para libs de canvas/SVG.
+│   │   │   └── ideogramAnnotations.js
+│   │   ├── App.jsx                  Roteamento (base-path aware), QueryClient, aviso médico global.
+│   │   └── index.css               Camadas Pure (theme, patterns, glass) e a classe de ícone.
 │   ├── package.json
-│   ├── vite.config.js               Proxy /api para backend:8000.
+│   ├── vite.config.js               base de VITE_BASE_PATH; proxy /api para backend:8000.
 │   └── tailwind.config.js           Paleta cinza e fonte Ubuntu.
 ├── benchmark/
 │   ├── run_benchmarks.py            Orquestrador: executa todas as suítes ou uma individual.
@@ -446,11 +523,15 @@ genvar-dashboard/
 │   │   ├── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
 │   │   └── figures/                 Figuras comparativas local vs Docker (fig_cmp_*).
 │   └── metrics/                     Dados, figuras, diagramas e scripts da metrificação do TCC.
+├── deploy/                          Blueprint Render e worker Cloudflare para o /beta.
 ├── docs/                            Diagramas de arquitetura e fluxo (SVG das Figuras 1 e 2).
 ├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
-├── render.yaml                      Configuração de deploy no Render.
+├── render.yaml                      Configuração de deploy no Render (produção).
 ├── SETUP.md                         Guia de instalação detalhado.
+├── ROADMAP.md                       Plano de evolução por fases (monogênico a poligênico).
+├── DATA_BURDEN.md                   Fontes públicas e ETL da camada de burden.
+├── DEPLOY_BETA.md                   Passo a passo do deploy isolado em genvar.delunalab.dev/beta.
 ├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
 ```
@@ -571,13 +652,39 @@ Exemplo (`GET /api/disease/hipercolesterolemia-familiar`):
 }
 ```
 
-### GET /api/health/sources
+### GET /api/panel e GET /api/panel/{id}
 
-Valida as fontes externas: pinga cada upstream (Ensembl, gnomAD, ClinVar,
-AlphaFold, UniProt, MyVariant, GWAS Catalog) com uma consulta conhecida e
-reporta `ok`, código HTTP e latência por fonte (`HealthSourcesResponse`).
-Resultado cacheado por 60 s. Útil para checar em produção se todas as APIs estão
-respondendo (ex.: `curl https://genvar-backend.onrender.com/api/health/sources`).
+Endpoints do módulo de Painéis de genes (multigênico).
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /api/panel` | Lista de painéis (`PanelListResponse`) com busca e faceta por categoria via `q`, `category`, `page`, `page_size`. |
+| `GET /api/panel/stats` | Estatísticas do catálogo (`PanelStatsResponse`): total de painéis, total de genes distintos e contagem por categoria. |
+| `GET /api/panel/{id}` | Detalhe (`PanelDetail`): genes do painel com a restrição da gnomAD (LOEUF, pLI) agregada ao vivo, a contagem de genes restritos, a nota digênica e as condições relacionadas. Retorna 404 para id fora do catálogo. Resultado degradado não é fixado no cache. |
+
+### GET /api/pgs e GET /api/pgs/{id}
+
+Endpoints do módulo Poligênico (escores PGS).
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /api/pgs` | Lista de escores poligênicos curados (`PgsListResponse`) com busca e faceta por categoria, mais a contagem por categoria. |
+| `GET /api/pgs/interplay` | Relação raro x poligênico (`InterplayResponse`): condições em que o fundo poligênico modula a penetrância de uma variante rara monogênica. |
+| `GET /api/pgs/{id}` | Detalhe do escore (`PgsScoreDetail`): metadados curados enriquecidos ao vivo pelo PGS Catalog (número de variantes, publicação, ancestrias das amostras) e a URL canônica no PGS Catalog. Retorna 404 para id fora do catálogo. |
+
+### GET /api/health/sources e GET /api/health/endpoints
+
+`GET /api/health/sources` valida as fontes externas: pinga cada upstream
+(Ensembl, gnomAD, ClinVar, AlphaFold, UniProt, MyVariant, GWAS Catalog) com uma
+consulta conhecida e reporta `ok`, código HTTP e latência por fonte
+(`HealthSourcesResponse`). Resultado cacheado por 60 s.
+
+`GET /api/health/endpoints` autossonda os próprios endpoints da API contra o
+próprio servidor, em paralelo, e reporta por endpoint o método, o caminho, o
+`ok`, o código HTTP, a latência e se depende de fonte externa
+(`EndpointsHealthResponse`). Alimenta a seção de serviços da página `/status`.
+Útil para checar em produção se todas as APIs estão respondendo (ex.:
+`curl https://genvar-backend.onrender.com/api/health/sources`).
 
 ### GET / e GET /health
 
