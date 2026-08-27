@@ -169,7 +169,6 @@ export default function ContributePage() {
 
           <form
             className="card flex flex-col gap-16"
-            style={{ maxWidth: 'var(--measure-wide)' }}
             noValidate
             onSubmit={(e) => {
               e.preventDefault()
@@ -184,6 +183,7 @@ export default function ContributePage() {
               window.open(url, '_blank', 'noopener')
             }}
           >
+            <div className="grid gap-16 about-cards">
             <label className="field">
               <span className="field-label">Nome</span>
               <input
@@ -212,7 +212,6 @@ export default function ContributePage() {
               {erros.contato && <span id="erro-contato" className="field-error" role="alert">{erros.contato}</span>}
             </label>
 
-            <div className="grid gap-16 about-cards">
               <label className="field">
                 <span className="field-label">De onde você vem</span>
                 <span className="select-shell">
