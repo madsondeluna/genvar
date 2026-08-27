@@ -16,7 +16,26 @@
 
 ## Descrição do projeto
 
-GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt) e um agregador de escores preditivos (MyVariant.info, sobre o dbNSFP) em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante ou gene de interesse.
+GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra oito bases públicas em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante, gene ou doença de interesse.
+
+As fontes se dividem em duas naturezas, e a distinção determina a idade do dado exibido:
+
+| Natureza | Fontes | Idade do dado |
+|---|---|---|
+| Catálogo (ETL versionado) | Orphanet, Genomics England PanelApp, PGS Catalog | data da extração |
+| Consulta ao vivo | Ensembl, gnomAD, ClinVar, AlphaFold, UniProt | data da requisição |
+
+Volumes atuais dos catálogos:
+
+| Catálogo | Total | Curado em PT-BR | Da fonte pública |
+|---|---|---|---|
+| Doenças raras | 3.739 | 26 | 3.713 |
+| Painéis de genes | 434 | 9 | 425 |
+| Escores poligênicos | 6.982 | 8 | 6.974 |
+
+Genes distintos: 4.146 em doenças, 4.309 em painéis. Categorias: 17 em doenças, 17 em painéis, vocabulário compartilhado entre os dois.
+
+A proveniência de cada fonte, com licença, uso e citação formal, está em `GET /api/sources` e na rota `/fontes` da aplicação.
 
 O sistema é voltado para pesquisadores, clínicos e estudantes das áreas de bioinformática, genética médica e medicina de precisão, permitindo a exploração de anotações funcionais, frequências populacionais, significado clínico, escores de patogenicidade, conservação evolutiva, predição de splicing e estrutura proteica de forma integrada e visualmente acessível.
 
@@ -68,27 +87,55 @@ Além da busca por gene e por variante, a plataforma reúne um conjunto de módu
 
 #### Doenças raras (monogênico)
 
-- Hub `/doencas`: catálogo curado de doenças monogênicas em PT-BR, com busca por doença, categoria ou gene e facetas por padrão de herança (AD, AR, XLR, XLD, XL). Um painel de panorama mostra a distribuição por herança e por categoria.
+- Hub `/doencas`: 3.739 doenças monogênicas, com busca por doença, categoria ou gene (com sugestões ao digitar) e seletor de padrão de herança. Um painel de panorama mostra a distribuição por herança e por categoria.
+- Padrões de herança: AD, AR, XLR, XLD, XL, MF (multifatorial), MT (mitocondrial), SD (semidominante), OL (oligogênica) e YL (ligada ao Y). Cada padrão tem uma marca colorida de slot categórico, estável entre listagem e detalhe.
 - Detalhe `/doenca/:id`: metadados curados (herança, prevalência, referências Orphanet, OMIM, MONDO, sinais clínicos), um painel de genes causais com a restrição gênica (LOEUF, pLI) obtida ao vivo da gnomAD e link para a página de gene, uma seção de variantes patogênicas por gene (via overlap do Ensembl com o ClinVar) e o contexto Brasil (cobertura SUS/PCDT, triagem neonatal, prevalência nacional e link para a raras.org).
-- Fonte de dados: catálogo completo gerado do Orphanet (`backend/scripts/build_catalog.py` produz `backend/app/data/rare_diseases.json` com todas as doenças raras que têm gene causal), mesclado com a curadoria PT-BR de `rare_diseases.py` (que tem prioridade por código Orphanet). Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD.
+- Fonte de dados: Orphanet, via `backend/etl/orphanet.py`, que produz `backend/app/data/orphanet_diseases.json`. O runtime mescla com a curadoria PT-BR de `rare_diseases.py`, que tem prioridade por código Orphanet. Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD.
+- Só entram associações de mutação germinativa causadora. Fator de suscetibilidade e gene candidato ficam em campo separado (`genes_susceptibility`), e entidades marcadas como históricas pelo Orphanet são excluídas.
+- Nomes em português oficial do Orphanet (`pt_product1`): 94% das 3.733 doenças. As demais mantêm o nome em inglês, que é como a fonte o publica.
+- Fenótipos: anotação HPO do Orphanet, restrita ao que é obrigatório ou frequente. Termos em português pela tradução oficial do HPO (7.213 termos, status `OFFICIAL`), complementada por `backend/etl/traducoes/hpo_pt_br.tsv` para os termos que o HPO ainda não traduziu. Cobertura atual das aparições: 64%.
 
-Para gerar o catálogo completo (onde a rede é aberta):
+Para gerar o catálogo:
 
 ```
-cd backend && python -m scripts.build_catalog
+cd backend && python -m etl.orphanet
 ```
+
+| Campo | Cobertura |
+|---|---|
+| Gene causal | 3.733 de 3.733 |
+| Categoria | 3.678 (99%) |
+| Padrão de herança | 3.640 |
+| Prevalência | 3.239 |
+| Fenótipos HPO | 2.204 |
 
 #### Painéis de genes (multigênico)
 
-- Hub `/paineis`: catálogo curado de painéis de genes, com busca por painel, categoria ou gene e facetas por categoria. Cada painel agrupa os genes que, juntos, respondem por uma condição ou por condições relacionadas.
+- Hub `/paineis`: 434 painéis de genes, com busca por painel, categoria ou gene (com sugestões ao digitar) e facetas por categoria. Cada painel agrupa os genes que, juntos, respondem por uma condição ou por condições relacionadas.
 - Detalhe `/painel/:id`: a restrição (LOEUF, pLI) de cada gene do painel obtida ao vivo da gnomAD, com a faixa do que é restrito ou tolerante e uma contagem de genes restritos a perda de função; a visão digênica ou oligogênica em destaque quando pertinente (por exemplo, herança digênica GJB2/GJB6 na surdez, ou PRPH2/ROM1 na retinose pigmentar); e as condições relacionadas com link para a doença.
-- Fonte de dados: catálogo curado em `backend/app/data/gene_panels.py` (câncer de mama e ovário, colorretal e Lynch, cardiomiopatias, arritmias, hipercolesterolemia familiar, surdez, retinopatias, epilepsias), enriquecido ao vivo pela gnomAD.
+- Fonte de dados: Genomics England PanelApp, via `backend/etl/panelapp.py`, que produz `backend/app/data/panelapp_panels.json`, mesclado com os 9 painéis curados em PT-BR de `gene_panels.py`. Enriquecido ao vivo pela gnomAD.
+- Só entram os genes de nível 3 (verde) do PanelApp, de evidência suficiente para uso diagnóstico. Âmbar e vermelho ficam em `genes_amber`. Dos 433 painéis publicados, 425 têm ao menos um gene verde.
+- O PanelApp acumula nomes de grupo de gerações diferentes de curadoria (41 rótulos para 17 assuntos). A normalização acontece no ETL, em `CATEGORIA`, e não no runtime.
+
+Para gerar o catálogo:
+
+```
+cd backend && python -m etl.panelapp
+```
 
 #### Poligênico e escores PGS
 
 - Página `/poligenico`: escores poligênicos (PGS) e, sobretudo, a relação entre o raro e o poligênico. Um escore poligênico soma o efeito de muitas variantes comuns de pequeno efeito para estimar a predisposição a um traço ou doença.
 - Seção "Raro x poligênico": como o fundo poligênico modula a penetrância de uma variante rara monogênica, com exemplos documentados (LDL e hipercolesterolemia familiar, BRCA e câncer de mama, doença arterial coronariana, MODY frente ao diabetes tipo 2). Cada exemplo liga os genes à página de gene e a condição à página de doença.
-- Escores: semente curada de escores públicos notáveis em `backend/app/data/polygenic.py`, enriquecida ao vivo pela API pública do PGS Catalog (número de variantes, publicação, ancestrias das amostras). Cada card abre a página canônica do escore no PGS Catalog.
+- Escores: 6.982 escores do PGS Catalog, via `backend/etl/pgscatalog.py`, que produz `backend/app/data/pgs_catalog.json`, mesclado com os 8 curados em PT-BR de `polygenic.py`. Cada card abre a página canônica do escore no PGS Catalog.
+- Categoria: taxonomia oficial do próprio PGS Catalog (`/rest/trait_category/all`), mapeada por trait EFO. Não há classificação por palavra-chave.
+- Composição de ancestria do conjunto de desenvolvimento de cada escore, com o marcador `eur_only`. Dos 6.982, 2.147 (31%) foram desenvolvidos exclusivamente em população europeia, o que determina se o escore se aplica fora dela.
+
+Para gerar o catálogo:
+
+```
+cd backend && python -m etl.pgscatalog
+```
 
 #### Associação por burden
 
@@ -100,9 +147,10 @@ cd backend && python -m scripts.build_catalog
 
 #### Produtos, planos e status
 
-- Aba `/produtos`: apresentação das três linhas do produto (raras e monogênico, multigênico, poligênico) e da relação entre o risco raro e o poligênico.
+- Aba `/produtos`: as três linhas do produto (raras e monogênico, multigênico, poligênico), a seção "O que já está no ar" com os volumes lidos da API em tempo de renderização, e a relação entre o risco raro e o poligênico.
 - Página `/planos`: estrutura de planos pretendida (Free, Pro, Enterprise) e uma nota sobre a API pública. Autenticação e cobrança não fazem parte do beta público.
 - Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda.
+- Página `/fontes`: as oito fontes de dados com licença, uso, citação formal e data de extração dos catálogos.
 
 #### Modo de leitura e aviso médico
 
@@ -423,6 +471,8 @@ genvar-dashboard/
 │   │   │   ├── disease.py           /api/disease: catálogo, detalhe e variantes por doença.
 │   │   │   ├── panel.py             /api/panel: painéis de genes (multigênico).
 │   │   │   ├── pgs.py               /api/pgs: escores poligênicos e relação raro x poligênico.
+│   │   │   ├── suggest.py           /api/suggest: sugestões ao digitar, do índice local.
+│   │   │   ├── sources.py           /api/sources: fontes, licenças e data de extração.
 │   │   │   └── health.py            /api/health/sources e /api/health/endpoints.
 │   │   ├── services/
 │   │   │   ├── ensembl.py           Cliente Ensembl REST API.
@@ -436,22 +486,35 @@ genvar-dashboard/
 │   │   ├── data/
 │   │   │   ├── rare_diseases.py     Catálogo curado de doenças raras e loader do JSON do Orphanet.
 │   │   │   ├── gene_panels.py       Catálogo curado de painéis de genes (multigênico).
-│   │   │   ├── polygenic.py         Semente de escores PGS e relação raro x poligênico.
+│   │   │   ├── polygenic.py         Semente de escores PGS e loader do JSON do PGS Catalog.
 │   │   │   ├── br_context.py        Contexto Brasil: SUS/PCDT e triagem neonatal.
-│   │   │   └── br_frequencies.py    Frequência alélica brasileira (ABraOM).
+│   │   │   ├── br_frequencies.py    Frequência alélica brasileira (ABraOM).
+│   │   │   ├── orphanet_diseases.json   Catálogo gerado (3.733 doenças, 2,7 MB).
+│   │   │   ├── panelapp_panels.json     Catálogo gerado (425 painéis, 12 MB).
+│   │   │   └── pgs_catalog.json         Catálogo gerado (6.982 escores, 3,4 MB).
 │   │   ├── scripts/
-│   │   │   ├── build_catalog.py     ETL do catálogo completo de doenças (Orphanet).
+│   │   │   ├── build_catalog.py     ETL antigo do Orphanet, superado por etl/orphanet.py.
 │   │   │   └── build_burden.py      ETL dos sumários de burden para JSON colunar.
 │   │   ├── models/
 │   │   │   └── schemas.py           Modelos Pydantic v2 (gene, variante, doença, painel, PGS, saúde).
 │   │   └── utils/
 │   │       ├── cache.py             Helpers Redis, fallback gracioso.
 │   │       └── validators.py        Validação de entrada e classificação clínica.
+│   ├── etl/
+│   │   ├── orphanet.py              ETL do Orphanet: doenças, genes, herança, HPO.
+│   │   ├── panelapp.py              ETL do PanelApp: painéis e nível de evidência.
+│   │   ├── pgscatalog.py            ETL do PGS Catalog: escores e ancestria.
+│   │   ├── traducoes/hpo_pt_br.tsv  Tradução dos fenótipos sem versão oficial do HPO.
+│   │   └── .cache/                  Páginas cruas por fonte, fora do git. Torna o ETL retomável.
+│   ├── pytest.ini                   Marcadores e exclusão dos testes de integração.
 │   └── tests/
-│       ├── test_apis.py             Testes de integração com APIs reais.
+│       ├── conftest.py              Marca test_apis.py como integração, por caminho.
+│       ├── test_apis.py             Contrato das APIs externas (marcado como integração).
 │       ├── test_services.py         Testes unitários com mocks.
 │       ├── test_disease.py          Testes do módulo de doenças (mocks).
-│       └── test_build_catalog.py    Testes do ETL do catálogo.
+│       ├── test_etl.py              Regras de curadoria dos três ETLs.
+│       ├── test_catalogos.py        Merge dos catálogos, sugestão e fontes.
+│       └── test_build_catalog.py    Testes do parser do ETL antigo.
 ├── frontend/
 │   ├── public/
 │   │   ├── pure/icons.svg           Sprite de ícones da linguagem Pure.
@@ -630,6 +693,7 @@ Endpoints do módulo de Doenças Raras (beta).
 | Endpoint | Resposta |
 |---|---|
 | `GET /api/disease` | Catálogo paginado (`DiseaseListResponse`: `items`, `total`, `page`, `page_size`), com busca e faceta no servidor via `q`, `inheritance`, `page`, `page_size`. Aguenta o catálogo completo do Orphanet. |
+| `GET /api/disease/stats` | Panorama do catálogo (`DiseaseStatsResponse`): total de doenças, total de genes causais distintos e contagem por padrão de herança e por categoria. |
 | `GET /api/disease/{id}` | Detalhe (`DiseaseDetail`): metadados curados mais `causal_genes` com a restrição da gnomAD (LOEUF, pLI) obtida ao vivo. Retorna 404 para id fora do catálogo. Resultado degradado (constraint indisponível) não é fixado no cache. |
 | `GET /api/disease/{id}/variants` | Variantes patogênicas por gene causal (`DiseaseVariantsResponse`): para cada gene, contagem e amostra de variantes classificadas como patogênicas pelo ClinVar (via overlap do Ensembl). Carregado em separado do detalhe. Retorna 404 para id fora do catálogo. |
 
@@ -671,6 +735,26 @@ Endpoints do módulo Poligênico (escores PGS).
 | `GET /api/pgs` | Lista de escores poligênicos curados (`PgsListResponse`) com busca e faceta por categoria, mais a contagem por categoria. |
 | `GET /api/pgs/interplay` | Relação raro x poligênico (`InterplayResponse`): condições em que o fundo poligênico modula a penetrância de uma variante rara monogênica. |
 | `GET /api/pgs/{id}` | Detalhe do escore (`PgsScoreDetail`): metadados curados enriquecidos ao vivo pelo PGS Catalog (número de variantes, publicação, ancestrias das amostras) e a URL canônica no PGS Catalog. Retorna 404 para id fora do catálogo. |
+
+### GET /api/suggest
+
+Sugestões ao digitar, servindo todos os campos de busca da aplicação.
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /api/suggest?q=&limit=` | `SuggestResponse` com itens tipados por `kind` (`disease`, `panel`, `gene`, `variant`), cada um com `id`, `label`, `hint` e `extra`. Consulta com menos de dois caracteres devolve lista vazia. `limit` vai de 1 a 20, padrão 8. |
+
+O índice é montado uma vez, na primeira chamada, a partir dos catálogos locais. Não há ida a fonte externa: a rota responde a cada tecla. Ordenação por prefixo antes de subcadeia e, no empate, pelo rótulo mais curto. Latência medida: 2 a 36 ms.
+
+### GET /api/sources
+
+Proveniência das fontes de dados.
+
+| Endpoint | Resposta |
+|---|---|
+| `GET /api/sources` | `SourcesResponse` com as oito fontes: nome, URL do site e dos dados, licença e URL da licença, natureza (`catalogo` ou `ao vivo`), uso na aplicação, citação formal e, nos catálogos, a data de extração. |
+
+A data de extração é lida do arquivo gerado pelo ETL, não de uma constante. Orphanet, PanelApp e PGS Catalog são publicados sob CC BY 4.0, que exige atribuição de quem redistribui os dados: a rota `/fontes` cumpre isso e está na barra de navegação de todas as páginas.
 
 ### GET /api/health/sources e GET /api/health/endpoints
 
@@ -865,18 +949,31 @@ Sem essa variável, o frontend usa o caminho `/api` relativo, que é redireciona
 
 ## Testes
 
-Testes unitários (com mocks, sem rede):
+A suíte separa dois tipos de teste, e a separação é a razão de o build ser confiável: testes de contrato externo reprovam quando um serviço de terceiro muda, fica fora do ar ou limita a taxa, e isso não diz nada sobre o código do projeto.
+
+| Comando | O que roda | Rede |
+|---|---|---|
+| `pytest` | 51 unitários | não |
+| `pytest -m integration` | 12 de contrato externo | sim |
+| `pytest -m ""` | os 63 | sim |
 
 ```bash
 cd backend
-pytest tests/test_services.py -v
+pytest
 ```
 
-Testes de integração (chamam APIs reais):
+Os unitários rodam em cerca de 1,5 s. A marca de integração é aplicada por caminho de arquivo em `tests/conftest.py`, então vale para `test_apis.py` inteiro e continua valendo para o que entrar nele depois.
 
-```bash
-pytest tests/test_apis.py -v
-```
+Cobertura por arquivo:
+
+| Arquivo | Cobre |
+|---|---|
+| `test_services.py` | serviços de Ensembl, gnomAD, ClinVar, AlphaFold, UniProt e MyVariant, com mocks |
+| `test_disease.py` | busca, paginação e facetas do catálogo de doenças |
+| `test_etl.py` | regras de curadoria dos três ETLs: nível de evidência do PanelApp, ancestria e categoria do PGS, prioridade de classificação e tipos causais do Orphanet |
+| `test_catalogos.py` | merge dos três catálogos, precedência do curado, unicidade de id, vocabulário de categorias, endpoints de sugestão e de fontes |
+| `test_build_catalog.py` | parser do ETL antigo do Orphanet |
+| `test_apis.py` | contrato das APIs externas, marcado como integração |
 
 
 ## Validação quantitativa (suite de benchmark)
@@ -1212,4 +1309,19 @@ As chaves de cache são versionadas (`gene:v3:`, `variant:v3:`) para invalidar r
 
 ## Licença
 
-MIT License. Os dados científicos provêm de bases públicas com uso livre para fins de pesquisa e educação.
+O código é MIT.
+
+Os dados vêm de bases públicas, cada uma sob a sua própria licença, e três delas exigem atribuição:
+
+| Fonte | Licença | Atribuição obrigatória |
+|---|---|---|
+| Orphanet | CC BY 4.0 | sim |
+| Genomics England PanelApp | CC BY 4.0 | sim |
+| PGS Catalog | CC BY 4.0 | sim |
+| AlphaFold DB | CC BY 4.0 | sim |
+| UniProt | CC BY 4.0 | sim |
+| Ensembl | Apache 2.0 | não |
+| gnomAD | CC0 1.0 | não |
+| ClinVar | domínio público (NCBI) | não |
+
+A atribuição fica em `/fontes`, alcançável de qualquer página pelo item Fontes da barra de navegação, e em `GET /api/sources`, com licença, uso e citação formal por fonte. Quem redistribuir estes dados fora do GenVar precisa cumprir as mesmas licenças.

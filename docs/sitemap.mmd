@@ -1,0 +1,60 @@
+---
+title: GenVar Dashboard - mapa do site
+---
+flowchart TD
+  home["/<br>Início<br>busca unificada"]
+
+  subgraph nav["Barra de navegação (8 rotas, presente em todas as páginas)"]
+    doencas["/doencas<br>Doenças Raras<br>3.739 registros"]
+    paineis["/paineis<br>Painéis<br>434 registros"]
+    polig["/poligenico<br>Poligênico<br>6.982 escores"]
+    assoc["/associacao<br>Associação<br>44 fenótipos"]
+    prod["/produtos<br>Produtos"]
+    status["/status<br>Status"]
+    fontes["/fontes<br>Fontes e licenças<br>8 bases"]
+  end
+
+  subgraph det["Rotas de detalhe (sem entrada na navegação)"]
+    doenca["/doenca/:id"]
+    painel["/painel/:id"]
+    gene["/gene/:symbol"]
+    variant["/variant/:rsid"]
+  end
+
+  orfa["/planos<br>rota órfã<br>sem link de entrada"]
+
+  home --> doencas
+  home --> paineis
+  home --> polig
+  home --> assoc
+  home --> prod
+  home --> status
+  home --> fontes
+
+  home -. "busca unificada e sugestões" .-> doenca
+  home -. "busca por gene" .-> gene
+  home -. "busca por variante" .-> variant
+
+  doencas --> doenca
+  paineis --> painel
+  prod --> doencas
+  prod --> paineis
+  prod --> polig
+  prod --> assoc
+  prod --> fontes
+
+  doenca --> gene
+  doenca --> variant
+  painel --> gene
+  painel --> doenca
+  polig --> gene
+  polig --> doenca
+  assoc --> gene
+  variant --> gene
+
+  classDef entrada fill:#3973b1,stroke:#0d1321,color:#ffffff
+  classDef detalhe fill:#9f8322,stroke:#0d1321,color:#ffffff
+  classDef problema fill:#ac5551,stroke:#0d1321,color:#ffffff
+  class home entrada
+  class doenca,painel,gene,variant detalhe
+  class orfa problema
