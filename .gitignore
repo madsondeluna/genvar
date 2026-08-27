@@ -41,3 +41,7 @@ benchmark/results/**/run_log.txt
 # Serve para retomar um ETL interrompido sem repetir rede; o produto versionado
 # sao os JSON em backend/app/data/.
 backend/etl/.cache/
+
+# AppleDouble do macOS em volume nao-HFS: o vitest tenta importa-los como teste
+._*
+.DS_Store

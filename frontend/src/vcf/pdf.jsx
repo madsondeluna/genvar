@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer'
 import { ROTULO, ORDEM_GRAVIDADE, ESTRELAS, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO } from './clinvar'
+import { CRITERIOS as CRITERIOS_PDF, NAO_AVALIADOS } from './interpretacao'
 
 // Relatório em PDF, na forma de um laudo e com a ressalva de um relatório de
 // pesquisa. Carregado por import dinâmico a partir do botão: a biblioteca pesa
@@ -25,7 +26,7 @@ const SERIE = ['#3973b1', '#9f8322', '#9e527f', '#49955c', '#745ba5', '#ba6f3e',
 // Slot de série por classificação e por impacto, os mesmos da tela: o papel e a
 // tela dizem a mesma coisa com a mesma cor, ou a leitura não transfere.
 const COR_SIG = { 1: SERIE[7], 2: SERIE[7], 3: SERIE[7], 4: SERIE[5], 5: SERIE[1], 6: SERIE[3], 7: SERIE[3], 8: SERIE[3], 9: SERIE[6], 10: SERIE[5], 11: SERIE[2], 12: SERIE[3] }
-const COR_IMPACTO = { alto: SERIE[7], moderado: SERIE[5], baixo: SERIE[2], modificador: SERIE[0] }
+const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modificador: SERIE[0] }
 
 const RESSALVA = 'Documento de pesquisa e ensino. Não é laudo diagnóstico, não foi emitido por '
   + 'laboratório clínico habilitado e não substitui avaliação médica. Todo achado exige '
@@ -111,6 +112,7 @@ export function RelatorioVCF({ dados, gerado }) {
   const {
     nome, tamanho, meta, metricas, variantes, lidos, truncado,
     porGene, dp, qual, cromo, resumoCli, anotacao, genesMapeados, espectro,
+    sha256, versaoClinvar, painel, papeis, termos,
   } = dados
   const maxCromo = Math.max(1, ...cromo.map((c) => c.n))
 
@@ -163,6 +165,15 @@ export function RelatorioVCF({ dados, gerado }) {
           </Campo>
           <Campo rotulo="Processamento">
             integralmente no navegador do usuário; o arquivo não foi transmitido a servidor
+          </Campo>
+          <Campo rotulo="Painel aplicado">
+            {painel ? `${painel.nome} — ${painel.genes.length} genes` : 'nenhum; o arquivo inteiro foi analisado'}
+          </Campo>
+          {termos?.length > 0 && (
+            <Campo rotulo="Sinais clínicos informados">{termos.join('; ')}</Campo>
+          )}
+          <Campo rotulo="SHA-256 do arquivo">
+            {sha256 || 'não calculado'}
           </Campo>
           <Campo rotulo="Data de emissão">{gerado}</Campo>
         </View>
@@ -424,7 +435,24 @@ export function RelatorioVCF({ dados, gerado }) {
           <Campo rotulo="Leitura do arquivo">
             fluxo linha a linha no navegador; nenhum byte transmitido a servidor
           </Campo>
-          <Campo rotulo="Anotação clínica">ClinVar (NCBI), domínio público</Campo>
+          <Campo rotulo="Anotação clínica">
+            ClinVar (NCBI), domínio público{versaoClinvar ? `, compilação de ${versaoClinvar}` : ''}
+          </Campo>
+          <Campo rotulo="Validade gene-doença">ClinGen Gene-Disease Validity, CC0</Campo>
+          <Campo rotulo="Farmacogenômica">
+            CPIC, CC BY-SA 4.0. Não determina diplótipo: alelo estrela exige fase e número de cópias,
+            ausentes de um VCF de variante curta
+          </Campo>
+          <Campo rotulo="Painéis de genes">
+            Genomics England PanelApp, genes verdes, CC BY-SA 4.0, mais ACMG SF v3.2. Símbolos
+            resolvidos pelo HGNC
+          </Campo>
+          <Campo rotulo="Critérios ACMG/AMP">
+            {'apenas os avaliáveis sem literatura, segregação ou ensaio funcional: '
+              + Object.keys(CRITERIOS_PDF).join(', ')
+              + '. Não constitui classificação ACMG'}
+          </Campo>
+          <Campo rotulo="SHA-256 do arquivo de entrada">{sha256 || 'não calculado'}</Campo>
           <Campo rotulo="Chave de cruzamento">
             rsID + REF + ALT como chave primária; cromossomo + posição + REF + ALT apenas quando o
             arquivo é GRCh38
@@ -466,12 +494,21 @@ export function RelatorioVCF({ dados, gerado }) {
           não é variante benigna: é variante não descrita.
         </Text>
 
+        <Text style={s.h2}>Critérios ACMG que este relatório não avalia</Text>
+        <View style={s.campos}>
+          {NAO_AVALIADOS.map(([ids, motivo]) => (
+            <Campo key={ids} rotulo={ids}>{motivo}</Campo>
+          ))}
+        </View>
+
         <Text style={s.h2}>Fontes</Text>
         <Text style={[s.p, s.apagado]}>
-          ClinVar, National Center for Biotechnology Information, domínio público.
-          dbSNP, NCBI. Coordenadas gênicas do Ensembl, GRCh38. Frequências de ExAC, 1000 Genomes
-          Project e NHLBI Exome Sequencing Project, redistribuídas pelo ClinVar. Nomes de doença e
-          fenótipos exibidos na aplicação vêm de Orphanet e HPO.
+          ClinVar e dbSNP, National Center for Biotechnology Information, domínio público.
+          ClinGen Gene-Disease Validity, CC0. CPIC, CC BY-SA 4.0. Genomics England PanelApp,
+          CC BY-SA 4.0. HGNC, CC0. gnomAD, Broad Institute, quando consultado. Coordenadas gênicas
+          do Ensembl, GRCh38. Frequências de ExAC, 1000 Genomes Project e NHLBI Exome Sequencing
+          Project, redistribuídas pelo ClinVar. Nomes de doença e fenótipos exibidos na aplicação
+          vêm de Orphanet e HPO.
         </Text>
 
         <View style={s.ressalva}>

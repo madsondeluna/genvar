@@ -1,9 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Histograma, BarrasNomeadas } from './Grafico'
 import TabelaVariantes from './TabelaVariantes'
+import ControleQualidade from './ControleQualidade'
+import PainelETrio from './PainelETrio'
+import Heranca from './Heranca'
+import { aplicarPainel } from '../vcf/interpretacao'
+import { resumoClinico } from '../vcf/clinvar'
 import AchadosClinicos from './AchadosClinicos'
 import Icon from './Icon'
-import { histograma, porCromossomo, espectroSubstituicao, TITV_ESPERADO } from '../vcf/metricas'
+import { histograma, porCromossomo, espectroSubstituicao, resumo, TITV_ESPERADO } from '../vcf/metricas'
 import { seriesStyle } from '../utils/seriesSlot'
 
 // Relatório do VCF. Tudo aqui é derivado do arquivo, sem rede: são as métricas
@@ -22,8 +27,30 @@ function Ficha({ rotulo, valor, nota, slot }) {
   )
 }
 
-export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarVUS }) {
-  const { meta, variantes, metricas, nome, tamanho, lidos, truncado, genesMapeados } = dados
+export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus, onCarregarVUS, gnomad, onConsultarGnomad }) {
+  const { meta, variantes: todas, metricas: metricasTodas, nome, tamanho, lidos, truncado, genesMapeados, simbolos } = dados
+  const [painel, setPainel] = useState(null)
+  const [papeis, setPapeis] = useState({})
+  const [termos, setTermos] = useState([])
+
+  // Tudo abaixo lê o recorte, não o arquivo. Escolher um painel não é um filtro
+  // de visualização: é a decisão de o que está sendo analisado, e métrica de
+  // qualidade calculada sobre o arquivo inteiro descreveria outra coisa.
+  const { variantes } = useMemo(
+    () => aplicarPainel(todas, painel, simbolos),
+    [todas, painel, simbolos],
+  )
+  const metricas = useMemo(
+    () => (painel ? resumo(variantes) : metricasTodas),
+    [painel, variantes, metricasTodas],
+  )
+  // O resumo clínico também é do recorte. Contagem por classificação do arquivo
+  // inteiro sobre uma tabela filtrada por painel mostraria 90 conflitantes num
+  // painel que só tem 3, e o número não bateria com nada na tela.
+  const resumoCli = useMemo(
+    () => (painel && resumoTodas ? resumoClinico(variantes) : resumoTodas),
+    [painel, variantes, resumoTodas],
+  )
   const [aba, setAba] = useState('clinica')
   const [pdf, setPdf] = useState('parado')  // parado | gerando | erro
 
@@ -33,7 +60,7 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
     setPdf('gerando')
     try {
       const { gerarPDF } = await import('../vcf/pdf.jsx')
-      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo, espectro, resumoCli, anotacao })
+      const blob = await gerarPDF({ ...dados, variantes, metricas, porGene, dp, qual, cromo, espectro, resumoCli, anotacao, painel, papeis, termos })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -101,21 +128,6 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
           </div>
         )}
 
-        {!genesMapeados && (
-          <div className="card tint-warning mb-24 flex items-start gap-10">
-            <Icon name="alert" className="text-muted mt-2" />
-            <p className="text-13 leading-snug about-left">
-              O cruzamento com genes foi <strong className="text-text font-medium">desligado</strong> para
-              este arquivo. As coordenadas de gene que o GenVar distribui são GRCh38, e este VCF
-              está em <span className="mono">{meta.build}</span>.
-              Entre GRCh37 e GRCh38 o deslocamento chega a milhões de bases: só no BRCA1 são
-              1.847.983. Cruzar assim não erra por pouco, troca o gene inteiro, e gene errado com
-              cara de certo é pior que gene nenhum. As métricas de qualidade abaixo não dependem
-              do build e continuam válidas.
-            </p>
-          </div>
-        )}
-
         {titv != null && !titvOk && (
           <div className="card tint-warning mb-24 flex items-start gap-10">
             <Icon name="alert" className="text-muted mt-2" />
@@ -128,9 +140,21 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
           </div>
         )}
 
+        <PainelETrio
+          painel={painel}
+          onPainel={setPainel}
+          amostras={meta.amostras}
+          papeis={papeis}
+          onPapeis={setPapeis}
+          termos={termos}
+          onTermos={setTermos}
+          nVariantes={todas.length}
+          nFiltradas={variantes.length}
+        />
+
         <div className="flex items-center justify-between gap-16 flex-wrap mb-16">
         <div className="flex flex-wrap gap-8" role="tablist" aria-label="Seções do relatório">
-          {[['clinica', 'Achados clínicos'], ['qualidade', 'Qualidade'], ['distribuicao', 'Distribuição'], ['genes', 'Genes'], ['tabela', 'Variantes']].map(([k, r]) => (
+          {[['clinica', 'Achados clínicos'], ['heranca', 'Herança'], ['qualidade', 'Qualidade'], ['distribuicao', 'Distribuição'], ['genes', 'Genes'], ['tabela', 'Variantes']].map(([k, r]) => (
             <button
               key={k}
               type="button"
@@ -153,7 +177,13 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
         </span>
         </div>
 
+        {aba === 'heranca' && (
+          <Heranca variantes={variantes} papeis={papeis} termos={termos} />
+        )}
+
         {aba === 'qualidade' && (
+          <div className="flex flex-col gap-16">
+          <ControleQualidade variantes={variantes} />
           <div className="grid gap-16 about-cards">
             <article className="card flex flex-col gap-12">
               <span className="flex items-baseline justify-between gap-8">
@@ -211,6 +241,7 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
                 rotuloX="variantes com essa zigosidade"
               />
             </article>
+          </div>
           </div>
         )}
 
@@ -302,6 +333,8 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
             ? (
               <AchadosClinicos
                 variantes={variantes}
+                gnomad={gnomad}
+                onConsultarGnomad={onConsultarGnomad}
                 resumoCli={resumoCli}
                 anotacao={anotacao}
                 vus={vus}
@@ -317,6 +350,9 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
             dados={dados}
             resumoCli={resumoCli}
             temAnotacao={!!resumoCli}
+            painel={painel}
+            gnomad={gnomad}
+            onConsultarGnomad={onConsultarGnomad}
           />
         )}
       </section>

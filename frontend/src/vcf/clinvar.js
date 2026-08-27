@@ -13,18 +13,18 @@
 const BASE = `${import.meta.env.BASE_URL}data/clinvar/`
 
 export const ROTULO = {
-  1: 'patogênica',
-  2: 'provavelmente patogênica',
-  3: 'patogênica / provavelmente patogênica',
-  4: 'classificações conflitantes',
-  5: 'significado incerto',
-  6: 'benigna',
-  7: 'provavelmente benigna',
-  8: 'benigna / provavelmente benigna',
-  9: 'resposta a fármaco',
-  10: 'fator de risco',
-  11: 'associação',
-  12: 'protetora',
+  1: 'Patogênica',
+  2: 'Provavelmente patogênica',
+  3: 'Patogênica / provavelmente patogênica',
+  4: 'Classificações conflitantes',
+  5: 'Significado incerto',
+  6: 'Benigna',
+  7: 'Provavelmente benigna',
+  8: 'Benigna / provavelmente benigna',
+  9: 'Resposta a fármaco',
+  10: 'Fator de risco',
+  11: 'Associação',
+  12: 'Protetora',
 }
 
 // Slot de série por classificação. Estado não usa slot de série e série não usa
@@ -35,13 +35,13 @@ export const SLOT = { 1: 8, 2: 8, 3: 8, 4: 6, 5: 2, 6: 4, 7: 4, 8: 4, 9: 7, 10: 
 export const ORDEM_GRAVIDADE = [1, 3, 2, 4, 10, 9, 11, 5, 12, 8, 6, 7]
 
 export const CONSEQUENCIA = {
-  1: 'troca de aminoácido', 2: 'sinônima', 3: 'códon de parada',
-  4: 'mudança de matriz de leitura', 5: 'sítio doador de splicing',
-  6: 'sítio aceptor de splicing', 7: 'intrônica', 8: 'região 5′ não traduzida',
-  9: 'região 3′ não traduzida', 10: 'deleção em matriz', 11: 'inserção em matriz',
-  12: 'códon iniciador', 13: 'perda do códon de parada', 14: 'transcrito não codificante',
-  15: 'a montante do gene', 16: 'a jusante do gene', 17: 'sem alteração de sequência',
-  18: 'indel em matriz',
+  1: 'Troca de aminoácido', 2: 'Sinônima', 3: 'Códon de parada',
+  4: 'Mudança de matriz de leitura', 5: 'Sítio doador de splicing',
+  6: 'Sítio aceptor de splicing', 7: 'Intrônica', 8: 'Região 5′ não traduzida',
+  9: 'Região 3′ não traduzida', 10: 'Deleção em matriz', 11: 'Inserção em matriz',
+  12: 'Códon iniciador', 13: 'Perda do códon de parada', 14: 'Transcrito não codificante',
+  15: 'A montante do gene', 16: 'A jusante do gene', 17: 'Sem alteração de sequência',
+  18: 'Indel em matriz',
 }
 
 // Tiers de impacto do Ensembl. Não é gravidade clínica: é quanto a troca
@@ -51,24 +51,24 @@ export const CONSEQUENCIA = {
 // impacto pode ser inofensiva num gene que não importa, e é por isso que
 // impacto e classificação são duas colunas, nunca uma.
 export const IMPACTO = {
-  3: 'alto', 4: 'alto', 5: 'alto', 6: 'alto', 12: 'alto', 13: 'alto',
-  1: 'moderado', 10: 'moderado', 11: 'moderado', 18: 'moderado',
-  2: 'baixo', 17: 'baixo',
-  7: 'modificador', 8: 'modificador', 9: 'modificador',
-  14: 'modificador', 15: 'modificador', 16: 'modificador',
+  3: 'Alto', 4: 'Alto', 5: 'Alto', 6: 'Alto', 12: 'Alto', 13: 'Alto',
+  1: 'Moderado', 10: 'Moderado', 11: 'Moderado', 18: 'Moderado',
+  2: 'Baixo', 17: 'Baixo',
+  7: 'Modificador', 8: 'Modificador', 9: 'Modificador',
+  14: 'Modificador', 15: 'Modificador', 16: 'Modificador',
 }
 
 // Slot de série por tier, do mais forte ao mais fraco. Ordem fixa: impacto é
 // escala ordenada, não categoria solta.
-export const ORDEM_IMPACTO = ['alto', 'moderado', 'baixo', 'modificador']
-export const SLOT_IMPACTO = { alto: 8, moderado: 6, baixo: 3, modificador: 1 }
+export const ORDEM_IMPACTO = ['Alto', 'Moderado', 'Baixo', 'Modificador']
+export const SLOT_IMPACTO = { Alto: 8, Moderado: 6, Baixo: 3, Modificador: 1 }
 
 export const ESTRELAS = {
-  0: 'sem critério declarado',
-  1: 'um laboratório, com critério',
-  2: 'vários laboratórios, sem conflito',
-  3: 'painel de especialistas',
-  4: 'diretriz de prática clínica',
+  0: 'Sem critério declarado',
+  1: 'Um laboratório, com critério',
+  2: 'Vários laboratórios, sem conflito',
+  3: 'Painel de especialistas',
+  4: 'Diretriz de prática clínica',
 }
 
 // Os turnos vêm gravados em gzip. Não é economia de disco: 157 MB de JSON cru

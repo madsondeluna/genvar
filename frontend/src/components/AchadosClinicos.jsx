@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Icon from './Icon'
 import { BarrasNomeadas } from './Grafico'
 import { ROTULO, SLOT, ORDEM_GRAVIDADE, ESTRELAS, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO, SLOT_IMPACTO } from '../vcf/clinvar'
+import { CRITERIOS, NAO_AVALIADOS } from '../vcf/interpretacao'
 import { seriesStyle } from '../utils/seriesSlot'
 
 const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
@@ -37,7 +38,7 @@ export function conflitoFrequencia(v) {
   return null
 }
 
-export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarregarVUS, vus }) {
+export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarregarVUS, vus, gnomad, onConsultarGnomad }) {
   const [gene, setGene] = useState(null)
 
   const anotadas = useMemo(() => variantes.filter((v) => v.clinvar), [variantes])
@@ -95,11 +96,29 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             único envio sem critério declarado. Achado aqui não é diagnóstico: precisa de
             confirmação em laboratório clínico e de aconselhamento genético.
           </p>
+
+          <span className="flex items-center gap-12 flex-wrap">
+            {gnomad === 'pronto' ? (
+              <span className="label">Frequência do gnomAD consultada para estes achados</span>
+            ) : gnomad ? (
+              <span className="label" role="status">
+                Consultando o gnomAD: {gnomad.feitas} de {gnomad.total}
+              </span>
+            ) : (
+              <button type="button" className="pill pill-sm"
+                      onClick={() => onConsultarGnomad?.(graves)}>
+                <Icon name="database" /> Consultar a frequência no gnomAD
+              </button>
+            )}
+            <span className="label">
+              Sai daqui coordenada e alelo, uma requisição por variante; nada que identifique pessoa
+            </span>
+          </span>
           <div className="table-scroll">
             <table className="w-full text-left">
               <thead>
                 <tr>
-                  {['Gene', 'Variante', 'Troca', 'Classificação', 'Revisão', 'Condição', 'Frequência na população', 'Genótipo'].map((c) => (
+                  {['Gene', 'Variante', 'Troca', 'Classificação', 'Revisão', 'Gene-doença (ClinGen)', 'Condição', 'Frequência na população', 'ACMG', 'Genótipo'].map((c) => (
                     <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>
                   ))}
                 </tr>
@@ -138,16 +157,60 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
                         <span className="mono num">{v.clinvar.estrelas}</span>
                         <span className="text-muted"> / 4</span>
                       </td>
+                      <td className="px-16 py-12 text-12 whitespace-nowrap">
+                        {v.clingen ? (
+                          <>
+                            <span className="text-text">{v.clingen.classificacao}</span>
+                            <span className="block label">{v.clingen.heranca}</span>
+                          </>
+                        ) : <span className="label">sem curadoria</span>}
+                      </td>
                       <td className="px-16 py-12 text-12" style={{ maxWidth: '18rem' }}>
                         {v.clinvar.condicao || '—'}
                       </td>
                       <td className="px-16 py-12 text-12 whitespace-nowrap">
-                        {freqTexto(v.clinvar.af)}
+                        {v.gnomad?.af != null ? (
+                          <>
+                            {freqTexto(v.gnomad.af)}
+                            <span className="block label">gnomAD, global</span>
+                            {v.gnomad.populacoes?.[0] && (
+                              <span className="block label">
+                                maior em {v.gnomad.populacoes[0].rotulo}: {freqTexto(v.gnomad.populacoes[0].af)}
+                              </span>
+                            )}
+                          </>
+                        ) : v.gnomad?.falhou ? (
+                          <>
+                            {freqTexto(v.clinvar.af)}
+                            <span className="block label">a consulta ao gnomAD falhou</span>
+                          </>
+                        ) : v.gnomad?.ausente ? (
+                          <>
+                            <span>ausente do gnomAD</span>
+                            <span className="block label">{v.gnomad.dataset}</span>
+                          </>
+                        ) : (
+                          <>
+                            {freqTexto(v.clinvar.af)}
+                            {v.clinvar.af != null && <span className="block label">ExAC, 1000 Genomes ou ESP</span>}
+                          </>
+                        )}
                         {conflito && (
                           <span className="block label" style={{ color: 'var(--status-warning)' }}>
                             comum demais para doença rara
                           </span>
                         )}
+                      </td>
+                      <td className="px-16 py-12 text-12">
+                        {v.acmg?.length ? (
+                          <span className="flex gap-4 flex-wrap">
+                            {v.acmg.map((c) => (
+                              <span key={c.id} className="tag tag-sm mono" title={`${CRITERIOS[c.id]?.forca}: ${CRITERIOS[c.id]?.texto}`}>
+                                {c.id}
+                              </span>
+                            ))}
+                          </span>
+                        ) : '—'}
                       </td>
                       <td className="px-16 py-12 text-12 whitespace-nowrap">{v.zigosidade}</td>
                     </tr>
@@ -159,6 +222,111 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
           {graves.length > 60 && (
             <p className="label">Mostrando as 60 primeiras. O TSV e o XLSX trazem todas.</p>
           )}
+        </article>
+      )}
+
+      {variantes.some((v) => v.cpic) && (
+        <article className="card flex flex-col gap-12">
+          <span className="flex items-baseline justify-between gap-16 flex-wrap">
+            <h3 className="text-16 font-medium text-text">Farmacogenômica</h3>
+            <span className="label">{fmt(variantes.filter((v) => v.cpic).length)} variantes com diretriz</span>
+          </span>
+          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+            <strong className="text-text font-medium">Isto não é um diplótipo.</strong> Dizer
+            &ldquo;*1/*4&rdquo; exige fase e número de cópias, e um VCF de variante curta não carrega
+            nenhum dos dois. O que está aqui é que estes rsID participam da definição dos alelos
+            estrela de genes com diretriz publicada pelo CPIC, e para quais fármacos essa diretriz
+            existe. Prescrição continua sendo do médico, com genotipagem farmacogenética própria.
+          </p>
+          <div className="table-scroll">
+            <table className="w-full text-left">
+              <thead>
+                <tr>
+                  {['Gene', 'Variante', 'Alelos que ela define', 'Fármacos com diretriz', 'Genótipo'].map((c) => (
+                    <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {variantes.filter((v) => v.cpic).slice(0, 40).map((v, i) => (
+                  <tr key={i} className="border-t border-border">
+                    <td className="px-16 py-12 text-12 mono">{v.cpic.gene}</td>
+                    <td className="px-16 py-12 text-12 mono whitespace-nowrap">
+                      {v.rsid}
+                      {v.cpic.nome && <span className="block label">{v.cpic.nome}</span>}
+                    </td>
+                    <td className="px-16 py-12 text-12" style={{ maxWidth: '14rem' }}>
+                      {v.cpic.alelos.map((a) => a.alelo).join(', ') || '—'}
+                      {v.cpic.alelos_total > v.cpic.alelos.length && (
+                        <span className="block label">e outros {v.cpic.alelos_total - v.cpic.alelos.length}</span>
+                      )}
+                    </td>
+                    <td className="px-16 py-12 text-12" style={{ maxWidth: '20rem' }}>
+                      <span className="flex gap-4 flex-wrap">
+                        {v.cpic.farmacos.slice(0, 6).map((f) => (
+                          <span key={f.farmaco}
+                                className={`tag tag-sm ${f.acionavel ? 'tag-series' : ''}`}
+                                style={f.acionavel ? seriesStyle(SLOT[9]) : undefined}
+                                title={f.diretriz ? f.diretriz.nome : `Nível CPIC ${f.nivel}`}>
+                            {f.farmaco}
+                          </span>
+                        ))}
+                      </span>
+                      {v.cpic.farmacos.length > 6 && (
+                        <span className="block label">e outros {v.cpic.farmacos.length - 6}</span>
+                      )}
+                    </td>
+                    <td className="px-16 py-12 text-12 whitespace-nowrap">{v.zigosidade}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="label">
+            Etiqueta destacada indica nível CPIC A ou B, que são os que têm recomendação de conduta.
+          </p>
+        </article>
+      )}
+
+      {variantes.some((v) => v.acmg?.length) && (
+        <article className="card flex flex-col gap-12">
+          <h3 className="text-16 font-medium text-text">Critérios ACMG/AMP avaliados</h3>
+          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+            <strong className="text-text font-medium">Isto não é uma classificação ACMG.</strong> A
+            regra completa combina 28 critérios, e a maioria exige literatura, segregação familiar
+            ou ensaio funcional que nenhum arquivo carrega. Abaixo estão os critérios que saem
+            mecanicamente do que está carregado, com a fonte de cada um, e a lista do que não foi
+            avaliado, porque mostrar três critérios sem dizer que existem vinte e cinco sugere uma
+            conclusão que ninguém tirou.
+          </p>
+          <div className="grid gap-24 about-cards">
+            <ul className="flex flex-col gap-8" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              {Object.entries(CRITERIOS).map(([id, c]) => {
+                const n = variantes.filter((v) => v.acmg?.some((x) => x.id === id)).length
+                return (
+                  <li key={id} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: '4rem 1fr auto' }}>
+                    <span className="mono text-13 text-text">{id}</span>
+                    <span className="text-12">
+                      {c.texto}
+                      <span className="block label">{c.forca}</span>
+                    </span>
+                    <span className="mono num text-13">{n ? fmt(n) : '—'}</span>
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="flex flex-col gap-8">
+              <span className="label">Não avaliados por este módulo</span>
+              <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                {NAO_AVALIADOS.map(([ids, motivo]) => (
+                  <li key={ids} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: '5.5rem 1fr' }}>
+                    <span className="mono text-12 text-text">{ids}</span>
+                    <span className="text-12">{motivo}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </article>
       )}
 
@@ -185,7 +353,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             <BarrasNomeadas
               itens={Object.entries(resumoCli.porConsequencia)
                 .sort((a, b) => b[1] - a[1]).slice(0, 8)
-                .map(([c, n]) => ({ rotulo: CONSEQUENCIA[c] || 'outra', n, slot: SLOT_IMPACTO[IMPACTO[+c]] || 1 }))}
+                .map(([c, n]) => ({ rotulo: CONSEQUENCIA[c] || 'Outra', n, slot: SLOT_IMPACTO[IMPACTO[+c]] || 1 }))}
               total={anotadas.length}
               slot={1}
               colunaRotulo="12rem"

@@ -167,3 +167,118 @@ export function baixar(blob, nome) {
   a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
+
+// --- VCF anotado --------------------------------------------------------------
+//
+// O filtrado saía em tabela e morria ali. Saindo em VCF, ele volta para o
+// pipeline de quem enviou.
+//
+// A anotação entra em campos INFO com prefixo próprio (GENVAR_), e não
+// sobrescrevendo campos existentes: um VCF que altera INFO alheio quebra o passo
+// seguinte de quem o consome. Todo campo novo é declarado no cabeçalho, porque
+// INFO sem ##INFO correspondente é VCF inválido, e a maioria dos validadores
+// reclama disso antes de qualquer outra coisa.
+import { ROTULO as SIG_ROTULO, CONSEQUENCIA as CONSEQ_ROTULO } from './clinvar'
+
+// Ponto e vírgula, espaço, igual e vírgula são separadores dentro de INFO. O
+// padrão manda percent-encode; sem isso uma condição como "Lynch syndrome,
+// type 1" divide o campo em dois.
+const infoSeguro = (s) => String(s ?? '')
+  .replace(/%/g, '%25').replace(/;/g, '%3B').replace(/=/g, '%3D')
+  .replace(/,/g, '%2C').replace(/ /g, '_').replace(/[\t\r\n]/g, '_')
+
+const CAMPOS_INFO = [
+  ['GENVAR_GENE', '1', 'String', 'Gene que contém a posição, por coordenada ou pelo ClinVar',
+    (v) => v.gene || v.clinvar?.gene || null],
+  ['GENVAR_CLNSIG', '1', 'String', 'Classificação clínica do ClinVar',
+    (v) => (v.clinvar ? SIG_ROTULO[v.clinvar.sig] : null)],
+  ['GENVAR_CLNREV', '1', 'Integer', 'Nível de revisão do ClinVar, de 0 a 4 estrelas',
+    (v) => (v.clinvar ? v.clinvar.estrelas : null)],
+  ['GENVAR_CLNDN', '1', 'String', 'Condição associada no ClinVar',
+    (v) => v.clinvar?.condicao || null],
+  ['GENVAR_CSQ', '1', 'String', 'Consequência molecular',
+    (v) => (v.clinvar?.consequencia ? CONSEQ_ROTULO[v.clinvar.consequencia] : null)],
+  ['GENVAR_AF', '1', 'Float', 'Frequência populacional publicada pelo ClinVar (ExAC, 1000 Genomes ou ESP)',
+    (v) => (v.clinvar?.af != null ? v.clinvar.af : null)],
+  ['GENVAR_GNOMAD_AF', '1', 'Float', 'Frequência global no gnomAD, quando consultado',
+    (v) => (v.gnomad?.af != null ? v.gnomad.af : null)],
+  ['GENVAR_AB', '1', 'Float', 'Balanço alélico da amostra em foco',
+    (v) => (v.ab != null ? +v.ab.toFixed(4) : null)],
+  ['GENVAR_ACMG', '.', 'String', 'Critérios ACMG avaliáveis por este módulo',
+    (v) => (v.acmg?.length ? v.acmg.map((c) => c.id).join('|') : null)],
+  ['GENVAR_CLINGEN', '1', 'String', 'Validade gene-doença curada pelo ClinGen',
+    (v) => (v.clingen ? `${v.clingen.classificacao}|${v.clingen.heranca_sigla}` : null)],
+  ['GENVAR_CPIC', '1', 'String', 'Gene com diretriz farmacogenética do CPIC',
+    (v) => (v.cpic ? v.cpic.gene : null)],
+  ['GENVAR_MATCH', '1', 'String', 'Como a variante casou com o ClinVar: rsid ou coordenada',
+    (v) => v.clinvarVia || null],
+]
+
+export function paraVCF({ variantes, meta, nome, sha256, versaoClinvar, painel }) {
+  const agora = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+  const cab = [
+    '##fileformat=VCFv4.3',
+    `##fileDate=${agora}`,
+    '##source=GenVar',
+    '##genvar_uso=Pesquisa_e_ensino._Nao_e_laudo_diagnostico.',
+  ]
+  if (meta.referencia) cab.push(`##reference=${meta.referencia}`)
+  cab.push(`##genvar_build=${meta.build}${meta.buildPresumido ? '_presumido' : meta.buildDeduzido ? '_deduzido' : '_declarado'}`)
+  if (sha256) cab.push(`##genvar_sha256_entrada=${sha256}`)
+  if (versaoClinvar) cab.push(`##genvar_clinvar=${infoSeguro(versaoClinvar)}`)
+  if (nome) cab.push(`##genvar_arquivo_origem=${infoSeguro(nome)}`)
+  if (painel) cab.push(`##genvar_painel=${infoSeguro(painel.nome)}`)
+
+  for (const c of meta.contigs || []) {
+    if (c.id && c.length) cab.push(`##contig=<ID=${c.id},length=${c.length}>`)
+  }
+  for (const f of meta.filtros || []) {
+    cab.push(`##FILTER=<ID=${f.id},Description="${(f.desc || f.id).replace(/"/g, "'")}">`)
+  }
+  for (const [id, num, tipo, desc] of CAMPOS_INFO) {
+    cab.push(`##INFO=<ID=${id},Number=${num},Type=${tipo},Description="${desc}">`)
+  }
+  cab.push('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotipo">')
+  cab.push('##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Leituras por alelo">')
+  cab.push('##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Profundidade da amostra">')
+  cab.push('##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Qualidade do genotipo">')
+
+  const amostras = meta.amostras || []
+  cab.push(['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO',
+    ...(amostras.length ? ['FORMAT', ...amostras] : [])].join('\t'))
+
+  const linhas = variantes.map((v) => {
+    const info = []
+    for (const [id, , tipo, , get] of CAMPOS_INFO) {
+      const val = get(v)
+      if (val == null || val === '') continue
+      info.push(`${id}=${tipo === 'String' ? infoSeguro(val) : val}`)
+    }
+    const campos = [
+      v.chrom, v.pos, v.rsid || v.id || '.', v.ref, v.alt,
+      v.qual != null ? v.qual : '.', v.filtro || '.',
+      info.length ? info.join(';') : '.',
+    ]
+    if (amostras.length) {
+      campos.push('GT:AD:DP:GQ')
+      for (const a of v.amostras) {
+        const ad = a.ad ? `${a.ad.ref},${a.ad.alt}` : '.'
+        campos.push(`${a.gt || './.'}:${ad}:${a.dp ?? '.'}:${a.gq ?? '.'}`)
+      }
+    }
+    return campos.join('\t')
+  })
+
+  return [...cab, ...linhas].join('\n') + '\n'
+}
+
+// SHA-256 do arquivo de entrada. Sem ele dois laudos do mesmo paciente em meses
+// diferentes não são comparáveis e ninguém prova de qual arquivo cada um saiu.
+// Roda em blocos porque um genoma passa de centenas de MB e o navegador não
+// precisa segurar tudo de uma vez.
+export async function sha256(arquivo) {
+  if (!globalThis.crypto?.subtle) return null
+  const buf = await arquivo.arrayBuffer()
+  const hash = await crypto.subtle.digest('SHA-256', buf)
+  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('')
+}

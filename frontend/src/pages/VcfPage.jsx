@@ -5,7 +5,12 @@ import NgsPipeline from '../components/NgsPipeline'
 import VcfReport from '../components/VcfReport'
 import { lerVCF, extrairDoZip } from '../vcf/parse'
 import { resumo, indiceDeGenes, geneDaPosicao } from '../vcf/metricas'
-import { anotar, resumoClinico } from '../vcf/clinvar'
+import { anotar, resumoClinico, carregarIndice } from '../vcf/clinvar'
+import {
+  carregarPaineis, carregarSimbolos, carregarClinGen, carregarCPIC,
+  anotarClinGen, anotarCPIC, anotarACMG, frequenciaGnomad,
+} from '../vcf/interpretacao'
+import { sha256 } from '../vcf/exportar'
 
 // Anotação de VCF, inteira no navegador.
 //
@@ -26,13 +31,14 @@ export default function VcfPage() {
   const [anotacao, setAnotacao] = useState(null)
   const [resumoCli, setResumoCli] = useState(null)
   const [vus, setVus] = useState(false)
+  const [gnomad, setGnomad] = useState(null)   // null | {feitas,total,...} | 'pronto'
   const [erro, setErro] = useState(null)
   const inputRef = useRef(null)
 
   const processar = useCallback(async (arquivo) => {
     if (!arquivo) return
     setEstado('lendo'); setErro(null); setDados(null); setProgresso(null)
-    setAnotacao(null); setResumoCli(null); setVus(false)
+    setAnotacao(null); setResumoCli(null); setVus(false); setGnomad(null)
     try {
       let extras = 0
       if (/\.zip$/i.test(arquivo.name)) {
@@ -40,6 +46,9 @@ export default function VcfPage() {
         arquivo = r.arquivo
         extras = r.outros
       }
+      // Impressão digital do arquivo, antes de qualquer leitura. Sem ela dois
+      // laudos do mesmo paciente em meses diferentes não são comparáveis.
+      const impressao = await sha256(arquivo).catch(() => null)
       const genesJson = await fetch(`${import.meta.env.BASE_URL}data/burden/genes.json`).then((r) => r.json())
       const indice = indiceDeGenes(genesJson)
 
@@ -68,6 +77,7 @@ export default function VcfPage() {
         truncado,
         metricas: resumo(variantes),
         genesMapeados: podeMapear,
+        sha256: impressao,
       }
       setDados(alvo)
       setEstado('pronto')
@@ -76,7 +86,17 @@ export default function VcfPage() {
       // ClinVar por cromossomo: prender o relatório inteiro nisso deixaria o
       // usuário olhando um carregando enquanto as métricas de qualidade, que
       // não dependem de rede nenhuma, já estavam prontas.
-      const info = await anotar(variantes, { camadas: ['aviso'], build: meta.build })
+      const [info, clingen, cpic, simbolos, indiceCv] = await Promise.all([
+        anotar(variantes, { camadas: ['aviso'], build: meta.build }),
+        carregarClinGen().catch(() => null),
+        carregarCPIC().catch(() => null),
+        carregarSimbolos().catch(() => null),
+        carregarIndice().catch(() => null),
+      ])
+      anotarClinGen(variantes, clingen, simbolos)
+      anotarCPIC(variantes, cpic)
+      anotarACMG(variantes)
+      setDados((d) => ({ ...d, versaoClinvar: indiceCv?.versao || null, simbolos }))
       setAnotacao(info)
       setResumoCli(resumoClinico(variantes))
     } catch (e) {
@@ -96,8 +116,24 @@ export default function VcfPage() {
       casadas: (a?.casadas || 0) + info.casadas,
       camadasCarregadas: [a?.camadasCarregadas, info.camadasCarregadas].filter(Boolean).join('; '),
     }))
+    anotarACMG(dados.variantes)
     setResumoCli(resumoClinico(dados.variantes))
     setVus(true)
+  }, [dados])
+
+  // gnomAD ao vivo, só para o que já tem achado. Sai daqui coordenada e alelo,
+  // que não identificam pessoa, e é uma requisição por variante: mandar 30 mil
+  // seria abuso de um serviço público e levaria horas.
+  const consultarGnomad = useCallback(async (alvos) => {
+    if (!dados || !alvos?.length) return
+    setGnomad({ feitas: 0, total: alvos.length })
+    await frequenciaGnomad(alvos, {
+      build: dados.meta.build,
+      onProgresso: (p) => setGnomad(p),
+    })
+    anotarACMG(dados.variantes)
+    setResumoCli(resumoClinico(dados.variantes))
+    setGnomad('pronto')
   }, [dados])
 
   const aoSoltar = useCallback((e) => {
@@ -118,21 +154,17 @@ export default function VcfPage() {
           <h1 className="display text-40">VCF</h1>
         </header>
 
-        {/* A abertura ocupa a faixa em duas colunas: o que o arquivo é, e o
-            que acontece com ele aqui. Ficava na coluna direita do cabeçalho,
-            onde competia com o título em vez de introduzir a página. */}
-        <div className="grid gap-24 about-cards mb-96">
-          <p className={PAR}>
-            Um VCF lista as posições em que uma amostra difere do genoma de referência. Ele não é
-            o sequenciamento: é o último arquivo de uma cadeia, e o que ele pode responder depende
-            do que cada etapa anterior guardou e do que descartou.
-          </p>
-          <p className={PAR}>
-            <strong className="text-text font-medium">O arquivo não sai do seu computador.</strong>{' '}
-            A leitura acontece no navegador; só coordenada e identificador de variante chegam às
-            bases públicas, e nenhum dos dois identifica uma pessoa.
-          </p>
-        </div>
+        {/* Abertura em fluxo contínuo na faixa inteira. Estava em duas colunas
+            lado a lado, e ler uma coluna até o fim para voltar ao topo da outra
+            é o que a leitura corrida evita. */}
+        <p className={`${PAR} texto-colunas mb-96`}>
+          Um VCF lista as posições em que uma amostra difere do genoma de referência. Ele não é o
+          sequenciamento: é o último arquivo de uma cadeia, e o que ele pode responder depende do
+          que cada etapa anterior guardou e do que descartou.{' '}
+          <strong className="text-text font-medium">O arquivo não sai do seu computador.</strong>{' '}
+          A leitura acontece no navegador; só coordenada e identificador de variante chegam às
+          bases públicas, e nenhum dos dois identifica uma pessoa.
+        </p>
 
         <section className="mb-96" aria-labelledby="fluxo-title">
           <h2 id="fluxo-title" className="section-title mb-8">Como se chega a um VCF</h2>
@@ -209,6 +241,8 @@ export default function VcfPage() {
             resumoCli={resumoCli}
             vus={vus}
             onCarregarVUS={carregarVUS}
+            gnomad={gnomad}
+            onConsultarGnomad={consultarGnomad}
           />
         )}
       </div>

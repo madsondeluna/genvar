@@ -195,37 +195,6 @@ export default function AssociationPage() {
               {provQ.data.escopo ? ` · ${provQ.data.escopo}` : ''}
             </p>
           )}
-
-          {/* Procedência ausente é um achado, não um campo em branco. A página
-              inteira defende FAIR: esconder a lacuna aqui seria o defeito que ela
-              denuncia. */}
-          {provQ.data && !provQ.data.fonte && provQ.data.fonte_pendente && (
-            <div className="card tint-warning mt-16 flex items-start gap-10">
-              <Icon name="alert" className="text-muted mt-2" />
-              <div className="flex flex-col gap-8">
-                <p className="text-13 leading-snug about-left">
-                  <strong className="text-text font-medium">Procedência não registrada.</strong>{' '}
-                  {provQ.data.fonte_pendente}
-                </p>
-                <ul className="flex flex-col gap-4" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                  {[
-                    ['Formato', provQ.data.verificado_no_arquivo?.formato],
-                    ['Escopo', provQ.data.escopo],
-                    ['Genes', provQ.data.verificado_no_arquivo?.genes?.toLocaleString('pt-BR')],
-                    ['Fenótipos', provQ.data.verificado_no_arquivo?.fenotipos],
-                    ['Biobancos', provQ.data.verificado_no_arquivo?.biobancos?.join(', ')],
-                    ['Erro-padrão do efeito', provQ.data.verificado_no_arquivo?.erro_padrao_do_efeito],
-                    ['Teto de precisão', provQ.data.verificado_no_arquivo?.teto_de_precisao],
-                  ].filter(([, v]) => v).map(([k, v]) => (
-                    <li key={k} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: 'minmax(0,11rem) 1fr' }}>
-                      <span className="label">{k}</span>
-                      <span className="text-12">{v}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
         </header>
 
         {error && <ErrorAlert message={error.message} />}

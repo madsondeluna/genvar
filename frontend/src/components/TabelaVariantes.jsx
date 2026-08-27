@@ -4,17 +4,17 @@ import Icon from './Icon'
 import { ROTULO, SLOT, ORDEM_GRAVIDADE, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO, SLOT_IMPACTO } from '../vcf/clinvar'
 import { trocaTexto } from './AchadosClinicos'
 import { seriesStyle } from '../utils/seriesSlot'
-import { paraTSV, paraJSON, paraXLSX, baixar, CABECALHO, linhasTabulares } from '../vcf/exportar'
+import { paraTSV, paraJSON, paraXLSX, paraVCF, baixar, CABECALHO, linhasTabulares } from '../vcf/exportar'
 
 const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
 
 // Faixas de frequência. Doença rara não anda com alelo comum, e é por isso que
 // o corte de 1% é o filtro que mais reduz uma lista de candidatas.
 const FAIXAS_AF = [
-  ['qualquer', () => true],
-  ['ausente das coortes', (af) => af === 0 || af == null],
-  ['abaixo de 0,1%', (af) => af != null && af < 0.001],
-  ['abaixo de 1%', (af) => af != null && af < 0.01],
+  ['Qualquer', () => true],
+  ['Ausente das coortes', (af) => af === 0 || af == null],
+  ['Abaixo de 0,1%', (af) => af != null && af < 0.001],
+  ['Abaixo de 1%', (af) => af != null && af < 0.01],
   ['1% ou mais', (af) => af != null && af >= 0.01],
 ]
 
@@ -39,7 +39,7 @@ const VAZIO = {
   soPassa: false, soAnotadas: false, qualMin: '', dpMin: '',
 }
 
-export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotacao }) {
+export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotacao, painel }) {
   const [f, setF] = useState(VAZIO)
   const [pagina, setPagina] = useState(0)
   const [ordem, setOrdem] = useState(null)
@@ -101,7 +101,13 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
   async function exportar(formato) {
     setSaida('gerando')
     try {
-      if (formato === 'tsv') {
+      if (formato === 'vcf') {
+        const txt = paraVCF({
+          variantes: filtradas, meta: dados.meta, nome: dados.nome,
+          sha256: dados.sha256, versaoClinvar: dados.versaoClinvar, painel,
+        })
+        baixar(new Blob([txt], { type: 'text/plain' }), `${base}-genvar.vcf`)
+      } else if (formato === 'tsv') {
         baixar(new Blob([paraTSV(filtradas)], { type: 'text/tab-separated-values' }), `${base}-genvar.tsv`)
       } else if (formato === 'json') {
         const txt = paraJSON({ ...dados, variantes: filtradas, resumoCli })
@@ -143,6 +149,9 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
               ['frequencia populacional', 'ExAC, senao 1000 Genomes, senao ESP, conforme o ClinVar publica'],
               ['linhas exportadas', filtradas.length],
               ['filtros aplicados', ativos ? 'sim' : 'nao'],
+              ['sha256 do arquivo de entrada', dados.sha256 || 'nao calculado'],
+              ['versao do ClinVar', dados.versaoClinvar || 'nao registrada'],
+              ['painel aplicado', painel ? `${painel.nome} (${painel.genes.length} genes)` : 'nenhum'],
               ['uso', 'Pesquisa e ensino. Nao e laudo diagnostico. Achado exige confirmacao em laboratorio clinico e aconselhamento genetico.'],
             ],
           },
@@ -185,7 +194,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
         <label className="filtro">
           <span className="label">Cromossomo</span>
           <select className="select" value={f.chrom} onChange={(e) => set('chrom', e.target.value)}>
-            <option value="">todos</option>
+            <option value="">Todos</option>
             {opcoes.chroms.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </label>
@@ -193,7 +202,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
         <label className="filtro">
           <span className="label">Genótipo</span>
           <select className="select" value={f.zig} onChange={(e) => set('zig', e.target.value)}>
-            <option value="">todos</option>
+            <option value="">Todos</option>
             {opcoes.zigs.map((z) => <option key={z} value={z}>{z}</option>)}
           </select>
         </label>
@@ -208,18 +217,18 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
         <label className="filtro">
           <span className="label">Revisão mínima</span>
           <select className="select" value={f.estrelas} onChange={(e) => set('estrelas', +e.target.value)}>
-            <option value={0}>qualquer</option>
+            <option value={0}>Qualquer</option>
             <option value={1}>1 estrela ou mais</option>
             <option value={2}>2 estrelas ou mais</option>
-            <option value={3}>painel de especialistas</option>
-            <option value={4}>diretriz de prática</option>
+            <option value={3}>Painel de especialistas</option>
+            <option value={4}>Diretriz de prática</option>
           </select>
         </label>
 
         <label className="filtro">
           <span className="label">Impacto</span>
           <select className="select" value={f.impacto} onChange={(e) => set('impacto', e.target.value)}>
-            <option value="">qualquer</option>
+            <option value="">Qualquer</option>
             {ORDEM_IMPACTO.filter((i) => resumoCli?.porImpacto?.[i]).map((i) => (
               <option key={i} value={i}>{i} ({resumoCli.porImpacto[i]})</option>
             ))}
@@ -229,7 +238,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
         <label className="filtro">
           <span className="label">Consequência</span>
           <select className="select" value={f.conseq} onChange={(e) => set('conseq', e.target.value)}>
-            <option value="">todas</option>
+            <option value="">Todas</option>
             {opcoes.conseqs.map((c) => <option key={c} value={c}>{CONSEQUENCIA[c]}</option>)}
           </select>
         </label>
@@ -333,7 +342,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
                   {v.clinvar?.consequencia > 0 ? (
                     <>
                       <span className="tag tag-series tag-sm" style={seriesStyle(SLOT_IMPACTO[IMPACTO[v.clinvar.consequencia]] || 1)}>
-                        {IMPACTO[v.clinvar.consequencia] || 'não classificado'}
+                        {IMPACTO[v.clinvar.consequencia] || 'Não classificado'}
                       </span>
                       <span className="block label">{CONSEQUENCIA[v.clinvar.consequencia]}</span>
                     </>
@@ -381,7 +390,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
 
         <span className="flex items-center gap-8 flex-wrap">
           <span className="label">Baixar {ativos ? 'o que está filtrado' : 'tudo'}</span>
-          {[['tsv', 'TSV'], ['xlsx', 'XLSX'], ['json', 'JSON']].map(([k, r]) => (
+          {[['vcf', 'VCF'], ['tsv', 'TSV'], ['xlsx', 'XLSX'], ['json', 'JSON']].map(([k, r]) => (
             <button key={k} type="button" className="pill pill-sm" disabled={saida === 'gerando'} onClick={() => exportar(k)}>
               <Icon name="download" /> {r}
             </button>
