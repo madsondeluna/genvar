@@ -219,7 +219,7 @@ export default function VariantTable({
                 <tr key={`${v.variant_id}-${v.position}`} className="table-row">
                   <td className="table-cell mono text-12">{v.variant_id}</td>
                   <td className="table-cell mono num text-12 text-muted">{formatPosition(v.position)}</td>
-                  <td className="table-cell text-12 text-muted">{formatConsequence(v.consequence)}</td>
+                  <td className="table-cell text-12">{formatConsequence(v.consequence)}</td>
                   <td className="table-cell">
                     <SignificanceTag value={v.clinical_significance} />
                   </td>

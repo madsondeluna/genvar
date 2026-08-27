@@ -107,7 +107,7 @@ export default function GeneLocusHeatmap({ geneData }) {
   return (
     <div className="card">
       <h3 className="section-title mb-8">Onde estão as variantes clínicas no gene</h3>
-      <p className="text-12 text-muted mb-8">
+      <p className="text-12 mb-8">
         O eixo horizontal é a posição no cromossomo {geneData.chromosome} (em milhões de bases, Mb),
         a mesma coordenada do mapa cromossômico acima. Cada barra cobre {binKb} kb do gene; a altura
         mostra quantas variantes com classificação clínica no ClinVar caem ali, em patogênica
@@ -150,7 +150,7 @@ export default function GeneLocusHeatmap({ geneData }) {
         </div>
       </div>
       {built.hotspot && (
-        <p className="text-12 text-muted mt-12">
+        <p className="text-12 mt-12">
           Trecho mais denso: {(built.hotspot.start / 1_000_000).toFixed(3)} Mb, com{' '}
           {built.hotspot.count.toLocaleString('pt-BR')} variantes classificadas em {binKb} kb.
         </p>

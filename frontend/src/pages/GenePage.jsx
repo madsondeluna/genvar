@@ -75,7 +75,7 @@ function InfoRow({ label, value, hint }) {
     <div className="flex flex-col gap-2">
       <span className="label">{label}</span>
       <span className="value">{value}</span>
-      {hint && <span className="block text-12 text-muted leading-snug mt-2">{hint}</span>}
+      {hint && <span className="block text-12 leading-snug mt-2">{hint}</span>}
     </div>
   )
 }
@@ -91,7 +91,7 @@ function StatCard({ label, value, hint, statusClass }) {
       ) : (
         <span className="label">{label}</span>
       )}
-      {hint && <span className="text-12 text-muted leading-snug">{hint}</span>}
+      {hint && <span className="text-12 leading-snug">{hint}</span>}
     </div>
   )
 }
@@ -216,7 +216,7 @@ export default function GenePage() {
 
             <section aria-labelledby="variant-summary-title">
               <h2 id="variant-summary-title" className="section-title mb-4">Resumo de variantes</h2>
-              <p className="text-12 text-muted mb-12">
+              <p className="text-12 mb-12">
                 Variantes do gene catalogadas no Ensembl, agrupadas pela classificação clínica do
                 ClinVar. As cores seguem o gráfico de distribuição.
               </p>
@@ -287,7 +287,7 @@ export default function GenePage() {
                   <div className="flex flex-col gap-12">
                     <div>
                       <p className="label mb-4">Erro de alinhamento previsto (PAE)</p>
-                      <p className="text-14 text-muted">
+                      <p className="text-14">
                         Valores menores indicam maior confiança nas posições relativas dos resíduos.
                       </p>
                     </div>

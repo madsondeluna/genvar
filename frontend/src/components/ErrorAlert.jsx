@@ -5,7 +5,7 @@ export default function ErrorAlert({ message }) {
       <Icon name="alert" size="md" style={{ color: 'var(--state-critical)' }} />
       <div>
         <p className="text-14 font-medium" style={{ color: 'var(--state-critical)' }}>Erro</p>
-        <p className="text-14 text-muted mt-2">{message}</p>
+        <p className="text-14 mt-2">{message}</p>
       </div>
     </div>
   )

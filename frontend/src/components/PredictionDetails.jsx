@@ -149,10 +149,10 @@ function ScoreCard({ label, score, prediction, tone, hint }) {
               {translatePrediction(prediction)}
             </p>
           )}
-          {hint && <p className="text-12 text-muted mt-4">{hint}</p>}
+          {hint && <p className="text-12 mt-4">{hint}</p>}
         </>
       ) : (
-        <p className="text-14 text-muted">Indisponível</p>
+        <p className="text-14">Indisponível</p>
       )}
     </div>
   )
@@ -194,7 +194,7 @@ export default function PredictionDetails({ data }) {
   return (
     <section className="card" aria-labelledby="score-details-title">
       <h3 id="score-details-title" className="section-title mb-8">Detalhes dos scores preditivos</h3>
-      <p className="text-12 text-muted mb-16">
+      <p className="text-12 mb-16">
         Agregado de SIFT, PolyPhen-2 (Ensembl VEP) e dbNSFP via MyVariant.info (CADD, REVEL,
         AlphaMissense, MetaLR, MetaSVM, PrimateAI, FATHMM, MutPred, DANN), conservação (PhyloP,
         PhastCons, GERP++) e predição de splicing (SpliceAI, dbscSNV).

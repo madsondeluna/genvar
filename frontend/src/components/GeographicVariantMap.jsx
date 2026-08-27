@@ -114,7 +114,7 @@ export default function GeographicVariantMap({ frequencies }) {
   return (
     <div className="card">
       <h3 className="section-title mb-8">Distribuição geográfica</h3>
-      <p className="text-12 text-muted mb-8">
+      <p className="text-12 mb-8">
         Cor identifica a população, a mesma do gráfico de frequências abaixo. Tamanho do marcador
         proporcional à frequência alélica (escala log). Passe o mouse sobre cada população para
         detalhes.

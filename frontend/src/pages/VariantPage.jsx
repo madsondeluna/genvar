@@ -36,7 +36,7 @@ function InfoRow({ label, value, hint }) {
     <div className="flex flex-col gap-2">
       <span className="label">{label}</span>
       <span className="value">{value}</span>
-      {hint && <span className="block text-12 text-muted leading-snug mt-2">{hint}</span>}
+      {hint && <span className="block text-12 leading-snug mt-2">{hint}</span>}
     </div>
   )
 }
@@ -86,7 +86,7 @@ export default function VariantPage() {
                       </Link>
                     )}
                     {data.most_severe_consequence && (
-                      <span className="text-14 text-muted">
+                      <span className="text-14">
                         {formatConsequence(data.most_severe_consequence)}
                       </span>
                     )}

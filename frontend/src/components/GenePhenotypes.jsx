@@ -34,7 +34,7 @@ export default function GenePhenotypes({ symbol }) {
   return (
     <section className="card" aria-labelledby="phenotypes-title">
       <h3 id="phenotypes-title" className="section-title mb-8">Doenças e fenótipos associados</h3>
-      <p className="text-12 text-muted mb-12">
+      <p className="text-12 mb-12">
         Associações gene-doença de fontes com curadoria clínica (OMIM, Orphanet, GenCC e G2P,
         agregadas pelo Ensembl). O modo de herança, quando exibido, vem da curadoria Orphanet.
         Abaixo, características influenciadas por muitas variantes de efeito pequeno
@@ -42,7 +42,7 @@ export default function GenePhenotypes({ symbol }) {
       </p>
 
       {isLoading && (
-        <div className="text-12 text-muted py-8" aria-live="polite">
+        <div className="text-12 py-8" aria-live="polite">
           Buscando associações curadas...
         </div>
       )}
@@ -67,7 +67,7 @@ export default function GenePhenotypes({ symbol }) {
                 <div className="flex flex-col gap-4">
                   <span className="text-14 text-text">{d.description}</span>
                   {d.inheritance.length > 0 && (
-                    <span className="text-12 text-muted">
+                    <span className="text-12">
                       Herança {d.inheritance.join(', ')}
                     </span>
                   )}
@@ -98,7 +98,7 @@ export default function GenePhenotypes({ symbol }) {
             {data.gwas.map((g) => (
               <li
                 key={g.trait}
-                className="text-12 text-muted border border-border rounded-control px-8 py-2"
+                className="text-12 border border-border rounded-control px-8 py-2"
                 title={
                   g.best_p_value != null
                     ? `${g.association_count} associações no catálogo; menor p = ${g.best_p_value.toExponential(1)}`
@@ -110,7 +110,7 @@ export default function GenePhenotypes({ symbol }) {
             ))}
           </ul>
           {(data.gwas_trait_total > data.gwas.length || data.gwas_truncated) && (
-            <p className="text-12 text-muted mt-8">
+            <p className="text-12 mt-8">
               Mostrando as {data.gwas.length} características com mais associações
               {data.gwas_trait_total > data.gwas.length &&
                 `, de ${data.gwas_trait_total.toLocaleString('pt-BR')} distintas`}

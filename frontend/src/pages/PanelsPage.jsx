@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import Icon from '../components/Icon'
 import { fetchPanels, fetchPanelStats } from '../api/client'
 import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
+import SuggestBox from '../components/SuggestBox'
+import { seriesSlot, seriesStyle } from '../utils/seriesSlot'
 import LoadingSpinner from '../components/LoadingSpinner'
 
 const PAGE_SIZE = 30
@@ -12,6 +14,7 @@ const PAGE_SIZE = 30
 // Hub de Paineis de genes (multigenico): busca e facetas por categoria, cards
 // com a contagem de genes. Cada card leva ao detalhe agregado.
 export default function PanelsPage() {
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [debounced, setDebounced] = useState('')
   const [category, setCategory] = useState('all')
@@ -32,6 +35,8 @@ export default function PanelsPage() {
   const items = data?.items ?? []
   const total = data?.total ?? 0
   const categories = statsQ.data?.by_category ?? []
+  // ordem canonica: cada categoria recebe sempre o mesmo slot de serie
+  const categoryKeys = categories.map((c) => c.key)
 
   return (
     <main className="min-h-screen bg-bg">
@@ -44,7 +49,7 @@ export default function PanelsPage() {
             Multigênico · beta
           </p>
           <h1 className="display mb-12">Painéis de genes</h1>
-          <p className="text-15 text-muted leading-normal">
+          <p className="text-15 leading-normal">
             Grupos de genes que, juntos, respondem por uma condição ou por
             condições relacionadas. Cada painel agrega a restrição (LOEUF/pLI) de
             todos os seus genes e destaca a herança complexa e os efeitos
@@ -60,16 +65,15 @@ export default function PanelsPage() {
         <div className="card mb-24 flex flex-col gap-16">
           <div className="flex items-center gap-8">
             <Icon name="search" className="text-muted" />
-            <label htmlFor="panel-search" className="sr-only">Buscar painel ou gene</label>
-            <input
-              id="panel-search"
-              type="text"
-              className="input flex-1"
+            <SuggestBox
+              className="flex-1"
+              inputClassName="input"
+              label="Buscar painel ou gene"
               placeholder="Buscar por painel, categoria ou gene (ex.: MYH7, cancer)"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              spellCheck={false}
-              autoComplete="off"
+              onChange={setQuery}
+              kinds={['panel','gene']}
+              onPick={(item, rota) => navigate(rota)}
             />
           </div>
           <div className="flex flex-wrap gap-8" role="group" aria-label="Filtrar por categoria">
@@ -104,14 +108,15 @@ export default function PanelsPage() {
                 <Link
                   key={p.id}
                   to={`/painel/${p.id}`}
-                  className="card hover-surface flex flex-col gap-8 cursor-pointer"
+                  className="card tint-series hover-surface flex flex-col gap-8 cursor-pointer"
+                  style={seriesStyle(seriesSlot(p.category, categoryKeys))}
                 >
                   <span className="flex items-center justify-between gap-8">
                     <span className="eyebrow">{p.category}</span>
                     <span className="pill pill-sm tint-neutral">{p.gene_count} genes</span>
                   </span>
                   <span className="text-16 font-medium text-text">{p.name}</span>
-                  {p.short && <span className="text-12 text-muted leading-snug">{p.short}</span>}
+                  {p.short && <span className="text-12 leading-snug">{p.short}</span>}
                   <span className="flex flex-wrap gap-6 mt-4">
                     {p.genes.slice(0, 6).map((g) => (
                       <span key={g} className="pill pill-solid pill-sm mono">{g}</span>
@@ -125,7 +130,7 @@ export default function PanelsPage() {
             </div>
 
             {items.length === 0 && !isFetching && (
-              <p className="text-14 text-muted mt-16">
+              <p className="text-14 mt-16">
                 Nenhum painel corresponde ao filtro. Ajuste a busca ou a categoria.
               </p>
             )}

@@ -37,26 +37,25 @@ export default function StatusPage() {
             <Icon name="chart-line" />
             Status
           </p>
-          <h1 className="display mb-12">Saúde do sistema</h1>
-          <p className="text-15 text-muted leading-normal">
+          <div className="flex items-center justify-between gap-16 mb-12 flex-wrap">
+            <h1 className="display">Saúde do sistema</h1>
+            <button
+              type="button"
+              onClick={refetchAll}
+              className="pill pill-sm"
+              disabled={busy}
+              aria-label="Recarregar status"
+            >
+              <Icon name="refresh" />
+              {busy ? 'Verificando...' : 'Recarregar'}
+            </button>
+          </div>
+          <p className="text-15 leading-normal">
             Verifica em tempo real os serviços da API do GenVar e as fontes externas de dados.
             Resultado cacheado no servidor. Endpoints e fontes que dependem de rede aparecem em
             falha quando a origem está indisponível.
           </p>
         </header>
-
-        <div className="flex justify-end mb-16">
-          <button
-            type="button"
-            onClick={refetchAll}
-            className="pill pill-sm"
-            disabled={busy}
-            aria-label="Recarregar status"
-          >
-            <Icon name="refresh" />
-            {busy ? 'Verificando...' : 'Recarregar'}
-          </button>
-        </div>
 
         {/* Servicos da API (nossos endpoints) */}
         <section className="mb-24" aria-labelledby="services-title">
@@ -82,27 +81,27 @@ export default function StatusPage() {
                 <thead>
                   <tr>
                     <th className="table-header">Endpoint</th>
-                    <th className="table-header">Tipo</th>
-                    <th className="table-header">Latência</th>
-                    <th className="table-header">Status</th>
+                    <th className="table-header w-px whitespace-nowrap">Tipo</th>
+                    <th className="table-header text-right w-px whitespace-nowrap">Latência</th>
+                    <th className="table-header w-px whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {endpoints.data.endpoints.map((e) => (
                     <tr key={e.path} className="border-t border-border">
-                      <td className="py-8 pr-12">
+                      <td className="px-16 py-12">
                         <span className="text-14 font-medium text-text block">{e.name}</span>
                         <span className="mono text-11 text-muted">{e.path}</span>
                       </td>
-                      <td className="py-8 pr-12">
+                      <td className="px-16 py-12">
                         <span className={`pill pill-sm ${e.external ? 'tint-warning' : 'tint-good'}`}>
                           {e.external ? 'externo' : 'interno'}
                         </span>
                       </td>
-                      <td className="py-8 pr-12 mono num text-13 text-muted">
+                      <td className="px-16 py-12 mono num text-13 text-muted text-right whitespace-nowrap">
                         {e.latency_ms != null ? `${e.latency_ms} ms` : 'n/d'}
                       </td>
-                      <td className="py-8">
+                      <td className="px-16 py-12">
                         <span className={`status ${e.ok ? 'status-good' : 'status-critical'}`}>
                           {e.ok ? 'OK' : (e.detail || 'Falha')}
                         </span>
@@ -139,20 +138,20 @@ export default function StatusPage() {
                 <thead>
                   <tr>
                     <th className="table-header">Fonte</th>
-                    <th className="table-header">Host</th>
-                    <th className="table-header">Latência</th>
-                    <th className="table-header">Status</th>
+                    <th className="table-header w-px whitespace-nowrap">Host</th>
+                    <th className="table-header text-right w-px whitespace-nowrap">Latência</th>
+                    <th className="table-header w-px whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sources.data.sources.map((s) => (
                     <tr key={s.name} className="border-t border-border">
-                      <td className="py-8 pr-12 text-14 font-medium text-text">{s.name}</td>
-                      <td className="py-8 pr-12 mono text-12 text-muted">{s.host}</td>
-                      <td className="py-8 pr-12 mono num text-13 text-muted">
+                      <td className="px-16 py-12 text-14 font-medium text-text">{s.name}</td>
+                      <td className="px-16 py-12 mono text-12 text-muted">{s.host}</td>
+                      <td className="px-16 py-12 mono num text-13 text-muted text-right whitespace-nowrap">
                         {s.latency_ms != null ? `${s.latency_ms} ms` : 'n/d'}
                       </td>
-                      <td className="py-8">
+                      <td className="px-16 py-12">
                         <span className={`status ${s.ok ? 'status-good' : 'status-critical'}`}>
                           {s.ok ? 'OK' : (s.detail || 'Falha')}
                         </span>

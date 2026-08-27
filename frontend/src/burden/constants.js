@@ -11,9 +11,10 @@ export const ANCESTRY_LABEL = {
   EUR: 'Europeia',
   AFR: 'Africana',
   AMR: 'Latina (Admixed American)',
-  EAS: 'Leste Asiatico',
-  SAS: 'Sul da Asia',
-  non_EUR: 'Nao europeia',
+  EAS: 'Leste Asiático',
+  SAS: 'Sul da Ásia',
+  MID: 'Oriente Médio',
+  non_EUR: 'Não europeia',
 }
 
 // Rotulo curto por ancestria, para colunas estreitas (forest).
@@ -22,16 +23,25 @@ export const ANCESTRY_SHORT = {
   EUR: 'Europeia',
   AFR: 'Africana',
   AMR: 'Latina (AMR)',
-  EAS: 'Leste Asiatico',
-  SAS: 'Sul da Asia',
-  non_EUR: 'Nao europeia',
+  EAS: 'Leste Asiático',
+  SAS: 'Sul da Ásia',
+  MID: 'Oriente Médio',
+  non_EUR: 'Não europeia',
 }
 
-// Cor por ancestria (AMR verde). Usada no forest e nas legendas; os plots
-// resolvem via canvas/SVG (valores concretos).
+// Cor por ancestria: slots categoricos do Pure, atribuidos em sequencia e
+// nunca ciclados. Eram sete hex escolhidos a mao, presos ao modo claro. 'All'
+// e agregado, nao serie, entao fica em tinta de grafico. Consumidores em SVG e
+// DOM leem o var() direto; canvas passa por resolveColor().
 export const ANCESTRY_COLOR = {
-  All: '#15202b', EUR: '#1f6f8b', AFR: '#e08a1e', AMR: '#2f7d4f',
-  EAS: '#c0392b', SAS: '#7d5ba6', non_EUR: '#566573',
+  All: 'var(--chart-ink)',
+  EUR: 'var(--chart-1)',
+  AFR: 'var(--chart-2)',
+  AMR: 'var(--chart-3)',
+  EAS: 'var(--chart-4)',
+  SAS: 'var(--chart-5)',
+  MID: 'var(--chart-6)',
+  non_EUR: 'var(--chart-7)',
 }
 
 export const MASKS = [

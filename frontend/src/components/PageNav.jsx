@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import AppMenu from './AppMenu'
+import BrandMark from './BrandMark'
 import UnifiedSearch from './UnifiedSearch'
 
 // Barra das páginas internas: marca (leva à home), menu de seções e a busca
@@ -10,7 +11,7 @@ export default function PageNav({ showSearch = true, initialQuery = '' }) {
     <nav className="app-nav z-10" aria-label="Principal">
       <div className="max-w-xl mx-auto px-24 py-12 flex items-center justify-between gap-16 flex-wrap">
         <Link to="/" className="flex items-center gap-8 text-14 text-text hover:opacity-70">
-          <img src={`${import.meta.env.BASE_URL}brand/genvar-mark.svg`} alt="Marca do GenVar" className="w-24 h-24" />
+          <BrandMark className="w-24 h-24" />
           GenVar Dashboard
         </Link>
         <AppMenu />

@@ -93,7 +93,7 @@ function MetricBar({ label, value, metric, description }) {
         </span>
       </div>
       <Meter fill={fill} ink={value != null ? band.ink : 'var(--border)'} />
-      {description && <p className="text-12 text-muted">{description}</p>}
+      {description && <p className="text-12">{description}</p>}
     </div>
   )
 }
@@ -114,7 +114,7 @@ function ScoreGauge({ label, value, metric, interpretation }) {
       <div className="mt-12">
         <Meter fill={fill} ink={value != null ? band.ink : 'var(--border)'} />
       </div>
-      {interpretation && <p className="text-12 text-muted mt-8">{interpretation}</p>}
+      {interpretation && <p className="text-12 mt-8">{interpretation}</p>}
     </div>
   )
 }
@@ -131,10 +131,10 @@ function DirectionScale() {
         }}
       />
       <div className="flex justify-between mt-4">
-        <span className="text-12 text-muted">Tolerante (barra vazia)</span>
-        <span className="text-12 text-muted">Altamente restrito (barra cheia)</span>
+        <span className="text-12">Tolerante (barra vazia)</span>
+        <span className="text-12">Altamente restrito (barra cheia)</span>
       </div>
-      <p className="text-12 text-muted mt-4">
+      <p className="text-12 mt-4">
         Todas as barras seguem esta direção: quanto mais cheia e mais vermelha, mais restrito o
         gene. Genes tolerantes ficam com a barra curta e verde.
       </p>
@@ -153,7 +153,7 @@ export default function ConstraintMetrics({ data }) {
         <h3 className="section-title">Métricas de restrição</h3>
         <span className="text-12 text-muted mono">gnomAD r4</span>
       </div>
-      <p className="text-12 text-muted mb-16">
+      <p className="text-12 mb-16">
         Mostra se o gene tolera perder função. Variantes de perda de função (LoF) desligam o produto
         do gene; genes importantes acumulam bem menos dessas variantes do que o esperado por acaso, e
         são ditos restritos. Quanto mais restrito, maior a chance de uma mutação grave ali causar
@@ -161,7 +161,7 @@ export default function ConstraintMetrics({ data }) {
       </p>
 
       <div className="mb-16 rounded-media bg-dim border border-border p-12">
-        <p className="text-12 text-muted">
+        <p className="text-12">
           <span className="font-medium text-text">O que é LoF:</span> sigla de loss of function
           (perda de função). É uma mutação que inativa o gene, fazendo-o parar de produzir sua
           proteína normal. Genes em que perder a função causa doença tendem a acumular poucas

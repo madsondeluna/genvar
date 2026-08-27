@@ -56,14 +56,14 @@ export default function PlansPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-3xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
         <header>
           <p className="eyebrow mb-8 flex items-center gap-8">
             <Icon name="sparkle" />
             Planos
           </p>
           <h1 className="display mb-12">Planos e acesso</h1>
-          <p className="text-15 text-muted leading-normal">
+          <p className="text-15 leading-normal">
             O beta e publico e gratuito. Os planos pagos, com exportacao, API
             ampliada e dados proprios, entram numa fase seguinte; abaixo a
             estrutura pretendida.
@@ -79,7 +79,7 @@ export default function PlansPage() {
               <div className="flex flex-col gap-4">
                 <span className="section-title">{p.name}</span>
                 <span className="text-20 font-medium text-text">{p.price}</span>
-                <span className="text-12 text-muted">{p.tagline}</span>
+                <span className="text-12">{p.tagline}</span>
               </div>
               <ul className="flex flex-col gap-8 flex-1">
                 {p.features.map((f) => (
@@ -100,7 +100,7 @@ export default function PlansPage() {
 
         <section className="card flex flex-col gap-8">
           <h2 className="section-title">API publica</h2>
-          <p className="text-14 text-muted leading-normal">
+          <p className="text-14 leading-normal">
             O GenVar ja expoe uma API REST publica (a mesma que alimenta o site):
             genes, variantes, doencas, paineis, associacao por burden e escores
             poligenicos. A documentacao interativa fica em <span className="mono">/docs</span> no
@@ -110,7 +110,7 @@ export default function PlansPage() {
           <Link to="/produtos" className="pill pill-sm self-start">Ver as linhas do produto</Link>
         </section>
 
-        <p className="text-12 text-muted leading-snug">
+        <p className="text-12 leading-snug">
           Autenticacao, cobranca e multiusuario nao fazem parte do beta publico:
           sao um passo dedicado, com as decisoes de provedor de identidade,
           pagamento e isolamento de dados a definir.

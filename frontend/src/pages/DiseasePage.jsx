@@ -7,6 +7,7 @@ import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import SignificanceTag from '../components/SignificanceTag'
+import { seriesStyle } from '../utils/seriesSlot'
 import { inheritanceMeta } from '../utils/inheritance'
 import { useViewMode } from '../hooks/useViewMode'
 
@@ -34,32 +35,40 @@ function InfoRow({ label, value }) {
 
 // Cartão compacto de gene causal com constraint enriquecido ao vivo e link para
 // a página de gene completa (variantes, estrutura, frequências).
+// Cartao de gene causal. O conteudo corre em LINHA e nao em coluna: a maioria
+// das doencas tem um ou dois genes causais, e com colunas fixas um gene unico
+// deixava dois tercos da faixa vazios. Em linha, o cartao ocupa a largura que
+// tiver e os numeros ficam lado a lado, que e como se comparam.
 function CausalGeneCard({ gene }) {
   const band = loeufBand(gene.loeuf)
   return (
-    <Link to={`/gene/${gene.symbol}`} className="card hover-surface flex flex-col gap-8 cursor-pointer">
-      <span className="flex items-center justify-between gap-8">
-        <span className="text-15 font-medium text-text mono">{gene.symbol}</span>
-        <Icon name="arrow-right" className="text-muted" />
-      </span>
+    <Link
+      to={`/gene/${gene.symbol}`}
+      className="card hover-surface flex items-center justify-between gap-16 flex-wrap cursor-pointer"
+    >
+      <span className="text-15 font-medium text-text mono">{gene.symbol}</span>
       {gene.constraint_available ? (
-        <div className="flex flex-col gap-6">
-          <div className="flex justify-between items-center">
+        <span className="flex items-center gap-24 flex-wrap">
+          <span className="flex items-baseline gap-6">
             <span className="label">LOEUF</span>
-            <span className="text-12 mono num text-text">
+            <span className="text-13 mono num text-text">
               {gene.loeuf != null ? gene.loeuf.toFixed(3) : 'n/d'}
             </span>
-          </div>
-          <span className="status text-12" style={{ color: band.ink }}>{band.label}</span>
-          <div className="flex justify-between items-center mt-4">
+          </span>
+          <span className="flex items-baseline gap-6">
             <span className="label">pLI</span>
-            <span className="text-12 mono num text-text">
+            <span className="text-13 mono num text-text">
               {gene.pli != null ? gene.pli.toFixed(3) : 'n/d'}
             </span>
-          </div>
-        </div>
+          </span>
+          <span className="status text-12" style={{ color: band.ink }}>{band.label}</span>
+          <Icon name="arrow-right" className="text-muted" />
+        </span>
       ) : (
-        <span className="text-12 text-muted">Constraint indisponível na gnomAD.</span>
+        <span className="flex items-center gap-16">
+          <span className="text-12">Constraint indisponível na gnomAD.</span>
+          <Icon name="arrow-right" className="text-muted" />
+        </span>
       )}
     </Link>
   )
@@ -80,7 +89,7 @@ function VariantRow({ v }) {
         )}
       </td>
       <td className="py-8 pr-12 mono num text-13 text-muted">{v.position || 'n/d'}</td>
-      <td className="py-8 pr-12 text-13 text-muted">{v.consequence}</td>
+      <td className="py-8 pr-12 text-13">{v.consequence}</td>
       <td className="py-8"><SignificanceTag value={v.clinical_significance} /></td>
     </tr>
   )
@@ -107,7 +116,7 @@ function PathogenicVariantsSection({ id }) {
         </h2>
         <span className="text-12 text-muted mono">ClinVar via Ensembl</span>
       </div>
-      <p className="text-12 text-muted mb-16">
+      <p className="text-12 mb-16">
         Variantes classificadas como patogênicas ou potencialmente patogênicas em cada gene causal.
         Amostra representativa por gene; a página de gene traz o conjunto completo. Clique num rsID
         para abrir a variante.
@@ -119,7 +128,7 @@ function PathogenicVariantsSection({ id }) {
       {data && !isLoading && (
         <>
           {genesWithHits.length === 0 && (
-            <p className="text-14 text-muted">
+            <p className="text-14">
               Nenhuma variante patogênica encontrada para os genes causais no momento.
             </p>
           )}
@@ -156,7 +165,7 @@ function PathogenicVariantsSection({ id }) {
             ))}
           </div>
           {data.degraded && (
-            <p className="text-12 text-muted mt-12">
+            <p className="text-12 mt-12">
               Parte dos genes não pôde ser carregada agora; tente recarregar em instantes.
             </p>
           )}
@@ -180,7 +189,7 @@ function BrazilContext({ data }) {
         </h2>
         <span className="text-12 text-muted mono">SUS e triagem</span>
       </div>
-      <p className="text-12 text-muted mb-16">
+      <p className="text-12 mb-16">
         Cobertura no sistema publico e rastreio neonatal (curado; confirme sempre com a fonte
         oficial). O botao raras.org, no topo, leva a informacao e comunidade para pacientes.
       </p>
@@ -189,7 +198,7 @@ function BrazilContext({ data }) {
         <div className="rounded-media border border-border p-16 mb-12">
           <span className="label mb-4">Epidemiologia no Brasil</span>
           <p className="text-13 text-text leading-snug">{prevalence_br}</p>
-          <p className="text-12 text-muted mt-4">Fonte de referencia: rede RARAS / Atlas Brasileiro (raras.org.br).</p>
+          <p className="text-12 mt-4">Fonte de referencia: rede RARAS / Atlas Brasileiro (raras.org.br).</p>
         </div>
       )}
 
@@ -203,7 +212,7 @@ function BrazilContext({ data }) {
                 {newborn.covered ? 'Rastreada' : 'Nao rastreada'}
               </span>
             </p>
-            {newborn.note && <p className="text-12 text-muted leading-snug mt-4">{newborn.note}</p>}
+            {newborn.note && <p className="text-12 leading-snug mt-4">{newborn.note}</p>}
           </div>
         </div>
       )}
@@ -227,7 +236,7 @@ function BrazilContext({ data }) {
               </span>
             </div>
           )}
-          {sus.note && <p className="text-12 text-muted leading-snug mb-8">{sus.note}</p>}
+          {sus.note && <p className="text-12 leading-snug mb-8">{sus.note}</p>}
           {sus.pcdt_url && <ExternalLinkButton href={sus.pcdt_url} label="Protocolos (PCDT)" />}
         </div>
       )}
@@ -243,7 +252,7 @@ function GenesForPatients({ data }) {
         <Icon name="helix" className="text-muted" />
         Genes envolvidos
       </h2>
-      <p className="text-13 text-muted leading-normal mb-16">
+      <p className="text-13 leading-normal mb-16">
         Alteracoes nestes genes podem causar a doenca. O diagnostico e a interpretacao devem ser
         feitos por um profissional de saude ou geneticista. Para informacao e apoio, use o botao
         raras.org no topo.
@@ -290,9 +299,9 @@ export default function DiseasePage() {
                   <p className="eyebrow mb-4">{data.category}</p>
                   <h1 className="display">{data.name}</h1>
                 </div>
-                <span className={`pill ${m.tint}`} title={m.label}>{m.label}</span>
+                <span className="tag tag-series" style={seriesStyle(m.slot)}>{m.label}</span>
               </div>
-              <p className="text-14 text-muted leading-normal mb-16">{data.short}</p>
+              <p className="text-14 leading-normal mb-16">{data.short}</p>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-16 mb-16">
                 <InfoRow label="Herança" value={m.label} />
@@ -349,12 +358,15 @@ export default function DiseasePage() {
                 <h2 id="causal-title" className="section-title">Genes causais</h2>
                 <span className="text-12 text-muted mono">gnomAD r4</span>
               </div>
-              <p className="text-12 text-muted mb-16">
+              <p className="text-12 mb-16">
                 Restrição de cada gene causal, medida pela gnomAD. LOEUF baixo (e pLI alto) indica
                 genes que toleram pouco perder função, onde variantes graves têm mais chance de
                 causar doença. Clique num gene para ver variantes, estrutura e frequências.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+              <div
+                className="grid gap-16"
+                style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 22rem), 1fr))' }}
+              >
                 {data.causal_genes.map((g) => (
                   <CausalGeneCard key={g.symbol} gene={g} />
                 ))}
@@ -365,19 +377,22 @@ export default function DiseasePage() {
             {/* Contexto brasileiro: SUS e triagem neonatal */}
             <BrazilContext data={data} />
 
-            {/* Variantes patogênicas por gene causal (assíncrono, só no modo profissional) */}
-            {mode === 'profissional' && <PathogenicVariantsSection id={id} />}
-
-            {/* Sinais clínicos (HPO) */}
+            {/* Sinais clínicos (HPO). Vem ANTES das variantes: o quadro clínico
+                e o que faz reconhecer a doenca, e a variante e o que se procura
+                depois de suspeitar dela. */}
             {data.hpo.length > 0 && (
-              <section className="card" aria-labelledby="hpo-title">
-                <h2 id="hpo-title" className="section-title mb-4 flex items-center gap-8">
-                  <Icon name="shield" className="text-muted" />
-                  Sinais e manifestações
-                </h2>
-                <p className="text-12 text-muted mb-16">
-                  Principais achados clínicos associados (curados). O mapeamento completo para HPO e
-                  Orphanet está na Fase 1 do roadmap.
+              <section className="card mb-24" aria-labelledby="hpo-title">
+                <div className="flex items-start justify-between gap-16 mb-4 flex-wrap">
+                  <h2 id="hpo-title" className="section-title flex items-center gap-8">
+                    <Icon name="shield" className="text-muted" />
+                    Sinais e manifestações
+                  </h2>
+                  <span className="text-12 text-muted mono">HPO via Orphanet</span>
+                </div>
+                <p className="text-12 mb-16">
+                  Achados clínicos frequentes ou obrigatórios, na anotação do Orphanet.
+                  Sinais ocasionais ficam de fora: uma doença rara lista dezenas deles, e a
+                  cauda não ajuda a reconhecer o quadro.
                 </p>
                 <div className="flex flex-wrap gap-8">
                   {data.hpo.map((h) => (
@@ -386,6 +401,10 @@ export default function DiseasePage() {
                 </div>
               </section>
             )}
+
+            {/* Variantes patogênicas por gene causal (assíncrono, só no modo profissional) */}
+            {mode === 'profissional' && <PathogenicVariantsSection id={id} />}
+
           </>
         )}
       </div>

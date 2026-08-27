@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import Icon from './Icon'
-import { useViewMode, setViewMode } from '../hooks/useViewMode'
+import { useColorMode, toggleColorMode } from '../hooks/useColorMode'
 
 // Menu de seções compartilhado entre as barras (páginas internas e home).
 // Um único ponto de verdade para os destinos de topo do produto. Icones da
@@ -13,34 +13,25 @@ const LINKS = [
   { to: '/associacao', label: 'Associação', icon: 'chart-bar' },
   { to: '/produtos', label: 'Produtos', icon: 'list' },
   { to: '/status', label: 'Status', icon: 'chart-line' },
+  { to: '/fontes', label: 'Fontes', icon: 'book' },
 ]
 
-// Alterna o modo de leitura global (linguagem simples x tecnico completo).
-function ModeToggle() {
-  const mode = useViewMode()
+// Alterna entre o modo claro e o escuro (grafite neutro da linguagem Pure).
+// Controle so de icone: o rotulo acessivel fica no botao, nao no desenho.
+function ColorModeToggle() {
+  const mode = useColorMode()
+  const dark = mode === 'dark'
   return (
-    <div className="flex items-center gap-4" role="group" aria-label="Modo de leitura">
-      <button
-        type="button"
-        onClick={() => setViewMode('paciente')}
-        className={`pill pill-sm ${mode === 'paciente' ? 'pill-solid' : ''}`}
-        aria-pressed={mode === 'paciente'}
-        title="Linguagem simples, para pacientes e familias"
-      >
-        <Icon name="user" />
-        Paciente
-      </button>
-      <button
-        type="button"
-        onClick={() => setViewMode('profissional')}
-        className={`pill pill-sm ${mode === 'profissional' ? 'pill-solid' : ''}`}
-        aria-pressed={mode === 'profissional'}
-        title="Detalhe tecnico completo, para profissionais"
-      >
-        <Icon name="shield" />
-        Profissional
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={toggleColorMode}
+      className="pill pill-sm hit"
+      aria-pressed={dark}
+      aria-label={dark ? 'Mudar para o modo claro' : 'Mudar para o modo escuro'}
+      title={dark ? 'Modo claro' : 'Modo escuro'}
+    >
+      <Icon name={dark ? 'sun' : 'moon'} />
+    </button>
   )
 }
 
@@ -60,7 +51,7 @@ export default function AppMenu({ className = '' }) {
           {label}
         </NavLink>
       ))}
-      <ModeToggle />
+      <ColorModeToggle />
     </nav>
   )
 }

@@ -36,7 +36,7 @@ function Box({ caption, value, sub, tone = 'neutral' }) {
     <div className={`flex-1 rounded-media border p-12 ${TONE_CLASS[tone]}`} style={{ minWidth: 'calc(var(--photo-sm) * 1.25)' }}>
       <p className="label mb-4">{caption}</p>
       <p className="text-18 font-medium mono" style={{ color: TONE_INK[tone] }}>{value}</p>
-      {sub && <p className="text-12 text-muted mt-2">{sub}</p>}
+      {sub && <p className="text-12 mt-2">{sub}</p>}
     </div>
   )
 }
@@ -61,7 +61,7 @@ export default function VariantChangePanel({ data }) {
   return (
     <section className="card" aria-labelledby="change-title">
       <h3 id="change-title" className="section-title mb-8">O que a variante muda</h3>
-      <p className="text-12 text-muted mb-16">
+      <p className="text-12 mb-16">
         Comparação entre a sequência de referência e a variante, no DNA e, quando se aplica, na
         proteína. A referência é a forma mais comum na população; a variante é a alteração descrita
         por este rs ID.
@@ -76,7 +76,7 @@ export default function VariantChangePanel({ data }) {
               altValue={data.alt_allele}
               altTone="warning"
             />
-            <p className="text-12 text-muted mt-8">
+            <p className="text-12 mt-8">
               Posição chr{data.chromosome}:{data.position?.toLocaleString('pt-BR')}. A base{' '}
               {data.ref_allele} é trocada por {data.alt_allele}.
             </p>
@@ -105,7 +105,7 @@ export default function VariantChangePanel({ data }) {
                 altTone={KIND_TONE[change.kind]}
               />
             )}
-            <p className="text-12 text-muted mt-8">
+            <p className="text-12 mt-8">
               {KIND_LABEL[change.kind]}
               {data.amino_acid_change ? ` (${data.amino_acid_change})` : ''}.
             </p>
@@ -121,7 +121,7 @@ export default function VariantChangePanel({ data }) {
                 toda a sequência seguinte.
               </p>
             </div>
-            <p className="text-12 text-muted mt-8">
+            <p className="text-12 mt-8">
               Mudança de matriz de leitura (frameshift)
               {data.amino_acid_change ? ` (${data.amino_acid_change})` : ''}.
             </p>
@@ -129,7 +129,7 @@ export default function VariantChangePanel({ data }) {
         )}
 
         {!change && (
-          <p className="text-12 text-muted">
+          <p className="text-12">
             Esta variante não altera diretamente um aminoácido. Efeito previsto:{' '}
             {formatConsequence(data.consequence || data.most_severe_consequence)}.
           </p>

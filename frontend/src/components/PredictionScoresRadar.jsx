@@ -116,7 +116,7 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
         <h3 className="section-title">Predições de patogenicidade</h3>
         {verdict && <span className={`status ${verdict.cls} text-12`}>{verdict.text}</span>}
       </div>
-      <p className="text-12 text-muted mb-12">
+      <p className="text-12 mb-12">
         Cada barra vai de 0 (benigno, verde) a 1 (dano, vermelho). O número à direita é o valor bruto
         do preditor. {damagingCount} de {present.length}{' '}
         {present.length === 1 ? 'preditor disponível indica' : 'preditores disponíveis indicam'} dano.
@@ -136,7 +136,7 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
                     {r.band.label}
                   </span>
                 ) : (
-                  <span className="text-12 text-muted">Sem dado</span>
+                  <span className="text-12">Sem dado</span>
                 )}
               </div>
               <span className="text-12 mono num text-text text-right">
@@ -151,7 +151,7 @@ export default function PredictionScoresRadar({ sift, polyphen, cadd, revel }) {
                 }}
               />
             </div>
-            <p className="text-12 text-muted leading-relaxed">{r.description}</p>
+            <p className="text-12 leading-relaxed">{r.description}</p>
             <div className="flex flex-wrap gap-x-12 gap-y-4">
               {r.thresholds.map((t) => (
                 <span key={t.label} className="status text-12" style={{ color: t.ink }}>

@@ -109,3 +109,16 @@ export const fetchEndpointsHealth = async () => {
 }
 
 export default client
+
+// Sugestoes ao digitar. O servidor responde do indice local, sem ida externa,
+// porque isto roda a cada tecla.
+export const fetchSuggestions = async (q, limit = 8) => {
+  const { data } = await client.get('/suggest', { params: { q, limit } })
+  return data
+}
+
+// Proveniencia: fontes, licencas e data de extracao de cada catalogo.
+export const fetchSources = async () => {
+  const { data } = await client.get('/sources')
+  return data
+}

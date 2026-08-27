@@ -2,10 +2,15 @@ import { pureToken, resolveColor } from './pureTokens'
 
 // As cores são resolvidas na hora da chamada: a lib do ideograma
 // pinta atributos SVG e não entende var(--token).
+// O cromossomo e desenhado em niveis de tinta (as bandas G sao intensidade de
+// coloracao, dado ordinal). A marca do gene precisa se separar disso, entao ela
+// vem de um SLOT DE SERIE e nao da tinta: em --chart-ink ela desaparecia contra
+// a banda mais corada, e o halo usava --state-warning, cor de estado para uma
+// marca que nao e estado nenhum.
 function categoryColors() {
   return {
-    gene: pureToken('--chart-ink'),
-    halo: resolveColor('color-mix(in srgb, var(--state-warning) 35%, var(--bg))'),
+    gene: pureToken('--chart-1'),
+    halo: resolveColor('color-mix(in srgb, var(--chart-1) 40%, var(--surface))'),
   }
 }
 

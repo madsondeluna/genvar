@@ -1,12 +1,16 @@
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import Icon from '../components/Icon'
 import PageNav from '../components/PageNav'
+import { fetchDiseaseStats, fetchPanelStats, fetchPgsScores, fetchSources } from '../api/client'
+import { seriesStyle } from '../utils/seriesSlot'
 
 // Aba Produtos (marketing, sem auth): apresenta as linhas do GenVar rumo a SaaS
 // e explica como o raro (monogênico) e o poligênico se relacionam.
 const LINES = [
   {
     id: 'raras',
+    slot: 1,
     icon: 'helix',
     name: 'Doenças e mutações raras',
     tag: 'Monogênico',
@@ -23,6 +27,7 @@ const LINES = [
   },
   {
     id: 'multigenico',
+    slot: 2,
     icon: 'branch',
     name: 'Doenças multigênicas',
     tag: 'Multigênico',
@@ -38,6 +43,7 @@ const LINES = [
   },
   {
     id: 'poligenico',
+    slot: 3,
     icon: 'sparkle',
     name: 'Fatores poligênicos',
     tag: 'Poligênico / PGS',
@@ -57,6 +63,55 @@ function StatusBadge({ status }) {
   return <span className={`pill pill-sm ${status.tint}`}>{status.label}</span>
 }
 
+// O que ja esta no ar, contado na propria API e nao escrito a mao: numero em
+// pagina de produto envelhece no dia seguinte ao commit se for constante.
+function Entregues() {
+  const doencas = useQuery({ queryKey: ['disease-stats'], queryFn: fetchDiseaseStats, staleTime: 1000 * 60 * 30 })
+  const paineis = useQuery({ queryKey: ['panel-stats'], queryFn: fetchPanelStats, staleTime: 1000 * 60 * 30 })
+  const pgs = useQuery({ queryKey: ['pgs', 'all'], queryFn: () => fetchPgsScores({ category: 'all' }), staleTime: 1000 * 60 * 30 })
+  const fontes = useQuery({ queryKey: ['sources'], queryFn: fetchSources, staleTime: 1000 * 60 * 60 })
+
+  const n = (v) => (v == null ? '—' : v.toLocaleString('pt-BR'))
+  const linhas = [
+    { slot: 1, to: '/doencas', valor: n(doencas.data?.total), rotulo: 'doenças raras',
+      nota: `${n(doencas.data?.total_genes)} genes causais` },
+    { slot: 2, to: '/paineis', valor: n(paineis.data?.total), rotulo: 'painéis de genes',
+      nota: `${n(paineis.data?.total_genes)} genes distintos` },
+    { slot: 3, to: '/poligenico', valor: n(pgs.data?.total), rotulo: 'escores poligênicos',
+      nota: 'com ancestria de desenvolvimento' },
+    { slot: 4, to: '/associacao', valor: '44', rotulo: 'fenótipos em burden',
+      nota: '20.033 genes, 10 biobancos' },
+    { slot: 5, to: '/fontes', valor: n(fontes.data?.items?.length), rotulo: 'bases integradas',
+      nota: 'licença e citação por fonte' },
+  ]
+
+  return (
+    <section className="mb-32" aria-labelledby="entregues-title">
+      <h2 id="entregues-title" className="section-title mb-4">O que já está no ar</h2>
+      <p className="text-14 leading-normal mb-16">
+        Números lidos da API neste momento, não fixados na página. O beta é público e gratuito.
+      </p>
+      <div
+        className="grid gap-16"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))' }}
+      >
+        {linhas.map((l) => (
+          <Link
+            key={l.to}
+            to={l.to}
+            className="card tint-series hover-surface flex flex-col gap-4 cursor-pointer"
+            style={seriesStyle(l.slot)}
+          >
+            <span className="text-32 mono num text-text leading-none">{l.valor}</span>
+            <span className="text-14 text-text">{l.rotulo}</span>
+            <span className="label">{l.nota}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function ProductsPage() {
   return (
     <main className="min-h-screen bg-bg">
@@ -69,7 +124,7 @@ export default function ProductsPage() {
             Produtos
           </p>
           <h1 className="display mb-12">Do gene ao risco, em um só lugar</h1>
-          <p className="text-15 text-muted leading-normal">
+          <p className="text-15 leading-normal">
             O GenVar começa pelas doenças e mutações raras e evolui para uma plataforma que une o
             monogênico, o multigênico e o poligênico: a base genética completa de uma condição.
           </p>
@@ -80,17 +135,17 @@ export default function ProductsPage() {
             const card = (
               <>
                 <span className="flex items-center justify-between gap-8 mb-4">
-                  <span className="w-40 h-40 bg-dim rounded-media flex items-center justify-center">
-                    <Icon name={l.icon} size="md" className="text-muted" />
+                  <span className="w-40 h-40 series-mark rounded-media flex items-center justify-center">
+                    <Icon name={l.icon} size="md" />
                   </span>
                   <StatusBadge status={l.status} />
                 </span>
                 <span className="eyebrow">{l.tag}</span>
                 <span className="text-16 font-medium text-text">{l.name}</span>
-                <span className="text-12 text-muted leading-snug">{l.desc}</span>
+                <span className="text-12 leading-snug">{l.desc}</span>
                 <span className="flex flex-col gap-6 mt-8">
                   {l.bullets.map((b) => (
-                    <span key={b} className="text-12 text-muted flex items-start gap-6">
+                    <span key={b} className="text-12 flex items-start gap-6">
                       <span aria-hidden="true">·</span>{b}
                     </span>
                   ))}
@@ -103,42 +158,49 @@ export default function ProductsPage() {
               </>
             )
             return l.to ? (
-              <Link key={l.id} to={l.to} className="card hover-surface fade-up flex flex-col gap-8 cursor-pointer">
+              <Link key={l.id} to={l.to} className="card tint-series hover-surface fade-up flex flex-col gap-8 cursor-pointer"
+                style={{ '--series': `var(--chart-${l.slot})` }}>
                 {card}
               </Link>
             ) : (
-              <div key={l.id} className="card fade-up flex flex-col gap-8">{card}</div>
+              <div key={l.id} className="card tint-series fade-up flex flex-col gap-8"
+                style={{ '--series': `var(--chart-${l.slot})` }}>{card}</div>
             )
           })}
         </div>
 
+        <Entregues />
+
         {/* Como raro e poligênico se relacionam */}
         <section className="card mb-24" aria-labelledby="rel-title">
           <h2 id="rel-title" className="section-title mb-4">Como o raro e o poligênico se relacionam</h2>
-          <p className="text-14 text-muted leading-normal mb-16">
+          <p className="text-14 leading-normal mb-16">
             Uma mesma doença raramente é só monogênica ou só poligênica. Uma variante rara de grande
             efeito define o principal risco, mas o <span className="text-text font-medium">fundo
             poligênico</span>, a soma de muitas variantes comuns de pequeno efeito, modula quem, de
             fato, adoece. É por isso que portadores da mesma mutação têm evoluções diferentes.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div className="rounded-media border border-border p-16 flex flex-col gap-4">
+            <div className="rounded-media border border-border p-16 flex flex-col gap-4 tint-series"
+                 style={{ '--series': 'var(--chart-1)' }}>
               <p className="label">Variante rara</p>
-              <p className="text-13 text-muted leading-snug">
+              <p className="text-13 leading-snug">
                 Grande efeito, baixa frequência. Define a suscetibilidade monogênica (ex.: LDLR na
                 hipercolesterolemia familiar).
               </p>
             </div>
-            <div className="rounded-media border border-border p-16 flex flex-col gap-4">
+            <div className="rounded-media border border-border p-16 flex flex-col gap-4 tint-series"
+                 style={{ '--series': 'var(--chart-2)' }}>
               <p className="label">Fundo poligênico (PGS)</p>
-              <p className="text-13 text-muted leading-snug">
+              <p className="text-13 leading-snug">
                 Muitas variantes comuns de pequeno efeito. Desloca o risco para cima ou para baixo em
                 cada indivíduo.
               </p>
             </div>
-            <div className="rounded-media border border-border p-16 flex flex-col gap-4">
+            <div className="rounded-media border border-border p-16 flex flex-col gap-4 tint-series"
+                 style={{ '--series': 'var(--chart-3)' }}>
               <p className="label">Penetrância observada</p>
-              <p className="text-13 text-muted leading-snug">
+              <p className="text-13 leading-snug">
                 O resultado clínico é a combinação dos dois, ainda calibrada por ancestria e
                 ambiente. É o que o GenVar quer mostrar em uma só tela.
               </p>
@@ -146,16 +208,6 @@ export default function ProductsPage() {
           </div>
         </section>
 
-        <section className="card" aria-labelledby="saas-title">
-          <h2 id="saas-title" className="section-title mb-4">Para onde vamos</h2>
-          <p className="text-14 text-muted leading-normal">
-            O beta é público e gratuito. As próximas fases abrem API programática, exportação e a
-            possibilidade de trazer seus próprios dados (burden, GWAS, PGS) para o mesmo ambiente,
-            comparados com dados públicos de consórcios. O roadmap detalhado está em
-            {' '}<span className="mono">ROADMAP.md</span> no repositório.
-          </p>
-          <Link to="/planos" className="pill pill-solid self-start mt-16">Ver planos e acesso</Link>
-        </section>
       </div>
     </main>
   )

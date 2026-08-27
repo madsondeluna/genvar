@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Icon from './Icon'
+import SuggestBox from './SuggestBox'
 import { fetchDiseases } from '../api/client'
 
 // Busca unificada: reconhece variante (rsID), doenca (catalogo) ou gene (HGNC)
 // e leva para a rota certa. Escalavel: nao carrega o catalogo inteiro; faz uma
 // checagem leve no servidor (page_size pequeno) para decidir o destino.
+// Sem `placeholder` o campo fica sem texto de exemplo (caso da nav); o rotulo
+// sr-only continua nomeando o campo para leitor de tela.
 export default function UnifiedSearch({ initialValue = '', full = false, placeholder }) {
   const [value, setValue] = useState(initialValue)
   const [busy, setBusy] = useState(false)
@@ -39,16 +42,14 @@ export default function UnifiedSearch({ initialValue = '', full = false, placeho
       className={`flex gap-8 ${full ? 'w-full' : 'flex-1 max-w-sm'}`}
       role="search"
     >
-      <label htmlFor="unified-search" className="sr-only">Buscar gene, variante ou doença</label>
-      <input
-        id="unified-search"
-        type="text"
-        className="input mono"
-        placeholder={placeholder || 'Gene, variante (rsID) ou doença'}
+      <SuggestBox
+        className={full ? 'flex-1' : 'flex-1'}
+        inputClassName="input mono"
+        label="Buscar gene, variante ou doença"
+        placeholder={placeholder || ''}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
-        spellCheck={false}
-        autoComplete="off"
+        onChange={setValue}
+        onPick={(item, rota) => { setValue(item.label); navigate(rota) }}
       />
       <button type="submit" className="pill" aria-label="Buscar" disabled={busy}>
         <Icon name="search" />

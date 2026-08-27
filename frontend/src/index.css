@@ -1,8 +1,11 @@
-/* Pure Design 1.4.2. Ordem obrigatória: theme (tailwind + tokens), patterns.
-   glass: camada liquid glass aditiva, por último para vencer o patterns. */
+/* Pure Design 1.6.0. Ordem obrigatória: theme (tailwind + tokens), patterns,
+   light (realce que segue o ponteiro), motion (receitas de transição).
+   O glass.css local saiu: a 1.6.0 traz o capítulo de vidro no patterns, com as
+   quatro texturas e --shadow-glass-rest/-hover, e a camada local vencia todas. */
 @import './pure/theme.css';
 @import './pure/patterns.css';
-@import './pure/glass.css';
+@import './pure/light.css';
+@import './pure/motion.css';
 
 /* Camada do app. Nenhum literal de cor, tamanho ou tempo:
    todo valor vem de tokens.css. */
@@ -53,6 +56,82 @@
 .status-warning { color: var(--state-warning); }
 .status-serious { color: var(--state-serious); }
 .status-critical { color: var(--state-critical); }
+
+/* Etiqueta de serie. A .tag da linguagem ja e o material certo (chapada, sem
+   vidro, sem sombra, mono 11), entao aqui so entram a cor do slot e o raio.
+   Fora de @layer de proposito: .tag mora no patterns.css, que nao e camadado,
+   e vence qualquer regra dentro de @layer components por mais especifica que
+   seja. Foi assim que a primeira versao desta classe saiu com raio 999px.
+   O raio e --radius-mark porque etiqueta e MARCA: o raio segue o papel, e o
+   raio de controle e o que faz etiqueta e botao lerem como a mesma coisa. */
+.tag-series {
+  border-radius: var(--radius-mark);
+  color: var(--text);
+  background: color-mix(in srgb, var(--series, var(--muted)) 18%, var(--surface));
+  border-color: color-mix(in srgb, var(--series, var(--muted)) 45%, var(--border));
+  white-space: nowrap;
+}
+
+.tag-dot {
+  display: inline-block;
+  inline-size: var(--space-8);
+  block-size: var(--space-8);
+  border-radius: var(--radius-circle);
+  background: var(--series, var(--muted));
+  flex: none;
+}
+
+/* Lista de sugestoes. Sobreposicao, entao z-index acima do conteudo e abaixo
+   da barra fixa. Fora de @layer pela mesma razao da etiqueta: precisa vencer
+   regras nao camadadas do patterns. Rola no lugar do corpo quando a lista
+   passa da altura maxima, e nunca empurra o layout, porque e posicionada. */
+.suggest-list {
+  position: absolute;
+  z-index: 30;
+  inset-inline: 0;
+  top: calc(100% + var(--space-4));
+  max-height: calc(var(--space-56) * 5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: var(--space-4);
+  list-style: none;
+  background: var(--surface);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-surface);
+  box-shadow: var(--shadow-glass-hover);
+}
+
+.suggest-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-8) var(--space-10);
+  border-radius: var(--radius-field);
+  cursor: pointer;
+  color: var(--text);
+  font-size: var(--text-13);
+}
+
+.suggest-item.is-active {
+  background: var(--surface-hover);
+}
+
+.suggest-label { font-weight: var(--weight-medium); white-space: nowrap; }
+
+/* a dica reusa a etiqueta, mas sem slot: fica na tinta neutra do fallback */
+.suggest-hint { flex: none; }
+
+.suggest-extra {
+  margin-inline-start: auto;
+  padding-inline-start: var(--space-8);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Em telas estreitas o texto justificado abre vãos grandes entre palavras
    (colunas curtas sem boa hifenização). No mobile alinhamos à esquerda; o
@@ -238,6 +317,30 @@
     border-color: var(--border);
   }
 
+  /* Identidade de bloco por slot de serie. Blocos irmaos que representam
+     coisas distintas recebem cada um o seu slot, em sequencia e sem ciclar, e
+     a cor entra em duas doses: uma lavagem minima no fundo do cartao e a cor
+     cheia na marca (o quadrado do icone). Em TEXTO nunca: slot de serie
+     reprova como tipo, entao rotulo e prosa continuam em tinta de interface.
+     O slot chega pela propriedade local --series, uma classe so em vez de oito.
+
+     A dose de 11% e um TETO medido, nao um gosto. Acima dela o deep-blue
+     reprova: --muted naquele modo fecha em exatamente 4,5:1 sobre --surface,
+     folga zero, e qualquer lavagem a mais derruba o rotulo para 4,48. Abaixo
+     de 11% as categorias vizinhas passam a ler como a mesma cor: em 6% o par
+     mais proximo ficava em delta-E 1,53, no limiar do perceptivel. Em 11% o
+     pior par dos quatro modos fica em 2,5. */
+  .tint-series {
+    background: color-mix(in srgb, var(--series) 11%, var(--surface));
+    border-color: color-mix(in srgb, var(--series) 36%, var(--border));
+  }
+
+  .series-mark {
+    background: color-mix(in srgb, var(--series) 16%, var(--surface));
+    color: var(--series);
+  }
+
+
   /* estado sem cor reservada: ponto e rótulo em tinta apagada */
   .status-none {
     color: var(--muted);
@@ -246,7 +349,7 @@
   /* entrada em escada para os blocos de uma página: os filhos herdam o
      fade-up e o .stagger do patterns escalona os atrasos */
   .stagger-fade > * {
-    animation: pure-fade-up var(--duration-6) var(--ease-out-soft) both;
+    animation: pure-fade-up var(--duration-6) var(--ease-out-soft) backwards;
   }
 
   /* giro do carregador */
@@ -297,5 +400,41 @@
   .ideogram-host text {
     font-family: var(--font-mono) !important;
     fill: var(--chart-ink-muted);
+  }
+
+  /* Bandas do ideograma. A biblioteca pinta com cor fixa (gneg em branco puro,
+     acen em rosa claro), entao no modo escuro o cromossomo virava uma lasca
+     branca sobre pagina grafite.
+
+     A banda G codifica INTENSIDADE de coloracao, que e dado ordinal, e a escala
+     certa para isso e nivel de tinta. Usar --surface para a banda sem coloracao
+     e --text para a mais corada resolve os quatro modos de uma vez: os dois
+     tokens trocam juntos, entao "mais corado" continua sendo "mais destacado
+     contra o fundo" tanto no claro quanto no escuro. Sem inverter nada a mao. */
+  .ideogram-host .gneg   { fill: var(--surface) !important; }
+  .ideogram-host .gpos25 { fill: color-mix(in srgb, var(--text) 25%, var(--surface)) !important; }
+  .ideogram-host .gpos33 { fill: color-mix(in srgb, var(--text) 33%, var(--surface)) !important; }
+  .ideogram-host .gpos50 { fill: color-mix(in srgb, var(--text) 50%, var(--surface)) !important; }
+  .ideogram-host .gpos66 { fill: color-mix(in srgb, var(--text) 66%, var(--surface)) !important; }
+  .ideogram-host .gpos75 { fill: color-mix(in srgb, var(--text) 75%, var(--surface)) !important; }
+  .ideogram-host .gpos100,
+  .ideogram-host .gpos    { fill: var(--text) !important; }
+  .ideogram-host .gvar    { fill: color-mix(in srgb, var(--text) 40%, var(--surface)) !important; }
+  .ideogram-host .stalk   { fill: color-mix(in srgb, var(--text) 30%, var(--surface)) !important; }
+
+  /* o centromero e marco anatomico, nao nivel de coloracao: cor de interface */
+  .ideogram-host .acen { fill: var(--accent) !important; }
+
+  /* contorno do cromossomo e das bandas, para a silhueta existir sobre a
+     superficie do cartao, que e a mesma cor da banda sem coloracao */
+  .ideogram-host .chromosome,
+  .ideogram-host .band {
+    stroke: var(--border) !important;
+    stroke-width: 0.5px;
+  }
+
+  .ideogram-host .bandLabelStalk line,
+  .ideogram-host .bandLabelStalk {
+    stroke: var(--chart-ink-muted) !important;
   }
 }

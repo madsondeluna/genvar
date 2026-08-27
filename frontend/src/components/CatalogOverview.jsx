@@ -3,15 +3,15 @@ import Icon from './Icon'
 import { fetchDiseaseStats } from '../api/client'
 
 // Panorama do catalogo: barras horizontais de magnitude (contagem), uma so cor
-// (hue unico --accent, seguindo o metodo dataviz para magnitude), com rotulo e
+// (hue unico --chart-1, seguindo o metodo dataviz para magnitude), com rotulo e
 // valor diretos. Reusa o .meter do Pure Design; funciona nos dois temas.
 function BarRow({ label, count, max, title }) {
   const fill = max > 0 ? count / max : 0
   return (
-    <div className="grid grid-cols-[7rem_1fr_2.5rem] items-center gap-12" title={title}>
-      <span className="text-12 text-muted truncate">{label}</span>
+    <div className="grid grid-cols-[minmax(0,10rem)_1fr_2.5rem] items-center gap-12" title={title}>
+      <span className="text-12 leading-snug">{label}</span>
       <span className="meter" role="img" aria-label={`${label}: ${count}`}>
-        <span style={{ transform: `scaleX(${fill})`, background: 'var(--accent)' }} />
+        <span style={{ transform: `scaleX(${fill})`, background: 'var(--chart-1)' }} />
       </span>
       <span className="mono num text-12 text-text text-right">{count}</span>
     </div>

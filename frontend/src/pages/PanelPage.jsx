@@ -41,7 +41,7 @@ function GeneCard({ g }) {
           </span>
         </div>
       ) : (
-        <span className="text-12 text-muted">Constraint indisponível (fonte externa).</span>
+        <span className="text-12">Constraint indisponível (fonte externa).</span>
       )}
     </Link>
   )
@@ -59,7 +59,7 @@ export default function PanelPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-2xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
         <Link to="/paineis" className="pill pill-sm self-start">
           <Icon name="arrow-left" />
           Painéis
@@ -76,7 +76,7 @@ export default function PanelPage() {
                 {data.category}
               </p>
               <h1 className="display mb-12">{data.name}</h1>
-              {data.short && <p className="text-15 text-muted leading-normal">{data.short}</p>}
+              {data.short && <p className="text-15 leading-normal">{data.short}</p>}
               <div className="flex flex-wrap gap-8 mt-12">
                 {data.inheritance && <span className="pill pill-sm tint-neutral">{data.inheritance}</span>}
                 <span className="pill pill-sm tint-neutral">{data.genes.length} genes</span>
@@ -104,7 +104,7 @@ export default function PanelPage() {
                 <p className="label">restrição por gene (LOEUF/pLI)</p>
               </div>
               {data.degraded && (
-                <p className="text-12 text-muted">
+                <p className="text-12">
                   A restrição por gene (gnomAD) está indisponível no momento; os
                   genes e a estrutura do painel seguem abaixo.
                 </p>
@@ -112,7 +112,7 @@ export default function PanelPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                 {data.panel_genes.map((g) => <GeneCard key={g.symbol} g={g} />)}
               </div>
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 LOEUF mede a tolerância do gene a perda de função: quanto menor,
                 mais o gene é conservado (variantes que o desligam tendem a ser
                 deletérias). Até 0,35 é muito restrito; acima de 1,0, tolerante.

@@ -12,11 +12,11 @@ const projX = (lng) => ((lng + 180) / 360) * W
 const projY = (lat) => ((90 - lat) / 180) * H
 
 const CONTINENTS = [
-  { label: 'America do Norte', lat: 44, lng: -100 },
-  { label: 'America do Sul', lat: -14, lng: -60 },
+  { label: 'América do Norte', lat: 44, lng: -100 },
+  { label: 'América do Sul', lat: -14, lng: -60 },
   { label: 'Europa', lat: 54, lng: 15 },
-  { label: 'Africa', lat: 2, lng: 20 },
-  { label: 'Asia', lat: 46, lng: 90 },
+  { label: 'África', lat: 2, lng: 20 },
+  { label: 'Ásia', lat: 46, lng: 90 },
   { label: 'Oceania', lat: -25, lng: 134 },
 ]
 
@@ -88,7 +88,7 @@ export default function BiobankMap({ biobanks }) {
           pointerEvents: 'none', padding: '8px 12px', zIndex: 5, minWidth: 180,
         }}>
           <p className="text-13 font-medium text-text">{tip.b.name}</p>
-          <p className="text-12 text-muted">{tip.b.country} · {fmtN(tip.b.sample_size)} amostras</p>
+          <p className="text-12">{tip.b.country} · {fmtN(tip.b.sample_size)} amostras</p>
           <p className="text-11 text-muted mt-4">
             {Object.entries(tip.b.ancestry_n || {})
               .sort((a, c) => c[1] - a[1]).slice(0, 3)

@@ -145,7 +145,7 @@ export default function ChromosomeIdeogram({
         <h3 id={`${containerId}-title`} className="section-title">{title}</h3>
         <span className="text-12 text-muted mono">GRCh38</span>
       </div>
-      {description && <p className="text-12 text-muted mb-12">{description}</p>}
+      {description && <p className="text-12 mb-12">{description}</p>}
 
       {legendItems && legendItems.length > 0 && (
         <div className="flex flex-wrap gap-x-16 gap-y-8 mb-12">
@@ -156,7 +156,7 @@ export default function ChromosomeIdeogram({
                 style={{ backgroundColor: item.color, borderRadius: 'var(--radius-mark)' }}
                 aria-hidden="true"
               />
-              <span className="text-12 text-muted">{item.label}</span>
+              <span className="text-12">{item.label}</span>
             </div>
           ))}
         </div>
@@ -169,7 +169,7 @@ export default function ChromosomeIdeogram({
       )}
 
       {loading && !error && (
-        <div className="text-12 text-muted py-8" aria-live="polite">
+        <div className="text-12 py-8" aria-live="polite">
           Carregando mapa cromossômico...
         </div>
       )}
@@ -181,7 +181,7 @@ export default function ChromosomeIdeogram({
       />
 
       {!loading && effectiveAnnotations.length === 0 && (
-        <p className="text-12 text-muted mt-8">Sem dados posicionais para exibir.</p>
+        <p className="text-12 mt-8">Sem dados posicionais para exibir.</p>
       )}
 
       {facts && facts.length > 0 && (
@@ -190,7 +190,7 @@ export default function ChromosomeIdeogram({
             <div key={f.label} className="flex flex-col gap-2">
               <span className="text-14 font-medium mono num text-text">{f.value}</span>
               <span className="label">{f.label}</span>
-              {f.hint && <span className="text-12 text-muted leading-snug">{f.hint}</span>}
+              {f.hint && <span className="text-12 leading-snug">{f.hint}</span>}
             </div>
           ))}
         </div>

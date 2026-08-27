@@ -164,7 +164,7 @@ export default function AssociationPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-4xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
 
         <header>
           <p className="eyebrow mb-8 flex items-center gap-8">
@@ -172,7 +172,7 @@ export default function AssociationPage() {
             Associação por burden · beta
           </p>
           <h1 className="display mb-12">Associação gene-fenótipo</h1>
-          <p className="text-15 text-muted leading-normal">
+          <p className="text-15 leading-normal">
             Resultados de burden de variantes raras por gene, meta-analisados por
             ancestria (inclusive latina/miscigenada das Américas e mundial). Cada
             ponto do Manhattan é um gene; a altura é a força da evidência de
@@ -233,7 +233,7 @@ export default function AssociationPage() {
                 </ThresholdKey>
               </div>
 
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 Como ler: o eixo vertical é -log10(p), então quanto mais alto o
                 ponto, mais improvável que a associação seja acaso. Acima da linha
                 tracejada vermelha o sinal é robusto mesmo corrigindo todos os
@@ -271,7 +271,7 @@ export default function AssociationPage() {
               </div>
 
               {topHits.length === 0 ? (
-                <p className="text-14 text-muted">
+                <p className="text-14">
                   Nenhuma associação para esta combinação de filtros. Troque a
                   ancestria, a máscara ou o teste.
                 </p>
@@ -379,7 +379,7 @@ function BiobankSection({ biobanks }) {
         </div>
         <div className="flex flex-wrap gap-x-16 gap-y-6">
           {order.map((k) => (
-            <span key={k} className="flex items-center gap-6 text-12 text-muted">
+            <span key={k} className="flex items-center gap-6 text-12">
               <span aria-hidden="true" style={{
                 width: 10, height: 10, borderRadius: 2, background: ANCESTRY_COLOR[k] || 'var(--muted)',
                 display: 'inline-block',
@@ -390,7 +390,7 @@ function BiobankSection({ biobanks }) {
         </div>
       </div>
 
-      <div className="tint-good card flex flex-col gap-4">
+      <div className="card flex flex-col gap-4">
         <span className="label">Camada latina (AMR)</span>
         <p className="text-14 text-text">
           {fmt(amr)} amostras de ancestria latina/miscigenada das Américas
@@ -400,7 +400,7 @@ function BiobankSection({ biobanks }) {
         </p>
       </div>
 
-      <p className="text-12 text-muted leading-snug">
+      <p className="text-12 leading-snug">
         Cada marcador é um biobanco na sua coordenada real, com o tamanho
         proporcional à amostra e a cor da ancestria predominante. Passe o mouse
         para ver país, tamanho e as principais ancestrias.
@@ -422,7 +422,7 @@ function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, l
       <div className="flex items-start justify-between gap-16">
         <div>
           <h2 className="section-title">Efeito por ancestria</h2>
-          <p className="text-13 text-muted mt-4">
+          <p className="text-13 mt-4">
             <Link to={`/gene/${sym}`} className="mono font-medium hover:underline">{sym}</Link>
             {ph ? <> · {ph}</> : null} · {MASK_LABEL[maskIndex]} · teste Burden
           </p>
@@ -441,7 +441,7 @@ function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, l
       {loading && <LoadingSpinner message="Carregando efeito por ancestria..." />}
 
       {!loading && forest?.empty && (
-        <p className="text-14 text-muted">
+        <p className="text-14">
           Sem estimativa de efeito Burden para este gene e fenótipo nesta máscara.
           Troque a máscara ou escolha outro sinal.
         </p>
@@ -461,7 +461,7 @@ function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, l
               </div>
               {/* escala do bom ao ruim: baixa (consistente) a alta (diverge) */}
               <I2Scale i2={het.i2} />
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 O I² mede quanto os efeitos divergem entre as ancestrias além do
                 acaso. Abaixo de 25% os resultados são consistentes (o efeito
                 genético se transfere entre populações); acima de 75% divergem
@@ -471,7 +471,7 @@ function ForestSection({ selected, genes, phenos, maskIndex, mafIndex, forest, l
             </div>
           )}
 
-          <p className="text-12 text-muted leading-snug">
+          <p className="text-12 leading-snug">
             Cada quadrado é a estimativa de efeito (beta) do teste Burden numa
             ancestria; a reta é o intervalo de confiança de 95%, reconstruído de
             beta e p. O losango é a meta-análise (todas as ancestrias). Quando o
@@ -519,7 +519,7 @@ function I2Scale({ i2 }) {
 
 function ThresholdKey({ color, dash, children }) {
   return (
-    <span className="flex items-center gap-8 text-12 text-muted">
+    <span className="flex items-center gap-8 text-12">
       <span
         aria-hidden="true"
         style={{

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useScrolled } from '../hooks/useScrolled'
+import BrandMark from './BrandMark'
 
 // Um único bloco de marca que atravessa dois estados: no topo da página ele
 // aparece grande, alinhado ao hero; ao rolar, ele encolhe e assenta no centro
@@ -91,7 +92,7 @@ export default function BrandMorphNav({ heroSlotRef }) {
               : undefined
           }
         >
-          <img src={`${import.meta.env.BASE_URL}brand/genvar-mark.svg`} alt="Marca do GenVar" className="w-24 h-24" />
+          <BrandMark className="w-24 h-24" />
           GenVar Dashboard
         </Link>
       </div>

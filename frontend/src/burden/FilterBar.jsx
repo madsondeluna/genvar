@@ -8,7 +8,7 @@ import {
 // linguagem de UX). Controles nativos com tokens Pure Design (.select-shell).
 function Field({ label, hint, children }) {
   return (
-    <label className="flex flex-col gap-4 min-w-0">
+    <label className="flex flex-col gap-4 min-w-0" style={{ flex: '1 1 14rem' }}>
       <span className="label" title={hint}>{label}</span>
       <span className="select-shell">{children}</span>
     </label>
@@ -21,7 +21,7 @@ export default function FilterBar({
   const set = (patch) => onChange({ ancestry, maskIndex, mafIndex, test, phenoIndex, ...patch })
 
   return (
-    <div className="card grid grid-cols-2 md:grid-cols-5 gap-16">
+    <div className="card flex flex-wrap gap-16">
       <Field label="Fenótipo" hint="Traço ou doença analisada">
         <select
           className="select"

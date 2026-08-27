@@ -283,7 +283,7 @@ export default function ExonVariantMap({ geneData }) {
           </div>
         )}
       </div>
-      <p className="text-12 text-muted mb-8">
+      <p className="text-12 mb-8">
         Cada haste marca a posição de uma variante com classificação clínica no ClinVar; a altura
         conta variantes na mesma posição. As caixas cinzas são os éxons
         {geneData.canonical_transcript_id ? (

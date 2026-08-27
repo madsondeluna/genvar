@@ -134,7 +134,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-dim z-10" aria-live="polite">
-            <span className="text-14 text-muted">Carregando estrutura...</span>
+            <span className="text-14">Carregando estrutura...</span>
           </div>
         )}
         {error && (
@@ -146,11 +146,11 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
       </div>
 
       <div className="flex items-center gap-24 flex-wrap">
-        <p className="text-12 text-muted">
+        <p className="text-12">
           Arraste para girar | Use a roda para aplicar zoom | Clique direito + arrastar para mover
         </p>
         <div className="flex items-center gap-8 ml-auto">
-          <span className="text-12 text-muted">Confiança:</span>
+          <span className="text-12">Confiança:</span>
           <div className="flex items-center gap-4">
             <div
               className="w-64 h-8"
@@ -160,7 +160,7 @@ export default function ProteinViewer({ pdbUrl, uniprotId }) {
                   'linear-gradient(to right, var(--div-9), var(--div-7), var(--div-5), var(--div-3), var(--div-1))',
               }}
             />
-            <span className="text-12 text-muted">Baixa &rarr; Alta</span>
+            <span className="text-12">Baixa &rarr; Alta</span>
           </div>
         </div>
       </div>

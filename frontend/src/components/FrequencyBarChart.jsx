@@ -83,7 +83,7 @@ export default function FrequencyBarChart({ frequencies }) {
   return (
     <div className="card">
       <h3 className="section-title mb-8">Frequências alélicas por população</h3>
-      <p className="text-12 text-muted mb-12">
+      <p className="text-12 mb-12">
         Frequência alélica (AC/AN) por população do gnomAD. Escala logarítmica. Passe o mouse para detalhes.
       </p>
 
@@ -97,7 +97,7 @@ export default function FrequencyBarChart({ frequencies }) {
       {/* Códigos e nomes das populações; a cor da série fica na marca */}
       <div className="mt-16 pt-12 border-t border-border grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-16 gap-y-8">
         {sorted.map((p) => (
-          <span key={p.population} className="flex items-start gap-6 text-12 text-muted leading-snug">
+          <span key={p.population} className="flex items-start gap-6 text-12 leading-snug">
             <span
               className="inline-block flex-shrink-0 w-10 h-10 mt-2"
               style={{ backgroundColor: legendColors[p.population], borderRadius: 'var(--radius-mark)' }}

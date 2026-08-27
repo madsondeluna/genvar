@@ -1,12 +1,12 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import Icon from '../components/Icon'
 import { fetchGene, fetchVariant } from '../api/client'
 import { useSearchHistory } from '../hooks/useSearchHistory'
-import BrandMorphNav from '../components/BrandMorphNav'
-import AppMenu from '../components/AppMenu'
+import PageNav from '../components/PageNav'
 import UnifiedSearch from '../components/UnifiedSearch'
+import SuggestBox from '../components/SuggestBox'
 import { useScrolled } from '../hooks/useScrolled'
 
 const GENE_EXAMPLES = ['MLH1', 'HBB', 'MSH2', 'VHL', 'LDLR', 'RB1']
@@ -63,7 +63,6 @@ const SHOWCASE = [
 ]
 
 export default function HomePage() {
-  const heroSlotRef = useRef(null)
   const scrolled = useScrolled()
   const [geneInput, setGeneInput] = useState('')
   const [variantInput, setVariantInput] = useState('')
@@ -119,21 +118,19 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-bg">
-      <BrandMorphNav heroSlotRef={heroSlotRef} />
-      <div className="max-w-lg mx-auto px-24 py-48 pb-96">
+      <PageNav showSearch={false} />
+      <div className="max-w-xl mx-auto px-24 py-48 pb-96">
 
         <header className="mb-48 stagger stagger-fade">
           <p className="eyebrow mb-12">Explorador de variantes genéticas</p>
-          {/* o slot reserva o espaço da marca; quem desenha é a barra, que
-              traz o mesmo bloco para cá enquanto a página está no topo */}
-          <h1 className="sr-only">GenVar Dashboard</h1>
-          <div ref={heroSlotRef} className="mb-12" style={{ height: 'var(--space-56)' }} aria-hidden="true" />
-          <p className="text-15 text-muted leading-normal">
+          {/* a marca mora na barra, em todas as páginas, e só lá: o hero
+              repetia o mesmo símbolo em outro tamanho e outro lugar */}
+          <h1 className="display text-40 mb-12">GenVar Dashboard</h1>
+          <p className="text-15 leading-normal">
             Ensembl, gnomAD, ClinVar, AlphaFold e UniProt em uma consulta única. Busque um símbolo
             de gene ou um rs ID para reunir significado clínico, frequências populacionais,
             métricas de restrição e estrutura proteica.
           </p>
-          <AppMenu className="mt-16" />
         </header>
 
         <section className="card fade-up mb-24" aria-labelledby="unified-search-title">
@@ -144,7 +141,7 @@ export default function HomePage() {
             <h2 id="unified-search-title" className="text-16 font-medium text-text">Busca unificada</h2>
           </div>
           <UnifiedSearch full placeholder="Gene (ex.: BRCA1), variante (ex.: rs334) ou doença (ex.: Lynch)" />
-          <p className="text-12 text-muted mt-12">
+          <p className="text-12 mt-12">
             Um só campo: reconhece símbolo de gene, rs ID de variante ou nome de doença e leva para
             a página certa.
           </p>
@@ -162,15 +159,15 @@ export default function HomePage() {
             </div>
             <form onSubmit={handleGeneSearch} className="flex flex-col gap-12">
               <label htmlFor="gene-input" className="field-label">Símbolo HGNC do gene</label>
-              <input
+              <SuggestBox
                 id="gene-input"
-                type="text"
-                className="input mono"
+                inputClassName="input mono"
+                label="Símbolo HGNC do gene"
                 placeholder="ex.: BRCA1"
                 value={geneInput}
-                onChange={(e) => setGeneInput(e.target.value)}
-                spellCheck={false}
-                autoComplete="off"
+                onChange={setGeneInput}
+                kinds={['gene']}
+                onPick={(item, rota) => navigate(rota)}
               />
               <button type="submit" className="pill w-full">
                 <Icon name="search" />
@@ -203,15 +200,15 @@ export default function HomePage() {
             </div>
             <form onSubmit={handleVariantSearch} className="flex flex-col gap-12">
               <label htmlFor="variant-input" className="field-label">Identificador rs do dbSNP</label>
-              <input
+              <SuggestBox
                 id="variant-input"
-                type="text"
-                className="input mono"
+                inputClassName="input mono"
+                label="Identificador rs do dbSNP"
                 placeholder="ex.: rs429358"
                 value={variantInput}
-                onChange={(e) => setVariantInput(e.target.value)}
-                spellCheck={false}
-                autoComplete="off"
+                onChange={setVariantInput}
+                kinds={['variant']}
+                onPick={(item, rota) => navigate(rota)}
               />
               <button type="submit" className="pill w-full">
                 <Icon name="search" />
@@ -284,7 +281,7 @@ export default function HomePage() {
                   <span className="mono text-12 text-muted">{c.id}</span>
                 </span>
                 <span className="text-14 font-medium text-text">{c.name}</span>
-                <span className="text-12 text-muted leading-snug">{c.desc}</span>
+                <span className="text-12 leading-snug">{c.desc}</span>
               </button>
             ))}
           </div>
@@ -336,7 +333,7 @@ export default function HomePage() {
             <div className="card fade-up h-full flex flex-col gap-8">
               <p className="label">Autor</p>
               <p className="text-14 font-medium text-text">Madson A. de Luna Aragão</p>
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 Doutorando em Bioinformática (UFMG), estudante de MBA em Engenharia de Software
                 (USP), especialista em Data Science &amp; Analytics (PUC-Rio), mestre em Genética
                 e Biologia Molecular (UFPE) e biomédico (UFPE).
@@ -345,7 +342,7 @@ export default function HomePage() {
             <div className="card fade-up h-full flex flex-col gap-8">
               <p className="label">Orientação</p>
               <p className="text-14 font-medium text-text">Marcelo Pereira da Silva</p>
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 Orientador do trabalho. Mestre em Ciência da Computação e doutorando em Ciência
                 da Informação.
               </p>
@@ -353,7 +350,7 @@ export default function HomePage() {
             <div className="card fade-up h-full flex flex-col gap-8">
               <p className="label">Programa</p>
               <p className="text-14 font-medium text-text">MBA em Engenharia de Software, USP</p>
-              <p className="text-12 text-muted leading-snug">
+              <p className="text-12 leading-snug">
                 Este produto é o MVP apresentado como critério para obtenção do título de MBA em
                 Engenharia de Software pela Universidade de São Paulo, em 2026.
               </p>
@@ -364,7 +361,7 @@ export default function HomePage() {
       </div>
 
       <footer className="app-footer app-footer-reveal" data-visible={String(scrolled)}>
-        <div className="max-w-lg mx-auto px-24 py-12 flex items-center justify-center gap-24 flex-wrap">
+        <div className="max-w-xl mx-auto px-24 py-12 flex items-center justify-center gap-24 flex-wrap">
           <span className="text-12 text-muted mono flex items-center justify-center gap-16 flex-wrap">
             <a
               href="https://delunalab.dev"

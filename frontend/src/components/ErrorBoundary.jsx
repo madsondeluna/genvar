@@ -30,7 +30,7 @@ export default class ErrorBoundary extends Component {
             <Icon name="alert" size="md" style={{ color: 'var(--state-critical)' }} />
             <div>
               <p className="text-14 font-medium text-text">Algo quebrou nesta página.</p>
-              <p className="text-14 text-muted mt-4">
+              <p className="text-14 mt-4">
                 {this.state.error?.message || 'Erro inesperado de renderização.'}
               </p>
             </div>

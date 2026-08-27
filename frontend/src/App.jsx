@@ -18,6 +18,7 @@ const PanelPage = lazy(() => import('./pages/PanelPage'))
 const PolygenicPage = lazy(() => import('./pages/PolygenicPage'))
 const PlansPage = lazy(() => import('./pages/PlansPage'))
 const AssociationPage = lazy(() => import('./pages/AssociationPage'))
+const SourcesPage = lazy(() => import('./pages/SourcesPage'))
 const StatusPage = lazy(() => import('./pages/StatusPage'))
 
 const queryClient = new QueryClient({
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="/planos" element={<PlansPage />} />
               <Route path="/associacao" element={<AssociationPage />} />
               <Route path="/status" element={<StatusPage />} />
+              <Route path="/fontes" element={<SourcesPage />} />
             </Routes>
           </Suspense>
           <MedicalDisclaimer />
