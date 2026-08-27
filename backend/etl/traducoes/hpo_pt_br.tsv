@@ -1,0 +1,121 @@
+subject_id	source_value	translation_value
+HP:0001249	Intellectual disability	Deficiência intelectual
+HP:0001263	Global developmental delay	Atraso global do desenvolvimento
+HP:0001250	Seizure	Crise epiléptica
+HP:0001252	Hypotonia	Hipotonia
+HP:0001288	Gait disturbance	Distúrbio da marcha
+HP:0001508	Failure to thrive	Déficit de crescimento
+HP:0002650	Scoliosis	Escoliose
+HP:0001511	Intrauterine growth retardation	Restrição de crescimento intrauterino
+HP:0000750	Delayed speech and language development	Atraso no desenvolvimento da fala e da linguagem
+HP:0012378	Fatigue	Fadiga
+HP:0001251	Ataxia	Ataxia
+HP:0001510	Growth delay	Atraso do crescimento
+HP:0000708	Atypical behavior	Comportamento atípico
+HP:0001999	Abnormal facial shape	Formato facial anômalo
+HP:0011968	Feeding difficulties	Dificuldades alimentares
+HP:0001945	Fever	Febre
+HP:0001260	Dysarthria	Disartria
+HP:0001257	Spasticity	Espasticidade
+HP:0002240	Hepatomegaly	Hepatomegalia
+HP:0005280	Depressed nasal bridge	Dorso nasal deprimido
+HP:0001156	Brachydactyly	Braquidactilia
+HP:0000365	Hearing impairment	Perda auditiva
+HP:0001347	Hyperreflexia	Hiper-reflexia
+HP:0001324	Muscle weakness	Fraqueza muscular
+HP:0002007	Frontal bossing	Bossa frontal
+HP:0100543	Cognitive impairment	Comprometimento cognitivo
+HP:0001270	Motor delay	Atraso motor
+HP:0010864	Intellectual disability, severe	Deficiência intelectual grave
+HP:0001382	Joint hypermobility	Hipermobilidade articular
+HP:0001824	Weight loss	Perda de peso
+HP:0002027	Abdominal pain	Dor abdominal
+HP:0001256	Intellectual disability, mild	Deficiência intelectual leve
+HP:0002750	Delayed skeletal maturation	Atraso da maturação esquelética
+HP:0002015	Dysphagia	Disfagia
+HP:0002315	Headache	Cefaleia
+HP:0002119	Ventriculomegaly	Ventriculomegalia
+HP:0002019	Constipation	Constipação
+HP:0008872	Feeding difficulties in infancy	Dificuldades alimentares na lactância
+HP:0001903	Anemia	Anemia
+HP:0002205	Recurrent respiratory infections	Infecções respiratórias de repetição
+HP:0001328	Specific learning disability	Transtorno específico da aprendizagem
+HP:0001744	Splenomegaly	Esplenomegalia
+HP:0000648	Optic atrophy	Atrofia óptica
+HP:0100490	Camptodactyly of finger	Camptodactilia de dedo da mão
+HP:0002014	Diarrhea	Diarreia
+HP:0001290	Generalized hypotonia	Hipotonia generalizada
+HP:0008947	Floppy infant	Lactente hipotônico
+HP:0002167	Abnormality of speech or vocalization	Anomalia da fala ou da vocalização
+HP:0002353	EEG abnormality	Alteração eletroencefalográfica
+HP:0001387	Joint stiffness	Rigidez articular
+HP:0002017	Nausea and vomiting	Náuseas e vômitos
+HP:0001332	Dystonia	Distonia
+HP:0001513	Obesity	Obesidade
+HP:0002013	Vomiting	Vômitos
+HP:0002093	Respiratory insufficiency	Insuficiência respiratória
+HP:0002342	Intellectual disability, moderate	Deficiência intelectual moderada
+HP:0002094	Dyspnea	Dispneia
+HP:0002376	Developmental regression	Regressão do desenvolvimento
+HP:0008897	Postnatal growth retardation	Restrição de crescimento pós-natal
+HP:0001873	Thrombocytopenia	Trombocitopenia
+HP:0000739	Anxiety	Ansiedade
+HP:0001276	Hypertonia	Hipertonia
+HP:0002360	Sleep abnormality	Alteração do sono
+HP:0002020	Gastroesophageal reflux	Refluxo gastroesofágico
+HP:0001561	Polyhydramnios	Poli-hidrâmnio
+HP:0002066	Gait ataxia	Ataxia da marcha
+HP:0001376	Limitation of joint mobility	Limitação da mobilidade articular
+HP:0011800	Midface retrusion	Retrusão da face média
+HP:0000729	Autistic behavior	Comportamento autista
+HP:0001629	Ventricular septal defect	Comunicação interventricular
+HP:0011344	Severe global developmental delay	Atraso global do desenvolvimento grave
+HP:0001622	Premature birth	Nascimento prematuro
+HP:0002120	Cerebral cortical atrophy	Atrofia cortical cerebral
+HP:0000767	Pectus excavatum	Pectus excavatum
+HP:0000989	Pruritus	Prurido
+HP:0000939	Osteoporosis	Osteoporose
+HP:0001762	Talipes equinovarus	Pé torto equinovaro
+HP:0001596	Alopecia	Alopecia
+HP:0000716	Depression	Depressão
+HP:0001337	Tremor	Tremor
+HP:0000938	Osteopenia	Osteopenia
+HP:0002079	Hypoplasia of the corpus callosum	Hipoplasia do corpo caloso
+HP:0001272	Cerebellar atrophy	Atrofia cerebelar
+HP:0002098	Respiratory distress	Desconforto respiratório
+HP:0000944	Abnormal metaphysis morphology	Morfologia metafisária anômala
+HP:0001344	Absent speech	Ausência de fala
+HP:0002039	Anorexia	Anorexia
+HP:0100022	Abnormality of movement	Anomalia do movimento
+HP:0001761	Pes cavus	Pé cavo
+HP:0000958	Dry skin	Pele seca
+HP:0002714	Downturned corners of mouth	Cantos da boca voltados para baixo
+HP:0001265	Hyporeflexia	Hiporreflexia
+HP:0000684	Delayed eruption of teeth	Erupção dentária tardia
+HP:0008736	Hypoplasia of penis	Hipoplasia peniana
+HP:0001369	Arthritis	Artrite
+HP:0002719	Recurrent infections	Infecções de repetição
+HP:0002716	Lymphadenopathy	Linfadenopatia
+HP:0011220	Prominent forehead	Fronte proeminente
+HP:0001518	Small for gestational age	Pequeno para a idade gestacional
+HP:0002652	Skeletal dysplasia	Displasia esquelética
+HP:0001537	Umbilical hernia	Hérnia umbilical
+HP:0000823	Delayed puberty	Puberdade tardia
+HP:0000988	Skin rash	Exantema
+HP:0000962	Hyperkeratosis	Hiperceratose
+HP:0000772	Abnormal rib morphology	Morfologia costal anômala
+HP:0001773	Short foot	Pé curto
+HP:0001284	Areflexia	Arreflexia
+HP:0005930	Abnormality of epiphysis morphology	Anomalia da morfologia epifisária
+HP:0000975	Hyperhidrosis	Hiperidrose
+HP:0000737	Irritability	Irritabilidade
+HP:0000774	Narrow chest	Tórax estreito
+HP:0008551	Microtia	Microtia
+HP:0002465	Poor speech	Fala pobre
+HP:0001274	Agenesis of corpus callosum	Agenesia do corpo caloso
+HP:0012379	Abnormal enzyme/coenzyme activity	Atividade enzimática ou de coenzima anômala
+HP:0001336	Myoclonus	Mioclonia
+HP:0001763	Pes planus	Pé plano
+HP:0008734	Decreased testicular size	Redução do volume testicular
+HP:0001627	Abnormal heart morphology	Morfologia cardíaca anômala
+HP:0000670	Carious teeth	Cáries dentárias

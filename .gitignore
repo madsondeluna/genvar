@@ -36,3 +36,8 @@ benchmark/results/**/run_log.txt
 .coverage
 *.rdb
 *.bkp
+
+# Cache do ETL: paginas cruas do PanelApp e do PGS Catalog, centenas de MB.
+# Serve para retomar um ETL interrompido sem repetir rede; o produto versionado
+# sao os JSON em backend/app/data/.
+backend/etl/.cache/

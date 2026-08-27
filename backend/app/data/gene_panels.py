@@ -14,13 +14,15 @@ page_size), no mesmo contrato do modulo de doencas.
 """
 import re
 import unicodedata
+import json
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 GENE_PANELS = [
     {
         "id": "cancer-mama-ovario-hereditario",
         "name": "Cancer de mama e ovario hereditario",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "short": "Genes de predisposicao ao cancer de mama e ovario, do alto risco (BRCA1/2) aos de risco moderado.",
         "inheritance": "Autossomica dominante",
         "genes": ["BRCA1", "BRCA2", "PALB2", "ATM", "CHEK2", "TP53", "PTEN", "STK11", "CDH1", "RAD51C", "RAD51D", "BARD1"],
@@ -33,7 +35,7 @@ GENE_PANELS = [
     {
         "id": "cancer-colorretal-hereditario",
         "name": "Cancer colorretal hereditario e polipose",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "short": "Reparo de mau pareamento (Lynch) e genes de polipose adenomatosa e associada a MUTYH.",
         "inheritance": "Autossomica dominante e recessiva",
         "genes": ["MLH1", "MSH2", "MSH6", "PMS2", "EPCAM", "APC", "MUTYH", "STK11", "SMAD4", "BMPR1A", "PTEN"],
@@ -46,7 +48,7 @@ GENE_PANELS = [
     {
         "id": "cardiomiopatia-hipertrofica",
         "name": "Cardiomiopatia hipertrofica",
-        "category": "Cardiovascular",
+        "category": "Cardiologia",
         "short": "Genes do sarcomero cardiaco; a maioria dos casos familiares vem de MYH7 e MYBPC3.",
         "inheritance": "Autossomica dominante",
         "genes": ["MYH7", "MYBPC3", "TNNT2", "TNNI3", "TPM1", "MYL2", "MYL3", "ACTC1", "CSRP3", "PLN"],
@@ -58,7 +60,7 @@ GENE_PANELS = [
     {
         "id": "cardiomiopatia-dilatada",
         "name": "Cardiomiopatia dilatada",
-        "category": "Cardiovascular",
+        "category": "Cardiologia",
         "short": "Genes do sarcomero, citoesqueleto e lamina nuclear; TTN truncado e a causa isolada mais comum.",
         "inheritance": "Autossomica dominante",
         "genes": ["TTN", "LMNA", "MYH7", "TNNT2", "SCN5A", "RBM20", "BAG3", "DSP", "FLNC", "PLN"],
@@ -70,7 +72,7 @@ GENE_PANELS = [
     {
         "id": "arritmias-hereditarias",
         "name": "Arritmias hereditarias e QT longo",
-        "category": "Cardiovascular",
+        "category": "Cardiologia",
         "short": "Canais ionicos cardiacos ligados a sindrome do QT longo, Brugada e taquicardia catecolaminergica.",
         "inheritance": "Autossomica dominante",
         "genes": ["KCNQ1", "KCNH2", "SCN5A", "KCNE1", "KCNE2", "RYR2", "CACNA1C", "KCNJ2"],
@@ -83,7 +85,7 @@ GENE_PANELS = [
     {
         "id": "hipercolesterolemia-familiar",
         "name": "Hipercolesterolemia familiar",
-        "category": "Cardiometabolico",
+        "category": "Metabolismo",
         "short": "Genes do metabolismo do LDL; a maioria dos casos vem de variantes em LDLR.",
         "inheritance": "Autossomica dominante",
         "genes": ["LDLR", "APOB", "PCSK9", "LDLRAP1"],
@@ -120,7 +122,7 @@ GENE_PANELS = [
     {
         "id": "epilepsias-geneticas",
         "name": "Epilepsias geneticas",
-        "category": "Neurologico",
+        "category": "Neurologia",
         "short": "Encefalopatias epilepticas e epilepsias monogenicas de inicio precoce.",
         "inheritance": "Heranca variavel",
         "genes": ["SCN1A", "SCN2A", "KCNQ2", "STXBP1", "CDKL5", "PCDH19", "GABRG2", "DEPDC5"],
@@ -142,11 +144,58 @@ def _normalize(text: str) -> str:
     return unicodedata.normalize("NFD", (text or "").lower()).encode("ascii", "ignore").decode()
 
 
-_BY_ID = {p["id"]: p for p in GENE_PANELS}
+# Catalogo do PanelApp (Genomics England), gerado por `python -m etl.panelapp`.
+# Fica em JSON e nao em modulo Python porque sao 425 paineis e 4308 genes: um
+# literal desse tamanho no fonte inviabiliza revisao de diff. Os 9 paineis
+# curados acima continuam, em PT-BR, e vem primeiro na listagem; o campo
+# `source` distingue os dois na interface.
+_PANELAPP_JSON = Path(__file__).parent / "panelapp_panels.json"
+
+
+def _carregar_panelapp() -> List[dict]:
+    if not _PANELAPP_JSON.exists():
+        return []
+    try:
+        bruto = json.loads(_PANELAPP_JSON.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    out = []
+    for p in bruto.get("panels", []):
+        genes = p.get("genes") or []
+        cond = p.get("conditions") or []
+        # `short` alimenta a busca e o cartao; o PanelApp nao tem um resumo,
+        # entao ele e montado do que existe, sem inventar texto clinico.
+        partes = [p.get("sub_category") or "", f"{len(genes)} genes verdes no PanelApp"]
+        if cond:
+            partes.append("Codigos: " + ", ".join(cond[:4]))
+        out.append({
+            "id": p["id"],
+            "source": "panelapp",
+            "source_id": p.get("source_id"),
+            "version": p.get("version"),
+            "name": p["name"],
+            "category": p.get("category") or "Outros",
+            "inheritance": p.get("inheritance") or "Nao especificada",
+            "short": ". ".join(x for x in partes if x),
+            "genes": genes,
+            "genes_detail": p.get("genes_detail") or [],
+            "genes_amber": p.get("genes_amber") or [],
+            "conditions": cond,
+            "digenic": "",
+        })
+    return out
+
+
+for _p in GENE_PANELS:
+    _p.setdefault("source", "curado")
+
+ALL_PANELS: List[dict] = GENE_PANELS + _carregar_panelapp()
+
+_BY_ID = {p["id"]: p for p in ALL_PANELS}
 
 
 def all_panels() -> List[dict]:
-    return GENE_PANELS
+    return ALL_PANELS
 
 
 def get_panel(panel_id: str) -> Optional[dict]:
@@ -156,11 +205,11 @@ def get_panel(panel_id: str) -> Optional[dict]:
 def search_panels(q: str = "", category: str = "all", page: int = 1, page_size: int = 30) -> Tuple[List[dict], int]:
     nq = _normalize(q).strip()
     items = []
-    for p in GENE_PANELS:
+    for p in ALL_PANELS:
         if category and category != "all" and p["category"] != category:
             continue
         if nq:
-            hay = _normalize(" ".join([p["name"], p["category"], p["short"], " ".join(p["genes"])]))
+            hay = _normalize(" ".join([p["name"], p["category"], p.get("short") or "", " ".join(p["genes"])]))
             if nq not in hay:
                 continue
         items.append(p)

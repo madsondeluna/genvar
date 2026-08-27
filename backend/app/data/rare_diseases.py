@@ -48,7 +48,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "sindrome-de-lynch",
         "name": "Sindrome de Lynch",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["MLH1", "MSH2", "MSH6", "PMS2", "EPCAM"],
         "short": "Deficiencia de reparo de malpareamento (MMR); variantes de perda de "
@@ -61,7 +61,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "cancer-mama-ovario-hereditario",
         "name": "Cancer de mama e ovario hereditario",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["BRCA1", "BRCA2"],
         "short": "Variantes germinativas em genes de reparo por recombinacao homologa "
@@ -73,7 +73,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "polipose-adenomatosa-familiar",
         "name": "Polipose adenomatosa familiar",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["APC"],
         "short": "Centenas a milhares de polipos adenomatosos no colon por perda de "
@@ -85,7 +85,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "sindrome-de-li-fraumeni",
         "name": "Sindrome de Li-Fraumeni",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["TP53"],
         "short": "Predisposicao a multiplos tumores por variantes germinativas no "
@@ -97,7 +97,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "von-hippel-lindau",
         "name": "Doenca de von Hippel-Lindau",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["VHL"],
         "short": "Supressor tumoral; variantes germinativas predispoem a tumores "
@@ -110,7 +110,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "neurofibromatose-tipo-1",
         "name": "Neurofibromatose tipo 1",
-        "category": "Oncogenetica",
+        "category": "Oncogenética",
         "inheritance": "AD",
         "genes": ["NF1"],
         "short": "Perda de funcao da neurofibromina, regulador da via RAS, com "
@@ -122,7 +122,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "hipercolesterolemia-familiar",
         "name": "Hipercolesterolemia familiar",
-        "category": "Cardiometabolico",
+        "category": "Metabolismo",
         "inheritance": "AD",
         "genes": ["LDLR", "APOB", "PCSK9"],
         "short": "Receptor de LDL e vias associadas; variantes patogenicas elevam o "
@@ -135,7 +135,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "hemocromatose-hereditaria",
         "name": "Hemocromatose hereditaria",
-        "category": "Cardiometabolico",
+        "category": "Metabolismo",
         "inheritance": "AR",
         "genes": ["HFE"],
         "short": "C282Y no gene HFE; absorcao excessiva de ferro com penetrancia "
@@ -148,7 +148,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "trombofilia-fator-v-leiden",
         "name": "Trombofilia por Fator V de Leiden",
-        "category": "Cardiometabolico",
+        "category": "Metabolismo",
         "inheritance": "AD",
         "genes": ["F5"],
         "short": "Variante do gene F5 que torna o Fator Va resistente a clivagem pela "
@@ -161,7 +161,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "cardiomiopatia-hipertrofica",
         "name": "Cardiomiopatia hipertrofica familiar",
-        "category": "Cardiometabolico",
+        "category": "Metabolismo",
         "inheritance": "AD",
         "genes": ["MYH7", "MYBPC3", "TNNT2", "TNNI3"],
         "short": "Hipertrofia ventricular por variantes em genes do sarcomero; causa "
@@ -173,7 +173,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "fibrose-cistica",
         "name": "Fibrose cistica",
-        "category": "Multissistemico",
+        "category": "Tecido conjuntivo",
         "inheritance": "AR",
         "genes": ["CFTR"],
         "short": "Disfuncao do canal de cloreto CFTR (mais comum F508del) com secrecoes "
@@ -185,7 +185,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "deficiencia-alfa1-antitripsina",
         "name": "Deficiencia de alfa-1 antitripsina",
-        "category": "Multissistemico",
+        "category": "Tecido conjuntivo",
         "inheritance": "AR",
         "genes": ["SERPINA1"],
         "short": "Niveis baixos de alfa-1 antitripsina (aleles PiZ/PiS) predispondo a "
@@ -197,7 +197,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "doenca-de-wilson",
         "name": "Doenca de Wilson",
-        "category": "Multissistemico",
+        "category": "Tecido conjuntivo",
         "inheritance": "AR",
         "genes": ["ATP7B"],
         "short": "Acumulo toxico de cobre por defeito na ATPase ATP7B, afetando figado "
@@ -209,7 +209,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "fenilcetonuria",
         "name": "Fenilcetonuria (PKU)",
-        "category": "Erros inatos do metabolismo",
+        "category": "Metabolismo",
         "inheritance": "AR",
         "genes": ["PAH"],
         "short": "Deficiencia da fenilalanina hidroxilase; o acumulo de fenilalanina "
@@ -221,7 +221,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "doenca-de-tay-sachs",
         "name": "Doenca de Tay-Sachs",
-        "category": "Erros inatos do metabolismo",
+        "category": "Metabolismo",
         "inheritance": "AR",
         "genes": ["HEXA"],
         "short": "Deficiencia da hexosaminidase A com acumulo de gangliosideos GM2 e "
@@ -233,7 +233,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "distrofia-muscular-duchenne",
         "name": "Distrofia muscular de Duchenne",
-        "category": "Neuromuscular",
+        "category": "Musculoesquelético",
         "inheritance": "XLR",
         "genes": ["DMD"],
         "short": "Ausencia de distrofina funcional por variantes no maior gene humano, "
@@ -245,7 +245,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "atrofia-muscular-espinhal",
         "name": "Atrofia muscular espinhal",
-        "category": "Neuromuscular",
+        "category": "Musculoesquelético",
         "inheritance": "AR",
         "genes": ["SMN1"],
         "short": "Perda de neuronios motores por deficiencia de SMN1; gravidade "
@@ -257,7 +257,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "doenca-de-huntington",
         "name": "Doenca de Huntington",
-        "category": "Neurologico",
+        "category": "Neurologia",
         "inheritance": "AD",
         "genes": ["HTT"],
         "short": "Expansao de repeticoes CAG no gene HTT causando neurodegeneracao "
@@ -269,7 +269,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "sindrome-do-x-fragil",
         "name": "Sindrome do X fragil",
-        "category": "Neurologico",
+        "category": "Neurologia",
         "inheritance": "XL",
         "genes": ["FMR1"],
         "short": "Expansao CGG que silencia FMR1; causa hereditaria mais comum de "
@@ -281,7 +281,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "sindrome-de-rett",
         "name": "Sindrome de Rett",
-        "category": "Neurologico",
+        "category": "Neurologia",
         "inheritance": "XLD",
         "genes": ["MECP2"],
         "short": "Regressao do neurodesenvolvimento em meninas por variantes em MECP2, "
@@ -317,7 +317,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "doenca-renal-policistica-ad",
         "name": "Doenca renal policistica autossomica dominante",
-        "category": "Renal",
+        "category": "Nefrologia",
         "inheritance": "AD",
         "genes": ["PKD1", "PKD2"],
         "short": "Cistos renais progressivos que levam a insuficiencia renal; causa "
@@ -329,7 +329,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
     {
         "id": "retinose-pigmentar",
         "name": "Retinose pigmentar",
-        "category": "Oftalmogenetica",
+        "category": "Oftalmologia",
         "inheritance": "AD",
         "genes": ["RHO", "RPGR", "USH2A"],
         "short": "Grupo geneticamente heterogeneo de degeneracoes de retina com perda "
@@ -347,6 +347,7 @@ RARE_DISEASES: List[Dict[str, Any]] = [
 # demais doencas do Orphanet entram em seguida. Sem o JSON, roda so a semente.
 CURATED_DISEASES = RARE_DISEASES
 _JSON_PATH = Path(__file__).parent / "rare_diseases.json"
+_ORPHANET_PATH = Path(__file__).parent / "orphanet_diseases.json"
 
 _ALL: Optional[List[Dict[str, Any]]] = None
 _BY_ID: Optional[Dict[str, Dict[str, Any]]] = None
@@ -367,6 +368,10 @@ def _load() -> List[Dict[str, Any]]:
     if _ALL is not None:
         return _ALL
 
+    # toda doenca declara de onde veio: a pagina de fontes e o credito no
+    # rodape dependem disso para dizer o que e curado e o que e do Orphanet
+    for _d in CURATED_DISEASES:
+        _d.setdefault("source", "curado")
     merged: List[Dict[str, Any]] = list(CURATED_DISEASES)
     curated_orpha = {d.get("orphanet") for d in CURATED_DISEASES if d.get("orphanet")}
     seen_ids = {d["id"] for d in merged}
@@ -393,6 +398,36 @@ def _load() -> List[Dict[str, Any]]:
             g.setdefault("short", "")
             seen_ids.add(gid)
             merged.append(g)
+
+    # Orphanet, gerado por `python -m etl.orphanet`. A mesma regra vale: a
+    # curadoria PT-BR vence por codigo Orphanet, entao as 26 escritas a mao
+    # continuam com o texto delas e o resto entra do catalogo publico.
+    if _ORPHANET_PATH.exists():
+        try:
+            bruto = json.loads(_ORPHANET_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            bruto = {}
+        for o in bruto.get("diseases", []):
+            if o.get("orphanet") and o["orphanet"] in curated_orpha:
+                continue
+            if o["id"] in seen_ids:
+                continue
+            genes = o.get("genes") or []
+            # o Orphadata nao publica resumo clinico nestes produtos, entao o
+            # `short` e montado do que existe. Nada de texto inventado: cada
+            # pedaco abaixo e um campo da fonte.
+            partes = []
+            if o.get("prevalence"):
+                partes.append(f"Prevalência {o['prevalence']}")
+            partes.append(
+                f"{len(genes)} gene causal" if len(genes) == 1
+                else f"{len(genes)} genes causais"
+            )
+            if o.get("hpo"):
+                partes.append("Sinais frequentes: " + ", ".join(o["hpo"][:3]))
+            o["short"] = ". ".join(partes) + "."
+            seen_ids.add(o["id"])
+            merged.append(o)
 
     _ALL = merged
     _BY_ID = {d["id"]: d for d in merged}

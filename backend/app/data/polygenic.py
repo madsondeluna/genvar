@@ -16,6 +16,8 @@ O runtime expoe all_scores(), get_score(id), search_scores(...) e all_interplay(
 """
 import re
 import unicodedata
+import json
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 # Escores poligenicos publicos notaveis (PGS Catalog). n_variants fica None
@@ -24,7 +26,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000004",
         "trait": "Cancer de mama",
-        "category": "Oncologico",
+        "category": "Outras doenças",
         "short": "Escore de 313 variantes amplamente validado para risco de cancer de mama.",
         "citation": "Mavaddat et al., 2019",
         "n_variants": 313,
@@ -32,7 +34,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000001",
         "trait": "Cancer de mama",
-        "category": "Oncologico",
+        "category": "Outras doenças",
         "short": "Escore inicial de 77 variantes para cancer de mama, base de estudos posteriores.",
         "citation": "Mavaddat et al., 2015",
         "n_variants": 77,
@@ -40,7 +42,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000013",
         "trait": "Doenca arterial coronariana",
-        "category": "Cardiovascular",
+        "category": "Doença cardiovascular",
         "short": "Escore genome-wide para doenca arterial coronariana, um dos primeiros de larga escala.",
         "citation": "Khera et al., 2018",
         "n_variants": None,
@@ -48,7 +50,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000018",
         "trait": "Doenca arterial coronariana",
-        "category": "Cardiovascular",
+        "category": "Doença cardiovascular",
         "short": "MetaGRS de doenca arterial coronariana combinando multiplos GWAS.",
         "citation": "Inouye et al., 2018",
         "n_variants": None,
@@ -56,7 +58,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000021",
         "trait": "Diabetes tipo 2",
-        "category": "Metabolico",
+        "category": "Doença metabólica",
         "short": "Escore poligenico para risco de diabetes tipo 2.",
         "citation": "PGS Catalog",
         "n_variants": None,
@@ -64,7 +66,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000027",
         "trait": "Colesterol LDL",
-        "category": "Cardiometabolico",
+        "category": "Lipídeos",
         "short": "Escore poligenico para niveis de LDL, complementar as causas monogenicas.",
         "citation": "PGS Catalog",
         "n_variants": None,
@@ -72,7 +74,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000034",
         "trait": "Fibrilacao atrial",
-        "category": "Cardiovascular",
+        "category": "Doença cardiovascular",
         "short": "Escore poligenico para risco de fibrilacao atrial.",
         "citation": "PGS Catalog",
         "n_variants": None,
@@ -80,7 +82,7 @@ POLYGENIC_SCORES = [
     {
         "id": "PGS000055",
         "trait": "Diabetes tipo 1",
-        "category": "Autoimune",
+        "category": "Sistema imune",
         "short": "Escore poligenico para diabetes tipo 1, com forte contribuicao do HLA.",
         "citation": "PGS Catalog",
         "n_variants": None,
@@ -136,11 +138,56 @@ def _normalize(text: str) -> str:
     return unicodedata.normalize("NFD", (text or "").lower()).encode("ascii", "ignore").decode()
 
 
-_BY_ID = {s["id"]: s for s in POLYGENIC_SCORES}
+# Catalogo completo do PGS Catalog, gerado por `python -m etl.pgscatalog`.
+# Os 8 escores curados acima continuam, em PT-BR e com resumo proprio, e vem
+# primeiro; o campo `source` distingue os dois na interface. O id e o mesmo
+# (PGSxxxxxxx), entao um curado sobrepoe o do catalogo em vez de duplicar.
+_PGS_JSON = Path(__file__).parent / "pgs_catalog.json"
+
+
+def _carregar_pgs() -> List[dict]:
+    if not _PGS_JSON.exists():
+        return []
+    try:
+        bruto = json.loads(_PGS_JSON.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    curados = {s["id"] for s in POLYGENIC_SCORES}
+    out = []
+    for s in bruto.get("scores", []):
+        if s["id"] in curados:
+            continue
+        anc = s.get("ancestry") or {}
+        partes = [s.get("method") or ""]
+        if anc:
+            comp = ", ".join(f"{k} {v}%" for k, v in sorted(anc.items(), key=lambda kv: -kv[1])[:3])
+            partes.append(f"Desenvolvido em {comp}")
+        out.append({
+            "id": s["id"],
+            "source": "pgs_catalog",
+            "trait": s.get("trait") or s["id"],
+            "category": s.get("category") or "Outros traços",
+            "short": ". ".join(x for x in partes if x),
+            "citation": s.get("citation") or "",
+            "n_variants": s.get("n_variants"),
+            "ancestry": anc,
+            "eur_only": s.get("eur_only", False),
+            "doi": s.get("doi") or "",
+            "build": s.get("build") or "",
+        })
+    return out
+
+
+for _s in POLYGENIC_SCORES:
+    _s.setdefault("source", "curado")
+
+ALL_SCORES: List[dict] = POLYGENIC_SCORES + _carregar_pgs()
+
+_BY_ID = {s["id"]: s for s in ALL_SCORES}
 
 
 def all_scores() -> List[dict]:
-    return POLYGENIC_SCORES
+    return ALL_SCORES
 
 
 def get_score(score_id: str) -> Optional[dict]:
@@ -154,7 +201,7 @@ def all_interplay() -> List[dict]:
 def search_scores(q: str = "", category: str = "all", page: int = 1, page_size: int = 30) -> Tuple[List[dict], int]:
     nq = _normalize(q).strip()
     items = []
-    for s in POLYGENIC_SCORES:
+    for s in ALL_SCORES:
         if category and category != "all" and s["category"] != category:
             continue
         if nq:
