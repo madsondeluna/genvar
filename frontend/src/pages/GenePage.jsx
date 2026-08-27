@@ -113,7 +113,7 @@ export default function GenePage() {
 
   return (
     <main className="min-h-screen bg-bg">
-      <PageNav initialQuery={symbol} />
+      <PageNav />
 
       <div className="max-w-xl mx-auto px-24 py-24">
 

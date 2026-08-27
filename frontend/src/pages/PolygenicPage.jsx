@@ -35,7 +35,7 @@ export default function PolygenicPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 stagger stagger-fade flex flex-col gap-24">
 
         <header>
           <p className="eyebrow mb-8 flex items-center gap-8">

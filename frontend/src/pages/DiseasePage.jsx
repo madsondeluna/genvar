@@ -282,7 +282,7 @@ export default function DiseasePage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-xl mx-auto px-24 py-32 pb-96">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 stagger stagger-fade">
         <Link to="/doencas" className="link-muted text-12 mono mb-16 inline-flex items-center gap-4">
           <Icon name="arrow-left" />
           Doenças Raras

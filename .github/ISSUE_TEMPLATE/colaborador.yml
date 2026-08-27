@@ -1,0 +1,87 @@
+name: Quero colaborar
+description: Inscrição para entrar no time do GenVar
+title: "[colaboração] "
+labels: ["colaboração", "quero-ajudar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        O GenVar é gratuito, aberto e mantido por quem aparece. Não há vaga, contrato
+        nem exclusividade: há tarefas, e quem pega uma entra no time.
+
+        Preencha o que souber. Nada aqui é obrigatório além do nome e de como te achar.
+
+  - type: input
+    id: nome
+    attributes:
+      label: Nome
+      placeholder: como você quer ser creditado
+    validations:
+      required: true
+
+  - type: input
+    id: contato
+    attributes:
+      label: Onde te achar
+      description: perfil, site, ORCID, Lattes ou e-mail
+    validations:
+      required: true
+
+  - type: input
+    id: onde
+    attributes:
+      label: Instituição ou cidade
+      placeholder: opcional
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: De onde você vem
+      multiple: true
+      options:
+        - Genética médica ou clínica
+        - Bioinformática
+        - Desenvolvimento de software
+        - Design e interface
+        - Ciência de dados
+        - Divulgação científica
+        - Paciente, familiar ou associação
+        - Outra
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frentes
+    attributes:
+      label: Em que você quer ajudar
+      description: as frentes abertas, da mais necessária para a menos
+      multiple: true
+      options:
+        - "Dados brasileiros: mapear doenças com protocolo no SUS (hoje 8 de 3739)"
+        - "Dados brasileiros: triagem neonatal e prevalência nacional"
+        - "Revisar traduções de fenótipo HPO com olhar clínico"
+        - "Curadoria: revisar doenças, genes causais e herança"
+        - "Backend: API, ETL, cache, limite de taxa"
+        - "Frontend: interface, acessibilidade, visualização de dado"
+        - "Testes e qualidade"
+        - "Documentação e material didático"
+        - "Ainda não sei, quero conversar"
+    validations:
+      required: true
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Alguma coisa que ajude a te conhecer
+      description: o que você já fez, o que te trouxe aqui, quanto tempo você tem
+      placeholder: opcional
+
+  - type: checkboxes
+    id: aceite
+    attributes:
+      label: Antes de enviar
+      options:
+        - label: Entendi que o projeto é aberto, gratuito e sob licença MIT, e que os dados seguem a licença de cada fonte.
+          required: true
+        - label: Li o aviso de que a aplicação é para informação e pesquisa e não substitui avaliação médica.
+          required: true

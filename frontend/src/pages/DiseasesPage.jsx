@@ -58,7 +58,7 @@ export default function DiseasesPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-xl mx-auto px-24 py-32 pb-96">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 stagger stagger-fade">
 
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">

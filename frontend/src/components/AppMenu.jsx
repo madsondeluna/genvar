@@ -14,6 +14,8 @@ const LINKS = [
   { to: '/produtos', label: 'Produtos', icon: 'list' },
   { to: '/status', label: 'Status', icon: 'chart-line' },
   { to: '/fontes', label: 'Fontes', icon: 'book' },
+  { to: '/sobre', label: 'Sobre', icon: 'info' },
+  { to: '/colabore', label: 'Colabore', icon: 'users' },
 ]
 
 // Alterna entre o modo claro e o escuro (grafite neutro da linguagem Pure).
@@ -35,6 +37,8 @@ function ColorModeToggle() {
   )
 }
 
+export { ColorModeToggle }
+
 export default function AppMenu({ className = '' }) {
   return (
     <nav className={`flex items-center gap-8 flex-wrap ${className}`} aria-label="Seções">
@@ -51,7 +55,6 @@ export default function AppMenu({ className = '' }) {
           {label}
         </NavLink>
       ))}
-      <ColorModeToggle />
     </nav>
   )
 }

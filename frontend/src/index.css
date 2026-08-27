@@ -438,3 +438,40 @@
     stroke: var(--chart-ink-muted) !important;
   }
 }
+
+/* Seção de dois eixos da página Sobre: explicação à esquerda, conteúdo à
+   direita. Abaixo do ponto de quebra vira uma coluna, na ordem de leitura.
+   O literal 768px é o valor de --breakpoint-stack; @media não lê var(). */
+.about-split { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); }
+.about-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Prosa curta dentro de cartão estreito não se justifica: a coluna é curta
+   demais e o justificado abre vãos entre as palavras. */
+.about-left { text-align: left; }
+
+@media (max-width: 768px) {
+  .about-split, .about-cards { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Painel de busca da barra. Ancorado no botão, largura própria e limitada pela
+   janela, e acima do conteúdo mas abaixo do pulo de teclado. Fora de @layer
+   porque .card-glass mora no patterns, que não é camadado. */
+.nav-search { position: relative; }
+
+.nav-search-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + var(--space-10));
+  right: 0;
+  inline-size: min(38rem, calc(100vw - var(--space-48)));
+  padding: var(--space-16);
+}
+
+@media (max-width: 768px) {
+  .nav-search-panel {
+    position: fixed;
+    inset-inline: var(--space-12);
+    inline-size: auto;
+    top: var(--scroll-offset);
+  }
+}

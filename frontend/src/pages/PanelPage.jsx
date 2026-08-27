@@ -59,7 +59,7 @@ export default function PanelPage() {
   return (
     <main className="min-h-screen bg-bg">
       <PageNav />
-      <div className="max-w-xl mx-auto px-24 py-32 pb-96 flex flex-col gap-24">
+      <div className="max-w-xl mx-auto px-24 py-32 pb-96 stagger stagger-fade flex flex-col gap-24">
         <Link to="/paineis" className="pill pill-sm self-start">
           <Icon name="arrow-left" />
           Painéis

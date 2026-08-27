@@ -58,7 +58,7 @@ export default function VariantPage() {
 
   return (
     <main className="min-h-screen bg-bg">
-      <PageNav initialQuery={rsid} />
+      <PageNav />
 
       <div className="max-w-xl mx-auto px-24 py-24">
 
