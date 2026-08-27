@@ -107,37 +107,96 @@ function parseCabecalho(linhas) {
   return meta
 }
 
+// Leitura de uma amostra: genótipo, profundidade e leituras por alelo.
+//
+// `AD` carrega uma contagem por alelo, começando pela referência: "30,35" são
+// 30 leituras do alelo de referência e 35 do primeiro alternativo. Com vários
+// ALT na mesma linha, o índice do alelo escolhe a coluna certa, e é por isso
+// que a expansão passa `iAlt`: usar sempre AD[1] atribuiria as leituras do
+// primeiro alternativo a todos os outros.
+//
+// O balanço alélico é o quociente entre as leituras do alelo alternativo e a
+// soma das duas. É a medida por variante que mais separa chamada verdadeira de
+// artefato: um heterozigoto real fica perto de 0,5, porque as duas cópias do
+// cromossomo são amplificadas igualmente. Longe disso, ou a chamada é falsa, ou
+// há contaminação, ou a região tem mais de duas cópias.
+function lerAmostra(bruto, chaves, nome, iAlt) {
+  const vals = bruto.split(':')
+  const o = { nome }
+  chaves.forEach((k, j) => { o[k] = vals[j] })
+
+  const gt = o.GT && o.GT !== './.' && o.GT !== '.' ? o.GT : null
+  const alelos = gt ? gt.split(/[/|]/).map((x) => (x === '.' ? null : +x)) : []
+  const nAlt = alelos.filter((a) => a === iAlt + 1).length
+  const nRef = alelos.filter((a) => a === 0).length
+
+  let ad = null
+  if (o.AD) {
+    const partes = o.AD.split(',').map((x) => +x)
+    if (partes.every(Number.isFinite) && partes.length > iAlt + 1) {
+      ad = { ref: partes[0], alt: partes[iAlt + 1] }
+    }
+  }
+  const somaAd = ad ? ad.ref + ad.alt : 0
+
+  return {
+    ...o,
+    gt,
+    fasado: !!gt && gt.includes('|'),
+    zigosidade: zigosidade(gt),
+    // Presente na amostra: carrega pelo menos uma cópia deste alelo.
+    tem: nAlt > 0,
+    // Referência homozigota confirmada, que é o que o teste de novo exige do pai
+    // e da mãe. Diferente de "sem chamada", e a distinção decide o resultado.
+    refHom: alelos.length > 0 && alelos.every((a) => a === 0),
+    semChamada: !gt,
+    nAlt,
+    nRef,
+    ad,
+    ab: somaAd > 0 ? ad.alt / somaAd : null,
+    dp: o.DP != null && o.DP !== '.' ? +o.DP : (somaAd || null),
+    gq: o.GQ != null && o.GQ !== '.' ? parseFloat(o.GQ) : null,
+  }
+}
+
 // Uma linha de VCF pode carregar vários ALT separados por vírgula. Cada um é
 // uma variante distinta, e contá-los como uma só subestima o total.
 function expandirAlts(campos, meta) {
   const [chrom, pos, id, ref, altBruto, qual, filtro, info, formato, ...amostras] = campos
   const infoObj = parseInfo(info)
   const chaves = formato ? formato.split(':') : []
-  const porAmostra = amostras.map((a, i) => {
-    const vals = a.split(':')
-    const o = {}
-    chaves.forEach((k, j) => { o[k] = vals[j] })
-    return { nome: meta.amostras[i] || `amostra${i + 1}`, ...o }
+
+  return altBruto.split(',').map((alt, iAlt) => {
+    const porAmostra = amostras.map((a, i) =>
+      lerAmostra(a, chaves, meta.amostras[i] || `amostra${i + 1}`, iAlt))
+    // A amostra em foco. Fica em 0 e o consumidor que quiser outra troca o
+    // índice: os campos planos abaixo são "a amostra em foco", não "a primeira",
+    // e é o que mantém tabela, filtro e exportação funcionando sem saber de trio.
+    const foco = porAmostra[0]
+    return {
+      chrom: chrom.replace(/^chr/i, ''),
+      pos: +pos,
+      id: id && id !== '.' ? id : null,
+      rsid: (id || '').split(';').find((x) => /^rs\d+$/i.test(x)) || null,
+      ref,
+      alt,
+      iAlt,
+      qual: qual === '.' ? null : parseFloat(qual),
+      filtro: filtro || '.',
+      passa: filtro === 'PASS' || filtro === '.',
+      tipo: tipoDaVariante(ref, alt),
+      transicao: ehTransicao(ref, alt),
+      info: infoObj,
+      amostras: porAmostra,
+      gt: foco?.gt || null,
+      fasado: !!foco?.fasado,
+      zigosidade: foco?.zigosidade ?? zigosidade(null),
+      ab: foco?.ab ?? null,
+      ad: foco?.ad ?? null,
+      dp: foco?.dp ?? (infoObj.DP ? +infoObj.DP : null),
+      gq: foco?.gq ?? null,
+    }
   })
-  return altBruto.split(',').map((alt) => ({
-    chrom: chrom.replace(/^chr/i, ''),
-    pos: +pos,
-    id: id && id !== '.' ? id : null,
-    rsid: (id || '').split(';').find((x) => /^rs\d+$/i.test(x)) || null,
-    ref,
-    alt,
-    qual: qual === '.' ? null : parseFloat(qual),
-    filtro: filtro || '.',
-    passa: filtro === 'PASS' || filtro === '.',
-    tipo: tipoDaVariante(ref, alt),
-    transicao: ehTransicao(ref, alt),
-    info: infoObj,
-    amostras: porAmostra,
-    gt: porAmostra[0]?.GT || null,
-    zigosidade: zigosidade(porAmostra[0]?.GT),
-    dp: porAmostra[0]?.DP ? +porAmostra[0].DP : (infoObj.DP ? +infoObj.DP : null),
-    gq: porAmostra[0]?.GQ ? parseFloat(porAmostra[0].GQ) : null,
-  }))
 }
 
 // Um .zip é um contêiner, não um fluxo comprimido: DecompressionStream lê

@@ -118,3 +118,237 @@ export function espectroSubstituicao(variantes) {
   }
   return { classes: CLASSES_SUBST.map((k) => ({ rotulo: k, n: c[k] })), n }
 }
+
+// --- Balanço alélico --------------------------------------------------------
+//
+// Heterozigoto verdadeiro fica perto de 0,5: as duas cópias do cromossomo são
+// amplificadas igualmente, então metade das leituras traz cada alelo. O desvio
+// tem causa, e a causa muda a conduta: abaixo de 0,25 costuma ser artefato de
+// alinhamento ou contaminação; acima de 0,75 num heterozigoto costuma ser perda
+// do alelo de referência, que é sinal de deleção na região.
+//
+// A faixa aceitável é 0,25 a 0,75, que é o intervalo usado na prática clínica.
+// Ela é larga de propósito: em profundidade baixa a variação binomial sozinha
+// já joga um heterozigoto real para longe de 0,5, e apertar o corte transformaria
+// cobertura baixa em achado.
+export const AB_MIN = 0.25
+export const AB_MAX = 0.75
+
+export function balancoAlelico(variantes) {
+  const faixas = Array.from({ length: 20 }, (_, i) => ({
+    de: +(i * 0.05).toFixed(2), ate: +((i + 1) * 0.05).toFixed(2), n: 0,
+  }))
+  let n = 0, desviados = 0
+  const suspeitas = []
+  for (const v of variantes) {
+    if (v.ab == null || v.zigosidade !== 'heterozigoto') continue
+    n += 1
+    faixas[Math.min(19, Math.floor(v.ab / 0.05))].n += 1
+    if (v.ab < AB_MIN || v.ab > AB_MAX) {
+      desviados += 1
+      if (suspeitas.length < 200) suspeitas.push(v)
+    }
+  }
+  const vals = variantes.filter((v) => v.ab != null && v.zigosidade === 'heterozigoto').map((v) => v.ab)
+  return {
+    faixas, n, desviados,
+    fracaoDesviada: n ? desviados / n : 0,
+    mediana: vals.length ? quantil(vals, 0.5) : null,
+    suspeitas,
+  }
+}
+
+// --- Ti/Tv separado entre conhecidas e novas ---------------------------------
+//
+// A razão global esconde o que interessa. Variante já depositada no dbSNP quase
+// sempre tem Ti/Tv bom, porque passou pelo crivo de já ter sido vista antes; o
+// ruído de chamada se concentra nas novas. Um arquivo com Ti/Tv global de 2,7 e
+// Ti/Tv de variante nova em 1,1 tem problema, e a razão global não mostra isso.
+export function titvSeparado(variantes) {
+  const c = {
+    conhecidas: { ti: 0, tv: 0 },
+    novas: { ti: 0, tv: 0 },
+  }
+  for (const v of variantes) {
+    if (v.transicao == null) continue
+    const g = v.rsid ? c.conhecidas : c.novas
+    if (v.transicao) g.ti += 1
+    else g.tv += 1
+  }
+  const razao = (g) => (g.tv ? g.ti / g.tv : null)
+  return {
+    conhecidas: { ...c.conhecidas, n: c.conhecidas.ti + c.conhecidas.tv, titv: razao(c.conhecidas) },
+    novas: { ...c.novas, n: c.novas.ti + c.novas.tv, titv: razao(c.novas) },
+  }
+}
+
+// --- Verificação de sexo ------------------------------------------------------
+//
+// Pega troca de amostra, que é o erro mais banal e mais grave de um laboratório.
+// Dois sinais independentes, e é a concordância entre eles que dá a resposta:
+//
+//   heterozigose no X fora da região pseudoautossômica. XY tem uma cópia só do
+//   X ali, então heterozigoto é raro. XX tem duas, e heterozigoto é comum.
+//   presença de variante no Y. XY tem Y, XX não tem.
+//
+// As duas regiões pseudoautossômicas do X (PAR1 e PAR2) são excluídas porque
+// nelas o X e o Y recombinam e um XY é diploide de verdade: contá-las faria todo
+// homem parecer XX. Coordenadas GRCh38.
+const PAR_X = [[10001, 2781479], [155701383, 156030895]]
+const naPAR = (pos) => PAR_X.some(([a, b]) => pos >= a && pos <= b)
+
+export function verificarSexo(variantes) {
+  let xHet = 0, xTotal = 0, yVariantes = 0
+  for (const v of variantes) {
+    if (v.chrom === 'X' && !naPAR(v.pos)) {
+      if (v.zigosidade === 'heterozigoto' || v.zigosidade === 'homozigoto alt') {
+        xTotal += 1
+        if (v.zigosidade === 'heterozigoto') xHet += 1
+      }
+    } else if (v.chrom === 'Y') {
+      yVariantes += 1
+    }
+  }
+  const fracaoHetX = xTotal ? xHet / xTotal : null
+
+  // Sem X suficiente não há inferência. Um painel de 40 genes pode não ter
+  // nenhuma variante no X, e responder "XY" a partir de zero seria inventar.
+  if (xTotal < 20) {
+    return { inferido: null, motivo: 'poucas variantes no X para inferir', xTotal, xHet, fracaoHetX, yVariantes }
+  }
+  const temY = yVariantes >= 5
+  const xDiploide = fracaoHetX > 0.2
+  let inferido = null
+  if (xDiploide && !temY) inferido = 'XX'
+  else if (!xDiploide && temY) inferido = 'XY'
+  return {
+    inferido,
+    motivo: inferido ? null : 'os dois sinais discordam: heterozigose no X e presença de Y não fecham',
+    xTotal, xHet, fracaoHetX, yVariantes,
+    discordante: !inferido && xTotal >= 20,
+  }
+}
+
+// --- Candidatos a heterozigoto composto ---------------------------------------
+//
+// Duas variantes em heterozigose no mesmo gene. É o mecanismo da maioria das
+// doenças recessivas, e nenhuma das duas isolada chama atenção numa lista
+// ordenada por gravidade individual.
+//
+// CANDIDATO, não achado, e a diferença é de fase. Duas variantes em heterozigose
+// só formam um composto se estiverem em cromossomos OPOSTOS (em trans): aí as
+// duas cópias do gene estão comprometidas. Em cis, as duas viajam no mesmo
+// cromossomo, a outra cópia está intacta e o efeito é o de um heterozigoto
+// comum. Sem fase não há como distinguir, e o que resolve é genótipo dos pais ou
+// fasamento por leitura.
+export function heterozigotosCompostos(variantes, { apenasAnotadas = false } = {}) {
+  const porGene = {}
+  for (const v of variantes) {
+    if (v.zigosidade !== 'heterozigoto') continue
+    const g = v.gene || v.clinvar?.gene
+    if (!g) continue
+    if (apenasAnotadas && !v.clinvar) continue
+    ;(porGene[g] ||= []).push(v)
+  }
+  const out = []
+  for (const [gene, lista] of Object.entries(porGene)) {
+    if (lista.length < 2) continue
+    // Duas variantes na mesma posição são o mesmo sítio com alelos diferentes,
+    // não duas cópias comprometidas.
+    const posicoes = new Set(lista.map((v) => v.pos))
+    if (posicoes.size < 2) continue
+    out.push({
+      gene,
+      variantes: lista.sort((a, b) => a.pos - b.pos),
+      n: lista.length,
+      // Fase declarada nas duas E na mesma linha de origem não basta para dizer
+      // trans: fase de VCF é por bloco, e blocos diferentes não são comparáveis.
+      // O que dá para afirmar é se há fase alguma.
+      temFase: lista.every((v) => v.fasado),
+      patogenicas: lista.filter((v) => [1, 2, 3].includes(v.clinvar?.sig)).length,
+      incertas: lista.filter((v) => v.clinvar?.sig === 5).length,
+    })
+  }
+  return out.sort((a, b) =>
+    b.patogenicas - a.patogenicas || b.incertas - a.incertas || b.n - a.n)
+}
+
+// --- Trio: de novo e segregação ------------------------------------------------
+//
+// A regra ingênua (heterozigoto na criança, referência nos dois pais) é uma
+// fábrica de falso positivo, e o motivo é cobertura: um pai com 3 leituras
+// naquele sítio sai como referência homozigota porque nenhuma das 3 calhou de
+// trazer o alelo. O piso de profundidade parental é o que separa "os pais não
+// têm" de "não se sabe se os pais têm".
+//
+// O número de sítios EXCLUÍDOS por cobertura parental insuficiente sai junto, e
+// não é detalhe: "3 de novo" e "3 de novo, com 400 sítios que não deu para
+// avaliar" são leituras opostas do mesmo arquivo.
+export const DP_PARENTAL_MIN = 10
+
+export function analiseTrio(variantes, { proband = 0, mae = null, pai = null } = {}) {
+  if (mae == null || pai == null) return null
+  const deNovo = []
+  const recessivas = []
+  const compostosTrans = []
+  let semCoberturaParental = 0
+  let avaliadas = 0
+
+  const porGene = {}
+
+  for (const v of variantes) {
+    const c = v.amostras[proband]
+    const m = v.amostras[mae]
+    const p = v.amostras[pai]
+    if (!c || !m || !p || !c.tem) continue
+    avaliadas += 1
+
+    const paisCobertos = (m.dp ?? 0) >= DP_PARENTAL_MIN && (p.dp ?? 0) >= DP_PARENTAL_MIN
+    const paisSemAlelo = m.refHom && p.refHom && (m.ad?.alt ?? 0) === 0 && (p.ad?.alt ?? 0) === 0
+
+    if (paisSemAlelo) {
+      if (paisCobertos) deNovo.push(v)
+      else semCoberturaParental += 1
+    }
+
+    // Recessiva homozigota: criança com as duas cópias, cada pai carregando uma.
+    if (c.zigosidade === 'homozigoto alt' && m.tem && p.tem
+        && m.zigosidade === 'heterozigoto' && p.zigosidade === 'heterozigoto') {
+      recessivas.push(v)
+    }
+
+    // Para o composto em trans: guardar de qual lado veio cada heterozigoto.
+    if (c.zigosidade === 'heterozigoto') {
+      const g = v.gene || v.clinvar?.gene
+      if (g) {
+        const daMae = m.tem && !p.tem
+        const doPai = p.tem && !m.tem
+        if (daMae || doPai) (porGene[g] ||= []).push({ v, origem: daMae ? 'mãe' : 'pai' })
+      }
+    }
+  }
+
+  // Duas heterozigotas no mesmo gene, uma herdada de cada lado: isso É trans, e
+  // é a única forma de afirmar composto sem fasamento por leitura.
+  for (const [gene, lista] of Object.entries(porGene)) {
+    const daMae = lista.filter((x) => x.origem === 'mãe')
+    const doPai = lista.filter((x) => x.origem === 'pai')
+    if (daMae.length && doPai.length) {
+      compostosTrans.push({
+        gene,
+        variantes: [...daMae, ...doPai].map((x) => x.v).sort((a, b) => a.pos - b.pos),
+        origens: Object.fromEntries([...daMae, ...doPai].map((x) => [`${x.v.chrom}:${x.v.pos}`, x.origem])),
+        patogenicas: [...daMae, ...doPai].filter((x) => [1, 2, 3].includes(x.v.clinvar?.sig)).length,
+      })
+    }
+  }
+
+  return {
+    deNovo: deNovo.sort((a, b) => (b.clinvar ? 1 : 0) - (a.clinvar ? 1 : 0)),
+    recessivas,
+    compostosTrans: compostosTrans.sort((a, b) => b.patogenicas - a.patogenicas),
+    semCoberturaParental,
+    avaliadas,
+    dpMin: DP_PARENTAL_MIN,
+  }
+}
