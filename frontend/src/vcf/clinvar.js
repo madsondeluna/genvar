@@ -89,6 +89,13 @@ async function buscarGz(url) {
   return JSON.parse(await new Response(fluxo).text())
 }
 
+// Nome da camada em texto corrido, para o relatório dizer o que foi consultado.
+const NOME_CAMADA = {
+  aviso: 'patogênica, provavelmente patogênica, conflitante, fármaco e risco',
+  incerta: 'significado incerto',
+  benigna: 'benigna e provavelmente benigna',
+}
+
 let indice = null
 
 export async function carregarIndice() {
@@ -191,7 +198,10 @@ export async function anotar(variantes, { camadas = ['aviso'], build = null, onP
       }
     }
   }
-  return { casadas, divergentes, cromossomos, podeCoordenada }
+  return {
+    casadas, divergentes, cromossomos, podeCoordenada,
+    camadasCarregadas: camadas.map((c) => NOME_CAMADA[c] || c).join(' e '),
+  }
 }
 
 export function resumoClinico(variantes) {

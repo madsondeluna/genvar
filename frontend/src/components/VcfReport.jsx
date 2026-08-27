@@ -33,7 +33,7 @@ export default function VcfReport({ dados, anotacao, resumoCli, vus, onCarregarV
     setPdf('gerando')
     try {
       const { gerarPDF } = await import('../vcf/pdf.jsx')
-      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo, resumoCli, anotacao })
+      const blob = await gerarPDF({ ...dados, porGene, dp, qual, cromo, espectro, resumoCli, anotacao })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url

@@ -91,7 +91,11 @@ export default function VcfPage() {
   const carregarVUS = useCallback(async () => {
     if (!dados) return
     const info = await anotar(dados.variantes, { camadas: ['incerta'], build: dados.meta.build })
-    setAnotacao((a) => ({ ...a, casadas: (a?.casadas || 0) + info.casadas }))
+    setAnotacao((a) => ({
+      ...a,
+      casadas: (a?.casadas || 0) + info.casadas,
+      camadasCarregadas: [a?.camadasCarregadas, info.camadasCarregadas].filter(Boolean).join('; '),
+    }))
     setResumoCli(resumoClinico(dados.variantes))
     setVus(true)
   }, [dados])
