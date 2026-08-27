@@ -125,11 +125,16 @@ export default function HomePage() {
           <p className="eyebrow mb-12">Explorador de variantes genéticas</p>
           {/* a marca mora na barra, em todas as páginas, e só lá: o hero
               repetia o mesmo símbolo em outro tamanho e outro lugar */}
-          <h1 className="display text-40 mb-12">GenVar Dashboard</h1>
+          <h1 className="display text-40 mb-12">GenVar</h1>
           <p className="text-15 leading-normal">
-            Ensembl, gnomAD, ClinVar, AlphaFold e UniProt em uma consulta única. Busque um símbolo
-            de gene ou um rs ID para reunir significado clínico, frequências populacionais,
-            métricas de restrição e estrutura proteica.
+            <strong className="text-text font-medium">3.739 doenças raras, 434 painéis de genes e
+            6.982 escores poligênicos</strong>, em português, cruzados ao vivo com Ensembl, gnomAD,
+            ClinVar, AlphaFold e UniProt. Digite um gene, um rs ID ou o nome de uma doença e receba
+            de uma vez o <strong className="text-text font-medium">significado clínico</strong>, a
+            <strong className="text-text font-medium"> frequência na população</strong>, a
+            <strong className="text-text font-medium"> restrição gênica</strong> e a
+            <strong className="text-text font-medium"> estrutura da proteína</strong>. Sem cadastro
+            e sem custo.
           </p>
         </header>
 

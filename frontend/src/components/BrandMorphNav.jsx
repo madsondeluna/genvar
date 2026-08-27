@@ -93,7 +93,7 @@ export default function BrandMorphNav({ heroSlotRef }) {
           }
         >
           <BrandMark className="w-24 h-24" />
-          GenVar Dashboard
+          GenVar
         </Link>
       </div>
     </nav>

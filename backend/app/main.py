@@ -23,7 +23,7 @@ class TimingMiddleware(BaseHTTPMiddleware):
 
 
 app = FastAPI(
-    title="GenVar Dashboard API",
+    title="GenVar API",
     description="Genetic variant exploration API aggregating Ensembl, gnomAD, ClinVar, AlphaFold, UniProt, and MyVariant.info",
     version="2.0.0",
 )
@@ -49,7 +49,7 @@ app.include_router(sources.router, prefix="/api/sources", tags=["sources"])
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "service": "GenVar Dashboard API", "version": "2.0.0"}
+    return {"status": "ok", "service": "GenVar API", "version": "2.0.0"}
 
 
 @app.get("/health")

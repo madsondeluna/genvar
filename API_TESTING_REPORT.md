@@ -1,4 +1,4 @@
-# API Testing Report - GenVar Dashboard
+# API Testing Report - GenVar
 
 Date: 2026-03-18
 Tested by: automated endpoint probing before implementation

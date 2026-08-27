@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-GenVar Dashboard benchmark suite.
+GenVar benchmark suite.
 
 Requires: backend running at --url (default http://localhost:8000)
           Redis running at --redis (default redis://localhost:6379)
@@ -46,7 +46,7 @@ async def check_backend(url: str) -> bool:
 
 
 async def main() -> None:
-    parser = argparse.ArgumentParser(description="GenVar Dashboard benchmark suite")
+    parser = argparse.ArgumentParser(description="GenVar benchmark suite")
     parser.add_argument("--url", default=BACKEND_URL, help="Backend base URL")
     parser.add_argument("--redis", default=REDIS_URL, help="Redis URL")
     parser.add_argument(

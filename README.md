@@ -1,4 +1,4 @@
-# GenVar Dashboard
+# GenVar
 
 | Campo | Informação |
 |---|---|
@@ -16,7 +16,7 @@
 
 ## Descrição do projeto
 
-GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra oito bases públicas em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante, gene ou doença de interesse.
+GenVar é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra oito bases públicas em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante, gene ou doença de interesse.
 
 As fontes se dividem em duas naturezas, e a distinção determina a idade do dado exibido:
 
@@ -774,7 +774,7 @@ próprio servidor, em paralelo, e reporta por endpoint o método, o caminho, o
 
 | Endpoint | Resposta |
 |---|---|
-| `GET /` | `{"status": "ok", "service": "GenVar Dashboard API", "version": "2.0.0"}`, identificação do serviço. |
+| `GET /` | `{"status": "ok", "service": "GenVar API", "version": "2.0.0"}`, identificação do serviço. |
 | `GET /health` | `{"status": "ok"}`, usado como health check pelo Render (`healthCheckPath` no `render.yaml`) e pela suíte de benchmark (`run_benchmarks.py`). |
 
 ### Respostas de erro
@@ -978,7 +978,7 @@ Cobertura por arquivo:
 
 ## Validação quantitativa (suite de benchmark)
 
-Esta seção descreve o plano de metrificação do GenVar Dashboard desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
+Esta seção descreve o plano de metrificação do GenVar desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
 
 Todas as suítes usam um conjunto de teste padronizado para o MVP (produto mínimo viável) definido em `suites/_targets.py`: 10 genes (MLH1, HBB, MSH2, VHL, LDLR, RB1, BRCA1, TP53, CFTR, PAH) e 10 variantes (rs334, rs1800562, rs6025, rs1799853, rs429358, rs1801133, rs1042522, rs5030858, rs28929474, rs121913529), escolhidos por cobertura das fontes e diversidade clínica. As coordenadas das variantes são GRCh38 (a correção de uma versão anterior em GRCh37, que fazia as chamadas manuais ao gnomAD retornarem vazio).
 

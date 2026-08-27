@@ -1,4 +1,4 @@
-# Como rodar o GenVar Dashboard
+# Como rodar o GenVar
 
 Guia prático para subir a aplicação localmente, executar os testes e rodar a suite completa de benchmarks do TCC.
 

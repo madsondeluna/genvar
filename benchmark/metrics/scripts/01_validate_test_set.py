@@ -1,5 +1,5 @@
 """
-Valida o conjunto de teste padronizado (MVP) do GenVar Dashboard.
+Valida o conjunto de teste padronizado (MVP) do GenVar.
 
 Este script consulta o backend local para cada um dos 10 genes e das 10 variantes
 do conjunto e verifica duas coisas: se a resposta retorna com sucesso (codigo HTTP 200)

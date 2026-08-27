@@ -3,10 +3,15 @@
 // interior, a tinta aqui e currentColor: a marca segue --text e acompanha os
 // quatro modos sem um segundo arquivo. Tinta cheia em todos os aneis: com as
 // opacidades originais (0.4 e 0.18) o simbolo saia lavado ao lado do letreiro.
+//
+// A caixa foi recortada na TINTA, medida na tela com getBBox mais metade do
+// traco: a original tinha 12 de folga a esquerda, 13 a direita, 7 em cima e 18
+// embaixo, e a assimetria empurrava a marca para cima dentro do quadrado. A
+// caixa nova e quadrada e centrada no desenho.
 export default function BrandMark({ className = '', title = 'Marca do GenVar' }) {
   return (
     <svg
-      viewBox="0 0 162 166"
+      viewBox="10.1 7 141 141"
       className={className}
       role="img"
       aria-label={title}
