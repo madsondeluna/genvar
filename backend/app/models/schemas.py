@@ -193,6 +193,7 @@ class CountItem(BaseModel):
 class DiseaseStatsResponse(BaseModel):
     """Panorama do catalogo para as visualizacoes do hub."""
     total: int = 0
+    total_genes: int = 0
     by_inheritance: List[CountItem] = []
     by_category: List[CountItem] = []
 
@@ -391,3 +392,34 @@ class EndpointsHealthResponse(BaseModel):
     internal_ok_count: int = 0
     internal_total: int = 0
     endpoints: List[EndpointHealth] = []
+
+class SuggestItem(BaseModel):
+    """Uma sugestao de busca. `kind` decide a rota que o front abre."""
+    kind: str
+    id: str
+    label: str
+    hint: Optional[str] = None
+    extra: Optional[str] = None
+
+
+class SuggestResponse(BaseModel):
+    query: str
+    items: List[SuggestItem]
+
+
+class SourceItem(BaseModel):
+    """Uma fonte de dados, com a licenca que autoriza o uso."""
+    id: str
+    name: str
+    url: str
+    data_url: str
+    license: str
+    license_url: str
+    kind: str
+    usage: str
+    citation: str
+    extracted_at: Optional[str] = None
+
+
+class SourcesResponse(BaseModel):
+    items: List[SourceItem]

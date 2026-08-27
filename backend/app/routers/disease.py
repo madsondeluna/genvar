@@ -56,9 +56,13 @@ async def list_diseases(
 
 # Rotulos das facetas de heranca, na ordem canonica, para o panorama do hub.
 _INH_LABELS = [
-    ("AD", "Autossomica dominante"), ("AR", "Autossomica recessiva"),
+    ("AD", "Autossômica dominante"), ("AR", "Autossômica recessiva"),
     ("XLR", "Ligada ao X recessiva"), ("XLD", "Ligada ao X dominante"),
     ("XL", "Ligada ao X"),
+    # entraram com o catalogo do Orphanet; sem eles 144 doencas ficavam com a
+    # heranca invisivel nas facetas, o que le como "nao tem heranca"
+    ("MF", "Multifatorial"), ("MT", "Mitocondrial"),
+    ("SD", "Semidominante"), ("OL", "Oligogênica"), ("YL", "Ligada ao Y"),
 ]
 
 
@@ -84,8 +88,10 @@ async def disease_stats():
         CountItem(key=name, label=name, count=n)
         for name, n in sorted(cat_counts.items(), key=lambda kv: kv[1], reverse=True)
     ]
+    genes = {g for d in items for g in (d.get("genes") or [])}
     return DiseaseStatsResponse(
-        total=len(items), by_inheritance=by_inheritance, by_category=by_category
+        total=len(items), total_genes=len(genes),
+        by_inheritance=by_inheritance, by_category=by_category,
     )
 
 
