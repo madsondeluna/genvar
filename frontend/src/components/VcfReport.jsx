@@ -31,7 +31,7 @@ function Ficha({ rotulo, valor, nota, slot }) {
 }
 
 export default function VcfReport({ dados }) {
-  const { meta, variantes, metricas, nome, tamanho, lidos, truncado } = dados
+  const { meta, variantes, metricas, nome, tamanho, lidos, truncado, genesMapeados } = dados
   const [aba, setAba] = useState('qualidade')
   const [pdf, setPdf] = useState('parado')  // parado | gerando | erro
 
@@ -77,8 +77,11 @@ export default function VcfReport({ dados }) {
         <p className="text-14 leading-normal mb-24" style={{ maxWidth: 'var(--measure-wide)' }}>
           <span className="mono">{nome}</span>, {fmt(Math.round(tamanho / 1024))} KB.{' '}
           {meta.build
-            ? <>Referência <strong className="text-text font-medium">{meta.build}</strong>, declarada no cabeçalho.</>
-            : <>O cabeçalho <strong className="text-text font-medium">não declara o build</strong> de referência, então as coordenadas não podem ser cruzadas com segurança.</>}
+            ? <>Referência <strong className="text-text font-medium">{meta.build}</strong>
+              {meta.buildDeduzido
+                ? ', deduzida do comprimento do cromossomo 1, porque o cabeçalho não a declara.'
+                : ', declarada no cabeçalho.'}</>
+            : <>O cabeçalho <strong className="text-text font-medium">não declara o build</strong> de referência e o comprimento dos contigs não permite deduzi-lo.</>}
           {meta.chamador && <> Chamador: <span className="mono">{meta.chamador}</span>.</>}
           {truncado && <> O arquivo excede o teto de leitura e o relatório cobre as primeiras {fmt(lidos)} linhas.</>}
         </p>
@@ -90,6 +93,21 @@ export default function VcfReport({ dados }) {
           <Ficha slot={4} valor={pct(metricas.fracaoConhecida)} rotulo="já no dbSNP" nota={`${fmt(metricas.comRsid)} com rsID`} />
           <Ficha slot={5} valor={fmt(meta.amostras.length)} rotulo="amostras" nota={meta.amostras.join(', ').slice(0, 20) || 'sem genótipo'} />
         </div>
+
+        {!genesMapeados && (
+          <div className="card tint-warning mb-24 flex items-start gap-10">
+            <Icon name="alert" className="text-muted mt-2" />
+            <p className="text-13 leading-snug about-left">
+              O cruzamento com genes foi <strong className="text-text font-medium">desligado</strong> para
+              este arquivo. As coordenadas de gene que o GenVar distribui são GRCh38, e este VCF
+              {meta.build ? <> está em <span className="mono">{meta.build}</span></> : <> não declara o build</>}.
+              Entre GRCh37 e GRCh38 o deslocamento chega a milhões de bases: só no BRCA1 são
+              1.847.983. Cruzar assim não erra por pouco, troca o gene inteiro, e gene errado com
+              cara de certo é pior que gene nenhum. As métricas de qualidade abaixo não dependem
+              do build e continuam válidas.
+            </p>
+          </div>
+        )}
 
         {titv != null && !titvOk && (
           <div className="card tint-warning mb-24 flex items-start gap-10">
@@ -235,7 +253,14 @@ export default function VcfReport({ dados }) {
               consultar a rede. Gene grande acumula mais variantes por tamanho, não por relevância:
               a lista é ponto de partida, não achado.
             </p>
-            {porGene.length === 0 && <p className="text-13">Nenhuma variante caiu dentro de um gene conhecido.</p>}
+            {!genesMapeados && (
+              <p className="text-13">
+                Indisponível para este arquivo: o mapa de genes é GRCh38 e o VCF não está nesse build.
+              </p>
+            )}
+            {genesMapeados && porGene.length === 0 && (
+              <p className="text-13">Nenhuma variante caiu dentro de um gene conhecido.</p>
+            )}
             <ul className="flex flex-col gap-6" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {porGene.map(([g, n], i) => (
                 <li key={g} className="grid items-center gap-12" style={{ gridTemplateColumns: 'minmax(0,8rem) 1fr auto auto' }}>

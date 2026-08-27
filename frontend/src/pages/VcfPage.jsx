@@ -44,8 +44,14 @@ export default function VcfPage() {
       })
       if (!variantes.length) throw new Error('Nenhuma variante encontrada. O arquivo é mesmo um VCF?')
 
-      // gene por coordenada, sem rede: busca binária sobre 20.033 genes
-      for (const v of variantes) v.gene = geneDaPosicao(indice, v.chrom, v.pos)
+      // Gene por coordenada, sem rede. SÓ para GRCh38: o conjunto de genes é
+      // GRCh38, e cruzar coordenada de GRCh37 contra ele não desloca um pouco,
+      // troca o gene. Sem o build declarado, também não se cruza: gene errado
+      // com cara de certo é pior que gene nenhum.
+      const podeMapear = meta.build === 'GRCh38'
+      if (podeMapear) {
+        for (const v of variantes) v.gene = geneDaPosicao(indice, v.chrom, v.pos)
+      }
 
       setDados({
         nome: arquivo.name,
@@ -56,6 +62,7 @@ export default function VcfPage() {
         lidos,
         truncado,
         metricas: resumo(variantes),
+        genesMapeados: podeMapear,
       })
       setEstado('pronto')
     } catch (e) {
@@ -77,9 +84,9 @@ export default function VcfPage() {
         <header className="mb-24">
           <p className="eyebrow mb-8 flex items-center gap-8">
             <Icon name="file" />
-            Do sequenciador ao significado
+            Chamada de variantes, do sequenciador ao significado
           </p>
-          <h1 className="display text-40">VCF: chamada de variantes</h1>
+          <h1 className="display text-40">VCF</h1>
         </header>
 
         {/* A abertura ocupa a faixa em duas colunas: o que o arquivo é, e o
@@ -100,7 +107,7 @@ export default function VcfPage() {
 
         <section className="mb-96" aria-labelledby="fluxo-title">
           <h2 id="fluxo-title" className="section-title mb-8">Como se chega a um VCF</h2>
-          <p className={`${PAR} mb-24`}>
+          <p className={`${PAR} mb-24`} style={{ maxWidth: 'var(--measure-wide)' }}>
             Cinco etapas, e cada uma guarda uma coisa e perde outra. A linha apagada de cada etapa
             é a perda, porque é ela que explica o que o arquivo final não consegue responder: um
             VCF registra onde a amostra difere da referência, e nada sobre onde ela é igual, e é

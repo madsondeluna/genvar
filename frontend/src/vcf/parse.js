@@ -80,12 +80,22 @@ function parseCabecalho(linhas) {
       meta.colunas = cols
     }
   }
-  // o build vem do ##reference ou do assembly dos contigs; sem nenhum dos dois
-  // o relatório diz "não declarado" em vez de chutar
+  // O build decide se as coordenadas podem ser cruzadas com qualquer outra
+  // coisa. Entre GRCh37 e GRCh38 o deslocamento chega a milhões de bases (só
+  // no BRCA1 são 1.847.983), então errar o build não desloca um pouco: troca o
+  // gene inteiro. Três fontes, da mais confiável para a menos.
   const ref = (meta.referencia || '') + ' ' + (meta.contigs[0]?.assembly || '')
   if (/GRCh38|hg38/i.test(ref)) meta.build = 'GRCh38'
-  else if (/GRCh37|hg19/i.test(ref)) meta.build = 'GRCh37'
-  else meta.build = null
+  else if (/GRCh37|hg19|b37/i.test(ref)) meta.build = 'GRCh37'
+  else {
+    // Sem declaração textual, o comprimento do cromossomo 1 identifica o build:
+    // são valores fixos e diferentes em cada um. É dedução, e o relatório diz
+    // que foi deduzida.
+    const chr1 = meta.contigs.find((c) => c.id === '1' || c.id === 'chr1')
+    if (chr1?.length === 248956422) { meta.build = 'GRCh38'; meta.buildDeduzido = true }
+    else if (chr1?.length === 249250621) { meta.build = 'GRCh37'; meta.buildDeduzido = true }
+    else meta.build = null
+  }
   return meta
 }
 
@@ -151,7 +161,12 @@ export async function extrairDoZip(arquivo) {
 // variantes e o texto inteiro não cabe confortavelmente em memória; o fluxo
 // mantém o pico baixo e permite relatar progresso.
 export async function lerVCF(arquivo, { onProgresso, limite = 0 } = {}) {
-  const gz = /\.gz$/i.test(arquivo.name)
+  // O nome não decide: quem decide são os dois primeiros bytes. Um .vcf.gz
+  // servido com Content-Encoding: gzip chega aqui já descompactado, e um VCF
+  // renomeado para .gz nunca foi comprimido; nos dois casos gunzipar devolve
+  // "incorrect header check" em cima de um arquivo perfeitamente legível.
+  const assinatura = new Uint8Array(await arquivo.slice(0, 2).arrayBuffer())
+  const gz = assinatura[0] === 0x1f && assinatura[1] === 0x8b
   let stream = arquivo.stream()
   if (gz) {
     if (typeof DecompressionStream === 'undefined') {
