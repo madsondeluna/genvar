@@ -118,6 +118,85 @@ _FONTES = [
     },
 ]
 
+_NOVAS = [
+    {
+        "id": "hgnc", "name": "HGNC",
+        "url": "https://www.genenames.org",
+        "data_url": "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt",
+        "license": "CC0 1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "kind": "catalogo", "arquivo": "../../frontend/public/data/paineis/simbolos.json.gz",
+        "usage": "Nomenclatura oficial de gene: resolve símbolo antigo e sinônimo para o "
+                 "símbolo corrente. Sem isso, o filtro por painel perde os genes que apenas "
+                 "mudaram de nome: cruzar direto casa 96,2% dos genes verdes do PanelApp, e "
+                 "com o mapa de sinônimos a taxa vai a 98,6%.",
+        "citation": "Seal RL, Braschi B, Gray K, et al. Genenames.org: the HGNC resources in "
+                    "2023. Nucleic Acids Res. 2023;51:D1003-D1009.",
+    },
+    {
+        "id": "clingen", "name": "ClinGen",
+        "url": "https://clinicalgenome.org",
+        "data_url": "https://search.clinicalgenome.org/kb/gene-validity",
+        "license": "CC0 1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "kind": "catalogo", "arquivo": "../../frontend/public/data/farmaco/clingen.json.gz",
+        "usage": "Validade gene-doença curada por painel de especialistas, com o padrão de "
+                 "herança. É o que permite dizer se a associação entre um gene e uma doença é "
+                 "definitiva ou apenas relatada, e é a fonte do critério PVS1 no módulo de VCF.",
+        "citation": "Strande NT, Riggs ER, Buchanan AH, et al. Evaluating the Clinical Validity "
+                    "of Gene-Disease Associations. Am J Hum Genet. 2017;100:895-906.",
+    },
+    {
+        "id": "cpic", "name": "CPIC",
+        "url": "https://cpicpgx.org",
+        "data_url": "https://api.cpicpgx.org/v1/",
+        "license": "CC BY-SA 4.0", "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "kind": "catalogo", "arquivo": "../../frontend/public/data/farmaco/cpic.json.gz",
+        "usage": "Diretrizes de farmacogenômica: quais genes têm recomendação de dose ou de "
+                 "escolha de fármaco. Limite declarado: o GenVar sinaliza o gene, e não "
+                 "determina diplotipo, porque chamada de alelo estrela exige fase e número de "
+                 "cópias, ausentes de um VCF de variante curta.",
+        "citation": "Relling MV, Klein TE. CPIC: Clinical Pharmacogenetics Implementation "
+                    "Consortium. Clin Pharmacol Ther. 2011;89:464-467.",
+    },
+    {
+        "id": "clinvar-embarcado", "name": "ClinVar (compilação embarcada)",
+        "url": "https://www.ncbi.nlm.nih.gov/clinvar/",
+        "data_url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/",
+        "license": "Domínio público",
+        "license_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+        "kind": "catalogo", "arquivo": "../../frontend/public/data/clinvar/index.json",
+        "usage": "A mesma base do ClinVar, compilada em JSON colunar comprimido e servida ao "
+                 "navegador: 4,2 milhões de variantes em três camadas e um arquivo por "
+                 "cromossomo. Existe porque o módulo de VCF roda inteiro no navegador, e "
+                 "consultar a API por variante entregaria o arquivo do paciente a um terceiro.",
+        "citation": "Landrum MJ, Chitipiralla S, Brown GR, et al. ClinVar: improvements to "
+                    "accessing data. Nucleic Acids Res. 2020;48:D835-D844.",
+    },
+    {
+        "id": "gwas-catalog", "name": "GWAS Catalog",
+        "url": "https://www.ebi.ac.uk/gwas/",
+        "data_url": "https://www.ebi.ac.uk/gwas/rest/api/",
+        "license": "CC BY 4.0", "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "kind": "ao vivo", "arquivo": None,
+        "usage": "Associações de variante comum com traço, usadas na página de gene para "
+                 "separar o que é monogênico do que é característica de arquitetura poligênica.",
+        "citation": "Sollis E, Mosaku A, Abid A, et al. The NHGRI-EBI GWAS Catalog. "
+                    "Nucleic Acids Res. 2023;51:D977-D985.",
+    },
+    {
+        "id": "myvariant", "name": "MyVariant.info",
+        "url": "https://myvariant.info",
+        "data_url": "https://myvariant.info/v1/",
+        "license": "Apache 2.0", "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "kind": "ao vivo", "arquivo": None,
+        "usage": "Agregador de escores preditivos sobre o dbNSFP: CADD, REVEL, AlphaMissense, "
+                 "SIFT, PolyPhen-2, conservação e predição de splicing, na página de variante.",
+        "citation": "Xin J, Mark A, Afrasiabi C, et al. High-performance web services for "
+                    "querying gene and variant annotation. Genome Biol. 2016;17:91.",
+    },
+]
+
+_FONTES = _FONTES + _NOVAS
+
 
 @router.get("", response_model=SourcesResponse)
 async def sources():
@@ -127,6 +206,6 @@ async def sources():
             id=f["id"], name=f["name"], url=f["url"], data_url=f["data_url"],
             license=f["license"], license_url=f["license_url"], kind=f["kind"],
             usage=f["usage"], citation=f["citation"],
-            extracted_at=_extraido(f["arquivo"]) if f["arquivo"] else None,
+            extracted_at=_extraido(f.get("arquivo")) if f.get("arquivo") else None,
         ))
     return SourcesResponse(items=itens)

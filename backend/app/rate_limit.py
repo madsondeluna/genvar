@@ -101,6 +101,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.hops = TRUSTED_PROXY_HOPS if hops is None else hops
         self._por_ip: Dict[str, _Janela] = defaultdict(_Janela)
 
+    @staticmethod
+    def _nasceu_aqui(request: Request) -> bool:
+        cliente = request.client.host if request.client else ""
+        return (cliente in ("127.0.0.1", "::1", "localhost")
+                and not request.headers.get("x-forwarded-for"))
+
     def _ip(self, request: Request) -> str:
         direto = request.client.host if request.client else "desconhecido"
         if self.hops <= 0:
@@ -140,6 +146,21 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         caminho = request.url.path
         if caminho.startswith(ISENTOS):
+            return await call_next(request)
+
+        # REQUISICAO NASCIDA DENTRO DESTE PROCESSO passa direto.
+        #
+        # A sonda de `/api/health/endpoints` chama as proprias rotas da API para
+        # dizer se elas respondem. Com dezoito rotas sondadas e teto de dez por
+        # segundo, ela reprovava a si mesma: a pagina de status mostrava 429 em
+        # sete rotas que estavam perfeitamente no ar, e o limitador virava a
+        # causa do problema que ele deveria ajudar a detectar.
+        #
+        # A regra e estreita de proposito: so vale quando o cliente e o proprio
+        # laco de retorno E nao ha `X-Forwarded-For`. Atras de um proxy, toda
+        # requisicao de gente carrega esse cabecalho, entao a unica coisa que
+        # satisfaz as duas condicoes e um pedido que saiu daqui de dentro.
+        if self._nasceu_aqui(request):
             return await call_next(request)
 
         agora = time.monotonic()

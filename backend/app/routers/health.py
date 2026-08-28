@@ -93,13 +93,35 @@ async def check_sources():
 # external=True: o endpoint depende de fontes externas (passa em producao,
 # falha no sandbox porque o egress e bloqueado). external=False: interno, sem
 # dependencia de rede (deve passar sempre).
+# A LISTA COBRE TODA ROTA PUBLICA, e a cobertura e o ponto: uma pagina de status
+# que sonda metade das rotas informa sobre metade da aplicacao e da a impressao
+# de informar sobre ela inteira. `external` diz se a rota depende de fonte de
+# terceiro, e e isso que decide o teto do cronometro: rota que so le dado local
+# responde em milissegundos.
 ENDPOINTS = [
     {"name": "Raiz", "method": "GET", "path": "/", "external": False},
     {"name": "Health", "method": "GET", "path": "/health", "external": False},
+    {"name": "Fontes de dados", "method": "GET", "path": "/api/sources", "external": False},
+    {"name": "Sugestao de busca", "method": "GET", "path": "/api/suggest?q=BRCA", "external": False},
+
     {"name": "Catalogo de doencas", "method": "GET", "path": "/api/disease?page_size=1", "external": False},
+    {"name": "Panorama de doencas", "method": "GET", "path": "/api/disease/stats", "external": False},
     {"name": "Detalhe de doenca", "method": "GET", "path": "/api/disease/anemia-falciforme", "external": True},
     {"name": "Variantes por doenca", "method": "GET", "path": "/api/disease/anemia-falciforme/variants", "external": True},
-    {"name": "Gene", "method": "GET", "path": "/api/gene/BRCA1", "external": True},
+
+    {"name": "Catalogo de paineis", "method": "GET", "path": "/api/panel?page_size=1", "external": False},
+    {"name": "Panorama de paineis", "method": "GET", "path": "/api/panel/stats", "external": False},
+    {"name": "Detalhe de painel", "method": "GET", "path": "/api/panel/epilepsias-geneticas", "external": True},
+
+    {"name": "Catalogo de escores", "method": "GET", "path": "/api/pgs?page_size=1", "external": False},
+    {"name": "Raro x poligenico", "method": "GET", "path": "/api/pgs/interplay", "external": False},
+    {"name": "Detalhe de escore", "method": "GET", "path": "/api/pgs/PGS000004", "external": True},
+
+    # Gene: as duas formas sao sondadas em separado porque tem custo muito
+    # diferente, e a pagina passou a usar a rapida. Sondar so a completa
+    # esconderia a que o usuario de fato espera.
+    {"name": "Gene (sem variantes)", "method": "GET", "path": "/api/gene/BRCA1?variantes=false", "external": True},
+    {"name": "Variantes do gene", "method": "GET", "path": "/api/gene/BRCA1/variants", "external": True},
     {"name": "Fenotipos do gene", "method": "GET", "path": "/api/gene/BRCA1/phenotypes", "external": True},
     {"name": "Variante", "method": "GET", "path": "/api/variant/rs334", "external": True},
 ]
