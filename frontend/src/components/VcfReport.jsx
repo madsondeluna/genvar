@@ -56,6 +56,7 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
   )
   const [aba, setAba] = useState('clinica')
   const [pdf, setPdf] = useState('parado')  // parado | gerando | erro
+  const [pdfErro, setPdfErro] = useState(null)
 
   // A biblioteca de PDF pesa centenas de KB e entra por import dinâmico: quem
   // só olha o relatório na tela não paga por ela no carregamento da página.
@@ -72,7 +73,13 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
       setTimeout(() => URL.revokeObjectURL(url), 2000)
       setPdf('parado')
     } catch (e) {
+      // O erro ia para o vazio e a tela dizia só "não foi possível". Montar um
+      // PDF de dezenas de páginas falha por motivo específico (coluna que não
+      // cabe, campo indefinido numa linha), e sem a mensagem não há como saber
+      // qual.
+      console.error('[GenVar] falha ao montar o PDF:', e)
       setPdf('erro')
+      setPdfErro(e?.message || String(e))
     }
   }
 
@@ -200,7 +207,11 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
           <span className="label">
             {painel ? `do painel: ${fmt(variantes.length)} variantes` : `${fmt(variantes.length)} variantes`}
           </span>
-          {pdf === 'erro' && <span className="field-error" role="alert">Não foi possível montar o PDF.</span>}
+          {pdf === 'erro' && (
+            <span className="field-error" role="alert">
+              Não foi possível montar o PDF{pdfErro ? `: ${pdfErro}` : '.'}
+            </span>
+          )}
           {saida === 'erro' && <span className="field-error" role="alert">Não foi possível gerar o arquivo.</span>}
         </span>
         </div>

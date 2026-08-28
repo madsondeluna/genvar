@@ -109,14 +109,29 @@ function maiorPop(v) {
   return `${p.rotulo}: ${String(n).replace('.', ',')}%`
 }
 
+// A largura e SEMPRE uma porcentagem entre 0 e 100. Sem o limite, um `max`
+// muito pequeno produzia largura em notacao exponencial ("1e+21%"), que o
+// gerador de PDF recusa com "unsupported number" e derruba o documento INTEIRO:
+// uma barra fora de escala apagava o laudo em vez de sair torta.
+function larguraPct(n, max) {
+  if (!Number.isFinite(n) || !Number.isFinite(max) || max <= 0) return 0
+  const pct = (n / max) * 100
+  if (!Number.isFinite(pct)) return 0
+  return Math.min(100, Math.max(0, pct))
+}
+
 function Barra({ rotulo, n, max, cor, sufixo }) {
+  const largura = larguraPct(n, max)
   return (
     <View style={s.linha}>
       <Text style={s.rotulo}>{rotulo}</Text>
       <View style={s.trilho}>
-        <View style={{ width: `${max ? Math.max(1, (n / max) * 100) : 0}%`, height: 5, backgroundColor: cor, borderRadius: 3 }} />
+        <View style={{
+          width: `${largura === 0 ? 0 : Math.max(1, largura).toFixed(2)}%`,
+          height: 5, backgroundColor: cor, borderRadius: 3,
+        }} />
       </View>
-      <Text style={s.valor}>{fmt(n)}{sufixo || ''}</Text>
+      <Text style={s.valor}>{Number.isFinite(n) ? fmt(n) : '\u2014'}{sufixo || ''}</Text>
     </View>
   )
 }
