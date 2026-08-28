@@ -116,13 +116,16 @@ export default function PolygenicPage() {
           {scoresQ.error && <ErrorAlert message={scoresQ.error.message} />}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            {/* Link INTERNO. Antes o card levava para a página do PGS Catalog,
+                e isso entregava a leitura a outro site: o que se precisa saber
+                sobre um escore está numa API pública, e mandar o usuário embora
+                para ler é abrir mão da entrega. A procedência não se perde, ela
+                fica declarada na nossa página, que também traz o link canônico.
+
+                O comentário fica AQUI e não dentro do `map`: o corpo de uma
+                seta com parênteses é uma expressão só, e um comentário JSX
+                dentro dele é um segundo filho sem elemento que o contenha. */}
             {scores.map((s) => (
-              {/* Link INTERNO. Antes o card levava para a página do PGS
-                  Catalog, e isso entregava a leitura a outro site: o que se
-                  precisa saber sobre um escore está numa API pública, e mandar
-                  o usuário embora para ler é abrir mão da entrega. A
-                  procedência não se perde, ela fica declarada na nossa página,
-                  que também traz o link canônico. */}
               <Link
                 key={s.id}
                 to={`/escore/${s.id}`}

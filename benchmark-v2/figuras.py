@@ -445,6 +445,167 @@ def fig_cache(resultados, figuras, dpi, formato):
     salvar(fig, figuras / "fig8_cache", dpi, formato)
 
 
+# --- Figura 9: latencia da API, por rota ---------------------------------------
+def fig_api(resultados, figuras, dpi, formato):
+    f = resultados / "api_latencia.csv"
+    if not f.exists():
+        return
+    d = pd.read_csv(f)
+    for c in ("frio_mediana_ms", "quente_mediana_ms", "frio_min_ms", "frio_max_ms"):
+        if c in d:
+            d[c] = pd.to_numeric(d[c], errors="coerce")
+    d = d.dropna(subset=["frio_mediana_ms"]).sort_values("frio_mediana_ms")
+    if d.empty:
+        return
+
+    alt = max(70, 6.5 * len(d) + 30) * MM
+    fig, (a, b) = plt.subplots(1, 2, figsize=(COLUNA_DUPLA, min(alt, ALTURA_MAX)),
+                               layout="constrained", sharey=True)
+    y = np.arange(len(d))
+
+    # Barra da mediana com a FAIXA medida por cima, e não barra de erro
+    # simétrica: a distribuição de latência de fonte externa é assimétrica, e uma
+    # barra de erro simétrica sugere uma dispersão que não é a observada.
+    a.barh(y, d["frio_mediana_ms"], height=0.6, color=NPG[1], label="sem cache")
+    a.hlines(y, d["frio_min_ms"], d["frio_max_ms"], color=CINZA, linewidth=0.6)
+    a.barh(y, d["quente_mediana_ms"], height=0.28, color=NPG[0], label="com cache")
+    a.set_xscale("log")
+    a.set_yticks(y)
+    a.set_yticklabels(d["rota"])
+    a.set_xlabel("Tempo de resposta (ms)")
+    painel(a, "a")
+
+    ganho = pd.to_numeric(d.get("ganho_cache"), errors="coerce").fillna(0)
+    b.barh(y, ganho, height=0.6,
+           color=[NPG[3] if e else NPG[2] for e in d["externa"].astype(str).str.lower()
+                  .isin(["true", "1"])])
+    b.set_xscale("log")
+    b.set_xlabel("Ganho do cache (vezes)")
+    painel(b, "b")
+
+    fig.legend(*a.get_legend_handles_labels(), loc="outside lower center", ncol=2)
+    salvar(fig, figuras / "fig9_api_latencia", dpi, formato)
+
+
+# --- Figura 10: dispersao entre replicas ---------------------------------------
+def fig_replicas(resultados, figuras, dpi, formato):
+    """Quanto a MESMA chamada varia entre repeticoes.
+
+    E a figura que justifica medir dez vezes: numa rota que depende de fonte
+    externa, duas chamadas seguidas ao mesmo endereco diferem por um fator de
+    dez, e um benchmark de uma replica reporta qualquer ponto dessa faixa como
+    se fosse o valor.
+    """
+    f = resultados / "api_bruto.csv"
+    if not f.exists():
+        return
+    d = pd.read_csv(f)
+    d = d[(d["estado"] == "frio") & (d["status"] == 200)]
+    if d.empty:
+        return
+    ordem = d.groupby("rota")["ms"].median().sort_values().index
+    dados = [d[d["rota"] == r]["ms"].values for r in ordem]
+
+    alt = max(70, 6.5 * len(ordem) + 30) * MM
+    fig, ax = plt.subplots(figsize=(COLUNA_DUPLA, min(alt, ALTURA_MAX)),
+                           layout="constrained")
+    y = np.arange(len(ordem))
+    # Cada réplica como um ponto, e não uma caixa: com dez pontos, mostrar os
+    # dez é mais honesto que resumir em quartis, e revela a bimodalidade que uma
+    # caixa esconderia.
+    for i, v in enumerate(dados):
+        ax.scatter(v, np.full(len(v), i), s=6, color=NPG[0], alpha=0.7,
+                   edgecolors="none")
+        ax.scatter([np.median(v)], [i], s=22, color=NPG[1], marker="|", linewidths=1.2)
+    ax.set_xscale("log")
+    ax.set_yticks(y)
+    ax.set_yticklabels(ordem)
+    ax.set_xlabel("Tempo de resposta, sem cache (ms)")
+    ax.set_ylim(-0.6, len(ordem) - 0.4)
+    salvar(fig, figuras / "fig10_replicas", dpi, formato)
+
+
+# --- Figura 11: catalogos e pacote ---------------------------------------------
+def fig_infra(resultados, figuras, dpi, formato):
+    """O que o navegador baixa: catalogos versionados e o pacote da aplicacao."""
+    cat = resultados / "dados_resumo.csv"
+    pac = resultados / "build_pacote.csv"
+    if not cat.exists() and not pac.exists():
+        return
+
+    fig, eixos = plt.subplots(1, 2, figsize=(COLUNA_DUPLA, 72 * MM), layout="constrained")
+
+    if cat.exists():
+        d = pd.read_csv(cat).sort_values("mb_cru", ascending=False)
+        x = np.arange(len(d))
+        larg = 0.38
+        eixos[0].bar(x - larg / 2, d["mb_cru"], larg, color=NEUTRAL, label="JSON cru")
+        eixos[0].bar(x + larg / 2, d["mb_disco"], larg, color=NPG[0],
+                     label="entregue comprimido")
+        eixos[0].set_xticks(x)
+        eixos[0].set_xticklabels([tc(str(g).split("/")[-1]) for g in d["grupo"]])
+        eixos[0].set_ylabel("Megabytes")
+        painel(eixos[0], "a")
+        fig.legend(*eixos[0].get_legend_handles_labels(), loc="outside lower center", ncol=2)
+
+    if pac.exists():
+        d = pd.read_csv(pac)
+        por = d.groupby("papel")[["kb", "kb_gzip"]].sum().sort_values("kb", ascending=False)
+        x = np.arange(len(por))
+        larg = 0.38
+        eixos[1].bar(x - larg / 2, por["kb"] / 1024, larg, color=NEUTRAL)
+        eixos[1].bar(x + larg / 2, por["kb_gzip"] / 1024, larg, color=NPG[0])
+        eixos[1].set_xticks(x)
+        eixos[1].set_xticklabels([tc(p) for p in por.index])
+        eixos[1].set_ylabel("Megabytes")
+        painel(eixos[1], "b")
+
+    salvar(fig, figuras / "fig11_infraestrutura", dpi, formato)
+
+
+# --- Figura 12: limitador de taxa ----------------------------------------------
+def fig_limite(resultados, figuras, dpi, formato):
+    f = resultados / "limite.csv"
+    if not f.exists():
+        return
+    d = pd.read_csv(f)
+    if d.empty:
+        return
+    d = d.iloc[::-1]
+    y = np.arange(len(d))
+
+    fig, ax = plt.subplots(figsize=(COLUNA_DUPLA, (26 + 9 * len(d)) * MM),
+                           layout="constrained")
+    ax.barh(y, d["ok"], height=0.6, color=NPG[2], label="passaram")
+    ax.barh(y, d["bloqueadas"], left=d["ok"], height=0.6, color=NPG[1], label="bloqueadas")
+    ax.set_yticks(y)
+    ax.set_yticklabels([str(c).replace(" com X-Forwarded-For forjado", "\ncom cabeçalho forjado")
+                        for c in d["caso"]])
+    ax.set_xlabel("Requisições")
+    fig.legend(*ax.get_legend_handles_labels(), loc="outside lower center", ncol=2)
+    salvar(fig, figuras / "fig12_limite", dpi, formato)
+
+
+# --- Figura 13: reprodutibilidade entre saidas ---------------------------------
+def fig_testes(resultados, figuras, dpi, formato):
+    f = resultados / "build_testes.csv"
+    if not f.exists():
+        return
+    d = pd.read_csv(f)
+    if d.empty:
+        return
+    fig, ax = plt.subplots(figsize=(COLUNA_SIMPLES, 52 * MM), layout="constrained")
+    y = np.arange(len(d))
+    ax.barh(y, d["segundos"], height=0.5, color=NPG[0])
+    for i, (s, n) in enumerate(zip(d["segundos"], d["testes"])):
+        ax.text(s, i, f"  {int(n)} testes", va="center", fontsize=6, color=CINZA)
+    ax.set_yticks(y)
+    ax.set_yticklabels(d["suite"])
+    ax.set_xlabel("Tempo da suíte (s)")
+    ax.set_xlim(0, float(d["segundos"].max()) * 1.45)
+    salvar(fig, figuras / "fig13_testes", dpi, formato)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Figuras do benchmark, padrão Nature")
     ap.add_argument("--resultados", default=str(AQUI / "resultados"))
@@ -467,6 +628,11 @@ def main():
     fig_memoria(df, figuras, args.dpi, args.formato)
     fig_lote(resultados, figuras, args.dpi, args.formato)
     fig_cache(resultados, figuras, args.dpi, args.formato)
+    fig_api(resultados, figuras, args.dpi, args.formato)
+    fig_replicas(resultados, figuras, args.dpi, args.formato)
+    fig_infra(resultados, figuras, args.dpi, args.formato)
+    fig_limite(resultados, figuras, args.dpi, args.formato)
+    fig_testes(resultados, figuras, args.dpi, args.formato)
     n = len(list(figuras.glob(f"*.{args.formato}")))
     print(f"\n{n} figuras.")
     if TRANSBORDOU:
