@@ -28,6 +28,19 @@ function systemPrefersDark() {
 }
 
 function read() {
+  // `?tema=` na URL vence tudo, e existe por duas razões que se somam. A
+  // primeira é a regra da linguagem, de que a URL carrega o estado: um link
+  // compartilhado deve abrir na mesma aparência para quem recebe. A segunda é
+  // prática, e foi o que motivou: capturar a tela num modo determinado exigia
+  // mexer no localStorage ou na preferência do sistema operacional, e nenhum
+  // dos dois é reproduzível por quem for refazer as figuras da documentação.
+  try {
+    const t = new URLSearchParams(window.location.search).get('tema')
+    const mapa = { claro: 'light', azul: 'deep-blue', grafite: 'dark' }
+    if (mapa[t]) return mapa[t]
+  } catch {
+    // sem window.location (renderização fora do navegador): segue o fluxo normal
+  }
   try {
     const saved = localStorage.getItem(KEY)
     if (MODOS.includes(saved)) return saved
