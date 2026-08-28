@@ -28,16 +28,50 @@ const SERIE = ['#3973b1', '#9f8322', '#9e527f', '#49955c', '#745ba5', '#ba6f3e',
 const COR_SIG = { 1: SERIE[7], 2: SERIE[7], 3: SERIE[7], 4: SERIE[5], 5: SERIE[1], 6: SERIE[3], 7: SERIE[3], 8: SERIE[3], 9: SERIE[6], 10: SERIE[5], 11: SERIE[2], 12: SERIE[3] }
 const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modificador: SERIE[0] }
 
-// Colunas da tabela completa, em paisagem. A soma tem de caber na largura util
-// de uma A4 deitada (842 menos as margens), senao o rodape da linha estoura.
+// Colunas da tabela completa: rotulo, largura e como tirar o valor da variante.
+//
+// UMA definicao para o cabecalho E para as celulas, e isso conserta um defeito
+// que estava na tela. As duas eram listas separadas e tinham divergido: o
+// cabecalho dizia Classificacao 54 e a celula usava 84, Rev. 16 contra 54,
+// Impacto 30 contra 46. As larguras do cabecalho somavam 498, que cabe na
+// largura util de uma A4 em retrato (595 menos 96 de margem), e as das celulas
+// somavam 582, que nao cabe: as ultimas colunas saiam empurradas para fora da
+// pagina e as demais desalinhadas do titulo. Derivando as duas da mesma lista,
+// divergir deixa de ser possivel.
+//
+// A soma esta travada por um teste, porque acrescentar coluna sem tirar largura
+// de outra e o jeito silencioso de quebrar a pagina de novo.
 const COLS_TABELA = [
-  ['Posição', 34], ['rsID', 38], ['Troca', 30],
-  ['Ti/Tv', 18], ['Gene', 32], ['Classificação', 54],
-  ['Rev.', 16], ['Impacto', 30], ['Consequência', 48],
-  ['Frequência', 38], ['Maior em', 40], ['Herança', 26],
-  ['Genótipo', 28], ['AB', 20], ['DP', 16],
-  ['ACMG', 30],
+  ['Posição', 36, (v) => `${v.chrom}:${fmt(v.pos)}`],
+  ['rsID', 36, (v) => v.rsid || '—'],
+  ['Troca', 28, (v) => `${v.ref.slice(0, 4)}→${v.alt.slice(0, 4)}`],
+  ['Ti/Tv', 18, (v) => (v.transicao == null ? '—' : v.transicao ? 'Ti' : 'Tv')],
+  ['Gene', 34, (v) => v.clinvar.gene || v.gene || '—'],
+  ['Classificação', 54, (v) => ROTULO[v.clinvar.sig], (v) => ({ color: COR_SIG[v.clinvar.sig] })],
+  ['Rev.', 18, (v) => `${v.clinvar.estrelas}/4`],
+  ['Impacto', 34, (v) => IMPACTO[v.clinvar.consequencia] || '—',
+    (v) => ({ color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA })],
+  ['Consequência', 38, (v) => (v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—')],
+  ['Frequência', 36, (v) => freqDe(v)],
+  ['Maior em', 34, (v) => maiorPop(v)],
+  ['Herança', 26, (v) => v.clingen?.heranca_sigla || '—'],
+  ['Genótipo', 28, (v) => v.zigosidade],
+  ['AB', 18, (v) => (v.ab != null ? v.ab.toFixed(2) : '—')],
+  ['DP', 16, (v) => v.dp ?? '—'],
+  ['ACMG', 26, (v) => (v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—')],
+  // O asterisco marca escore que contem criterio nao verificado. A legenda dele
+  // esta na pagina de metodologia, e nao aqui: coluna de 18 pontos nao comporta
+  // explicacao, e simbolo sem legenda em nenhum lugar seria pior que ausencia.
+  ['Pts', 18, (v) => (v.acmgPontos
+    ? `${v.acmgPontos.pontos > 0 ? '+' : ''}${v.acmgPontos.pontos}`
+      + (v.acmgPontos.naoVerificados.length ? '*' : '')
+    : '—')],
 ]
+
+// Largura util de uma A4 em retrato: 595,28 pontos menos os 48 de margem de
+// cada lado. A tabela nao pode passar disto, e o teste confere.
+export const LARGURA_UTIL = 595.28 - 48 * 2
+export const LARGURA_TABELA = COLS_TABELA.reduce((t, [, w]) => t + w, 0)
 
 const RESSALVA = 'Documento de pesquisa e ensino. Não é laudo diagnóstico, não foi emitido por '
   + 'laboratório clínico habilitado e não substitui avaliação médica. Todo achado exige '
@@ -282,22 +316,11 @@ export function RelatorioVCF({ dados, gerado }) {
             </View>
             {graves.slice(0, 80).map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 46 }]}>{v.clinvar.gene || '—'}</Text>
-                <Text style={[s.td, { width: 66 }]}>{v.chrom}:{fmt(v.pos)}</Text>
-                <Text style={[s.td, { width: 58 }]}>{v.rsid || '—'}</Text>
-                <Text style={[s.td, { width: 42 }]}>
-                  {v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}
-                  {v.transicao != null ? (v.transicao ? ' Ti' : ' Tv') : ''}
-                </Text>
-                <Text style={[s.td, { width: 62, color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA }]}>
-                  {v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—'}
-                </Text>
-                <Text style={[s.td, { width: 70, color: COR_SIG[v.clinvar.sig] }]}>{ROTULO[v.clinvar.sig]}</Text>
-                <Text style={[s.td, { width: 22 }]}>{v.clinvar.estrelas}/4</Text>
-                <Text style={[s.td, { width: 86 }]}>{v.clinvar.condicao || '—'}</Text>
-                <Text style={[s.td, { width: 62 }]}>{freqDe(v)}</Text>
-                <Text style={[s.td, { width: 60 }]}>{maiorPop(v)}</Text>
-                <Text style={[s.td, { width: 40 }]}>{v.zigosidade}</Text>
+                {COLS_TABELA.map(([c, w, valor, estilo]) => (
+                  <Text key={c} style={[s.td, { width: w }, estilo ? estilo(v) : null]}>
+                    {valor(v)}
+                  </Text>
+                ))}
               </View>
             ))}
             {graves.length > 80 && (
@@ -442,6 +465,12 @@ export function RelatorioVCF({ dados, gerado }) {
                 <Text style={[s.td, { width: 28 }]}>{v.dp ?? '—'}</Text>
                 <Text style={[s.td, { width: 20 }]}>
                   {v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—'}
+                </Text>
+                <Text style={[s.td, { width: 14 }]}>
+                  {v.acmgPontos
+                    ? `${v.acmgPontos.pontos > 0 ? '+' : ''}${v.acmgPontos.pontos}`
+                      + (v.acmgPontos.naoVerificados.length ? '*' : '')
+                    : '—'}
                 </Text>
               </View>
             ))}
@@ -617,6 +646,13 @@ export function RelatorioVCF({ dados, gerado }) {
             {'apenas os avaliáveis sem literatura, segregação ou ensaio funcional: '
               + Object.keys(CRITERIOS_PDF).join(', ')
               + '. Não constitui classificação ACMG'}
+          </Campo>
+          <Campo rotulo="Escore de evidência (coluna Pts)">
+            {'sistema de pontos de Tavtigian et al. (2018, 2020), adotado pelo ClinGen SVI: '
+              + 'muito forte 8, forte 4, moderado 2, apoio 1, com sinal negativo para os '
+              + 'critérios benignos. PARCIAL, por somar 7 dos 28 critérios da regra: o escore '
+              + 'ordena a fila de revisão e NÃO classifica a variante. O asterisco marca escore '
+              + 'que contém critério cuja evidência não foi verificada por completo'}
           </Campo>
           <Campo rotulo="SHA-256 do arquivo de entrada">{sha256 || 'não calculado'}</Campo>
           <Campo rotulo="Chave de cruzamento">

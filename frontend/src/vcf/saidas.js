@@ -47,6 +47,11 @@ function metodologia(dados, variantes) {
       : 'nao consultada'],
     ['criterios ACMG', 'apenas os avaliaveis sem literatura, segregacao ou ensaio funcional. '
       + 'Nao constitui classificacao ACMG.'],
+    ['escore ACMG', 'sistema de pontos de Tavtigian et al. (2018, 2020), adotado pelo ClinGen SVI: '
+      + 'muito forte 8, forte 4, moderado 2, apoio 1, com sinal negativo para os benignos. '
+      + 'PARCIAL, por somar 7 dos 28 criterios da regra: ordena a fila de revisao e NAO '
+      + 'classifica a variante. A coluna acmg_criterios_nao_verificados lista os criterios '
+      + 'que entraram sem verificacao completa da evidencia.'],
     ['linhas exportadas', variantes.length],
   ]
 }

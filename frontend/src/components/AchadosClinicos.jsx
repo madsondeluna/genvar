@@ -4,6 +4,8 @@ import Icon from './Icon'
 import { BarrasNomeadas } from './Grafico'
 import { ROTULO, SLOT, ORDEM_GRAVIDADE, ESTRELAS, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO, SLOT_IMPACTO } from '../vcf/clinvar'
 import { CRITERIOS, NAO_AVALIADOS } from '../vcf/interpretacao'
+import { ordenarPorEvidencia } from '../vcf/acmg'
+import EscoreAcmg from './EscoreAcmg'
 import { seriesStyle } from '../utils/seriesSlot'
 
 const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
@@ -203,12 +205,17 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
                       </td>
                       <td className="px-16 py-12 text-12">
                         {v.acmg?.length ? (
-                          <span className="flex gap-4 flex-wrap">
-                            {v.acmg.map((c) => (
-                              <span key={c.id} className="tag tag-sm mono" title={`${CRITERIOS[c.id]?.forca}: ${CRITERIOS[c.id]?.texto}`}>
-                                {c.id}
-                              </span>
-                            ))}
+                          <span className="flex flex-col gap-4" style={{ minWidth: '9rem' }}>
+                            <EscoreAcmg escore={v.acmgPontos} compacto />
+                            <span className="flex gap-4 flex-wrap">
+                              {v.acmg.map((c) => (
+                                <span key={c.id} className="tag tag-sm mono"
+                                  title={`${CRITERIOS[c.id]?.forca}: ${CRITERIOS[c.id]?.texto}`
+                                    + (c.ressalva ? `. Ressalva: ${c.ressalva}` : '')}>
+                                  {c.id}
+                                </span>
+                              ))}
+                            </span>
                           </span>
                         ) : '—'}
                       </td>
@@ -355,6 +362,33 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             avaliado, porque mostrar três critérios sem dizer que existem vinte e cinco sugere uma
             conclusão que ninguém tirou.
           </p>
+          <p className="text-12 leading-snug about-left">
+            O <strong className="text-text font-medium">escore</strong> soma os pontos que o
+            sistema bayesiano de Tavtigian, adotado pelo ClinGen, atribui a cada força de critério:
+            muito forte 8, forte 4, moderado 2, apoio 1, com sinal negativo para os benignos. Ele
+            serve para ordenar a fila de revisão, porque PVS1 numa variante e BA1 noutra não se
+            comparam como rótulo e se comparam como +8 contra −8. Ele <strong className="text-text font-medium">não
+            nomeia a faixa</strong> em que cai: com sete critérios de 28, o nome seria uma
+            classificação tirada de uma fração da evidência.
+          </p>
+          {(() => {
+            // A variante de maior evidência patogênica, que é a primeira que
+            // alguém vai querer olhar. A ordenação por escore é o que a lista de
+            // siglas soltas não permitia: PVS1 numa variante e BA1 noutra não se
+            // comparam como rótulo, mas se comparam como +8 contra -8.
+            const alvo = ordenarPorEvidencia(variantes.filter((v) => v.acmgPontos))[0]
+            if (!alvo) return null
+            return (
+              <div className="flex flex-col gap-8 pb-16"
+                style={{ borderBottom: 'var(--hairline) solid var(--border)' }}>
+                <span className="label">
+                  Maior evidência da amostra: {alvo.gene || alvo.clinvar?.gene || `${alvo.chrom}:${alvo.pos}`}
+                  {alvo.rsid ? ` · ${alvo.rsid}` : ''}
+                </span>
+                <EscoreAcmg escore={alvo.acmgPontos} criterios={alvo.acmg} />
+              </div>
+            )
+          })()}
           <div className="grid gap-24 about-cards">
             <ul className="flex flex-col gap-8" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
               {Object.entries(CRITERIOS).map(([id, c]) => {

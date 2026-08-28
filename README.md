@@ -145,6 +145,14 @@ A resolução de símbolo usa `prev_symbol` e `alias_symbol` do HGNC, e a mediç
 
 `PM2` só dispara com o gnomAD consultado ao vivo: a frequência embarcada vem do que o ClinVar publica, e ausência ali significa "o ClinVar não publicou frequência", não "ausente das bases populacionais".
 
+**Escore de evidência.** Os critérios que dispararam são somados pelo sistema de pontos bayesiano de Tavtigian et al. (2018, 2020), adotado pelo ClinGen SVI, em que cada degrau de força dobra o peso: muito forte 8, forte 4, moderado 2, apoio 1, com sinal negativo para os benignos. Ele existe porque rótulo solto não se ordena: PVS1 numa variante e BA1 noutra não se comparam como sigla, e se comparam como +8 contra −8. O escore ordena a fila de revisão.
+
+**O escore não nomeia a faixa em que cai, e a ausência é a decisão de desenho.** Somar sete critérios de 28 e imprimir o nome da janela produziria uma classificação ACMG a partir de uma fração da evidência, e a mais fácil de produzir por acidente: PM2 sozinho, que é uma consulta de frequência, pontua +2 e cai na janela do significado incerto. Num laudo de laboratório, "VUS" significa que a evidência foi avaliada e ficou inconclusiva, e não que sete de 28 critérios foram olhados. Então o que sai é o número, o lado para onde ele aponta e quantos critérios ficaram de fora, na tela, no PDF, no CSV e no VCF anotado. Um teste percorre o retorno da função e o texto do PDF e reprova se o nome de qualquer faixa aparecer.
+
+Critério que dispara com ressalva registrada entra com os pontos cheios e marca o escore. São dois: `PVS1`, que sai da validade gene-doença do ClinGen sem o mecanismo de perda de função verificado gene a gene, e `BP7`, que sai da consequência sinônima sem a predição de splicing. A marca viaja com o número, inclusive na coluna `acmg_criterios_nao_verificados` do CSV, porque `PVS1` vale 8 dos 10 pontos da faixa patogênica e um escore silencioso sobre isso seria pior que nenhum.
+
+A página de variante mostra o mesmo escore, calculado das mesmas entradas pelo adaptador `criteriosDaApi`. `PVS1` não entra por esse caminho: ele exige a validade gene-doença do ClinGen, que a página não carrega.
+
 **Saídas.** Laudo em PDF (identificação, achados patogênicos, fármaco e risco, frequência por população, tabela completa das variantes anotadas, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde e fontes) e exportação em VCF anotado, CSV, TSV, XLSX e JSON. Todas respeitam os filtros ativos, e os botões ficam ao lado do PDF: estavam só dentro da aba de variantes, e quem queria o dado tinha de descobrir a aba antes.
 
 O CSV usa ponto e vírgula e traz BOM. Não é preciosismo: o Excel em configuração brasileira usa a vírgula como separador decimal e abre um CSV separado por vírgula tudo numa coluna só, e sem o BOM ele lê UTF-8 como Latin-1, transformando "patogênica" em "patogÃªnica" em toda linha.

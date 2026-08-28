@@ -232,6 +232,62 @@
     min-height: var(--space-24);
   }
 
+  /* Régua do escore ACMG.
+     
+     O TRILHO usa a paleta DIVERGENTE de dados (`--div-*`) e não os tokens de
+     estado, e a divisão é a que a linguagem manda: um eixo que vai de benigna a
+     patogênica passando por um meio neutro é dado divergente, e a paleta existe
+     para isso, calibrada nos dois sentidos a partir de um centro claro. Os
+     tokens de estado ficam para o MARCADOR, que é o que de fato comunica um
+     estado. Misturar os dois faria a régua e o ponto disputarem o mesmo
+     significado.
+
+     A versão anterior compunha o trilho com `color-mix` a 24% dos tokens de
+     estado sobre a superfície, e o resultado era cinza dos dois lados: a régua
+     não dizia para que lado o escore andava, que é a única coisa que ela existe
+     para dizer. */
+  .escore-regua {
+    position: relative;
+    display: block;
+    height: var(--space-8);
+    border-radius: var(--radius-control);
+    border: var(--hairline) solid var(--border);
+    background: linear-gradient(
+      to right,
+      var(--div-2) 0%,
+      var(--div-4) 26%,
+      var(--div-5) 50%,
+      var(--div-7) 74%,
+      var(--div-9) 100%
+    );
+  }
+
+  /* Fronteira de faixa: fio claro por cima do gradiente. Escuro sumiria no lado
+     escuro da régua e claro sumiria no meio, então ele leva sombra dos dois
+     lados em vez de uma cor só. */
+  .escore-marca {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgb(255 255 255 / 0.55);
+    box-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.12);
+  }
+
+  /* O ponto do escore: cor de ESTADO, com anel da superfície para se destacar
+     de qualquer ponto do gradiente sob ele. */
+  .escore-ponto {
+    position: absolute;
+    top: 50%;
+    width: var(--space-12);
+    height: var(--space-12);
+    margin-left: calc(var(--space-12) / -2);
+    margin-top: calc(var(--space-12) / -2);
+    border-radius: var(--radius-circle);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18);
+  }
+
   /* barra da home: só a borda e o fundo aparecem no scroll; a marca em si
      viaja do hero para o centro da barra pelo transform do .brand-morph */
   .app-nav-morph {

@@ -173,4 +173,36 @@ describe('laudo em PDF', { timeout: 60000 }, () => {
     const blob = await gerarPDF({ ...base, genesMapeados: false, porGene: [] })
     expect(blob.size).toBeGreaterThan(3000)
   })
+
+  it('mantém a tabela dentro da largura útil da página', async () => {
+    // Trava a soma das colunas. O cabeçalho e as células já foram duas listas
+    // separadas e divergiram: o cabeçalho somava 498, que cabe, e as células
+    // 582, que não cabe, então as últimas colunas saíam empurradas para fora da
+    // página e as demais desalinhadas do título. Agora saem da mesma definição,
+    // e este teste impede que a soma cresça de novo sem alguém perceber.
+    const { LARGURA_TABELA, LARGURA_UTIL } = await import('./pdf.jsx')
+    expect(LARGURA_TABELA).toBeLessThanOrEqual(LARGURA_UTIL)
+  })
+
+  it('imprime o escore ACMG sem nomear a faixa', async () => {
+    // A mesma garantia do motor de pontuação, cobrada no artefato que circula:
+    // o PDF tem forma de laudo clínico, e é onde um nome de classe faria mais
+    // estrago. Se algum dia alguém imprimir a faixa aqui, este teste reprova.
+    const { gerarPDF } = await import('./pdf.jsx')
+    const variantes = base.variantes.map((v, i) => (i === 0 ? {
+      ...v,
+      acmg: [{ id: 'PM2', valor: 0, fonte: 'ausente do gnomAD' }],
+      acmgPontos: {
+        pontos: 2, direcao: 'incerta', avaliados: 1, computaveis: 7,
+        naoAvaliados: 21, naoVerificados: [], teto: 11, piso: -10, fracao: 0.57,
+      },
+    } : v))
+    const blob = await gerarPDF({ ...base, variantes })
+    expect(blob.size).toBeGreaterThan(3000)
+
+    const texto = await blob.text().catch(() => '')
+    for (const proibido of ['Significado incerto', 'Provavelmente patogênica', 'VUS']) {
+      expect(texto).not.toContain(proibido)
+    }
+  })
 })

@@ -4,6 +4,8 @@
 // as fontes públicas dizem e mostram de onde veio cada afirmação, que é a
 // diferença entre uma ferramenta de apoio e um oráculo.
 
+import { pontuarACMG } from './acmg'
+
 const BASE = import.meta.env.BASE_URL
 
 async function buscarGz(url) {
@@ -267,7 +269,13 @@ export function anotarACMG(variantes) {
   let n = 0
   for (const v of variantes) {
     const c = criteriosACMG(v)
-    if (c.length) { v.acmg = c; n += 1 }
+    if (c.length) {
+      v.acmg = c
+      // A pontuação anda junto dos critérios: gerar uma sem os outros deixaria
+      // a tela e o CSV podendo discordar sobre a mesma variante.
+      v.acmgPontos = pontuarACMG(c)
+      n += 1
+    }
   }
   return n
 }

@@ -6,6 +6,7 @@
 // SpreadsheetML que o Excel, o LibreOffice e o Google Sheets abrem.
 
 import { ROTULO, CONSEQUENCIA, ESTRELAS } from './clinvar'
+import { PONTOS } from './acmg'
 
 const COLUNAS = [
   ['cromossomo', (v) => v.chrom],
@@ -29,6 +30,22 @@ const COLUNAS = [
   ['frequencia_populacional', (v) => (v.clinvar?.af != null ? v.clinvar.af : '')],
   ['casado_por', (v) => v.clinvarVia || ''],
   ['alelo_divergente', (v) => (v.aleloDivergente ? `${v.aleloDivergente.ref}>${v.aleloDivergente.alt}` : '')],
+  // ACMG: os criterios que dispararam, o escore de evidencia e o lado para onde
+  // ele aponta.
+  //
+  // NAO existe coluna de classificacao, e a ausencia e a decisao. Uma coluna
+  // chamada `acmg_classificacao` numa planilha e colada num relatorio sem a nota
+  // de rodape junto, e sete de 28 criterios viram um laudo. `acmg_direcao` diz o
+  // lado sem nomear a classe, e `acmg_criterios_nao_avaliados` viaja na mesma
+  // linha para o numero nunca aparecer sozinho.
+  ['acmg_criterios', (v) => (v.acmg || []).map((c) => c.id).join(' ')],
+  ['acmg_pontos', (v) => (v.acmgPontos ? v.acmgPontos.pontos : '')],
+  ['acmg_direcao', (v) => v.acmgPontos?.direcao || ''],
+  ['acmg_criterios_avaliados', (v) => (v.acmgPontos ? v.acmgPontos.avaliados : '')],
+  ['acmg_criterios_nao_avaliados', (v) => (v.acmgPontos ? v.acmgPontos.naoAvaliados : '')],
+  ['acmg_criterios_nao_verificados', (v) => (v.acmgPontos?.naoVerificados || []).join(' ')],
+  ['acmg_pontos_por_criterio', (v) => (v.acmg || [])
+    .map((c) => `${c.id}${PONTOS[c.id] > 0 ? '+' : ''}${PONTOS[c.id] ?? '?'}`).join(' ')],
 ]
 
 export const CABECALHO = COLUNAS.map(([c]) => c)
@@ -226,6 +243,21 @@ const CAMPOS_INFO = [
     (v) => (v.ab != null ? +v.ab.toFixed(4) : null)],
   ['GENVAR_ACMG', '.', 'String', 'Critérios ACMG avaliáveis por este módulo',
     (v) => (v.acmg?.length ? v.acmg.map((c) => c.id).join('|') : null)],
+  // O escore e o que ele NAO cobre, no mesmo arquivo. A descricao do campo
+  // carrega a ressalva porque um VCF anotado circula sem o laudo ao lado, e o
+  // proximo passo do pipeline le o cabecalho, nao o PDF.
+  ['GENVAR_ACMG_PONTOS', '1', 'Integer',
+    'Escore de evidencia ACMG pelo sistema de pontos de Tavtigian (ClinGen SVI). '
+    + 'PARCIAL: soma apenas os 7 de 28 criterios que este modulo avalia, e NAO e '
+    + 'uma classificacao ACMG',
+    (v) => (v.acmgPontos ? v.acmgPontos.pontos : null)],
+  ['GENVAR_ACMG_DIR', '1', 'String',
+    'Lado para onde o escore parcial aponta: patogenica, benigna ou incerta',
+    (v) => v.acmgPontos?.direcao || null],
+  ['GENVAR_ACMG_NV', '.', 'String',
+    'Criterios que entraram no escore sem verificacao completa da evidencia',
+    (v) => (v.acmgPontos?.naoVerificados?.length
+      ? v.acmgPontos.naoVerificados.join('|') : null)],
   ['GENVAR_CLINGEN', '1', 'String', 'Validade gene-doença curada pelo ClinGen',
     (v) => (v.clingen ? `${v.clingen.classificacao}|${v.clingen.heranca_sigla}` : null)],
   ['GENVAR_CPIC', '1', 'String', 'Gene com diretriz farmacogenética do CPIC',

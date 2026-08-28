@@ -11,6 +11,8 @@ import SignificanceTag from '../components/SignificanceTag'
 import ExternalLinkButton from '../components/ExternalLinkButton'
 import CopyLinkButton from '../components/CopyLinkButton'
 import VariantChangePanel from '../components/VariantChangePanel'
+import EscoreAcmg from '../components/EscoreAcmg'
+import { escoreDaApi } from '../vcf/acmg'
 import PageNav from '../components/PageNav'
 import { VariantPageSkeleton } from '../components/Skeleton'
 import { useSearchHistory } from '../hooks/useSearchHistory'
@@ -193,6 +195,30 @@ export default function VariantPage() {
                     </div>
                   )}
                 </div>
+
+                {/* O mesmo escore do módulo de VCF, calculado das mesmas
+                    entradas: significado, nível de revisão e frequência. Um
+                    escore por tela seria um produto com duas opiniões sobre a
+                    mesma variante. PVS1 não entra por aqui, e a ausência é
+                    deliberada: ele exige a validade gene-doença do ClinGen, que
+                    esta página não carrega, e vale 8 dos 10 pontos da faixa
+                    patogênica. */}
+                {(() => {
+                  const r = escoreDaApi({
+                    significado: data.clinvar_significance,
+                    revisao: data.clinvar_review_status,
+                    af: data.gnomad_global_af,
+                    consequencia: data.consequence,
+                  })
+                  if (!r) return null
+                  return (
+                    <div className="mt-24 pt-16"
+                      style={{ borderTop: 'var(--hairline) solid var(--border)' }}>
+                      <p className="label mb-8">Escore de evidência ACMG</p>
+                      <EscoreAcmg escore={r.escore} criterios={r.criterios} />
+                    </div>
+                  )
+                })()}
               </section>
             )}
 
