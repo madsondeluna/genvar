@@ -7,6 +7,12 @@
 # declarar `##source=genvar-`, que so as fixtures sinteticas declaram.
 #
 # Ativar com: git config core.hooksPath .githooks
+# O volume e exFAT: o macOS escreve um sidecar "._nome" ao lado de cada arquivo
+# para guardar atributos estendidos. Eles ja entraram num commit uma vez, fazem
+# o vitest tentar rodar "._algo.test.js" como teste e quebram o `git gc` com
+# "non-monotonic index". Somem antes de qualquer commit.
+find . -name "._*" -not -path "./node_modules/*" -delete 2>/dev/null
+
 falhou=0
 for f in $(git diff --cached --name-only --diff-filter=ACM); do
   [ -f "$f" ] || continue
