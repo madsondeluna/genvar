@@ -145,7 +145,7 @@ function PathogenicVariantsSection({ id }) {
                   </span>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left">
+                  <table className="tabela">
                     <thead>
                       <tr>
                         <th className="label pb-8 pr-12">Variante</th>

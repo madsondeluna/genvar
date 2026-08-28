@@ -297,7 +297,7 @@ export default function AssociationPage() {
                 </p>
               ) : (
                 <div className="card p-0 overflow-x-auto">
-                  <table className="w-full border-collapse">
+                  <table className="tabela">
                     <thead>
                       <tr>
                         <th className="table-header">Gene</th>

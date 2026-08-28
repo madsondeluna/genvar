@@ -243,7 +243,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
       </div>
 
       <div className="table-scroll">
-        <table className="w-full text-left">
+        <table className="tabela">
           <thead>
             <tr>
               {COLUNAS.map((c) => (

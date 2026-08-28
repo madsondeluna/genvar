@@ -65,6 +65,45 @@
   padding-right: var(--space-6);
 }
 
+/* TABELA: o alinhamento, e só ele.
+   
+   As onze tabelas do projeto já trazem a própria tipografia, via `.table-header`
+   e as classes de célula de cada uma. Esta regra NÃO mexe nisso: sobrepor uma
+   segunda camada de fonte e espaçamento sobre a que já existe é como duas
+   folhas discordarem sobre a mesma tabela, e foi o que aconteceu na primeira
+   tentativa. O que ela faz é o que estava faltando nas onze.
+   
+   `vertical-align: top` é a metade que mais se vê. Quando uma célula quebra em
+   três linhas e a vizinha tem uma, o padrão do navegador centraliza, e as
+   células da mesma fileira deixam de compartilhar uma linha de base: o olho
+   perde a fileira. No topo, todas começam juntas.
+   
+   A outra metade é o número. Alinhar à direita exigia lembrar de `text-right`
+   NO CABEÇALHO E NA CÉLULA, em dois pontos distantes do arquivo, e esquecer um
+   dos dois deixava o título à esquerda e o valor à direita. Marcando a célula
+   com `.num`, o alinhamento e o dígito de largura fixa vêm juntos; sem largura
+   fixa, "1.111" e "8.888" ocupam larguras diferentes e a coluna ondula.
+   
+   Fora de @layer pela mesma razão das outras regras deste bloco: `patterns.css`
+   não é camadado e venceria qualquer coisa escrita dentro de @layer. */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.tabela th,
+.tabela td {
+  vertical-align: top;
+}
+
+.tabela td.num,
+.tabela th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 /* fora de @layer para vencer o patterns.css, que é não-camadado */
 .status-good { color: var(--state-good); }
 .status-warning { color: var(--state-warning); }

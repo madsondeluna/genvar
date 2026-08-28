@@ -213,7 +213,7 @@ export default function PolygenicScorePage() {
                   desaparece quando a página mostra apenas o número de variantes.
                 </p>
                 <div className="table-scroll">
-                  <table className="w-full text-13">
+                  <table className="tabela text-13">
                     <thead>
                       {/* A classe `.label` é `display: block`, e aplicada ao
                           próprio `th` derruba o `display: table-cell`: as cinco

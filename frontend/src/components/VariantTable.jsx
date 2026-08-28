@@ -183,7 +183,7 @@ export default function VariantTable({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="tabela">
           <thead className="bg-dim">
             <tr>
               {[

@@ -264,7 +264,7 @@ export default function LotePage() {
                   propósito, e não classificação.
                 </p>
                 <div className="table-scroll">
-                  <table className="w-full text-left">
+                  <table className="tabela">
                     <thead>
                       <tr>{['Arquivo', 'Amostra', 'Build', 'Variantes', 'Ti/Tv novas', 'Balanço', 'Sexo', 'Achados', 'Sinais']
                         .map((c) => <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>)}</tr>
@@ -320,7 +320,7 @@ export default function LotePage() {
                   <span className="label">{fmt(total.achados)} no total, mostrando 200</span>
                 </span>
                 <div className="table-scroll">
-                  <table className="w-full text-left">
+                  <table className="tabela">
                     <thead>
                       <tr>{['Amostra', 'Gene', 'Variante', 'Classificação', 'Revisão', 'Condição', 'Genótipo']
                         .map((c) => <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>)}</tr>
@@ -393,7 +393,7 @@ export default function LotePage() {
                   <p className="text-13">Nenhuma variante aparece em duas amostras ou mais.</p>
                 )}
                 <div className="table-scroll">
-                  <table className="w-full text-left">
+                  <table className="tabela">
                     <thead>
                       <tr>{['Variante', 'Amostras', 'Gene', 'Classificação', 'Consequência', 'Arquivos']
                         .map((c) => <th key={c} className="table-header w-px whitespace-nowrap">{c}</th>)}</tr>

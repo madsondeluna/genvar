@@ -117,7 +117,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             </span>
           </span>
           <div className="table-scroll">
-            <table className="w-full text-left">
+            <table className="tabela">
               <thead>
                 <tr>
                   {['Gene', 'Variante', 'Troca', 'Classificação', 'Revisão', 'Gene-doença (ClinGen)', 'Condição', 'Frequência na população', 'ACMG', 'Genótipo'].map((c) => (
@@ -302,7 +302,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             existe. Prescrição continua sendo do médico, com genotipagem farmacogenética própria.
           </p>
           <div className="table-scroll">
-            <table className="w-full text-left">
+            <table className="tabela">
               <thead>
                 <tr>
                   {['Gene', 'Variante', 'Alelos que ela define', 'Fármacos com diretriz', 'Genótipo'].map((c) => (

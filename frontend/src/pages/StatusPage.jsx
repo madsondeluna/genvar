@@ -77,12 +77,12 @@ export default function StatusPage() {
           {endpoints.error && <ErrorAlert message={endpoints.error.message} />}
           {endpoints.data && (
             <div className="card overflow-x-auto">
-              <table className="w-full text-left">
+              <table className="tabela">
                 <thead>
                   <tr>
                     <th className="table-header">Endpoint</th>
                     <th className="table-header w-px whitespace-nowrap">Tipo</th>
-                    <th className="table-header text-right w-px whitespace-nowrap">Latência</th>
+                    <th className="table-header num w-px">Latência</th>
                     <th className="table-header w-px whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
@@ -98,7 +98,7 @@ export default function StatusPage() {
                           {e.external ? 'externo' : 'interno'}
                         </span>
                       </td>
-                      <td className="px-16 py-12 mono num text-13 text-muted text-right whitespace-nowrap">
+                      <td className="px-16 py-12 mono num text-13 text-muted">
                         {e.latency_ms != null ? `${e.latency_ms} ms` : 'n/d'}
                       </td>
                       <td className="px-16 py-12">
@@ -134,12 +134,12 @@ export default function StatusPage() {
           {sources.error && <ErrorAlert message={sources.error.message} />}
           {sources.data && (
             <div className="card overflow-x-auto">
-              <table className="w-full text-left">
+              <table className="tabela">
                 <thead>
                   <tr>
                     <th className="table-header">Fonte</th>
                     <th className="table-header w-px whitespace-nowrap">Host</th>
-                    <th className="table-header text-right w-px whitespace-nowrap">Latência</th>
+                    <th className="table-header num w-px">Latência</th>
                     <th className="table-header w-px whitespace-nowrap">Status</th>
                   </tr>
                 </thead>
@@ -148,7 +148,7 @@ export default function StatusPage() {
                     <tr key={s.name} className="border-t border-border">
                       <td className="px-16 py-12 text-14 font-medium text-text">{s.name}</td>
                       <td className="px-16 py-12 mono text-12 text-muted">{s.host}</td>
-                      <td className="px-16 py-12 mono num text-13 text-muted text-right whitespace-nowrap">
+                      <td className="px-16 py-12 mono num text-13 text-muted">
                         {s.latency_ms != null ? `${s.latency_ms} ms` : 'n/d'}
                       </td>
                       <td className="px-16 py-12">
