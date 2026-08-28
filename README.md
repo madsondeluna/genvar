@@ -145,7 +145,11 @@ A resolução de símbolo usa `prev_symbol` e `alias_symbol` do HGNC, e a mediç
 
 `PM2` só dispara com o gnomAD consultado ao vivo: a frequência embarcada vem do que o ClinVar publica, e ausência ali significa "o ClinVar não publicou frequência", não "ausente das bases populacionais".
 
-**Saídas.** Laudo em PDF de oito páginas (identificação, achados, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde, fontes), e exportação em VCF anotado, TSV, XLSX e JSON, todas respeitando os filtros ativos.
+**Saídas.** Laudo em PDF (identificação, achados patogênicos, fármaco e risco, frequência por população, tabela completa das variantes anotadas em paisagem, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde e fontes) e exportação em VCF anotado, CSV, TSV, XLSX e JSON. Todas respeitam os filtros ativos, e os botões ficam ao lado do PDF: estavam só dentro da aba de variantes, e quem queria o dado tinha de descobrir a aba antes.
+
+O CSV usa ponto e vírgula e traz BOM. Não é preciosismo: o Excel em configuração brasileira usa a vírgula como separador decimal e abre um CSV separado por vírgula tudo numa coluna só, e sem o BOM ele lê UTF-8 como Latin-1, transformando "patogênica" em "patogÃªnica" em toda linha.
+
+O XLSX ganha uma aba **Populações** quando o gnomAD foi consultado, com uma linha por variante e por população. É o recorte mais pedido depois do laudo, e reconstruí-lo a partir da tabela larga é trabalhoso.
 
 O PDF e o VCF carregam o **SHA-256 do arquivo de entrada** e a versão da compilação do ClinVar. Sem isso, dois laudos do mesmo paciente em meses diferentes não são comparáveis e ninguém prova de qual arquivo cada um saiu.
 
@@ -154,6 +158,22 @@ O XLSX é escrito em SpreadsheetML sobre o JSZip que já era dependência (é el
 **Ressalva de uso.** O laudo tem a forma de um relatório clínico e a natureza de um documento de pesquisa. A ressalva aparece na capa, no rodapé de **toda** página e no fim, porque PDF circula por folha solta: uso em pesquisa e ensino, não é laudo diagnóstico, não foi emitido por laboratório clínico habilitado, e todo achado exige confirmação por método independente e aconselhamento genético.
 
 **Arquivos de exemplo.** Quatro VCF sintéticos, gerados com semente fixa por `scripts/gera_vcf_exemplo.py` e `scripts/gera_vcf_teste.py`, carregáveis por um clique na própria página: um exoma com variantes reais do ClinVar, um trio com de novo e compostos plantados, um arquivo com defeitos de rotina, e um perfil XY. Nenhum vem de sequenciamento de pessoa alguma.
+
+#### Idioma da interface
+
+Tudo o que aparece na tela está em português, e o que vem em inglês da fonte é traduzido no ETL, não em tempo de renderização.
+
+| Conteúdo | Cobertura em PT-BR | Como |
+|---|---|---|
+| Nomes de doença (Orphanet) | 100% | Nomenclatura oficial `pt_product1` para 95%; os 204 restantes numa tabela curada em `backend/etl/traducoes/nomes_doenca_pt_br.tsv` |
+| Fenótipos HPO | 96,2% | Tradução oficial do HPO (7.213 termos) mais 340 termos em `hpo_pt_br.tsv` |
+| Traços do PGS Catalog | 80% | Os 200 mais frequentes, em `pgs_traits_pt_br.tsv` |
+| Métodos do PGS Catalog | 98% | Glossário de métodos estatísticos no próprio ETL |
+
+**O nome original fica sempre**, nos campos `name_original`, `trait_original` e `method_original`, e a busca varre os dois. Sem isso, traduzir os nomes quebraria a procura por "myasthenic" e "night blindness", que é como a literatura nomeia essas doenças: seria trocar um problema de idioma por um pior. Medido: "night blindness" acha 3 doenças e "cegueira noturna" acha 4, e a primeira é a mesma nas duas.
+
+Para os nomes de doença, a tradução é uma tabela curada e **não** uma regra. Um tradutor por regra foi escrito, medido e descartado: alcançava 80% dos casos e produzia "Alazami-Yuan sindrome" e "Spastic paraplegia hereditaria relacionada a ADAR1". Nome de doença pela metade cria uma entidade que não existe em lugar nenhum, o que é pior que o inglês.
+
 
 #### Painéis de genes (multigênico)
 
@@ -193,8 +213,12 @@ cd backend && python -m etl.pgscatalog
 
 #### Produtos, fontes e status
 
-- Aba `/produtos`: as três linhas do produto (raras e monogênico, multigênico, poligênico), a seção "O que já está no ar" com os volumes lidos da API em tempo de renderização, e a relação entre o risco raro e o poligênico.
-- Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda.
+- Aba `/produtos`: quatro trabalhos, não quatro camadas de genética. Cada bloco começa por uma necessidade concreta ("tenho um arquivo de variantes e preciso saber o que há nele") e declara o que entra, o que sai e o diferencial. A ordem é deliberada: a análise de VCF vem primeiro e em destaque, por ser o único módulo com fluxo completo, entrada de arquivo e artefato de saída.
+
+  A página nasceu descrevendo catálogos (monogênico, multigênico, poligênico), que é como um bioinformata organiza o assunto e não como alguém chega com uma necessidade. Os números seguiram o mesmo caminho: "3.739 doenças" mede o esforço de quem carregou o dado, e quem chega não tem como saber se é muito ou pouco. No lugar dele há uma busca que responde a única pergunta que importa, se a doença, o gene ou a variante procurada está no catálogo.
+
+  O selo de maturidade separa **Pronto para uso**, **Beta** e **Exploratório**, com o que cada um significa escrito na própria página. Antes os três módulos diziam "Beta disponível", e um rótulo que não distingue nada não informa nada.
+- Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda. O teto da sonda é 8 s para rota local e 30 s para rota que consulta fonte externa, e acima de 5 s a rota sai como lenta com a explicação, não como falha: `/api/gene/BRCA1` leva de 10 a 12 s a frio, porque encadeia quatro chamadas externas e o overlap de variantes do Ensembl leva 7,5 s sozinho. Com um teto único de 8 s, a página acusava `ReadTimeout` numa rota que responde 200.
 - Página `/fontes`: as oito fontes de dados com licença, uso, citação formal e data de extração dos catálogos.
 
 #### Modo de leitura e aviso médico

@@ -4,14 +4,17 @@ title: GenVar - mapa do site
 flowchart TD
   home["/<br>Início<br>busca unificada"]
 
-  subgraph nav["Barra de navegação (8 rotas, presente em todas as páginas)"]
+  subgraph nav["Barra de navegação (11 rotas, presente em todas as páginas)"]
     doencas["/doencas<br>Doenças Raras<br>3.739 registros"]
     paineis["/paineis<br>Painéis<br>434 registros"]
     polig["/poligenico<br>Poligênico<br>6.982 escores"]
     assoc["/associacao<br>Associação<br>44 fenótipos"]
-    prod["/produtos<br>Produtos"]
+    vcf["/vcf<br>Análise de VCF<br>no navegador, sem upload"]
+    prod["/produtos<br>Produtos<br>quatro trabalhos"]
     status["/status<br>Status"]
     fontes["/fontes<br>Fontes e licenças<br>8 bases"]
+    sobre["/sobre<br>Sobre e FAIR"]
+    colabore["/colabore<br>Colabore"]
   end
 
   subgraph det["Rotas de detalhe (sem entrada na navegação)"]
@@ -21,14 +24,22 @@ flowchart TD
     variant["/variant/:rsid"]
   end
 
+  subgraph saidas["Artefatos que o usuário leva embora (só em /vcf)"]
+    laudo["Laudo em PDF<br>identificação, achados, população,<br>tabela completa, qualidade, metodologia"]
+    tab["CSV, TSV, XLSX, JSON<br>respeitam os filtros ativos"]
+    vcfout["VCF anotado<br>com SHA-256 da entrada no cabeçalho"]
+  end
 
   home --> doencas
   home --> paineis
   home --> polig
   home --> assoc
+  home --> vcf
   home --> prod
   home --> status
   home --> fontes
+  home --> sobre
+  home --> colabore
 
   home -. "busca unificada e sugestões" .-> doenca
   home -. "busca por gene" .-> gene
@@ -36,11 +47,20 @@ flowchart TD
 
   doencas --> doenca
   paineis --> painel
-  prod --> doencas
-  prod --> paineis
-  prod --> polig
-  prod --> assoc
+
+  prod -. "trabalho: arquivo de variantes" .-> vcf
+  prod -. "trabalho: gene ou variante" .-> home
+  prod -. "trabalho: quadro clínico" .-> doencas
+  prod -. "trabalho: contexto de risco" .-> polig
+  prod -. "busca de cobertura" .-> doenca
   prod --> fontes
+
+  vcf --> laudo
+  vcf --> tab
+  vcf --> vcfout
+  vcf -. "gene do achado" .-> gene
+  vcf -. "rsID do achado" .-> variant
+  vcf -. "filtro por painel" .-> painel
 
   doenca --> gene
   doenca --> variant
@@ -50,9 +70,12 @@ flowchart TD
   polig --> doenca
   assoc --> gene
   variant --> gene
+  sobre --> colabore
 
   classDef entrada fill:#3973b1,stroke:#0d1321,color:#ffffff
   classDef detalhe fill:#9f8322,stroke:#0d1321,color:#ffffff
-  classDef problema fill:#ac5551,stroke:#0d1321,color:#ffffff
+  classDef artefato fill:#49955c,stroke:#0d1321,color:#ffffff
   class home entrada
+  class vcf entrada
   class doenca,painel,gene,variant detalhe
+  class laudo,tab,vcfout artefato
