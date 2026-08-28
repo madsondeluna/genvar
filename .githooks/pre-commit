@@ -1,0 +1,37 @@
+#!/bin/sh
+# Barreira contra dado genomico de pessoa no historico.
+#
+# O .gitignore ja bloqueia a extensao, mas `git add -f` passa por cima dele e um
+# arquivo renomeado (paciente.txt) nao casa com o padrao. Aqui a checagem e pelo
+# CONTEUDO: todo arquivo novo ou alterado que comece com ##fileformat=VCF tem de
+# declarar `##source=genvar-`, que so as fixtures sinteticas declaram.
+#
+# Ativar com: git config core.hooksPath .githooks
+falhou=0
+for f in $(git diff --cached --name-only --diff-filter=ACM); do
+  [ -f "$f" ] || continue
+  case "$f" in *.gz) cabecalho=$(gzip -cd "$f" 2>/dev/null | head -40) ;;
+                  *) cabecalho=$(head -c 4096 "$f" 2>/dev/null) ;; esac
+  case "$cabecalho" in
+    *"##fileformat=VCF"*)
+      case "$cabecalho" in
+        *"##source=genvar-"*) ;;
+        *) echo "bloqueado: $f e um VCF que nao declara ##source=genvar-." >&2
+           echo "  VCF de pessoa nao entra no repositorio. Se for sintetico, gere-o" >&2
+           echo "  com scripts/gera_vcf_teste.py, que escreve o cabecalho correto." >&2
+           falhou=1 ;;
+      esac ;;
+  esac
+  # Alinhamento: SAM comeca com "@HD\tVN:" na PRIMEIRA linha e BAM com os bytes
+  # "BAM\1". Procurar "@HD" em qualquer lugar do arquivo acusava este proprio
+  # script, que traz a string no codigo.
+  primeira=$(printf '%s' "$cabecalho" | head -1)
+  case "$primeira" in
+    "@HD"*"VN:"*) echo "bloqueado: $f e um alinhamento SAM." >&2; falhou=1 ;;
+  esac
+  if [ "$(head -c 4 "$f" 2>/dev/null)" = "BAM$(printf '\1')" ]; then
+    echo "bloqueado: $f e um alinhamento BAM." >&2
+    falhou=1
+  fi
+done
+exit $falhou

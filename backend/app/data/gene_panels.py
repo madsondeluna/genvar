@@ -159,6 +159,28 @@ def _carregar_panelapp() -> List[dict]:
         bruto = json.loads(_PANELAPP_JSON.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return []
+    # O JSON guarda o detalhe por gene normalizado: `genes_ref` traz apenas
+    # [simbolo, heranca, indice de fenotipo], e o que e constante por gene mora
+    # em `catalogo_genes`. A mesma entrada repetida em oito paineis custava
+    # 7,5 MB de simbolo, HGNC, Ensembl e nome iguais. Aqui ela e reidratada.
+    catalogo = bruto.get("catalogo_genes") or {}
+    fenotipos = bruto.get("fenotipos") or []
+
+    def _reidratar(refs):
+        out = []
+        for ref in refs or []:
+            simbolo, moi, ifen = ref
+            base = catalogo.get(simbolo) or {}
+            out.append({
+                "symbol": simbolo,
+                "hgnc": base.get("hgnc"),
+                "ensembl": base.get("ensembl"),
+                "name": base.get("name"),
+                "moi": moi,
+                "phenotypes": fenotipos[ifen] if 0 <= ifen < len(fenotipos) else [],
+            })
+        return out
+
     out = []
     for p in bruto.get("panels", []):
         genes = p.get("genes") or []
@@ -178,7 +200,7 @@ def _carregar_panelapp() -> List[dict]:
             "inheritance": p.get("inheritance") or "Nao especificada",
             "short": ". ".join(x for x in partes if x),
             "genes": genes,
-            "genes_detail": p.get("genes_detail") or [],
+            "genes_detail": _reidratar(p.get("genes_ref")),
             "genes_amber": p.get("genes_amber") or [],
             "conditions": cond,
             "digenic": "",

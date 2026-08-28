@@ -45,3 +45,23 @@ backend/etl/.cache/
 # AppleDouble do macOS em volume nao-HFS: o vitest tenta importa-los como teste
 ._*
 .DS_Store
+
+# Dado genomico de pessoa. Um VCF, um BAM ou um FASTQ identificam o portador, e
+# o que entra no historico do git nao sai: `git rm` remove do commit seguinte e
+# nao dos anteriores. A regra bloqueia tudo e o `!` abre excecao apenas para as
+# fixtures sinteticas, que sao geradas por scripts/gera_vcf_teste.py e declaram
+# `##source=genvar-` no proprio cabecalho.
+*.vcf
+*.vcf.gz
+*.bam
+*.bai
+*.cram
+*.crai
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+# A excecao usa [!._] no comeco: `*.vcf` sozinho reincluia o AppleDouble
+# `._trio-grch38.vcf`, que o macOS escreve ao lado do arquivo neste volume.
+!frontend/public/fixtures/[!._]*.vcf
+!frontend/public/exemplo-grch38.vcf

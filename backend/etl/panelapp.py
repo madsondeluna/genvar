@@ -278,15 +278,46 @@ def main() -> int:
     paineis.sort(key=lambda p: (p["category"], p["name"]))
 
     genes = sorted({g for p in paineis for g in p["genes"]})
+
+    # Normaliza o detalhe por gene antes de gravar. Um gene aparece em media em
+    # oito paineis, e o simbolo, o HGNC, o Ensembl e o nome sao os mesmos em
+    # todos: repeti-los custava 1,8 MB. As listas de fenotipo tambem se repetem,
+    # porque o mesmo gene costuma trazer o mesmo conjunto em paineis diferentes,
+    # entao elas viram um repertorio referenciado por indice. O modo de heranca
+    # (MOI) NAO entra nisso: o PanelApp o cura por painel, e o mesmo gene pode
+    # ter heranca diferente em contextos diferentes.
+    catalogo: Dict[str, Dict[str, Any]] = {}
+    fenotipos: List[List[str]] = []
+    indice_fen: Dict[str, int] = {}
+    for pa in paineis:
+        magro = []
+        for g in pa.pop("genes_detail", []):
+            sim = g["symbol"]
+            catalogo.setdefault(sim, {
+                "hgnc": g.get("hgnc"), "ensembl": g.get("ensembl"), "name": g.get("name"),
+            })
+            fen = g.get("phenotypes") or []
+            chave = "\u0000".join(fen)
+            if chave not in indice_fen:
+                indice_fen[chave] = len(fenotipos)
+                fenotipos.append(fen)
+            magro.append([sim, g.get("moi") or "", indice_fen[chave]])
+        pa["genes_ref"] = magro
+
     SAIDA.parent.mkdir(parents=True, exist_ok=True)
     SAIDA.write_text(json.dumps({
         "source": "Genomics England PanelApp",
         "api": API,
         "generated_at": _agora(),
+        "formato": "genes_ref e [simbolo, heranca, indice em fenotipos]; o resto do gene mora em catalogo_genes",
+        "catalogo_genes": catalogo,
+        "fenotipos": fenotipos,
         "panels": paineis,
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
+    }, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
     print(f"{len(paineis)} paineis com gene verde, {len(genes)} genes distintos")
+    print(f"{len(catalogo)} genes no catalogo, {len(fenotipos)} listas de fenotipo distintas")
+    print(f"{SAIDA.stat().st_size/1e6:.1f} MB")
     print(f"escrito em {SAIDA}")
     return 0
 
