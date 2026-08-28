@@ -57,12 +57,24 @@ services:
     domains:
       - genvar.delunalab.dev
     rootDir: frontend
-    # `git lfs pull` ANTES de tudo. Os catalogos sao versionados com LFS e um
-    # clone sem eles entrega ponteiros de 130 bytes: o build compila limpo, o
-    # site sobe, e a aplicacao responde "nenhum achado" para todo arquivo, que e
-    # indistinguivel de um resultado de verdade. O `prebuild` do package.json
-    # recusa o build se algum ponteiro passar mesmo assim.
-    buildCommand: git lfs install && git lfs pull && npm ci && npm run build
+    # Os catalogos sao versionados com LFS e um clone sem eles entrega ponteiros
+    # de 130 bytes: o build compila limpo, o site sobe, e a aplicacao responde
+    # "nenhum achado" para todo arquivo, que e indistinguivel de um resultado.
+    #
+    # O passo do LFS e CONDICIONAL, e a condicao nao e cautela: o ambiente de
+    # build estatico do Render nao tem o git-lfs instalado, e comecar o comando
+    # por `git lfs install` derrubava o deploy na primeira instrucao com
+    # "git: 'lfs' is not a git command", antes de qualquer verificacao. Medido no
+    # log do build do commit e36fcee.
+    #
+    # Quem decide se o dado chegou inteiro e o `prebuild` do package.json, que
+    # roda o verifica_dados.mjs e recusa o build com a causa escrita se algum
+    # arquivo vier como ponteiro. E a checagem certa para o lugar: ela olha o
+    # RESULTADO em vez de presumir que uma ferramenta esteja disponivel.
+    buildCommand: >-
+      if command -v git-lfs >/dev/null 2>&1; then git lfs install && git lfs pull;
+      else echo "git-lfs ausente no ambiente de build; seguindo com o que o clone trouxe";
+      fi && npm ci && npm run build
     staticPublishPath: dist
     autoDeploy: true
     pullRequestPreviewsEnabled: false
