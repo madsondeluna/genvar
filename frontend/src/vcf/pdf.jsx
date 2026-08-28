@@ -31,12 +31,12 @@ const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modif
 // Colunas da tabela completa, em paisagem. A soma tem de caber na largura util
 // de uma A4 deitada (842 menos as margens), senao o rodape da linha estoura.
 const COLS_TABELA = [
-  ['Posição', 50], ['rsID', 54], ['Troca', 44],
-  ['Ti/Tv', 26], ['Gene', 46], ['Classificação', 80],
-  ['Rev.', 22], ['Impacto', 44], ['Consequência', 72],
-  ['Frequência', 56], ['Maior em', 58], ['Herança', 40],
-  ['Genótipo', 42], ['AB', 28], ['DP', 22],
-  ['ACMG', 52],
+  ['Posição', 34], ['rsID', 38], ['Troca', 30],
+  ['Ti/Tv', 18], ['Gene', 32], ['Classificação', 54],
+  ['Rev.', 16], ['Impacto', 30], ['Consequência', 48],
+  ['Frequência', 38], ['Maior em', 40], ['Herança', 26],
+  ['Genótipo', 28], ['AB', 20], ['DP', 16],
+  ['ACMG', 30],
 ]
 
 const RESSALVA = 'Documento de pesquisa e ensino. Não é laudo diagnóstico, não foi emitido por '
@@ -385,9 +385,20 @@ export function RelatorioVCF({ dados, gerado }) {
         </Page>
       )}
 
-      {/* 5. Tabela completa das variantes anotadas */}
+      {/* 5. Tabela completa das variantes anotadas.
+
+          RETRATO, e nao paisagem. Uma pagina `orientation="landscape"` no mesmo
+          Document das outras derruba o PDF INTEIRO com "unsupported number:
+          -3.8e+21" na geometria da borda, e o numero e sempre o mesmo, o que
+          denuncia leitura de medida nao inicializada. Nao e a largura das
+          colunas: o erro persiste com elas somando 498, que cabe em retrato.
+          Trocar a orientacao resolve, e o teste `fecha com tabela longa o
+          bastante para atravessar paginas` tranca isso.
+
+          O preco e coluna estreita. Foi pago encurtando rotulo e cortando o que
+          ja aparece em outra pagina, e nao espremendo tudo. */}
       {anotadas.length > 0 && (
-        <Page size="A4" style={s.pagina} orientation="landscape">
+        <Page size="A4" style={s.pagina}>
           <Text style={s.h2}>Todas as variantes com anotação clínica</Text>
           <Text style={s.p}>
             {fmt(anotadas.length)} variantes que o ClinVar conhece, ordenadas por gravidade e
@@ -406,30 +417,30 @@ export function RelatorioVCF({ dados, gerado }) {
             .slice(0, 400)
             .map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 50 }]}>{v.chrom}:{fmt(v.pos)}</Text>
-                <Text style={[s.td, { width: 54 }]}>{v.rsid || '—'}</Text>
-                <Text style={[s.td, { width: 44 }]}>{v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}</Text>
-                <Text style={[s.td, { width: 26 }]}>
+                <Text style={[s.td, { width: 34 }]}>{v.chrom}:{fmt(v.pos)}</Text>
+                <Text style={[s.td, { width: 38 }]}>{v.rsid || '—'}</Text>
+                <Text style={[s.td, { width: 30 }]}>{v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}</Text>
+                <Text style={[s.td, { width: 18 }]}>
                   {v.transicao == null ? '—' : v.transicao ? 'Ti' : 'Tv'}
                 </Text>
-                <Text style={[s.td, { width: 46 }]}>{v.clinvar.gene || v.gene || '—'}</Text>
+                <Text style={[s.td, { width: 32 }]}>{v.clinvar.gene || v.gene || '—'}</Text>
                 <Text style={[s.td, { width: 84, color: COR_SIG[v.clinvar.sig] }]}>
                   {ROTULO[v.clinvar.sig]}
                 </Text>
-                <Text style={[s.td, { width: 80 }]}>{v.clinvar.estrelas}/4</Text>
+                <Text style={[s.td, { width: 54 }]}>{v.clinvar.estrelas}/4</Text>
                 <Text style={[s.td, { width: 46, color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA }]}>
                   {IMPACTO[v.clinvar.consequencia] || '—'}
                 </Text>
-                <Text style={[s.td, { width: 22 }]}>
+                <Text style={[s.td, { width: 16 }]}>
                   {v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—'}
                 </Text>
-                <Text style={[s.td, { width: 44 }]}>{freqDe(v)}</Text>
-                <Text style={[s.td, { width: 72 }]}>{maiorPop(v)}</Text>
-                <Text style={[s.td, { width: 56 }]}>{v.clingen?.heranca_sigla || '—'}</Text>
-                <Text style={[s.td, { width: 58 }]}>{v.zigosidade}</Text>
-                <Text style={[s.td, { width: 40 }]}>{v.ab != null ? v.ab.toFixed(2) : '—'}</Text>
-                <Text style={[s.td, { width: 42 }]}>{v.dp ?? '—'}</Text>
-                <Text style={[s.td, { width: 28 }]}>
+                <Text style={[s.td, { width: 30 }]}>{freqDe(v)}</Text>
+                <Text style={[s.td, { width: 48 }]}>{maiorPop(v)}</Text>
+                <Text style={[s.td, { width: 38 }]}>{v.clingen?.heranca_sigla || '—'}</Text>
+                <Text style={[s.td, { width: 40 }]}>{v.zigosidade}</Text>
+                <Text style={[s.td, { width: 26 }]}>{v.ab != null ? v.ab.toFixed(2) : '—'}</Text>
+                <Text style={[s.td, { width: 28 }]}>{v.dp ?? '—'}</Text>
+                <Text style={[s.td, { width: 20 }]}>
                   {v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—'}
                 </Text>
               </View>

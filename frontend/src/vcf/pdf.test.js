@@ -124,6 +124,41 @@ describe('laudo em PDF', { timeout: 60000 }, () => {
     expect(blob.size).toBeGreaterThan(5000)
   })
 
+  // Foi assim que o laudo caía com dado real: 131 variantes anotadas, das quais
+  // 124 caem na tabela de "fármaco e risco", e a tabela atravessa varias
+  // paginas. O cabecalho marcado como `fixed` se repetia a cada quebra e a
+  // geometria da borda saia como "unsupported number: -3.8e+21", derrubando o
+  // documento inteiro. Com 40 variantes, que era o tamanho do outro teste, a
+  // tabela cabia numa pagina so e nada quebrava.
+  it('fecha com tabela longa o bastante para atravessar páginas', async () => {
+    const { gerarPDF } = await import('./pdf.jsx')
+    const base3 = { ...base }
+    const anotadas = []
+    for (let i = 0; i < 140; i += 1) {
+      const v = base.variantes[i % base.variantes.length]
+      anotadas.push({
+        ...v,
+        pos: v.pos + i,
+        rsid: `rs${10000000 + i}`,
+        gene: `GENE${i % 30}`,
+        clinvar: {
+          // Maioria em classificação conflitante, que é a que enche a segunda
+          // tabela, exatamente como no arquivo real.
+          sig: i % 9 === 0 ? 1 : [4, 9, 10, 11][i % 4],
+          estrelas: i % 5,
+          condicao: `Condição associada razoavelmente longa número ${i}`,
+          consequencia: [1, 2, 3, 4, 7][i % 5],
+          gene: `GENE${i % 30}`,
+          af: 10 ** -(2 + (i % 5)),
+        },
+        clingen: { classificacao: 'Definitive', heranca: 'autossômica recessiva', heranca_sigla: 'AR', forca: 6 },
+        acmg: [{ id: 'PM2', valor: 0, fonte: 'teste' }, { id: 'PP5', valor: null, fonte: 'teste' }],
+      })
+    }
+    const blob = await gerarPDF({ ...base3, variantes: [...anotadas, ...base.variantes.slice(200)] })
+    expect(blob.size).toBeGreaterThan(20000)
+  })
+
   it('fecha sem nenhuma anotação clínica', async () => {
     const { gerarPDF } = await import('./pdf.jsx')
     const variantes = base.variantes.map(({ clinvar, clingen, acmg, ...v }) => v)
