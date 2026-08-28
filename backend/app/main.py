@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.config import settings
+from app.rate_limit import RateLimitMiddleware
 from app.routers import gene, variant, disease, panel, pgs, health, suggest, sources
 
 logging.basicConfig(
@@ -29,6 +30,10 @@ app = FastAPI(
 )
 
 app.add_middleware(TimingMiddleware)
+# Antes do CORS na ordem de adicao, o que o poe DEPOIS na execucao: a resposta
+# 429 precisa sair com os cabecalhos de CORS, ou o navegador a esconde atras de
+# um erro de rede e ninguem descobre que foi limite de taxa.
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.origins_list,

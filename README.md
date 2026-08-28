@@ -194,7 +194,6 @@ cd backend && python -m etl.pgscatalog
 #### Produtos, fontes e status
 
 - Aba `/produtos`: as três linhas do produto (raras e monogênico, multigênico, poligênico), a seção "O que já está no ar" com os volumes lidos da API em tempo de renderização, e a relação entre o risco raro e o poligênico.
-- Página `/planos`: rota herdada de uma versão anterior, com uma estrutura de planos que não corresponde à estratégia atual. Nenhuma página do app aponta para ela, e ela está marcada como órfã no mapa do site em `docs/sitemap.mmd`. O projeto é gratuito e sem plano pago, conforme a seção Estratégia de produto.
 - Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda.
 - Página `/fontes`: as oito fontes de dados com licença, uso, citação formal e data de extração dos catálogos.
 
@@ -639,7 +638,8 @@ genvar-dashboard/
 │   │   │   ├── PanelsPage.jsx, PanelPage.jsx        Painéis de genes (hub e detalhe).
 │   │   │   ├── PolygenicPage.jsx                    Poligênico e relação raro x poligênico.
 │   │   │   ├── AssociationPage.jsx                  Associação por burden.
-│   │   │   ├── ProductsPage.jsx, PlansPage.jsx      Produtos e planos.
+│   │   │   ├── ProductsPage.jsx      As três linhas do produto e o que já está no ar.
+│   │   │   ├── VcfPage.jsx           Anotação de VCF no navegador, com os exemplos sintéticos.
 │   │   │   └── StatusPage.jsx                       Saúde das fontes e endpoints.
 │   │   ├── pure/
 │   │   │   ├── theme.css, patterns.css              Tokens e padrões da linguagem Pure.
