@@ -1,0 +1,22 @@
+# Git LFS: dados grandes que o ETL regenera.
+#
+# Aplicado DAQUI PRA FRENTE, sem reescrever historico. A razao esta medida: o
+# repositorio inteiro cabe em 62 MB depois da faxina (670 arquivos "._" do macOS
+# estavam dentro do proprio .git e 130 MB eram objetos soltos), e a 62 MB nao ha
+# problema a resolver no passado. O problema e o futuro: cada versao nova do
+# ClinVar acrescenta ~27 MB ao historico PARA SEMPRE, porque o git guarda cada
+# versao inteira de um binario. O LFS troca isso por um ponteiro de 130 bytes.
+#
+# Consequencia para quem clona: precisa de `git-lfs` instalado. Sem ele, os
+# arquivos abaixo chegam como ponteiro de texto e a aplicacao nao acha os dados.
+#   brew install git-lfs && git lfs install
+#
+# Arquivo ja versionado so migra para o LFS quando for alterado. Isso e
+# deliberado: converter os existentes exigiria reescrever os 53 commits da beta
+# e um push --force.
+
+frontend/public/data/clinvar/*.json.gz filter=lfs diff=lfs merge=lfs -text
+frontend/public/data/paineis/*.json.gz filter=lfs diff=lfs merge=lfs -text
+frontend/public/data/farmaco/*.json.gz filter=lfs diff=lfs merge=lfs -text
+backend/app/data/*.json filter=lfs diff=lfs merge=lfs -text
+frontend/public/data/burden/*.json filter=lfs diff=lfs merge=lfs -text
