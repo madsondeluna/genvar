@@ -44,8 +44,8 @@ const PRODUTOS = [
     maturidade: 'pronto',
     trabalho: 'Tenho um arquivo de variantes e preciso saber o que há nele',
     nome: 'Análise de VCF',
-    entra: 'um .vcf, .vcf.gz ou .zip',
-    sai: 'laudo em PDF, VCF anotado, planilha e tabela',
+    entra: 'Um .vcf, .vcf.gz ou .zip',
+    sai: 'Laudo em PDF, VCF anotado, planilha e tabela',
     desc: 'O arquivo é lido no navegador e não é enviado a servidor nenhum. Sai um relatório com '
         + 'os achados do ClinVar, os critérios ACMG avaliáveis, o controle de qualidade da chamada '
         + 'e, com um trio, as variantes de novo e o heterozigoto composto em trans.',
@@ -66,8 +66,8 @@ const PRODUTOS = [
     maturidade: 'pronto',
     trabalho: 'Encontrei um gene ou uma variante e preciso do contexto completo',
     nome: 'Consulta de gene e variante',
-    entra: 'um símbolo HGNC ou um rsID',
-    sai: 'ficha consolidada com estrutura, restrição e significado clínico',
+    entra: 'Um símbolo HGNC ou um rsID',
+    sai: 'Ficha consolidada com estrutura, restrição e significado clínico',
     desc: 'Uma tela reúne o que hoje exige abrir oito portais: coordenadas e consequência do '
         + 'Ensembl, frequência por população do gnomAD, classificação do ClinVar, escores '
         + 'preditivos do dbNSFP, estrutura predita do AlphaFold e anotação funcional do UniProt.',
@@ -86,8 +86,8 @@ const PRODUTOS = [
     maturidade: 'beta',
     trabalho: 'Tenho um quadro clínico e preciso chegar aos genes candidatos',
     nome: 'Do quadro clínico ao gene',
-    entra: 'nome da doença ou sinais clínicos',
-    sai: 'genes causais com herança, evidência e o que existe no Brasil',
+    entra: 'Nome da doença ou sinais clínicos',
+    sai: 'Genes causais com herança, evidência e o que existe no Brasil',
     desc: 'Catálogo do Orphanet com genes causais, padrão de herança, prevalência e fenótipos '
         + 'HPO, mais os painéis do PanelApp por condição. Cada gene abre na ficha completa.',
     diferencial: 'Fenótipos HPO em português, com 96% de cobertura, e o contexto brasileiro que '
@@ -107,8 +107,8 @@ const PRODUTOS = [
     maturidade: 'exploratorio',
     trabalho: 'Preciso situar o risco além da variante de grande efeito',
     nome: 'Risco poligênico e associação',
-    entra: 'um fenótipo ou um gene',
-    sai: 'escores publicados e associação por burden de variantes raras',
+    entra: 'Um fenótipo ou um gene',
+    sai: 'Escores publicados e associação por burden de variantes raras',
     desc: 'Escores do PGS Catalog com a ancestria em que foram desenvolvidos, e resultados de '
         + 'associação gene-fenótipo por burden, meta-analisados por ancestria.',
     diferencial: 'A ancestria de desenvolvimento aparece em cada escore. Um PGS treinado em '
@@ -124,14 +124,14 @@ const PRODUTOS = [
 
 // As oito bases, ditas do lado do usuário: o que ele deixa de abrir.
 const FONTES = [
-  ['Ensembl', 'coordenadas, transcritos e consequência'],
-  ['gnomAD', 'frequência por população e restrição gênica'],
-  ['ClinVar', 'classificação clínica e nível de revisão'],
-  ['AlphaFold', 'estrutura proteica predita'],
-  ['UniProt', 'anotação funcional e domínios'],
-  ['Orphanet', 'doenças raras, herança e fenótipos'],
-  ['PanelApp', 'painéis diagnósticos com nível de evidência'],
-  ['PGS Catalog', 'escores poligênicos publicados'],
+  ['Ensembl', 'Coordenadas, transcritos e consequência'],
+  ['gnomAD', 'Frequência por população e restrição gênica'],
+  ['ClinVar', 'Classificação clínica e nível de revisão'],
+  ['AlphaFold', 'Estrutura proteica predita'],
+  ['UniProt', 'Anotação funcional e domínios'],
+  ['Orphanet', 'Doenças raras, herança e fenótipos'],
+  ['PanelApp', 'Painéis diagnósticos com nível de evidência'],
+  ['PGS Catalog', 'Escores poligênicos publicados'],
 ]
 
 function Selo({ chave }) {
@@ -170,14 +170,14 @@ function Cobertura() {
       : it.kind === 'panel' ? `/painel/${it.id}` : `/variant/${it.id}`)
 
   const numeros = useMemo(() => [
-    { slot: 1, to: '/doencas', valor: n(doencas.data?.total), rotulo: 'doenças raras catalogadas',
+    { slot: 1, to: '/doencas', valor: n(doencas.data?.total), rotulo: 'Doenças raras catalogadas',
       nota: `${n(doencas.data?.total_genes)} genes causais` },
-    { slot: 3, to: '/paineis', valor: n(paineis.data?.total), rotulo: 'painéis diagnósticos',
+    { slot: 3, to: '/paineis', valor: n(paineis.data?.total), rotulo: 'Painéis diagnósticos',
       nota: `${n(paineis.data?.total_genes)} genes distintos` },
-    { slot: 5, to: '/poligenico', valor: n(pgs.data?.total), rotulo: 'escores poligênicos',
-      nota: 'com a ancestria de desenvolvimento declarada' },
-    { slot: 7, to: '/fontes', valor: n(fontes.data?.items?.length), rotulo: 'bases integradas',
-      nota: 'licença e citação por fonte' },
+    { slot: 5, to: '/poligenico', valor: n(pgs.data?.total), rotulo: 'Escores poligênicos',
+      nota: 'Com a ancestria de desenvolvimento declarada' },
+    { slot: 7, to: '/fontes', valor: n(fontes.data?.items?.length), rotulo: 'Bases integradas',
+      nota: 'Licença e citação por fonte' },
   ], [doencas.data, paineis.data, pgs.data, fontes.data])
 
   return (

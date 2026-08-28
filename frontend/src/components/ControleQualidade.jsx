@@ -25,7 +25,7 @@ export default function ControleQualidade({ variantes }) {
         <span className="flex items-baseline justify-between gap-8 flex-wrap">
           <h3 className="text-16 font-medium text-text">Balanço alélico dos heterozigotos</h3>
           <span className="label">
-            {ab.n ? `mediana ${dec(ab.mediana)}` : 'o arquivo não traz AD'}
+            {ab.n ? `mediana ${dec(ab.mediana)}` : 'O arquivo não traz AD'}
           </span>
         </span>
         <p className="text-12 leading-snug about-left">
@@ -65,8 +65,8 @@ export default function ControleQualidade({ variantes }) {
         </p>
         <BarrasNomeadas
           itens={[
-            { rotulo: 'já no dbSNP', n: titv.conhecidas.n, slot: 3 },
-            { rotulo: 'novas', n: titv.novas.n, slot: 6 },
+            { rotulo: 'Já no dbSNP', n: titv.conhecidas.n, slot: 3 },
+            { rotulo: 'Novas', n: titv.novas.n, slot: 6 },
           ]}
           total={titv.conhecidas.n + titv.novas.n}
           slot={1}

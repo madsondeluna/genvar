@@ -321,8 +321,8 @@ export default function VcfPage() {
               {[
                 ['Formatos', '.vcf, .vcf.gz e .zip com um VCF dentro'],
                 ['Teto', `${TETO_VARIANTES.toLocaleString('pt-BR')} variantes`],
-                ['Onde roda', 'no seu navegador, sem upload'],
-                ['O que sai daqui', 'nada: o arquivo não é enviado'],
+                ['Onde roda', 'No seu navegador, sem upload'],
+                ['O que sai daqui', 'Nada: o arquivo não é enviado'],
                 ['Genes', '20.033 mapeados por coordenada, sem rede'],
               ].map(([k, v]) => (
                 <li key={k} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: 'minmax(0,9rem) 1fr' }}>

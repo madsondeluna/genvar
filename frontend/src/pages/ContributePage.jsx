@@ -16,32 +16,32 @@ const REPO = 'https://github.com/madsondeluna/genvar'
 
 const FRENTES = [
   {
-    slot: 1, icone: 'shield', peso: 'a mais necessária',
+    slot: 1, icone: 'shield', peso: 'A mais necessária',
     titulo: 'Dados brasileiros',
     texto: 'Mapear quais doenças têm protocolo no SUS, triagem neonatal e prevalência '
          + 'nacional. Hoje são 8 de 3.739. É curadoria sobre documento público, não código.',
-    quem: 'geneticista, residente, profissional do SUS',
+    quem: 'Geneticista, residente, profissional do SUS',
   },
   {
-    slot: 2, icone: 'book', peso: 'alto impacto',
+    slot: 2, icone: 'book', peso: 'Alto impacto',
     titulo: 'Revisão de fenótipos',
     texto: 'Os sinais clínicos vêm da tradução oficial do HPO, que cobre 42% dos termos. '
          + 'O resto foi traduzido pelo projeto e precisa de olhar clínico.',
-    quem: 'quem atende paciente e conhece o vocabulário',
+    quem: 'Quem atende paciente e conhece o vocabulário',
   },
   {
-    slot: 3, icone: 'database', peso: 'contínuo',
+    slot: 3, icone: 'database', peso: 'Contínuo',
     titulo: 'Backend e dados',
     texto: 'API, ETL, cache e limite de taxa. Python, FastAPI e um ETL por fonte, com '
          + 'cache em disco para ser reproduzível.',
-    quem: 'quem programa em Python',
+    quem: 'Quem programa em Python',
   },
   {
-    slot: 4, icone: 'grid', peso: 'contínuo',
+    slot: 4, icone: 'grid', peso: 'Contínuo',
     titulo: 'Interface e visualização',
     texto: 'React, acessibilidade e visualização de dado. A linguagem de design é própria '
          + 'e documentada; não há decisão de cor ou espaçamento para inventar.',
-    quem: 'quem faz front-end ou design de dado',
+    quem: 'Quem faz front-end ou design de dado',
   },
 ]
 

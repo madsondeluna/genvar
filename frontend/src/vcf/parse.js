@@ -28,12 +28,12 @@ export function ehTransicao(ref, alt) {
 
 // GT vem como 0/1, 1|1, ./. e variações. O separador diz se a fase é conhecida.
 export function zigosidade(gt) {
-  if (!gt || gt === '.' || gt === './.' || gt === '.|.') return 'ausente'
+  if (!gt || gt === '.' || gt === './.' || gt === '.|.') return 'Ausente'
   const alelos = gt.split(/[/|]/)
-  if (alelos.some((a) => a === '.')) return 'parcial'
+  if (alelos.some((a) => a === '.')) return 'Parcial'
   const unicos = new Set(alelos)
-  if (unicos.size === 1) return alelos[0] === '0' ? 'homozigoto ref' : 'homozigoto alt'
-  return 'heterozigoto'
+  if (unicos.size === 1) return alelos[0] === '0' ? 'Homozigoto ref' : 'Homozigoto alt'
+  return 'Heterozigoto'
 }
 
 function parseInfo(campo) {

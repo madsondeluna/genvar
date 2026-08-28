@@ -10,8 +10,8 @@ const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
 
 // Frequência populacional em texto. 0,0004 não se lê; 1 em 2.500 se lê.
 export function freqTexto(af) {
-  if (af == null) return 'sem frequência publicada'
-  if (af === 0) return 'não observada nas coortes de referência'
+  if (af == null) return 'Sem frequência publicada'
+  if (af === 0) return 'Não observada nas coortes de referência'
   const pc = af * 100
   const pct = pc >= 1 ? pc.toFixed(1) : pc >= 0.01 ? pc.toFixed(2) : pc.toPrecision(2)
   return `${String(pct).replace('.', ',')}% · 1 em ${fmt(Math.round(1 / af))}`
@@ -428,9 +428,9 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
           </p>
           <BarrasNomeadas
             itens={[
-              { rotulo: 'com rsID', n: comRsid, slot: 3 },
-              { rotulo: 'sem rsID', n: variantes.length - comRsid, slot: 6 },
-              { rotulo: 'no ClinVar', n: anotadas.length, slot: 1 },
+              { rotulo: 'Com rsID', n: comRsid, slot: 3 },
+              { rotulo: 'Sem rsID', n: variantes.length - comRsid, slot: 6 },
+              { rotulo: 'No ClinVar', n: anotadas.length, slot: 1 },
             ]}
             max={variantes.length}
             total={variantes.length}
@@ -503,9 +503,9 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
           <h3 className="text-16 font-medium text-text">Cobertura desta anotação</h3>
           <ul className="flex flex-col gap-8" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {[
-              ['Camada carregada', vus ? 'aviso e significado incerto' : 'aviso (patogênica, conflitante, fármaco, risco)'],
+              ['Camada carregada', vus ? 'Aviso e significado incerto' : 'Aviso: patogênica, conflitante, fármaco e risco'],
               ['Casadas', `${fmt(anotacao?.casadas ?? 0)} variantes`],
-              ['Por coordenada', anotacao?.podeCoordenada ? 'ligado (arquivo em GRCh38)' : 'desligado (o arquivo não é GRCh38)'],
+              ['Por coordenada', anotacao?.podeCoordenada ? 'Ligado, arquivo em GRCh38' : 'Desligado, o arquivo não é GRCh38'],
               ['rsID com alelo diferente', `${fmt(divergentes.length)}`],
             ].map(([k, v]) => (
               <li key={k} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: 'minmax(0,11rem) 1fr' }}>

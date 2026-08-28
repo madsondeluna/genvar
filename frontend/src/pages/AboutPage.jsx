@@ -106,10 +106,10 @@ export default function AboutPage() {
   const n = (v) => (v == null ? '—' : v.toLocaleString('pt-BR'))
 
   const numeros = [
-    { slot: 1, v: n(doencas.data?.total), r: 'doenças raras' },
-    { slot: 2, v: n(paineis.data?.total), r: 'painéis de genes' },
-    { slot: 3, v: n(pgs.data?.total), r: 'escores poligênicos' },
-    { slot: 4, v: n(doencas.data?.total_genes), r: 'genes causais' },
+    { slot: 1, v: n(doencas.data?.total), r: 'Doenças raras' },
+    { slot: 2, v: n(paineis.data?.total), r: 'Painéis de genes' },
+    { slot: 3, v: n(pgs.data?.total), r: 'Escores poligênicos' },
+    { slot: 4, v: n(doencas.data?.total_genes), r: 'Genes causais' },
   ]
 
   return (
@@ -173,7 +173,7 @@ export default function AboutPage() {
                     <Icon name={d.icone} size="md" />
                   </span>
                   <span className={`tag ${d.pronto ? 'tint-good' : 'tint-neutral'}`}>
-                    {d.pronto ? 'implementado' : 'em construção'}
+                    {d.pronto ? 'implementado' : 'Em construção'}
                   </span>
                 </span>
                 <h3 className="text-16 font-medium text-text">{d.titulo}</h3>

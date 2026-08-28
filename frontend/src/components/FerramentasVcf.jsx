@@ -10,25 +10,27 @@ export const FERRAMENTAS = [
     to: '/vcf',
     icone: 'file',
     nome: 'Uma amostra',
-    resumo: 'laudo completo, herança e painel',
+    resumo: 'Laudo completo, herança e painel',
   },
   {
     to: '/lote',
     icone: 'list',
     nome: 'Lote',
-    resumo: 'muitos arquivos, consolidado da coorte',
+    resumo: 'Muitos arquivos, consolidado da coorte',
   },
   {
     to: '/concordancia',
     icone: 'branch',
     nome: 'Concordância',
-    resumo: 'dois VCF da mesma amostra, sensibilidade e precisão',
+    resumo: 'Dois VCF da mesma amostra, sensibilidade e precisão',
+    pronta: false,
   },
   {
     to: '/cobertura',
     icone: 'chart-bar',
     nome: 'Cobertura',
-    resumo: 'o que o exame não conseguiu avaliar',
+    resumo: 'O que o exame não conseguiu avaliar',
+    pronta: false,
   },
 ]
 
@@ -38,6 +40,28 @@ export default function FerramentasVcf() {
     <nav className="ferramentas mb-24" aria-label="Ferramentas de arquivo">
       {FERRAMENTAS.map((f) => {
         const ativa = pathname === f.to
+        const conteudo = (
+          <>
+            <Icon name={f.icone} />
+            <span className="flex flex-col gap-2" style={{ minWidth: 0 }}>
+              <span className="text-13 text-text">
+                {f.nome}
+                {f.pronta === false && <span className="label"> · em construção</span>}
+              </span>
+              <span className="label truncate">{f.resumo}</span>
+            </span>
+          </>
+        )
+        // Ferramenta ainda não construída NÃO vira link. Um link para uma rota
+        // que não existe leva a uma tela em branco, e a leitura disso é que a
+        // aplicação quebrou, não que o recurso está em construção.
+        if (f.pronta === false) {
+          return (
+            <span key={f.to} className="ferramenta is-pendente" aria-disabled="true">
+              {conteudo}
+            </span>
+          )
+        }
         return (
           <Link
             key={f.to}
@@ -45,11 +69,7 @@ export default function FerramentasVcf() {
             className={`ferramenta ${ativa ? 'is-ativa' : ''}`}
             aria-current={ativa ? 'page' : undefined}
           >
-            <Icon name={f.icone} />
-            <span className="flex flex-col gap-2" style={{ minWidth: 0 }}>
-              <span className="text-13 text-text">{f.nome}</span>
-              <span className="label truncate">{f.resumo}</span>
-            </span>
+            {conteudo}
           </Link>
         )
       })}

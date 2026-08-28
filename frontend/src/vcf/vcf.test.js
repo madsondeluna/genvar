@@ -38,12 +38,12 @@ async function carregar(nome) {
 
 describe('zigosidade', () => {
   it('lê as quatro formas de genótipo', () => {
-    expect(zigosidade('0/1')).toBe('heterozigoto')
-    expect(zigosidade('1|0')).toBe('heterozigoto')
-    expect(zigosidade('1/1')).toBe('homozigoto alt')
-    expect(zigosidade('0/0')).toBe('homozigoto ref')
-    expect(zigosidade('./.')).toBe('ausente')
-    expect(zigosidade('0/.')).toBe('parcial')
+    expect(zigosidade('0/1')).toBe('Heterozigoto')
+    expect(zigosidade('1|0')).toBe('Heterozigoto')
+    expect(zigosidade('1/1')).toBe('Homozigoto alt')
+    expect(zigosidade('0/0')).toBe('Homozigoto ref')
+    expect(zigosidade('./.')).toBe('Ausente')
+    expect(zigosidade('0/.')).toBe('Parcial')
   })
 })
 
@@ -63,13 +63,13 @@ describe('parse', () => {
   })
 
   it('calcula o balanço alélico a partir do AD, por amostra', () => {
-    const v = trio.variantes.find((x) => x.amostras[0].zigosidade === 'heterozigoto' && x.amostras[0].ad)
+    const v = trio.variantes.find((x) => x.amostras[0].zigosidade === 'Heterozigoto' && x.amostras[0].ad)
     const { ref, alt } = v.amostras[0].ad
     expect(v.amostras[0].ab).toBeCloseTo(alt / (ref + alt), 10)
   })
 
   it('distingue referência homozigota de ausência de chamada', () => {
-    const v = trio.variantes.find((x) => x.amostras[1].zigosidade === 'homozigoto ref')
+    const v = trio.variantes.find((x) => x.amostras[1].zigosidade === 'Homozigoto ref')
     expect(v.amostras[1].refHom).toBe(true)
     expect(v.amostras[1].semChamada).toBe(false)
     expect(v.amostras[1].tem).toBe(false)
@@ -153,7 +153,7 @@ describe('heterozigoto composto', () => {
     for (const g of c) {
       expect(g.n).toBeGreaterThanOrEqual(2)
       expect(new Set(g.variantes.map((v) => v.pos)).size).toBeGreaterThanOrEqual(2)
-      for (const v of g.variantes) expect(v.zigosidade).toBe('heterozigoto')
+      for (const v of g.variantes) expect(v.zigosidade).toBe('Heterozigoto')
     }
   })
 })
@@ -194,9 +194,9 @@ describe('trio', () => {
     const t = analiseTrio(trio.variantes, { proband: 0, mae: 1, pai: 2 })
     expect(t.recessivas.length).toBeGreaterThanOrEqual(Number(trio.esperado.recessivas_homozigotas))
     for (const v of t.recessivas) {
-      expect(v.amostras[0].zigosidade).toBe('homozigoto alt')
-      expect(v.amostras[1].zigosidade).toBe('heterozigoto')
-      expect(v.amostras[2].zigosidade).toBe('heterozigoto')
+      expect(v.amostras[0].zigosidade).toBe('Homozigoto alt')
+      expect(v.amostras[1].zigosidade).toBe('Heterozigoto')
+      expect(v.amostras[2].zigosidade).toBe('Heterozigoto')
     }
   })
 })

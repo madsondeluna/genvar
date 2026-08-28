@@ -999,3 +999,11 @@ button.ngs-cartao {
 @media (pointer: coarse) {
   .ferramenta { min-block-size: var(--hit-min-touch); }
 }
+
+/* Ferramenta anunciada e ainda nao construida: aparece, nao e alvo. */
+.ferramenta.is-pendente {
+  opacity: 0.55;
+  cursor: default;
+  background: transparent;
+  border-style: dashed;
+}

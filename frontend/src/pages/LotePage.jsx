@@ -190,9 +190,9 @@ export default function LotePage() {
               {[
                 ['Formatos', '.vcf, .vcf.gz e .zip com um VCF dentro'],
                 ['Teto', `${LIMITE_ARQUIVOS} arquivos por lote, 400.000 variantes cada`],
-                ['Ordem', 'um de cada vez; paralelo troca tempo por risco de estourar a memória'],
-                ['Se um falhar', 'entra na lista com o motivo e o lote continua'],
-                ['O que sai daqui', 'nada: nenhum arquivo é enviado'],
+                ['Ordem', 'Um de cada vez; paralelo troca tempo por risco de estourar a memória'],
+                ['Se um falhar', 'Entra na lista com o motivo e o lote continua'],
+                ['O que sai daqui', 'Nada: nenhum arquivo é enviado'],
               ].map(([k, v]) => (
                 <li key={k} className="grid gap-12 items-baseline" style={{ gridTemplateColumns: 'minmax(0,9rem) 1fr' }}>
                   <span className="label">{k}</span>
@@ -217,10 +217,10 @@ export default function LotePage() {
                  style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 11rem), 1fr))' }}>
               {[
                 [1, fmt(total.processados), 'amostras', `${fmt(total.arquivos)} enviadas`],
-                [2, fmt(total.variantes), 'variantes lidas', 'somando o lote'],
+                [2, fmt(total.variantes), 'variantes lidas', 'Somando o lote'],
                 [8, fmt(total.patogenicas), 'achados patogênicos', `em ${fmt(total.amostrasComPatogenica)} amostras`],
-                [6, fmt(total.achados), 'achados no total', 'inclui risco e fármaco'],
-                [3, fmt(recorrentes.length), 'variantes recorrentes', 'em duas amostras ou mais'],
+                [6, fmt(total.achados), 'achados no total', 'Inclui risco e fármaco'],
+                [3, fmt(recorrentes.length), 'variantes recorrentes', 'Em duas amostras ou mais'],
               ].map(([slot, valor, rotulo, nota]) => (
                 <div key={rotulo} className="tint-series" style={seriesStyle(slot)}>
                   <span className="text-24 mono num text-text leading-none">{valor}</span>

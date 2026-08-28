@@ -141,7 +141,7 @@ export function balancoAlelico(variantes) {
   let n = 0, desviados = 0
   const suspeitas = []
   for (const v of variantes) {
-    if (v.ab == null || v.zigosidade !== 'heterozigoto') continue
+    if (v.ab == null || v.zigosidade !== 'Heterozigoto') continue
     n += 1
     faixas[Math.min(19, Math.floor(v.ab / 0.05))].n += 1
     if (v.ab < AB_MIN || v.ab > AB_MAX) {
@@ -149,7 +149,7 @@ export function balancoAlelico(variantes) {
       if (suspeitas.length < 200) suspeitas.push(v)
     }
   }
-  const vals = variantes.filter((v) => v.ab != null && v.zigosidade === 'heterozigoto').map((v) => v.ab)
+  const vals = variantes.filter((v) => v.ab != null && v.zigosidade === 'Heterozigoto').map((v) => v.ab)
   return {
     faixas, n, desviados,
     fracaoDesviada: n ? desviados / n : 0,
@@ -201,9 +201,9 @@ export function verificarSexo(variantes) {
   let xHet = 0, xTotal = 0, yVariantes = 0
   for (const v of variantes) {
     if (v.chrom === 'X' && !naPAR(v.pos)) {
-      if (v.zigosidade === 'heterozigoto' || v.zigosidade === 'homozigoto alt') {
+      if (v.zigosidade === 'Heterozigoto' || v.zigosidade === 'Homozigoto alt') {
         xTotal += 1
-        if (v.zigosidade === 'heterozigoto') xHet += 1
+        if (v.zigosidade === 'Heterozigoto') xHet += 1
       }
     } else if (v.chrom === 'Y') {
       yVariantes += 1
@@ -244,7 +244,7 @@ export function verificarSexo(variantes) {
 export function heterozigotosCompostos(variantes, { apenasAnotadas = false } = {}) {
   const porGene = {}
   for (const v of variantes) {
-    if (v.zigosidade !== 'heterozigoto') continue
+    if (v.zigosidade !== 'Heterozigoto') continue
     const g = v.gene || v.clinvar?.gene
     if (!g) continue
     if (apenasAnotadas && !v.clinvar) continue
@@ -312,13 +312,13 @@ export function analiseTrio(variantes, { proband = 0, mae = null, pai = null } =
     }
 
     // Recessiva homozigota: criança com as duas cópias, cada pai carregando uma.
-    if (c.zigosidade === 'homozigoto alt' && m.tem && p.tem
-        && m.zigosidade === 'heterozigoto' && p.zigosidade === 'heterozigoto') {
+    if (c.zigosidade === 'Homozigoto alt' && m.tem && p.tem
+        && m.zigosidade === 'Heterozigoto' && p.zigosidade === 'Heterozigoto') {
       recessivas.push(v)
     }
 
     // Para o composto em trans: guardar de qual lado veio cada heterozigoto.
-    if (c.zigosidade === 'heterozigoto') {
+    if (c.zigosidade === 'Heterozigoto') {
       const g = v.gene || v.clinvar?.gene
       if (g) {
         const daMae = m.tem && !p.tem

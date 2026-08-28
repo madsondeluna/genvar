@@ -99,9 +99,9 @@ export function anotarCPIC(variantes, cpic) {
 const GNOMAD = 'https://gnomad.broadinstitute.org/api'
 
 const POPULACAO = {
-  afr: 'africana', amr: 'latina', asj: 'judaica asquenaze', eas: 'leste asiático',
-  fin: 'finlandesa', nfe: 'europeia não finlandesa', sas: 'sul da Ásia',
-  mid: 'oriente médio', remaining: 'demais',
+  afr: 'Africana', amr: 'Latina', asj: 'Judaica asquenaze', eas: 'Leste asiático',
+  fin: 'Finlandesa', nfe: 'Europeia não finlandesa', sas: 'Sul da Ásia',
+  mid: 'Oriente médio', remaining: 'Demais',
 }
 
 export async function frequenciaGnomad(variantes, { build = 'GRCh38', onProgresso } = {}) {
@@ -188,29 +188,29 @@ export async function frequenciaGnomad(variantes, { build = 'GRCh38', onProgress
 // do ClinVar o critério ainda funciona, mas a base muda (ExAC, 1000 Genomes ou
 // ESP) e a coorte é menor, então a origem sai declarada junto.
 export const CRITERIOS = {
-  BA1: { forca: 'benigno autônomo', texto: 'Frequência acima de 5% numa população de referência' },
-  BS1: { forca: 'benigno forte', texto: 'Frequência maior do que a esperada para a doença' },
-  PM2: { forca: 'patogênico moderado', texto: 'Ausente ou muito rara nas bases populacionais' },
-  PVS1: { forca: 'patogênico muito forte', texto: 'Perda de função em gene cujo mecanismo de doença é perda de função' },
-  PP5: { forca: 'patogênico de apoio', texto: 'Fonte respeitada relata a variante como patogênica' },
-  BP6: { forca: 'benigno de apoio', texto: 'Fonte respeitada relata a variante como benigna' },
-  BP7: { forca: 'benigno de apoio', texto: 'Variante sinônima sem efeito previsto sobre splicing' },
+  BA1: { forca: 'Benigno autônomo', texto: 'Frequência acima de 5% numa população de referência' },
+  BS1: { forca: 'Benigno forte', texto: 'Frequência maior do que a esperada para a doença' },
+  PM2: { forca: 'Patogênico moderado', texto: 'Ausente ou muito rara nas bases populacionais' },
+  PVS1: { forca: 'Patogênico muito forte', texto: 'Perda de função em gene cujo mecanismo de doença é perda de função' },
+  PP5: { forca: 'Patogênico de apoio', texto: 'Fonte respeitada relata a variante como patogênica' },
+  BP6: { forca: 'Benigno de apoio', texto: 'Fonte respeitada relata a variante como benigna' },
+  BP7: { forca: 'Benigno de apoio', texto: 'Variante sinônima sem efeito previsto sobre splicing' },
 }
 
 // Critérios que este módulo NÃO avalia, e por quê. Sai impresso no laudo.
 export const NAO_AVALIADOS = [
-  ['PS1, PM5', 'exigem comparar a troca de aminoácido com outra variante já classificada'],
-  ['PS2, PM6', 'exigem confirmação de paternidade e maternidade, não só o trio'],
-  ['PS3, BS3', 'exigem ensaio funcional publicado'],
-  ['PS4', 'exige estudo caso-controle'],
-  ['PM1', 'exige domínio funcional mapeado e sem variação benigna'],
-  ['PM3, BP2', 'exigem fase confirmada com uma variante patogênica conhecida'],
-  ['PM4, BP3', 'exigem anotação de região repetitiva'],
-  ['PP1, BS4', 'exigem segregação em vários membros da família'],
-  ['PP2, BP1', 'exigem a distribuição de missense benigna e patogênica do gene'],
-  ['PP3, BP4', 'exigem predição in silico, que este módulo não executa'],
-  ['PP4', 'exige quadro clínico altamente específico avaliado por médico'],
-  ['BS2', 'exige a variante observada em indivíduo saudável adulto'],
+  ['PS1, PM5', 'Exigem comparar a troca de aminoácido com outra variante já classificada'],
+  ['PS2, PM6', 'Exigem confirmação de paternidade e maternidade, não só o trio'],
+  ['PS3, BS3', 'Exigem ensaio funcional publicado'],
+  ['PS4', 'Exige estudo caso-controle'],
+  ['PM1', 'Exige domínio funcional mapeado e sem variação benigna'],
+  ['PM3, BP2', 'Exigem fase confirmada com uma variante patogênica conhecida'],
+  ['PM4, BP3', 'Exigem anotação de região repetitiva'],
+  ['PP1, BS4', 'Exigem segregação em vários membros da família'],
+  ['PP2, BP1', 'Exigem a distribuição de missense benigna e patogênica do gene'],
+  ['PP3, BP4', 'Exigem predição in silico, que este módulo não executa'],
+  ['PP4', 'Exige quadro clínico altamente específico avaliado por médico'],
+  ['BS2', 'Exige a variante observada em indivíduo saudável adulto'],
 ]
 
 // Perda de função: interrompe a leitura da proteína.
