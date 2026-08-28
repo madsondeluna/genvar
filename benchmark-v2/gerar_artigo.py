@@ -223,13 +223,17 @@ if escala:
                n(l["p95_ms"], 0), n(l.get("variantes_por_segundo"), 0),
                n(l.get("heap_delta_mb"), 0)) for l in sorted(
                  escala, key=lambda x: float(x.get("variantes") or 0))],
-             "**Tabela 2.** Leitura do VCF por escala."))
+             f"**Tabela 2.** Leitura do VCF por escala. Réplicas: "
+             f"{escala[0].get('n', '—')}. Teto de heap: "
+             f"{n(escala[0].get('teto_heap_mb'), 0)} MB."))
 
 cat = [l for l in funcoes if l["etapa"] == "catalogo"]
 if cat:
     w("\n### 3.2 Custo fixo de sessão\n")
     w(tabela(["Etapa", "Tempo (ms)"], [(l["funcao"], n(l["mediana_ms"], 0)) for l in cat],
-             "**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo."))
+             "**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo. "
+             "A montagem do índice é medida com uma réplica: ela acontece uma vez "
+             "e repeti-la mediria o cache."))
     w("""
 A montagem do índice do ClinVar é o maior item, e medi-la junto do primeiro
 arquivo produzia uma curva de anotação que **descia** de mil para 25 mil
@@ -265,7 +269,11 @@ if lote:
                n(float(l["lote_ms"]) / 1000, 2) if l.get("lote_ms") else "—",
                n(l.get("individual_retido_mb"), 0), n(l.get("lote_retido_mb"), 0),
                n(l.get("ganho_retido"), 1)) for l in lote],
-             "**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários."))
+             f"**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários. "
+             f"Réplicas: {lote[0].get('repeticoes', '—')}. Teto de heap: "
+             f"{n(lote[0].get('teto_heap_mb'), 0)} MB, acima do que um navegador "
+             f"oferece: com o teto padrão do Node o caminho individual não "
+             f"termina a coorte de cinquenta."))
 
 w("\n### 3.5 Reprodutibilidade\n")
 w(figura("fig4_reprodutibilidade.png", 4,

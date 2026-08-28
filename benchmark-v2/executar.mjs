@@ -89,6 +89,12 @@ const heapMB = () => {
   return process.memoryUsage().heapUsed / 1048576
 }
 
+// Teto de heap desta rodada, gravado em toda linha. Sem isso `funcoes.csv`
+// acumula medidas de execucoes com tetos diferentes e a mediana do arquivo passa
+// a misturar condicoes, que e exatamente o erro que a secao de metodo do artigo
+// diz ter corrigido.
+const TETO_HEAP_MB = Math.round(v8.getHeapStatistics().heap_size_limit / 1048576)
+
 const linhas = []
 
 // Grava a cada arquivo terminado, e nao so no fim. O 1000 Genomes chrY derrubou
@@ -132,6 +138,7 @@ async function medir(arquivo, etapa, funcao, fn, n = REPETICOES, extra = {}) {
     desvio_ms: +desvio(tempos).toFixed(3),
     heap_delta_mb: +(heapMB() - antes).toFixed(2),
     anotacao_ativa: ANOTACAO_ATIVA,
+    teto_heap_mb: TETO_HEAP_MB,
     erro,
     ...extra,
   }
