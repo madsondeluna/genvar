@@ -1516,8 +1516,10 @@ Números medidos, não estimados:
 | Triagem neonatal | 4 doenças |
 | Prevalência brasileira | 4 doenças |
 | Frequência alélica brasileira (ABraOM) | 0 variantes; a camada existe e está vazia |
-| Limite de taxa na API | ausente |
-| Contas, exportação e dados próprios | fora do escopo do beta |
+| Limite de taxa na API | **implementado**: 60/min e 10/s por IP, com o IP lido a partir do fim do X-Forwarded-For |
+| Exportação de dados próprios | **implementada** no módulo de VCF: laudo em PDF, VCF anotado, CSV, TSV, XLSX e JSON |
+| Contas e dados por usuário | fora do escopo, e por decisão: o módulo de VCF não guarda nada porque o arquivo não sobe |
+| Procedência dos sumários de burden | não registrada; os números não devem ser citados como resultado de estudo |
 
 A camada brasileira é o que separa o GenVar de um agregador a mais, e ela está 0,2% construída. Enquanto isso não mudar, a posição defensável do projeto é a de ferramenta em português, não a de ferramenta brasileira.
 
