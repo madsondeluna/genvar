@@ -723,6 +723,20 @@ genvar-dashboard/
 │   │   ├── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
 │   │   └── figures/                 Figuras comparativas local vs Docker (fig_cmp_*).
 │   └── metrics/                     Dados, figuras, diagramas e scripts da metrificação do TCC.
+├── benchmark-v2/                    Benchmark da plataforma: o pipeline de VCF, não a API.
+│   ├── executar.mjs                 Toda função do pipeline, sobre todo arquivo do corpus.
+│   ├── reprodutibilidade.mjs        Mesma entrada, mesmo laudo: seis critérios binários.
+│   ├── lote.mjs                     Lote contra arquivo a arquivo: tempo, pico e memória retida.
+│   ├── cache.py                     Consulta de gene e variante, com cache e sem cache.
+│   ├── ganho.py                     Anotar a mão contra anotar na plataforma.
+│   ├── infra.py                     Catálogos, limitador de taxa e pacote entregue.
+│   ├── figuras.py                   Figuras no guia da Nature, com teste de recorte.
+│   ├── gerar_relatorio.py           Monta o RELATORIO.md a partir dos CSVs.
+│   ├── corpus/gerar.py              Doze VCF determinísticos, 8% vindos do ClinVar embarcado.
+│   ├── suites/                      dados.py, limite.py e build.py, chamadas pelo infra.py.
+│   ├── resultados/                  CSVs de cada suíte, versionados.
+│   ├── figuras/                     PNGs no tamanho final de publicação.
+│   └── RELATORIO.md                 Relatório gerado, com todas as tabelas e figuras.
 ├── deploy/                          Blueprint Render e worker Cloudflare para o /beta.
 ├── docs/                            Diagramas de arquitetura e fluxo (SVG das Figuras 1 e 2).
 ├── imgs/                            Logos das fontes de dados.
@@ -1197,7 +1211,42 @@ O gerador também produz um arquivo deliberadamente ruim, com balanço alélico 
 
 ## Validação quantitativa (suite de benchmark)
 
-Esta seção descreve o plano de metrificação do GenVar desenvolvido para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre o desempenho, a confiabilidade e o valor de agregação da ferramenta, organizadas em seis suítes automatizadas que geram arquivos CSV e figuras PNG prontos para uso no trabalho escrito e na apresentação para a banca.
+Esta seção descreve a metrificação do GenVar desenvolvida para o TCC. O objetivo é produzir evidências quantitativas reprodutíveis sobre desempenho, confiabilidade e reprodutibilidade da ferramenta, em arquivos CSV e figuras PNG prontos para o trabalho escrito e para a apresentação à banca.
+
+São **duas suítes, em duas pastas**, e a divisão é por objeto de medida:
+
+| Pasta | Mede | Escopo |
+|---|---|---|
+| `benchmark/` | A API: latência, exaustão, tratamento de erro, completude e enriquecimento de payload | Seis suítes, executadas contra o backend |
+| `benchmark-v2/` | A plataforma: cada função do pipeline de VCF, sobre um corpus de doze arquivos sintéticos e quatro arquivos reais, mais reprodutibilidade, lote contra individual, cache e catálogos | Sete suítes, a maioria executada no próprio pipeline do navegador |
+
+A primeira nasceu com a versão 2.0 e continua válida: ela cobre o que a API faz. A segunda existe porque a primeira não alcança nada do módulo de VCF, que é onde está o trabalho pesado desta versão, e que até então não tinha um único número medido.
+
+### Benchmark da plataforma (`benchmark-v2/`)
+
+Relatório completo, com todas as tabelas e figuras, em [`benchmark-v2/RELATORIO.md`](benchmark-v2/RELATORIO.md). Metodologia e como reproduzir em [`benchmark-v2/README.md`](benchmark-v2/README.md).
+
+**Corpus.** Doze arquivos sintéticos determinísticos, cada um existente para exercitar um caminho que os outros não alcançam: escala de mil a 600 mil variantes, entrada em `.gz` e em `.zip`, GRCh37, build não declarado, trio com os números de herança plantados no cabeçalho, arquivo com defeitos de rotina e arquivo com cinco amostras. **8% de cada um vem das próprias tabelas do ClinVar embarcado**, e a razão é uma correção de método: a primeira versão usava posição e rsID sorteados, casou 16 variantes em 400.000 e divergiu em 58, ou seja, exercitava o ramo "rsID conhecido, alelo não confere" e deixava resumo clínico, critérios ACMG, filtro por painel e a largura das linhas exportadas medindo o caso vazio.
+
+Mais quatro arquivos reais, de fontes públicas, nunca versionados: o benchmark GIAB HG002 v4.2.1 em GRCh38 (149 MB), um exoma GIAB/NIST em GRCh37, o cromossomo Y do 1000 Genomes com 1.233 amostras, e o arquivo de casos de borda do htslib. O corpus sintético controla a variável; os reais provam que o controle não inventou um mundo mais fácil que o real.
+
+**Reprodutibilidade.** Seis critérios binários por arquivo: TSV, CSV e VCF anotado byte a byte idênticos entre duas execuções; métricas invariantes à ordem das linhas da entrada, verificada com embaralhamento determinístico; e o artefato carregando o SHA-256 da entrada e a versão da compilação do ClinVar. Nove de nove arquivos satisfazem os seis. É a metade da promessa que tempo nenhum mede: um fluxo com oito portais abertos e cópia e cola não tem como sustentá-la.
+
+**Lote contra individual.** Cem arquivos de 25.000 variantes: o caminho individual leva 28,9 s e retém 1.766 MB; o lote leva 19,3 s e retém 53 MB. A memória retida do individual cresce linearmente com a coorte e a do lote não, porque cada arquivo é lido, anotado, resumido e descartado. O ganho de tempo, porém, **depende do cenário**: numa coorte em que todos os arquivos cobrem os mesmos cromossomos, o índice do ClinVar é montado uma vez nos dois caminhos e o lote não acelera nada; numa coorte de painéis dirigidos, cada arquivo pagaria a própria montagem, e a união de cromossomos do lote vira ganho. Os dois cenários estão medidos.
+
+**Cache.** Busca por gene: 4,92 s sem cache contra 5 ms com, fator 1.036. Busca por variante: 2,52 s contra 2 ms, fator 1.174. Sem cache a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant; com cache é uma leitura do Redis.
+
+**Limites encontrados.** Medir até quebrar é parte do método, e três limites apareceram:
+
+- **O teto de leitura conta variantes, não genótipos.** A aplicação corta em 400.000 variantes e ignora o número de amostras. O cromossomo Y do 1000 Genomes tem 1.233 amostras: 400.000 variantes dele seriam 493 milhões de genótipos, e o processo morre antes de terminar de ler. O teto correto seria em variantes vezes amostras.
+- **`Math.max(...vetor)` estoura a pilha a 400 mil elementos.** Encontrado pelo próprio benchmark, dentro do cálculo de um histograma: espalhar um vetor num argumento gasta uma posição de pilha por item. Corrigido por laço, e o mesmo padrão foi corrigido no Manhattan plot da página de associação.
+- **Cinquenta exomas não cabem no caminho individual** com o limite de memória padrão do Node.
+
+**Figuras.** No guia da Nature Portfolio: coluna simples 89 mm, coluna dupla 183 mm, sans-serif de 5 a 7 pt, paleta NPG. A figura é desenhada no tamanho final, em milímetros, porque desenhar grande e encolher derruba o corpo do texto junto. `figuras.py` grava cada figura duas vezes, uma no tamanho declarado e outra em `bbox_inches='tight'`, e falha o build se a segunda for maior: `bbox_inches=None` é obrigatório para o tamanho final sair certo, e o preço é que qualquer elemento fora da caixa some cortado, sem aviso. Barra empilhada em eixo logarítmico não existe aqui, porque o comprimento aparente de cada segmento dependeria de onde ele começa.
+
+### Benchmark da API (`benchmark/`)
+
+O que segue descreve a suíte da versão 2.0, ainda válida para os endpoints.
 
 Todas as suítes usam um conjunto de teste padronizado para o MVP (produto mínimo viável) definido em `suites/_targets.py`: 10 genes (MLH1, HBB, MSH2, VHL, LDLR, RB1, BRCA1, TP53, CFTR, PAH) e 10 variantes (rs334, rs1800562, rs6025, rs1799853, rs429358, rs1801133, rs1042522, rs5030858, rs28929474, rs121913529), escolhidos por cobertura das fontes e diversidade clínica. As coordenadas das variantes são GRCh38 (a correção de uma versão anterior em GRCh37, que fazia as chamadas manuais ao gnomAD retornarem vazio).
 
@@ -1206,7 +1255,7 @@ O mesmo conjunto é medido em dois ambientes para quantificar o custo da contain
 Todos os scripts estão no diretório `benchmark/`.
 
 
-### Pré-requisitos
+#### Pré-requisitos
 
 ```bash
 python3 --version     # 3.12 ou superior
@@ -1233,7 +1282,7 @@ uvicorn app.main:app --reload --port 8000
 **Nota sobre Redis**: as suítes de latência, exaustão e comparativo fazem flush do Redis para garantir runs a frio controlados. Sem Redis, as métricas de speedup de cache não são coletadas, mas as demais métricas funcionam normalmente.
 
 
-### Execução
+#### Execução
 
 ```bash
 cd benchmark
@@ -1263,7 +1312,7 @@ python plot_comparison.py                          # figuras comparativas   -> r
 Nas tabelas de saída das suítes abaixo, `results/` refere-se ao diretório do ambiente medido (`results/local/` por padrão; `results/docker/` na execução conteinerizada).
 
 
-### Suíte 1: Latência (`suites/latency.py`)
+#### Suíte 1: Latência (`suites/latency.py`)
 
 **O que valida**: o tempo de resposta dos dois endpoints principais (`/api/gene/{symbol}` e `/api/variant/{rsid}`) em condições sem cache (cold) e com cache Redis aquecido (warm).
 
@@ -1292,7 +1341,7 @@ Nas tabelas de saída das suítes abaixo, `results/` refere-se ao diretório do 
 **Como interpretar**: valores de cold entre 2 s e 8 s são esperados, pois envolvem até cinco chamadas externas, das quais até três em paralelo. Valores de warm abaixo de 50 ms confirmam que o Redis está ativo. Um speedup de 50x ou mais é normal para queries com cache.
 
 
-### Suíte 2: Exaustão (`suites/exhaustion.py`)
+#### Suíte 2: Exaustão (`suites/exhaustion.py`)
 
 **O que valida**: o comportamento do sistema sob carga crescente, tanto em requisições sequenciais a taxas controladas quanto em rajadas concorrentes.
 
@@ -1315,7 +1364,7 @@ Nas tabelas de saída das suítes abaixo, `results/` refere-se ao diretório do 
 **Como interpretar**: na fase concorrente com cache, o sistema deve responder em menos de 100 ms mesmo com 20 requisições simultâneas, pois o Redis absorve a carga sem acionar APIs externas. Na fase sequencial a frio, o gargalo é o rate limit das APIs externas; erros a 2 req/s indicam que o sistema está no limite do Ensembl sem chave de API.
 
 
-### Suíte 3: Tratamento de erros (`suites/errors.py`)
+#### Suíte 3: Tratamento de erros (`suites/errors.py`)
 
 Esta suíte não procura defeitos no GenVar; ela confirma o contrário. O objetivo é mostrar que a plataforma reage de forma correta quando recebe uma entrada errada (um nome de gene impossível, um rs ID mal formado), recusando-a com uma resposta clara em vez de quebrar. Por isso, os códigos 404 e 422 que aparecem nas tabelas abaixo são o resultado esperado e desejado: a API informando que a entrada não é válida. O que seria um problema de fato é um erro 500 (servidor quebrado), e a suíte verifica justamente que isso nunca ocorre. Entradas válidas escritas de formas diferentes (maiúsculas ou minúsculas) são normalizadas e retornam 200.
 
@@ -1358,7 +1407,7 @@ Para `/api/variant/*`:
 **Como interpretar**: todos os 14 casos devem passar (100% de acerto). Aqui, passar significa que a API respondeu com o código certo para cada entrada, ou seja, recusou as inválidas e aceitou as válidas, não que ela tenha apresentado erros. Um FAIL indicaria um problema de validação ou normalização de entrada. A ausência de linhas com status 5xx é o resultado mais importante: demonstra que a API é tolerante a entradas adversariais e não quebra diante delas.
 
 
-### Suíte 4: Comparativo manual vs GenVar (`suites/comparison.py`)
+#### Suíte 4: Comparativo manual vs GenVar (`suites/comparison.py`)
 
 **O que valida**: o ganho de tempo que a ferramenta oferece em relação ao fluxo de consulta manual, em que o pesquisador acessa cada banco de dados separadamente.
 
@@ -1407,7 +1456,7 @@ O speedup total inclui uma estimativa de 900 s (15 minutos) de processamento hum
 **Como interpretar**: o `api_speedup` reflete o ganho da execução paralela. Na variante, três chamadas correm em paralelo (gnomAD, ClinVar e MyVariant.info), enquanto o VEP do Ensembl é sequencial e obrigatório antes delas e costuma ser a etapa mais lenta, o que limita o ganho a algo próximo de 1 a 2 vezes. O `total_speedup` é muito maior (centenas de vezes) porque o denominador é o tempo do GenVar em segundos, enquanto o numerador inclui 15 minutos de processamento humano.
 
 
-### Suíte 5: Completude de dados (`suites/completeness.py`)
+#### Suíte 5: Completude de dados (`suites/completeness.py`)
 
 **O que valida**: a fração de campos do schema de resposta que são preenchidos para cada alvo de teste. Identifica quais campos são sistematicamente nulos em todos os alvos, o que caracteriza limitações das APIs externas (não da ferramenta).
 
@@ -1429,7 +1478,7 @@ Alvos testados: os 10 genes e as 10 variantes de `suites/_targets.py`.
 **Como interpretar**: completude abaixo de 80% para um dado alvo indica que alguma API não retornou dados para aquela consulta específica. O arquivo `completeness_null_fields.csv` separado permite distinguir campos que são nulos por limitação da API (fill_rate 0% em todos os alvos) de campos que são nulos apenas para alvos específicos (limitação de cobertura do banco de dados para aquele gene ou variante).
 
 
-### Suíte 6: Enriquecimento de payload (`suites/payload.py`)
+#### Suíte 6: Enriquecimento de payload (`suites/payload.py`)
 
 **O que valida**: a vantagem de agregação da ferramenta, medida pelo número de campos estruturados que o GenVar retorna em uma única chamada comparado ao que cada API individual retorna separadamente.
 
@@ -1465,7 +1514,7 @@ Para genes: Ensembl lookup, UniProt e gnomAD constraint.
 **Como interpretar**: o `enrichment_ratio` mede quantas vezes a resposta do GenVar tem mais campos do que a API individual mais rica. O dado continua em `payload.csv`, mas é interpretado com cautela: a contagem de campos varia muito com o que cada fonte devolve no momento e não corresponde linearmente ao valor para o usuário.
 
 
-### Outputs completos da suite
+#### Outputs completos da suite
 
 | Arquivo CSV | Suite | Descrição |
 |---|---|---|
