@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import Icon from '../components/Icon'
 import PageNav from '../components/PageNav'
 import NgsPipeline from '../components/NgsPipeline'
+import FerramentasVcf from '../components/FerramentasVcf'
 import VcfReport from '../components/VcfReport'
 import { lerVCF, extrairDoZip } from '../vcf/parse'
 import { resumo, indiceDeGenes, geneDaPosicao } from '../vcf/metricas'
@@ -217,6 +218,8 @@ export default function VcfPage() {
           </p>
           <h1 className="display text-40">VCF</h1>
         </header>
+
+        <FerramentasVcf />
 
         {/* Abertura em fluxo contínuo na faixa inteira. Estava em duas colunas
             lado a lado, e ler uma coluna até o fim para voltar ao topo da outra

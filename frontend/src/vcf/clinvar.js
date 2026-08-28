@@ -103,6 +103,11 @@ export async function carregarIndice() {
   return indice
 }
 
+// Índice indisponível é ausência de anotação, não falha da análise. Sem isto um
+// lote inteiro caía porque a rede não respondeu: as métricas de qualidade não
+// dependem do ClinVar e continuam válidas sem ele.
+const CAMADA_VAZIA = { porRs: new Map(), porPos: new Map(), rsSemAlelo: new Map() }
+
 // Descompacta um turno colunar em duas tabelas de busca: uma por rsID e outra
 // por coordenada. Objeto por variante seria mais legível e não passa: são
 // centenas de milhares de linhas por cromossomo.
@@ -136,7 +141,14 @@ const cache = new Map()
 async function camada(nome, cromossomos, onProgresso) {
   const chave = `${nome}:${[...cromossomos].sort().join()}`
   if (cache.has(chave)) return cache.get(chave)
-  const idx = await carregarIndice()
+  const idx = await carregarIndice().catch((e) => {
+    console.error(`ClinVar: índice indisponível (${e.message}); a anotação fica vazia`)
+    return null
+  })
+  if (!idx?.camadas?.[nome]) {
+    cache.set(chave, CAMADA_VAZIA)
+    return CAMADA_VAZIA
+  }
   const existentes = cromossomos.filter((c) => idx.camadas[nome]?.[c])
   // Em paralelo, mas relatando cada um que termina: a camada de significado
   // incerto passa de meio minuto, e sem progresso a tela fica igual do começo
@@ -182,8 +194,14 @@ async function camada(nome, cromossomos, onProgresso) {
 // Anota em bloco. `camadas` decide o que entra: a de aviso é a que a página
 // carrega sempre, as outras duas entram quando o usuário pede, porque VUS
 // sozinha tem 1,3 milhão de linhas.
-export async function anotar(variantes, { camadas = ['aviso'], build = null, onProgresso } = {}) {
-  const cromossomos = [...new Set(variantes.map((v) => v.chrom))]
+export async function anotar(variantes, {
+  camadas = ['aviso'], build = null, onProgresso, cromossomos: forcados = null,
+} = {}) {
+  // Em lote, o chamador passa a UNIÃO dos cromossomos de todos os arquivos. A
+  // chave do cache é o conjunto pedido, então deixar cada arquivo pedir o seu
+  // remonta o índice inteiro a cada um: com seis arquivos de conjuntos
+  // diferentes, são seis expansões de meio milhão de linhas em vez de uma.
+  const cromossomos = forcados || [...new Set(variantes.map((v) => v.chrom))]
   const podeCoordenada = build === 'GRCh38'
   let casadas = 0
   let divergentes = 0
