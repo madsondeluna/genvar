@@ -22,8 +22,19 @@ client.interceptors.response.use(
   }
 )
 
+// DUAS chamadas, e a divisão é o que faz a página aparecer.
+//
+// O `overlap` do Ensembl, que lista as variantes do gene, mediu de 2,3 s a 43 s
+// para o MESMO gene em chamadas seguidas, e devolve 72 mil variantes num gene
+// como o SCN1A. Numa chamada só, nada da página existia enquanto ele não
+// voltasse, e a tela ficava em branco por dezenas de segundos.
 export const fetchGene = async (symbol) => {
-  const { data } = await client.get(`/gene/${symbol}`)
+  const { data } = await client.get(`/gene/${symbol}`, { params: { variantes: false } })
+  return data
+}
+
+export const fetchGeneVariants = async (symbol) => {
+  const { data } = await client.get(`/gene/${symbol}/variants`, { timeout: 120000 })
   return data
 }
 

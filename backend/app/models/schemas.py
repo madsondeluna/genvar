@@ -24,6 +24,26 @@ class VariantBin(BaseModel):
     other: int = 0
 
 
+class GeneVariantsResponse(BaseModel):
+    """So a parte de variantes da pagina de gene.
+
+    Separada porque e a lenta: o `overlap` do Ensembl mediu de 2,3 s a 43 s para
+    o mesmo gene, e enquanto ele nao volta a pagina inteira ficava sem nada.
+    """
+    total_variants: int = 0
+    pathogenic_count: int = 0
+    vus_count: int = 0
+    benign_count: int = 0
+    other_count: int = 0
+    pathogenic_variants: List[GeneVariant] = []
+    vus_variants: List[GeneVariant] = []
+    benign_variants: List[GeneVariant] = []
+    other_variants: List[GeneVariant] = []
+    variant_distribution: List[VariantBin] = []
+    variant_bin_size: Optional[int] = None
+    displayed_variants: int = 0
+
+
 class GeneResponse(BaseModel):
     gene_symbol: str
     gene_id: str

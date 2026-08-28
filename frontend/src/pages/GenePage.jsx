@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { fetchGene } from '../api/client'
+import { fetchGene, fetchGeneVariants } from '../api/client'
 import ErrorAlert from '../components/ErrorAlert'
 import ConstraintMetrics from '../components/ConstraintMetrics'
 import GeneLocusHeatmap from '../components/GeneLocusHeatmap'
@@ -83,8 +83,12 @@ function InfoRow({ label, value, hint }) {
 function StatCard({ label, value, hint, statusClass }) {
   return (
     <div className="flex flex-col gap-4 p-16 border border-border rounded-media">
+      {/* `value || 0` transformava ausência em zero, e aqui os dois significam
+          coisas opostas: zero variantes patogênicas é um resultado, e ausência
+          é "a consulta ainda não voltou". Enquanto ela corre, o cartão mostra
+          um traço. */}
       <span className="text-24 font-medium text-text num">
-        {(value || 0).toLocaleString('pt-BR')}
+        {value == null ? '—' : value.toLocaleString('pt-BR')}
       </span>
       {statusClass ? (
         <span className={`status ${statusClass} text-12`}>{label}</span>
@@ -100,12 +104,29 @@ export default function GenePage() {
   const { symbol } = useParams()
   const { push } = useSearchHistory()
 
-  const { data, isLoading, error } = useQuery({
+  const { data: base, isLoading, error } = useQuery({
     queryKey: ['gene', symbol],
     queryFn: () => fetchGene(symbol),
     retry: 1,
     staleTime: 1000 * 60 * 10,
   })
+
+  // As variantes vêm DEPOIS do esqueleto, e o `enabled` é o que garante isso.
+  //
+  // Disparadas junto, as duas consultas competem pelo mesmo limite de uso do
+  // Ensembl e uma atrasa a outra: medido no SCN1A, em paralelo o esqueleto
+  // levou 31 s e as variantes 21 s; sozinhas, 5,9 s e 18,2 s. Encadeando, a
+  // página aparece em 6 s e as tabelas preenchem depois, em vez de tudo
+  // esperar pelo pior caso das duas.
+  const { data: vars, isLoading: carregandoVars } = useQuery({
+    queryKey: ['gene-variants', symbol],
+    queryFn: () => fetchGeneVariants(symbol),
+    enabled: Boolean(base?.gene_id),
+    retry: 1,
+    staleTime: 1000 * 60 * 10,
+  })
+
+  const data = useMemo(() => (base ? { ...base, ...(vars || {}) } : base), [base, vars])
 
   useEffect(() => {
     if (data?.gene_symbol) push('gene', data.gene_symbol)
@@ -216,37 +237,47 @@ export default function GenePage() {
 
             <section aria-labelledby="variant-summary-title">
               <h2 id="variant-summary-title" className="section-title mb-4">Resumo de variantes</h2>
+              {/* O ESTADO DE ESPERA e obrigatorio aqui, e nao enfeite. A
+                  consulta de variantes vem em separado justamente por ser lenta,
+                  e sem dizer que ela esta a caminho a secao aparece com zero em
+                  todos os campos: zero variantes e um resultado possivel, entao
+                  o leitor nao tem como distinguir "ainda nao chegou" de "nao
+                  existe". */}
               <p className="text-12 mb-12">
-                Variantes do gene catalogadas no Ensembl, agrupadas pela classificação clínica do
-                ClinVar. As cores seguem o gráfico de distribuição.
+                {carregandoVars
+                  ? 'Buscando as variantes deste gene no Ensembl. Em genes grandes a consulta '
+                    + 'passa de dez segundos, porque a fonte devolve todas as variantes '
+                    + 'registradas na região.'
+                  : 'Variantes do gene catalogadas no Ensembl, agrupadas pela classificação '
+                    + 'clínica do ClinVar. As cores seguem o gráfico de distribuição.'}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-16">
                 <StatCard
                   label="Total"
-                  value={data.total_variants}
+                  value={carregandoVars ? null : data.total_variants}
                   hint="Todas as variantes já registradas neste gene."
                 />
                 <StatCard
                   label="Patogênicas"
-                  value={data.pathogenic_count}
+                  value={carregandoVars ? null : data.pathogenic_count}
                   statusClass="status-critical"
                   hint="Causam ou contribuem para doença."
                 />
                 <StatCard
                   label="VUS"
-                  value={data.vus_count}
+                  value={carregandoVars ? null : data.vus_count}
                   statusClass="status-warning"
                   hint="Significado incerto: evidência ainda insuficiente."
                 />
                 <StatCard
                   label="Benignas"
-                  value={data.benign_count}
+                  value={carregandoVars ? null : data.benign_count}
                   statusClass="status-good"
                   hint="Sem efeito conhecido sobre a saúde."
                 />
                 <StatCard
                   label="Sem classificação"
-                  value={data.other_count}
+                  value={carregandoVars ? null : data.other_count}
                   statusClass="status-none"
                   hint="Ainda sem avaliação clínica no ClinVar."
                 />
