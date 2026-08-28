@@ -104,6 +104,30 @@
   white-space: nowrap;
 }
 
+/* RELEVO DO CARTÃO NOS DOIS MODOS ESCUROS.
+   
+   Medido: entre o fundo e a superfície havia 1,30:1 no grafite e 1,33:1 no azul.
+   Essas duas casas decimais são a razão de a borda do cartão sumir e a página
+   ler como um bloco só. Subindo a superfície um degrau da rampa, o relevo vai a
+   1,51:1 e 1,54:1.
+   
+   O que segura o degrau é o texto apagado sobre o cartão, que a linguagem exige
+   em 4,5:1 no mínimo. Medido nos dois depois da troca: 4,72:1 no grafite e
+   4,60:1 no azul. Passa, com pouca folga, e é por isso que o degrau é UM: o
+   seguinte (graphite-800) derruba os dois abaixo do piso.
+   
+   A deviação mora AQUI e não no `pure/tokens.css`, que é cópia da linguagem e
+   fica igual ao que ela publica. Uma alteração enterrada na cópia se perde na
+   próxima atualização dos arquivos e ninguém sabe que existiu. */
+:root.dark,
+:root.deep-blue {
+  --surface: var(--graphite-820);
+}
+
+:root.deep-blue {
+  --surface: var(--slate-820);
+}
+
 /* fora de @layer para vencer o patterns.css, que é não-camadado */
 .status-good { color: var(--state-good); }
 .status-warning { color: var(--state-warning); }

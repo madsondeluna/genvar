@@ -18,8 +18,8 @@ localizamos medem tempo de resposta de servidor.
 **Results.** Foram medidas todas as funções do pipeline sobre um corpus de doze
 arquivos sintéticos determinísticos e quatro arquivos reais de fontes públicas,
 mais as rotas da API com 10 réplicas
-por rota. A leitura de 400.000 variantes leva 2.112 ms
-e o cruzamento com o ClinVar embarcado 799 ms, com
+por rota. A leitura de 400.000 variantes leva 6.902 ms
+e o cruzamento com o ClinVar embarcado 2.050 ms, com
 o índice já montado. Em coorte de cem exomas, o processamento em lote retém
 54 MB contra 1.766 MB
 do caminho arquivo a arquivo, um fator de 33,0.
@@ -134,31 +134,31 @@ típico.
 
 | Arquivo | Variantes | Leitura (ms) | p95 (ms) | Variantes/s | Memória (MB) |
 |---|---|---|---|---|---|
-| 01-pequeno.vcf | 1.000 | 10 | 12 | 102.680 | 1 |
-| 02-medio.vcf | 25.000 | 108 | 123 | 231.655 | 17 |
-| 06-medio.vcf.gz | 25.000 | 95 | 108 | 264.206 | 18 |
-| 07-medio.zip | 25.000 | 93 | 102 | 267.835 | 18 |
-| 08-grch37.vcf | 25.000 | 88 | 90 | 283.846 | 18 |
-| 09-sem-build.vcf | 25.000 | 82 | 86 | 303.804 | 18 |
-| 03-exoma.vcf | 100.000 | 319 | 349 | 313.491 | 71 |
-| 04-grande.vcf | 400.000 | 2.112 | 2.327 | 189.419 | 287 |
-| 05-acima-do-teto.vcf | 600.000 | 1.991 | 2.107 | 200.879 | 287 |
+| 01-pequeno.vcf | 1.000 | 12 | 77 | 82.981 | 1 |
+| 02-medio.vcf | 25.000 | 596 | 697 | 41.959 | 18 |
+| 06-medio.vcf.gz | 25.000 | 740 | 2.237 | 33.766 | 18 |
+| 07-medio.zip | 25.000 | 281 | 362 | 88.854 | 18 |
+| 08-grch37.vcf | 25.000 | 273 | 441 | 91.674 | 18 |
+| 09-sem-build.vcf | 25.000 | 206 | 421 | 121.226 | 18 |
+| 03-exoma.vcf | 100.000 | 1.169 | 1.696 | 85.563 | 71 |
+| 04-grande.vcf | 400.000 | 6.902 | 13.767 | 57.953 | 287 |
+| 05-acima-do-teto.vcf | 600.000 | 19.433 | 43.214 | 20.583 | 287 |
 
-**Tabela 2.** Leitura do VCF por escala.
+**Tabela 2.** Leitura do VCF por escala. Réplicas: 3. Teto de heap: 12.480 MB.
 
 
 ### 3.2 Custo fixo de sessão
 
 | Etapa | Tempo (ms) |
 |---|---|
-| carregar painéis | 13 |
-| carregar símbolos | 19 |
-| carregar ClinGen | 13 |
-| carregar CPIC | 28 |
-| índice de genes | 4 |
-| montagem do índice ClinVar | 904 |
+| carregar painéis | 45 |
+| carregar símbolos | 76 |
+| carregar ClinGen | 50 |
+| carregar CPIC | 103 |
+| índice de genes | 11 |
+| montagem do índice ClinVar | 3.948 |
 
-**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo.
+**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo. A montagem do índice é medida com uma réplica: ela acontece uma vez e repeti-la mediria o cache.
 
 
 A montagem do índice do ClinVar é o maior item, e medi-la junto do primeiro
@@ -207,7 +207,7 @@ coorte na seção 3.4.
 | painel dirigido | 50 | 1,33 | 1,97 | 120 | 14 | 8,7 |
 | painel dirigido | 100 | 3,17 | 2,80 | 241 | 28 | 8,7 |
 
-**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários.
+**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários. Réplicas: 3. Teto de heap: 12.480 MB, acima do que um navegador oferece: com o teto padrão do Node o caminho individual não termina a coorte de cinquenta.
 
 
 ### 3.5 Reprodutibilidade

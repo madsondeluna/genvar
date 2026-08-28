@@ -25,21 +25,27 @@ const LINKS = [
   { to: '/colabore', label: 'Colabore', icon: 'users' },
 ]
 
-// Alterna entre o modo claro e o escuro (grafite neutro da linguagem Pure).
-// Controle so de icone: o rotulo acessivel fica no botao, nao no desenho.
+// Cicla os tres modos de cor: claro, azul profundo e grafite.
+//
+// Deixou de ser um interruptor de dois estados, entao `aria-pressed` saiu: ele
+// descreve ligado ou desligado, e um controle de tres posicoes anunciado assim
+// mente para o leitor de tela. O rotulo diz o modo ATUAL e para onde o toque
+// leva, que e o que o interruptor booleano nao precisava dizer.
+const PROXIMO = { light: 'azul profundo', 'deep-blue': 'grafite', dark: 'claro' }
+const NOME = { light: 'Claro', 'deep-blue': 'Azul profundo', dark: 'Grafite' }
+const ICONE = { light: 'sun', 'deep-blue': 'moon', dark: 'moon' }
+
 function ColorModeToggle() {
   const mode = useColorMode()
-  const dark = mode === 'dark'
   return (
     <button
       type="button"
       onClick={toggleColorMode}
       className="pill pill-sm hit"
-      aria-pressed={dark}
-      aria-label={dark ? 'Mudar para o modo claro' : 'Mudar para o modo escuro'}
-      title={dark ? 'Modo claro' : 'Modo escuro'}
+      aria-label={`Modo de cor: ${NOME[mode] || 'claro'}. Mudar para ${PROXIMO[mode] || 'escuro'}`}
+      title={`${NOME[mode] || 'Claro'} · mudar para ${PROXIMO[mode] || 'escuro'}`}
     >
-      <Icon name={dark ? 'sun' : 'moon'} />
+      <Icon name={ICONE[mode] || 'sun'} />
     </button>
   )
 }

@@ -8,8 +8,8 @@ mão, para não divergir dos dados ao lado.
 |---|---|
 | Node | v25.8.2 |
 | Plataforma | darwin arm64 |
-| Repetições por medida, suíte de funções | 2 |
-| Teto de heap, suíte de funções | — MB |
+| Repetições por medida, suíte de funções | 3 |
+| Teto de heap, suíte de funções | 12480 MB |
 | Anotação clínica ativa | sim |
 | Medições registradas | 352 |
 
@@ -52,9 +52,9 @@ das linhas exportadas medindo o caso vazio.
 
 | Arquivo | Variantes lidas | Build | Leitura | Casadas no ClinVar | Observação |
 |---|---|---|---|---|---|
-| nist-usuario.vcf.gz | 30.009 | GRCh37 | 222,0 ms | 131 |  |
-| htslib-teste.vcf | 323 | GRCh37 | 2,7 ms | 0 |  |
-| giab-hg002-grch38.vcf.gz | 400.000 | GRCh38 | 11.220,3 ms | 42 | truncado no teto |
+| nist-usuario.vcf.gz | 30.009 | GRCh37 | 397,9 ms | 131 |  |
+| htslib-teste.vcf | 323 | GRCh37 | 3,5 ms | 0 |  |
+| giab-hg002-grch38.vcf.gz | 400.000 | GRCh38 | 21.835,8 ms | 42 | truncado no teto |
 | 1000g-chrY.vcf.gz | não coube | — | — | — | acima do teto de genotipos desta rodada |
 
 
@@ -77,12 +77,12 @@ das linhas exportadas medindo o caso vazio.
 
 | Etapa | Tempo mediano |
 |---|---|
-| carregar painéis | 13,2 ms |
-| carregar símbolos | 18,7 ms |
-| carregar ClinGen | 13,1 ms |
-| carregar CPIC | 27,8 ms |
-| índice de genes | 3,9 ms |
-| montagem do índice ClinVar | 903,6 ms |
+| carregar painéis | 45,1 ms |
+| carregar símbolos | 75,7 ms |
+| carregar ClinGen | 50,0 ms |
+| carregar CPIC | 103,3 ms |
+| índice de genes | 10,8 ms |
+| montagem do índice ClinVar | 3.948,3 ms |
 
 
 A montagem do índice do ClinVar acontece uma vez por conjunto de cromossomos, e
