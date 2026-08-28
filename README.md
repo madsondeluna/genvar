@@ -93,7 +93,7 @@ Além da busca por gene e por variante, a plataforma reúne um conjunto de módu
 - Fonte de dados: Orphanet, via `backend/etl/orphanet.py`, que produz `backend/app/data/orphanet_diseases.json`. O runtime mescla com a curadoria PT-BR de `rare_diseases.py`, que tem prioridade por código Orphanet. Sem o JSON, roda a semente curada. Genes causais enriquecidos ao vivo pela gnomAD.
 - Só entram associações de mutação germinativa causadora. Fator de suscetibilidade e gene candidato ficam em campo separado (`genes_susceptibility`), e entidades marcadas como históricas pelo Orphanet são excluídas.
 - Nomes em português oficial do Orphanet (`pt_product1`): 94% das 3.733 doenças. As demais mantêm o nome em inglês, que é como a fonte o publica.
-- Fenótipos: anotação HPO do Orphanet, restrita ao que é obrigatório ou frequente. Termos em português pela tradução oficial do HPO (7.213 termos, status `OFFICIAL`), complementada por `backend/etl/traducoes/hpo_pt_br.tsv` para os termos que o HPO ainda não traduziu. Cobertura atual das aparições: 64%.
+- Fenótipos: anotação HPO do Orphanet, restrita ao que é obrigatório ou frequente. Termos em português pela tradução oficial do HPO (7.213 termos, status `OFFICIAL`), complementada por `backend/etl/traducoes/hpo_pt_br.tsv` para os termos que o HPO ainda não traduziu (340 termos). Cobertura atual das aparições: 96,2%. Os 617 termos que restam em inglês aparecem 857 vezes, quase todos uma ou duas: é cauda longa, e cada tradução nova rende cada vez menos.
 
 Para gerar o catálogo:
 
