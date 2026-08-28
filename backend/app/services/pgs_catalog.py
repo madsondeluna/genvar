@@ -1,6 +1,40 @@
 import httpx
 from typing import Any, Dict, Optional
 
+# O glossario de metodos ja existe no ETL e e mantido la. Importar em vez de
+# copiar: duas listas do mesmo vocabulario divergem na primeira vez que alguem
+# acrescenta um metodo a uma delas.
+try:
+    from etl.pgscatalog import traduzir_metodo
+except Exception:  # pragma: no cover - o ETL nao acompanha a imagem de runtime
+    def traduzir_metodo(nome):
+        return nome
+
+# Ancestria por extenso, como o catalogo escreve no bloco de desempenho. O bloco
+# de distribuicao usa sigla e e traduzido no front; aqui vem o nome completo.
+ANCESTRIA_PT = {
+    "European": "Europeia",
+    "African": "Africana",
+    "African American or Afro-Caribbean": "Afro-americana ou afro-caribenha",
+    "African unspecified": "Africana não especificada",
+    "East Asian": "Leste asiática",
+    "South Asian": "Sul asiática",
+    "South East Asian": "Sudeste asiática",
+    "Asian unspecified": "Asiática não especificada",
+    "Hispanic or Latin American": "Hispânica ou latino-americana",
+    "Greater Middle Eastern (Middle Eastern, North African or Persian)":
+        "Oriente Médio, Norte da África ou Persa",
+    "Oceanian": "Oceânica",
+    "Native American": "Nativa americana",
+    "Aboriginal Australian": "Aborígene australiana",
+    "Additional Asian Ancestries": "Outras ancestrias asiáticas",
+    "Additional Diverse Ancestries": "Outras ancestrias",
+    "Multi-ancestry (including European)": "Múltiplas, incluindo europeia",
+    "Multi-ancestry (excluding European)": "Múltiplas, excluindo europeia",
+    "Not reported": "Não informada",
+    "NR": "Não informada",
+}
+
 # Identificacao da origem. Servico publico sem User-Agent e a primeira coisa
 # que um mantenedor bloqueia quando precisa cortar trafego anonimo.
 UA = "GenVar/2.0 (+https://github.com/madsondeluna/genvar)"
@@ -53,7 +87,7 @@ async def get_score(score_id: str) -> Optional[Dict[str, Any]]:
         "trait_reported": data.get("trait_reported"),
         "trait_efo": [t.get("label") for t in (data.get("trait_efo") or []) if t.get("label")],
         "n_variants": data.get("variants_number"),
-        "method": data.get("method_name"),
+        "method": traduzir_metodo(data.get("method_name") or "") or None,
         "method_params": data.get("method_params"),
         "genome_build": data.get("variants_genomebuild"),
         # "NR" e como o catalogo grava "nao reportado". Deixar a sigla vazar
@@ -69,7 +103,7 @@ async def get_score(score_id: str) -> Optional[Dict[str, Any]]:
             "journal": pub.get("journal"),
             "year": pub.get("date_publication", "")[:4] if pub.get("date_publication") else None,
             "doi": pub.get("doi"),
-            "pmid": pub.get("PMID"),
+            "pmid": str(pub["PMID"]) if pub.get("PMID") is not None else None,
         },
         "ancestry_dev": ancestries,
         "ancestry_gwas": _fase("gwas"),
@@ -104,7 +138,8 @@ async def get_performance(score_id: str, limite: int = 40):
     for item in payload.get("results", []) or []:
         conjunto = item.get("sampleset") or {}
         amostras = conjunto.get("samples") or []
-        ancestrias = sorted({a.get("ancestry_broad") for a in amostras if a.get("ancestry_broad")})
+        ancestrias = sorted({ANCESTRIA_PT.get(a.get("ancestry_broad"), a.get("ancestry_broad"))
+                             for a in amostras if a.get("ancestry_broad")})
         n = sum(int(a.get("sample_number") or 0) for a in amostras)
         metricas = item.get("performance_metrics") or {}
 

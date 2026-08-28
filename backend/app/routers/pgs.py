@@ -3,10 +3,12 @@
 Semente curada de escores publicos notaveis (renderiza offline) enriquecida ao
 vivo pela API do PGS Catalog. A rota /interplay e registrada antes de /{score_id}.
 """
+import asyncio
+
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import (
     PgsSummary, PgsListResponse, CountItem, PgsScoreDetail, PgsPublication,
-    InterplayItem, InterplayResponse,
+    PgsAncestryPhase, PgsPerformance, InterplayItem, InterplayResponse,
 )
 from app.services import pgs_catalog
 from app.utils.cache import cache_get, cache_set
@@ -47,7 +49,12 @@ async def get_score_detail(score_id: str):
     if not s:
         raise HTTPException(status_code=404, detail="Escore poligenico nao encontrado no catalogo")
 
-    cache_key = f"pgs:v1:{score_id}"
+    # A versao na chave sobe a cada mudanca no que se GRAVA, e nao so no
+    # formato: v2 acrescentou metodo, build, ancestria por fase e desempenho, e
+    # v3 passou a traduzir metodo e ancestria. Reaproveitar a chave devolveria o
+    # registro anterior, sem os campos novos ou ainda em ingles, e a pagina sai
+    # errada sem erro nenhum, que e a falha mais cara de achar.
+    cache_key = f"pgs:v3:{score_id}"
     cached = cache_get(cache_key)
     if cached:
         return PgsScoreDetail(**cached)
@@ -55,25 +62,52 @@ async def get_score_detail(score_id: str):
     n_variants = s.get("n_variants")
     publication = None
     ancestry_dev: dict = {}
+    extras: dict = {}
     live = False
 
     # Enriquecimento ao vivo pelo PGS Catalog (degrada se a fonte estiver fora).
+    # As duas chamadas sao independentes e paralelas: a de desempenho varre as
+    # avaliacoes publicadas e e a mais lenta das duas, entao encadear dobraria a
+    # espera sem necessidade.
     try:
-        data = await pgs_catalog.get_score(score_id)
+        data, desempenho = await asyncio.gather(
+            pgs_catalog.get_score(score_id),
+            pgs_catalog.get_performance(score_id),
+            return_exceptions=True,
+        )
     except Exception:
+        data, desempenho = None, None
+    if isinstance(data, Exception):
         data = None
+    if isinstance(desempenho, Exception) or desempenho is None:
+        desempenho = []
+
     if data:
         live = True
         n_variants = data.get("n_variants") or n_variants
         ancestry_dev = data.get("ancestry_dev") or {}
         pub = data.get("publication") or {}
         publication = PgsPublication(**pub)
+        extras = {
+            "trait_efo": data.get("trait_efo") or [],
+            "method": data.get("method"),
+            "method_params": data.get("method_params"),
+            "genome_build": data.get("genome_build"),
+            "weight_type": data.get("weight_type"),
+            "release_date": data.get("release_date"),
+            "license": data.get("license"),
+            "scoring_file": data.get("scoring_file"),
+            "ancestry_gwas": PgsAncestryPhase(**(data.get("ancestry_gwas") or {})),
+            "ancestry_dist_dev": PgsAncestryPhase(**(data.get("ancestry_dist_dev") or {})),
+            "ancestry_eval": PgsAncestryPhase(**(data.get("ancestry_eval") or {})),
+        }
 
     result = PgsScoreDetail(
         id=s["id"], trait=s["trait"], category=s["category"],
         citation=s.get("citation", ""), short=s.get("short"),
         n_variants=n_variants, publication=publication, ancestry_dev=ancestry_dev,
-        pgs_catalog_url=PGS_URL.format(id=score_id), live=live,
+        performance=[PgsPerformance(**d) for d in desempenho],
+        pgs_catalog_url=PGS_URL.format(id=score_id), live=live, **extras,
     )
     if live:
         cache_set(cache_key, result.model_dump())

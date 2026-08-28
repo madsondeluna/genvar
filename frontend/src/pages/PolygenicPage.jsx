@@ -8,7 +8,6 @@ import { seriesSlot, seriesStyle } from '../utils/seriesSlot'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
 
-const PGS_URL = (id) => `https://www.pgscatalog.org/score/${id}/`
 
 // Pagina do Poligenico: escores PGS (semente curada, detalhe canonico no PGS
 // Catalog) e a relacao raro x poligenico (modulacao de penetrancia), que e o
@@ -118,11 +117,15 @@ export default function PolygenicPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             {scores.map((s) => (
-              <a
+              {/* Link INTERNO. Antes o card levava para a página do PGS
+                  Catalog, e isso entregava a leitura a outro site: o que se
+                  precisa saber sobre um escore está numa API pública, e mandar
+                  o usuário embora para ler é abrir mão da entrega. A
+                  procedência não se perde, ela fica declarada na nossa página,
+                  que também traz o link canônico. */}
+              <Link
                 key={s.id}
-                href={PGS_URL(s.id)}
-                target="_blank"
-                rel="noopener noreferrer"
+                to={`/escore/${s.id}`}
                 className="card tint-series hover-surface flex flex-col gap-8"
                 style={seriesStyle(seriesSlot(s.category, categoryKeys))}
               >
@@ -135,11 +138,13 @@ export default function PolygenicPage() {
                 <span className="flex items-center justify-between gap-8 mt-4">
                   <span className="label">{s.citation}</span>
                   <span className="text-12 flex items-center gap-4">
-                    {s.n_variants != null ? `${s.n_variants.toLocaleString('pt-BR')} variantes` : 'ver no PGS Catalog'}
-                    <Icon name="external" />
+                    {s.n_variants != null
+                      ? `${s.n_variants.toLocaleString('pt-BR')} variantes`
+                      : 'abrir o escore'}
+                    <Icon name="arrow-right" />
                   </span>
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
           <p className="text-12 leading-snug">

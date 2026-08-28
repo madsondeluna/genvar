@@ -6,14 +6,54 @@ import PageNav from '../components/PageNav'
 import ErrorAlert from '../components/ErrorAlert'
 import LoadingSpinner from '../components/LoadingSpinner'
 
-// Faixa do LOEUF: <=0.35 muito restrito (intolerante a perda de funcao),
-// <=0.6 restrito, acima disso tolerante. Mesma convencao da pagina de doenca.
+// Faixa do LOEUF. Mesma convencao da pagina de doenca: <=0.35 muito restrito,
+// <=0.6 restrito, <=1.0 intermediario, acima disso tolerante.
+//
+// A ETIQUETA DIZ O QUE O NUMERO SIGNIFICA, e nao o nome da faixa. "Muito
+// restrito" e vocabulario de quem ja sabe o que LOEUF mede: nao diz restrito a
+// que, nem por que isso importa para quem esta lendo um painel de genes. O que
+// a faixa de fato informa e quanto o gene tolera PERDA DE FUNCAO na populacao
+// geral, e isso muda como se le uma variante encontrada nele: variante que
+// trunca a proteina num gene que nao tolera perda de funcao pesa mais do que a
+// mesma variante num gene que tolera.
+//
+// LOEUF e o limite superior do intervalo de confianca da razao entre variantes
+// de perda de funcao observadas e esperadas no gnomAD. Perto de zero, quase
+// nenhuma foi observada onde muitas eram esperadas: a selecao natural as
+// removeu. Perto de um, observou-se o esperado.
 function loeufBand(v) {
-  if (v == null) return { key: 'neutral', label: 'Sem dado' }
-  if (v <= 0.35) return { key: 'critical', label: 'Muito restrito' }
-  if (v <= 0.6) return { key: 'serious', label: 'Restrito' }
-  if (v <= 1.0) return { key: 'warning', label: 'Intermediario' }
-  return { key: 'good', label: 'Tolerante' }
+  if (v == null) {
+    return {
+      key: 'neutral', label: 'Sem dado', curto: 'sem dado',
+      leitura: 'A restrição deste gene não foi obtida do gnomAD.',
+    }
+  }
+  if (v <= 0.35) {
+    return {
+      key: 'critical', label: 'Não tolera perda de função', curto: 'não tolera LoF',
+      leitura: 'Quase nenhuma variante de perda de função é observada onde muitas seriam '
+        + 'esperadas. Uma variante que trunca a proteína aqui pesa mais na interpretação.',
+    }
+  }
+  if (v <= 0.6) {
+    return {
+      key: 'serious', label: 'Tolera pouca perda de função', curto: 'pouco tolerante',
+      leitura: 'Perda de função é observada abaixo do esperado, mas não é rara. '
+        + 'Achado de truncamento merece atenção, sem o peso do grupo acima.',
+    }
+  }
+  if (v <= 1.0) {
+    return {
+      key: 'warning', label: 'Tolerância intermediária', curto: 'intermediário',
+      leitura: 'Perda de função aparece perto do esperado. A restrição do gene não '
+        + 'acrescenta nem retira peso do achado.',
+    }
+  }
+  return {
+    key: 'good', label: 'Tolera perda de função', curto: 'tolerante',
+    leitura: 'Perda de função é observada no esperado ou acima. Truncamento aqui é '
+      + 'comum na população e, sozinho, não sustenta um achado.',
+  }
 }
 
 function GeneCard({ g }) {
@@ -23,25 +63,36 @@ function GeneCard({ g }) {
       to={`/gene/${g.symbol}`}
       className="card hover-surface flex flex-col gap-8 cursor-pointer"
     >
-      <span className="flex items-center justify-between gap-8">
+      <span className="flex items-center justify-between gap-8 flex-wrap">
         <span className="mono font-medium text-text">{g.symbol}</span>
-        <span className={`pill pill-sm tint-${band.key === 'neutral' ? 'neutral' : band.key}`}>
-          {band.label}
+        {/* A etiqueta leva o VALOR junto do rótulo. Separados, o leitor tem de
+            casar "não tolera" com o 0,18 três linhas abaixo, e a faixa vira uma
+            opinião sem o número que a produziu. */}
+        <span className={`pill pill-sm tint-${band.key === 'neutral' ? 'neutral' : band.key}`}
+          title={band.leitura}>
+          {band.curto}
+          {g.loeuf != null && <span className="mono num"> · LOEUF {g.loeuf.toFixed(2)}</span>}
         </span>
       </span>
       {g.constraint_available ? (
-        <div className="flex gap-16">
-          <span className="flex flex-col">
-            <span className="label">LOEUF</span>
-            <span className="value num">{g.loeuf != null ? g.loeuf.toFixed(2) : '-'}</span>
-          </span>
-          <span className="flex flex-col">
-            <span className="label">pLI</span>
-            <span className="value num">{g.pli != null ? g.pli.toFixed(2) : '-'}</span>
-          </span>
-        </div>
+        <>
+          <div className="flex gap-16">
+            <span className="flex flex-col">
+              <span className="label">LOEUF</span>
+              <span className="value num">{g.loeuf != null ? g.loeuf.toFixed(2) : '-'}</span>
+            </span>
+            <span className="flex flex-col">
+              <span className="label">pLI</span>
+              <span className="value num">{g.pli != null ? g.pli.toFixed(2) : '-'}</span>
+            </span>
+          </div>
+          <span className="text-12 leading-snug">{band.leitura}</span>
+        </>
       ) : (
-        <span className="text-12">Constraint indisponível (fonte externa).</span>
+        <span className="text-12">
+          A restrição deste gene não veio do gnomAD nesta consulta. O gene continua no painel;
+          o que falta é a medida de tolerância a perda de função.
+        </span>
       )}
     </Link>
   )

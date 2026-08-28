@@ -16,6 +16,7 @@ const ProductsPage = lazy(() => import('./pages/ProductsPage'))
 const PanelsPage = lazy(() => import('./pages/PanelsPage'))
 const PanelPage = lazy(() => import('./pages/PanelPage'))
 const PolygenicPage = lazy(() => import('./pages/PolygenicPage'))
+const PolygenicScorePage = lazy(() => import('./pages/PolygenicScorePage'))
 const AssociationPage = lazy(() => import('./pages/AssociationPage'))
 const SourcesPage = lazy(() => import('./pages/SourcesPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="/paineis" element={<PanelsPage />} />
               <Route path="/painel/:id" element={<PanelPage />} />
               <Route path="/poligenico" element={<PolygenicPage />} />
+              <Route path="/escore/:id" element={<PolygenicScorePage />} />
               <Route path="/produtos" element={<ProductsPage />} />
               <Route path="/associacao" element={<AssociationPage />} />
               <Route path="/status" element={<StatusPage />} />
