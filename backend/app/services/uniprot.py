@@ -3,7 +3,9 @@ from typing import Optional
 
 BASE_URL = "https://rest.uniprot.org"
 TIMEOUT = 20.0
-HEADERS = {"User-Agent": "GenVar-Dashboard/1.0 (genvar@bioinformatics.ufmg.br)"}
+# Mesmo contato do NCBI, e pelo mesmo motivo: servico publico escreve antes de
+# bloquear, e so consegue escrever se houver endereco.
+HEADERS = {"User-Agent": "GenVar/2.0 (madsondeluna@gmail.com; +https://github.com/madsondeluna/genvar)"}
 
 
 async def get_uniprot_id(gene_symbol: str) -> Optional[str]:

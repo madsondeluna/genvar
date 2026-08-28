@@ -14,6 +14,15 @@ class Settings(BaseSettings):
     # fazendo um teste de doenca reprovar por 429 e apontar para o lugar errado.
     rate_limit_per_minute: int = 60
     rate_limit_per_second: int = 10
+    # Proxies entre o cliente e a aplicacao. O Render poe um. Rodando local, sem
+    # proxy, o valor e zero e o X-Forwarded-For passa a ser ignorado: sem proxy
+    # nenhum, todo XFF que chega foi o proprio cliente quem escreveu.
+    trusted_proxy_hops: int = 1
+    # Identificacao exigida pelo NCBI em toda chamada ao E-utilities. Sem ela
+    # eles bloqueiam a origem sem aviso, porque nao tem a quem escrever antes.
+    # A chave e opcional e sobe o teto de 3 para 10 requisicoes por segundo.
+    ncbi_email: str = "madsondeluna@gmail.com"
+    ncbi_api_key: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

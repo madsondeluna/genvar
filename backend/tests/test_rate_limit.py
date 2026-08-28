@@ -16,10 +16,10 @@ LIMITE_POR_MINUTO = 12
 LIMITE_POR_SEGUNDO = 4
 
 
-def _app():
+def _app(hops=1):
     a = FastAPI()
-    a.add_middleware(RateLimitMiddleware,
-                     limite_minuto=LIMITE_POR_MINUTO, limite_segundo=LIMITE_POR_SEGUNDO)
+    a.add_middleware(RateLimitMiddleware, limite_minuto=LIMITE_POR_MINUTO,
+                     limite_segundo=LIMITE_POR_SEGUNDO, hops=hops)
 
     @a.get("/api/coisa")
     async def coisa():
@@ -30,6 +30,12 @@ def _app():
         return {"ok": True}
 
     return a
+
+
+def _xff(cliente_forjado, real="203.0.113.9"):
+    """Cadeia como o proxy entrega: o que o cliente mandou, e o proxy acrescenta
+    ao FIM o endereco real da conexao."""
+    return {"x-forwarded-for": f"{cliente_forjado}, {real}"}
 
 
 def test_rajada_no_mesmo_instante_e_barrada():
@@ -86,30 +92,30 @@ def test_ips_distintos_tem_contadores_separados():
     cliente = TestClient(_app())
     # Um IP estoura o teto.
     for _ in range(LIMITE_POR_MINUTO + 2):
-        cliente.get("/api/coisa", headers={"x-forwarded-for": "198.51.100.1"})
+        cliente.get("/api/coisa", headers=_xff("x", "198.51.100.1"))
     assert cliente.get("/api/coisa",
-                       headers={"x-forwarded-for": "198.51.100.1"}).status_code == 429
+                       headers=_xff("x", "198.51.100.1")).status_code == 429
     # O vizinho nao paga por isso.
     assert cliente.get("/api/coisa",
-                       headers={"x-forwarded-for": "198.51.100.2"}).status_code == 200
+                       headers=_xff("x", "198.51.100.2")).status_code == 200
 
 
 def test_sonda_passa_mesmo_com_o_ip_bloqueado():
     cliente = TestClient(_app())
     for _ in range(LIMITE_POR_MINUTO + 2):
-        cliente.get("/api/coisa", headers={"x-forwarded-for": "198.51.100.9"})
+        cliente.get("/api/coisa", headers=_xff("x", "198.51.100.9"))
     assert cliente.get("/api/coisa",
-                       headers={"x-forwarded-for": "198.51.100.9"}).status_code == 429
+                       headers=_xff("x", "198.51.100.9")).status_code == 429
     # Se a sonda tambem fosse limitada, o servico pareceria fora do ar justamente
     # quando alguem esta conferindo se ele esta no ar.
     assert cliente.get("/health",
-                       headers={"x-forwarded-for": "198.51.100.9"}).status_code == 200
+                       headers=_xff("x", "198.51.100.9")).status_code == 200
 
 
 def test_resposta_429_explica_e_traz_retry_after():
     cliente = TestClient(_app())
     for _ in range(LIMITE_POR_MINUTO + 5):
-        r = cliente.get("/api/coisa", headers={"x-forwarded-for": "203.0.113.77"})
+        r = cliente.get("/api/coisa", headers=_xff("198.51.100.1", "203.0.113.77"))
         if r.status_code == 429:
             break
     else:
@@ -121,3 +127,35 @@ def test_resposta_429_explica_e_traz_retry_after():
     # A mensagem tem de dizer POR QUE existe o limite: sem isso, quem bate nele
     # conclui que a aplicacao esta com defeito.
     assert "Ensembl" in corpo["detail"]
+
+
+def test_x_forwarded_for_forjado_nao_burla_o_limite():
+    """O furo que este teste tranca: lendo o PRIMEIRO elemento do
+    X-Forwarded-For, que e o que o cliente escreveu, 60 de 60 requisicoes
+    passavam trocando o cabecalho a cada uma. O limitador barrava script honesto
+    e nao barrava ninguem que estivesse tentando."""
+    cliente = TestClient(_app(hops=1))
+    codigos = [cliente.get("/api/coisa", headers=_xff(f"10.0.0.{i}")).status_code
+               for i in range(LIMITE_POR_MINUTO * 3)]
+    # Passa o teto por SEGUNDO, nao o por minuto: as requisicoes do teste caem
+    # todas no mesmo segundo, e o teto de rajada e o mais apertado dos dois.
+    assert codigos.count(200) == LIMITE_POR_SEGUNDO
+    assert codigos.count(429) == LIMITE_POR_MINUTO * 3 - LIMITE_POR_SEGUNDO
+
+
+def test_cadeia_mais_curta_que_o_esperado_cai_para_o_ip_da_conexao():
+    """Configuracao errada ou caminho que nao passa pelo proxy: em vez de
+    escolher um elemento arbitrario da lista, usa o endereco da conexao."""
+    cliente = TestClient(_app(hops=2))
+    codigos = [cliente.get("/api/coisa", headers={"x-forwarded-for": f"10.0.0.{i}"}).status_code
+               for i in range(LIMITE_POR_MINUTO * 2)]
+    assert 429 in codigos
+
+
+def test_sem_proxy_o_cabecalho_e_ignorado():
+    """Com hops=0 nao ha proxy, entao todo X-Forwarded-For que chega foi o
+    proprio cliente quem escreveu e nao vale nada."""
+    cliente = TestClient(_app(hops=0))
+    codigos = [cliente.get("/api/coisa", headers=_xff(f"10.0.0.{i}")).status_code
+               for i in range(LIMITE_POR_MINUTO * 2)]
+    assert 429 in codigos

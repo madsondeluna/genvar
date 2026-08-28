@@ -16,6 +16,19 @@ migra para o Redis que o cache ja usa.
 `/health` e `/api/health/*` ficam de fora: sonda de disponibilidade e o
 monitoramento do proprio Render, e limita-la faz o servico parecer fora do ar
 justamente quando alguem esta conferindo se ele esta no ar.
+
+SOBRE O IP DE ORIGEM. `X-Forwarded-For` e uma LISTA em que cada proxy ACRESCENTA
+ao final o endereco de quem falou com ele. O cliente pode mandar a sua propria
+lista, e ela chega inteira na frente da que o proxy escreveu. Ler o primeiro
+elemento, que e a leitura obvia, le exatamente o que o atacante escolheu: medido,
+60 de 60 requisicoes passam trocando o cabecalho a cada uma, ou seja, o limitador
+barra script honesto e nao barra ninguem que esteja tentando.
+
+O unico elemento confiavel e o que o SEU proxy escreveu, contado a partir do FIM.
+`TRUSTED_PROXY_HOPS` diz quantos proxies existem entre o cliente e a aplicacao:
+no Render e um. Errar esse numero tem consequencia nos dois sentidos, e nenhum
+dos dois e silencioso: alto demais e todo mundo divide o IP do proxy e o limite
+vira global; baixo demais e o cabecalho volta a ser controlado pelo cliente.
 """
 from __future__ import annotations
 
@@ -39,6 +52,11 @@ LIMITE_POR_MINUTO = settings.rate_limit_per_minute
 LIMITE_POR_SEGUNDO = settings.rate_limit_per_second
 
 ISENTOS = ("/health", "/api/health", "/docs", "/openapi.json", "/redoc")
+
+# Proxies entre o cliente e esta aplicacao. No Render e um. Rodando direto, sem
+# proxy nenhum, o valor e zero e o X-Forwarded-For e ignorado por inteiro, que e
+# o correto: sem proxy, qualquer XFF que chegue foi o cliente quem escreveu.
+TRUSTED_PROXY_HOPS = settings.trusted_proxy_hops
 
 # Quantos IPs distintos guardar. Sem teto, uma varredura de IPs de origem
 # forjados faria o proprio limitador consumir a memoria que ele protege.
@@ -76,19 +94,32 @@ class _Janela:
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, limite_minuto: int | None = None,
-                 limite_segundo: int | None = None) -> None:
+                 limite_segundo: int | None = None, hops: int | None = None) -> None:
         super().__init__(app)
         self.limite_minuto = LIMITE_POR_MINUTO if limite_minuto is None else limite_minuto
         self.limite_segundo = LIMITE_POR_SEGUNDO if limite_segundo is None else limite_segundo
+        self.hops = TRUSTED_PROXY_HOPS if hops is None else hops
         self._por_ip: Dict[str, _Janela] = defaultdict(_Janela)
 
     def _ip(self, request: Request) -> str:
-        # Atras do proxy do Render, o IP real vem em X-Forwarded-For. O primeiro
-        # da lista e o cliente; os seguintes sao os proxies do caminho.
+        direto = request.client.host if request.client else "desconhecido"
+        if self.hops <= 0:
+            return direto
+
         encaminhado = request.headers.get("x-forwarded-for")
-        if encaminhado:
-            return encaminhado.split(",")[0].strip()
-        return request.client.host if request.client else "desconhecido"
+        if not encaminhado:
+            return direto
+
+        cadeia = [p.strip() for p in encaminhado.split(",") if p.strip()]
+        # Conta do FIM: a ultima posicao foi escrita pelo proxy mais proximo
+        # daqui, a penultima pelo anterior, e assim por diante. Tudo que estiver
+        # antes de `hops` posicoes veio do cliente e nao vale nada.
+        if len(cadeia) >= self.hops:
+            return cadeia[-self.hops]
+        # Cadeia mais curta que o esperado: ou a configuracao esta errada, ou
+        # alguem chegou por um caminho que nao passa pelo proxy. Nos dois casos o
+        # endereco da conexao e mais confiavel que adivinhar na lista.
+        return direto
 
     def _podar(self, agora: float) -> None:
         if len(self._por_ip) <= MAX_IPS:

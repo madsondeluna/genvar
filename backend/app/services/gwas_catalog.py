@@ -1,6 +1,10 @@
 import httpx
 from typing import Any, Dict
 
+# Identificacao da origem. Servico publico sem User-Agent e a primeira coisa
+# que um mantenedor bloqueia quando precisa cortar trafego anonimo.
+UA = "GenVar/2.0 (+https://github.com/madsondeluna/genvar)"
+
 # GWAS Catalog (NHGRI-EBI), API v2: associacoes variante-caracteristica mapeadas
 # ao gene pelo proprio catalogo. Fonte primaria dos sinais poligenicos do painel.
 BASE_URL = "https://www.ebi.ac.uk/gwas/api/v2"
@@ -21,7 +25,7 @@ async def get_gene_associations(gene_symbol: str) -> Dict[str, Any]:
                 f"{BASE_URL}/genes/{gene_symbol}/associations",
                 params={"size": PAGE_SIZE, "page": page},
                 timeout=TIMEOUT,
-                headers={"Accept": "application/json"},
+                headers={"Accept": "application/json", "User-Agent": UA},
             )
             if response.status_code == 404:
                 return {"traits": [], "association_total": 0, "truncated": False}

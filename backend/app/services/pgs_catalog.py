@@ -1,6 +1,10 @@
 import httpx
 from typing import Any, Dict, Optional
 
+# Identificacao da origem. Servico publico sem User-Agent e a primeira coisa
+# que um mantenedor bloqueia quando precisa cortar trafego anonimo.
+UA = "GenVar/2.0 (+https://github.com/madsondeluna/genvar)"
+
 # PGS Catalog (EBI), API publica REST. Enriquece um escore poligenico com o
 # numero de variantes, a publicacao e a distribuicao de ancestrias das amostras
 # de desenvolvimento e avaliacao. Fonte que mantem o dado atualizado por API.
@@ -14,7 +18,7 @@ async def get_score(score_id: str) -> Optional[Dict[str, Any]]:
         response = await client.get(
             f"{BASE_URL}/score/{score_id}",
             timeout=TIMEOUT,
-            headers={"Accept": "application/json"},
+            headers={"Accept": "application/json", "User-Agent": UA},
         )
         if response.status_code == 404:
             return None

@@ -1,15 +1,36 @@
 import httpx
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
+from app.config import settings
 
 BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 TIMEOUT = 20.0
+
+# O NCBI EXIGE identificacao em toda chamada ao E-utilities, e a exigencia nao e
+# formalidade: sem `tool` e `email` eles bloqueiam a origem sem aviso, porque nao
+# tem a quem escrever antes. Com uma chave de API o teto sobe de 3 para 10
+# requisicoes por segundo. A chave e opcional e o servico funciona sem ela; o que
+# nao pode faltar e a identificacao.
+FERRAMENTA = "GenVar"
+HEADERS = {"User-Agent": f"{FERRAMENTA}/2.0 (+https://github.com/madsondeluna/genvar)"}
+
+
+def _identificacao() -> Dict[str, str]:
+    p = {"tool": FERRAMENTA}
+    if settings.ncbi_email:
+        p["email"] = settings.ncbi_email
+    if settings.ncbi_api_key:
+        p["api_key"] = settings.ncbi_api_key
+    return p
 
 
 async def search_clinvar(term: str) -> List[str]:
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{BASE_URL}/esearch.fcgi",
-            params={"db": "clinvar", "term": term, "retmode": "json", "retmax": "10"},
+            params={"db": "clinvar", "term": term, "retmode": "json",
+                    "retmax": "10", **_identificacao()},
+            headers=HEADERS,
             timeout=TIMEOUT,
         )
         response.raise_for_status()
@@ -23,7 +44,9 @@ async def get_clinvar_batch_summary(uids: List[str]) -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
         response = await client.get(
             f"{BASE_URL}/esummary.fcgi",
-            params={"db": "clinvar", "id": ",".join(uids), "retmode": "json"},
+            params={"db": "clinvar", "id": ",".join(uids), "retmode": "json",
+                    **_identificacao()},
+            headers=HEADERS,
             timeout=TIMEOUT,
         )
         response.raise_for_status()

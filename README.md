@@ -1046,6 +1046,19 @@ Sem essa variável, o frontend usa o caminho `/api` relativo, que é redireciona
 - Ubuntu: `sudo apt install redis-server && sudo systemctl start redis`.
 
 
+## Proteção do acesso às fontes
+
+A API pública repassa consultas para Ensembl, gnomAD e NCBI, todas com política de uso justo **por IP de origem**. O risco não é sobrecarga do servidor: é o bloqueio da origem, que derruba a aplicação para todo mundo de uma vez. Três camadas cuidam disso, e cada uma cobre o que as outras não cobrem.
+
+**Cache.** É a que mais reduz tráfego, e já existia: gene, variante, doença, painel e escore respondem de Redis quando a chave está quente. Medido em produção, `GET /api/gene/TP53` leva 15,9 s frio e 0,37 s quente, ou seja, a segunda consulta não toca fonte externa nenhuma.
+
+**Identificação nas chamadas de saída.** O NCBI exige `tool` e `email` em toda chamada ao E-utilities: não é autenticação, é o contato que eles usam para avisar antes de bloquear. Sem ele, o bloqueio vem sem aviso. `NCBI_API_KEY` é opcional e sobe o teto de 3 para 10 requisições por segundo. gnomAD, PGS Catalog, GWAS Catalog e UniProt recebem `User-Agent` identificando o projeto, porque tráfego anônimo é o primeiro que um mantenedor corta.
+
+**Limitação de taxa na entrada.** 60 requisições por minuto e 10 por segundo por IP, em janela deslizante, com sondas de saúde isentas para o serviço não parecer fora do ar justamente quando alguém confere se ele está no ar. Configurável por `RATE_LIMIT_PER_MINUTE` (zero desliga).
+
+O IP de origem sai do `X-Forwarded-For` contado **a partir do fim**, e a distinção é o que separa um limite real de um limite decorativo. O cabeçalho é uma lista em que cada proxy acrescenta ao final quem falou com ele; o cliente pode mandar a própria lista, que chega inteira na frente. Ler o primeiro elemento lê exatamente o que o atacante escolheu, e está medido em `tests/test_rate_limit.py`: com essa leitura, 60 de 60 requisições passavam trocando o cabeçalho a cada uma. `TRUSTED_PROXY_HOPS` diz quantos proxies existem no caminho (um no Render, zero rodando local, quando o cabeçalho passa a ser ignorado por inteiro).
+
+
 ## Dado genômico no repositório
 
 Nenhum VCF de pessoa entra aqui. Os cinco arquivos `.vcf` versionados são sintéticos e declaram `##source=genvar-` no cabeçalho.

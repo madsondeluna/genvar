@@ -2,6 +2,10 @@ import httpx
 from typing import Dict, Any, List
 from app.config import settings
 
+# Identificacao da origem. Servico publico sem User-Agent e a primeira coisa
+# que um mantenedor bloqueia quando precisa cortar trafego anonimo.
+UA = "GenVar/2.0 (+https://github.com/madsondeluna/genvar)"
+
 GNOMAD_API = "https://gnomad.broadinstitute.org/api"
 TIMEOUT = 30.0
 
@@ -78,6 +82,7 @@ async def get_variant_frequencies(
     async with httpx.AsyncClient() as client:
         response = await client.post(
             GNOMAD_API,
+            headers={"User-Agent": UA},
             json={"query": query, "variables": {"variantId": variant_id, "dataset": dataset}},
             timeout=TIMEOUT,
         )
@@ -155,6 +160,7 @@ async def get_gene_constraint(gene_symbol: str) -> Dict[str, Any]:
         try:
             response = await client.post(
                 GNOMAD_API,
+                headers={"User-Agent": UA},
                 json={"query": query, "variables": {"geneSymbol": gene_symbol}},
                 timeout=TIMEOUT,
             )
