@@ -1174,6 +1174,8 @@ pytest
 
 Os unitários rodam em cerca de 1,5 s. A marca de integração é aplicada por caminho de arquivo em `tests/conftest.py`, então vale para `test_apis.py` inteiro e continua valendo para o que entrar nele depois.
 
+O `conftest.py` também desliga **o limitador de taxa e o cache**, e as duas coisas por defeito medido, não por comodidade. Todos os testes saem do mesmo IP do `TestClient` e estourariam o teto de requisições juntos, fazendo um teste de doença reprovar por 429 e apontar para o lugar errado. E com o Redis populado por outra execução, `test_detail_degrades_when_constraint_unavailable` reprovava: a rota devolvia o registro cacheado antes de chegar na chamada que o teste havia substituído. Um teste cujo resultado depende de o Redis estar vazio não está testando o código.
+
 Cobertura por arquivo:
 
 | Arquivo | Cobre |
@@ -1232,7 +1234,11 @@ Mais quatro arquivos reais, de fontes públicas, nunca versionados: o benchmark 
 
 **Reprodutibilidade.** Seis critérios binários por arquivo: TSV, CSV e VCF anotado byte a byte idênticos entre duas execuções; métricas invariantes à ordem das linhas da entrada, verificada com embaralhamento determinístico; e o artefato carregando o SHA-256 da entrada e a versão da compilação do ClinVar. Nove de nove arquivos satisfazem os seis. É a metade da promessa que tempo nenhum mede: um fluxo com oito portais abertos e cópia e cola não tem como sustentá-la.
 
-**Lote contra individual.** Cem arquivos de 25.000 variantes: o caminho individual leva 28,9 s e retém 1.766 MB; o lote leva 19,3 s e retém 53 MB. A memória retida do individual cresce linearmente com a coorte e a do lote não, porque cada arquivo é lido, anotado, resumido e descartado. O ganho de tempo, porém, **depende do cenário**: numa coorte em que todos os arquivos cobrem os mesmos cromossomos, o índice do ClinVar é montado uma vez nos dois caminhos e o lote não acelera nada; numa coorte de painéis dirigidos, cada arquivo pagaria a própria montagem, e a união de cromossomos do lote vira ganho. Os dois cenários estão medidos.
+**Lote contra individual.** Cem arquivos de 25.000 variantes, 2,5 milhões de variantes ao todo: o caminho individual retém **1.766 MB** ao fim e o lote retém **54 MB**, um fator de 33. A memória retida do individual cresce linearmente com a coorte e a do lote não, porque cada arquivo é lido, anotado, resumido e descartado. É esse o número que decide se roda no navegador.
+
+O tempo é a medida frágil das duas e vem com ressalva: o lote termina a mesma coorte entre 1,5 e 1,8 vezes mais rápido, mas o valor absoluto oscilou entre 19 s e 56 s em rodadas diferentes conforme a carga da máquina, enquanto a memória repetiu 1.766 e 54 MB em todas. O ganho de tempo também **depende do cenário**: numa coorte em que todos os arquivos cobrem os mesmos cromossomos, o índice do ClinVar é montado uma vez nos dois caminhos; numa coorte de painéis dirigidos, cada arquivo pagaria a própria montagem, e a união de cromossomos do lote vira ganho. Os dois cenários estão medidos.
+
+As linhas acima de 25 arquivos exigem heap maior que o padrão do Node: com os 2 GB de fábrica, o caminho individual morre antes de terminar a coorte de 50. O teto vigente vai na coluna `teto_heap_mb` de cada linha do CSV, porque é ele que separa "medindo o algoritmo" de "medindo o limite da máquina", e um navegador está bem mais perto do segundo.
 
 **Cache.** Busca por gene: 4,92 s sem cache contra 5 ms com, fator 1.036. Busca por variante: 2,52 s contra 2 ms, fator 1.174. Sem cache a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant; com cache é uma leitura do Redis.
 

@@ -327,13 +327,15 @@ def fig_ganho(resultados, figuras, dpi, formato):
     fig, ax = plt.subplots(figsize=(COLUNA_SIMPLES, 70 * MM), layout="constrained")
     x = np.arange(len(d))
     larg = 0.26
-    seg_manual = d["manual_horas"] * 3600
-    seg_api = d["api_genvar_horas"] * 3600
-    ax.bar(x - larg, seg_manual, larg, color=NPG[1], label="A mão, 4 consultas")
-    ax.bar(x, seg_api, larg, color=NPG[0], label="API do GenVar")
+    # Duas barras, e nao tres. A da API saiu porque ninguem anota cem mil
+    # variantes chamando a API uma de cada vez: a comparacao real e o fluxo
+    # manual contra a passada local.
+    larg = 0.36
+    ax.bar(x - larg / 2, d["manual_horas"] * 3600, larg, color=NPG[1],
+           label="A mão, 4 consultas por variante")
     if "embarcado_segundos" in d:
-        ax.bar(x + larg, d["embarcado_segundos"], larg, color=NPG[2],
-               label="ClinVar embarcado")
+        ax.bar(x + larg / 2, d["embarcado_segundos"], larg, color=NPG[2],
+               label="ClinVar embarcado, uma passada")
     ax.set_yscale("log")
     ax.set_xticks(x)
     ax.set_xticklabels([f'{int(v):,}'.replace(",", ".") for v in d["variantes"]])

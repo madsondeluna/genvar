@@ -1,5 +1,5 @@
-variantes,manual_horas,api_genvar_horas,embarcado_segundos,ganho_sobre_manual
-100,0.16,0.07,0.0,2834863.0
-1000,1.57,0.67,0.002,2834863.0
-25000,39.3,16.79,0.05,2834863.0
-100000,157.21,67.16,0.2,2834863.0
+variantes,manual_horas,embarcado_segundos
+100,0.09,0.0
+1000,0.88,0.002
+25000,22.09,0.05
+100000,88.38,0.2

@@ -23,6 +23,7 @@ import { resolve, dirname, join, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { performance } from 'node:perf_hooks'
 import { createHash } from 'node:crypto'
+import v8 from 'node:v8'
 
 const AQUI = dirname(fileURLToPath(import.meta.url))
 const RAIZ = resolve(AQUI, '..')
@@ -408,5 +409,8 @@ writeFileSync(join(SAIDA, 'hashes_de_saida.json'),
 writeFileSync(join(SAIDA, 'ambiente.json'), JSON.stringify({
   node: process.version, plataforma: process.platform, arch: process.arch,
   repeticoes: REPETICOES, anotacao_ativa: ANOTACAO_ATIVA,
+  // O teto de heap decide ate onde a medida chega nos arquivos grandes, entao
+  // ele e parte da condicao e nao do ambiente incidental.
+  teto_heap_mb: Math.round(v8.getHeapStatistics().heap_size_limit / 1048576),
 }, null, 2) + '\n')
 console.log('\nConcluido.')

@@ -26,6 +26,7 @@ import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs'
 import { resolve, dirname, join, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { performance } from 'node:perf_hooks'
+import v8 from 'node:v8'
 
 const AQUI = dirname(fileURLToPath(import.meta.url))
 const RAIZ = resolve(AQUI, '..')
@@ -60,6 +61,16 @@ const interp = await import(join(SRC, 'vcf/interpretacao.js'))
 const lote = await import(join(SRC, 'vcf/lote.js'))
 
 const heapMB = () => process.memoryUsage().heapUsed / 1048576
+
+// TETO DE HEAP DESTA RODADA, e ele vai em toda linha do CSV.
+//
+// O caminho individual morre por falta de memoria antes de terminar coortes
+// grandes, entao o teto decide ate onde a medida chega: com o padrao do Node,
+// perto de 2 GB, a coorte de 50 nao termina; com 12 GB, a de 100 termina. Sao
+// numeros de condicoes diferentes, e um CSV que nao diz qual condicao valia
+// deixa os dois parecerem o mesmo resultado. Um navegador nao tem 12 GB: a
+// linha medida com teto alto descreve o algoritmo, nao a aba.
+const TETO_HEAP_MB = Math.round(v8.getHeapStatistics().heap_size_limit / 1048576)
 
 // PICO amostrado durante a execucao, e nao a diferenca entre antes e depois.
 //
@@ -184,7 +195,10 @@ function gravar() {
       .join('\n') + '\n')
 }
 
-console.log('\nLote contra individual\n')
+console.log('\nLote contra individual')
+console.log(`  teto de heap desta rodada: ${TETO_HEAP_MB} MB`
+  + (TETO_HEAP_MB > 4096 ? '  (acima do que um navegador oferece)' : ''))
+console.log('')
 
 const catalogos = {
   clingen: await interp.carregarClinGen(),
@@ -227,7 +241,7 @@ for (const [cenario, fabrica, nota] of CENARIOS) {
     // marca e gravada ANTES da tentativa. Se o processo sobrevive, a linha e
     // substituida pelo resultado; se morre, a marca fica no CSV e diz onde.
     const marca = {
-      cenario, arquivos: k, repeticoes: REPETICOES,
+      cenario, arquivos: k, repeticoes: REPETICOES, teto_heap_mb: TETO_HEAP_MB,
       individual_estourou: true,
       erro: 'processo morreu por falta de memoria durante o caminho individual',
     }
@@ -243,6 +257,7 @@ for (const [cenario, fabrica, nota] of CENARIOS) {
     const linha = {
       cenario,
       arquivos: k,
+      teto_heap_mb: TETO_HEAP_MB,
       variantes_por_arquivo: nPorArquivo,
       variantes_totais: k * nPorArquivo,
       repeticoes: REPETICOES,

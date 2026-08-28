@@ -8,9 +8,14 @@ mão, para não divergir dos dados ao lado.
 |---|---|
 | Node | v25.8.2 |
 | Plataforma | darwin arm64 |
-| Repetições por medida | 2 |
+| Repetições por medida, suíte de funções | 2 |
+| Teto de heap, suíte de funções | — MB |
 | Anotação clínica ativa | sim |
 | Medições registradas | 352 |
+
+Cada suíte roda com os seus parâmetros, e eles não são os mesmos: a tabela acima
+vale para a suíte de funções. As repetições e o teto de heap das demais aparecem
+na seção de cada uma, tirados do próprio CSV.
 
 A anotação ativa não é detalhe de rodapé: com o índice do ClinVar indisponível,
 o módulo degrada para camada vazia, e todas as etapas seguintes medem o caminho
@@ -147,18 +152,27 @@ meses diferentes não são comparáveis.
 
 | Cenário | Arquivos | Individual | Lote | Retido individual | Retido lote | Ganho de memória |
 |---|---|---|---|---|---|---|
-| exoma completo | 1 | 0,15 s | 0,19 s | 18 MB | 1 MB | 17,9x |
-| exoma completo | 5 | 0,58 s | 0,65 s | 88 MB | 3 MB | 32,8x |
-| exoma completo | 10 | 1,07 s | 1,24 s | 178 MB | 5 MB | 33,3x |
-| exoma completo | 25 | 3,89 s | 3,40 s | 444 MB | 13 MB | 33,2x |
-| exoma completo | 50 | 8,78 s | 8,20 s | 882 MB | 27 MB | 33,0x |
-| exoma completo | 100 | 28,89 s | 19,28 s | 1.766 MB | 53 MB | 33,5x |
-| painel dirigido | 1 | 0,04 s | 0,07 s | 2 MB | 0 MB | 2,5x |
-| painel dirigido | 5 | 0,22 s | 0,24 s | 12 MB | 1 MB | 8,6x |
-| painel dirigido | 10 | 0,64 s | 0,43 s | 24 MB | 3 MB | 8,5x |
-| painel dirigido | 25 | 0,90 s | 0,72 s | 60 MB | 7 MB | 8,7x |
-| painel dirigido | 50 | 1,32 s | 1,08 s | 120 MB | 14 MB | 8,7x |
-| painel dirigido | 100 | 1,96 s | 2,13 s | 241 MB | 28 MB | 8,7x |
+| exoma completo | 1 | 0,39 s | 0,24 s | 18 MB | 1 MB | 17,9x |
+| exoma completo | 5 | 0,74 s | 0,83 s | 88 MB | 3 MB | 32,4x |
+| exoma completo | 10 | 1,50 s | 2,21 s | 177 MB | 5 MB | 33,7x |
+| exoma completo | 25 | 8,32 s | 5,16 s | 444 MB | 13 MB | 34,2x |
+| exoma completo | 50 | 13,98 s | 8,95 s | 883 MB | 27 MB | 33,2x |
+| exoma completo | 100 | 102,01 s | 56,33 s | 1.766 MB | 54 MB | 33,0x |
+| painel dirigido | 1 | 0,07 s | 0,11 s | 2 MB | 0 MB | 2,4x |
+| painel dirigido | 5 | 0,38 s | 0,45 s | 12 MB | 1 MB | 8,8x |
+| painel dirigido | 10 | 1,00 s | 0,90 s | 24 MB | 3 MB | 8,6x |
+| painel dirigido | 25 | 1,42 s | 1,09 s | 60 MB | 7 MB | 8,7x |
+| painel dirigido | 50 | 1,33 s | 1,97 s | 120 MB | 14 MB | 8,7x |
+| painel dirigido | 100 | 3,17 s | 2,80 s | 241 MB | 28 MB | 8,7x |
+
+
+Repetições por ponto: 3. Teto de heap: 12480 MB.
+
+**O teto de heap muda o resultado e por isso viaja com ele.** Com o padrão do
+Node, perto de 2 GB, o caminho individual morre antes de terminar a coorte de
+50; as linhas acima de 25 arquivos vêm de uma rodada com teto alto, onde o que
+se mede é o algoritmo e não o limite da máquina. Um navegador está mais perto do
+teto padrão, e é lá que a aba morre.
 
 
 Dois cenários, e a distinção decide o resultado. Numa coorte em que todos os
@@ -187,6 +201,9 @@ constante no lote, porque cada arquivo é lido, anotado, resumido e descartado.
 | variante | rs1799853 | 2,65 s | 2 ms | 1.083x |
 
 
+Chamadas por alvo: 4 sem cache, 10 com cache.
+
+
 Sem cache, a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant,
 com as dependências entre elas respeitadas. Com cache, é uma leitura do Redis.
 O intervalo entre as chamadas a frio não é cortesia: o Ensembl aplica uso justo
@@ -196,12 +213,12 @@ para todos os usuários da aplicação de uma vez.
 
 ## Ganho de tempo sobre o fluxo manual
 
-| Variantes | A mão | API do GenVar | ClinVar embarcado |
-|---|---|---|---|
-| 100 | 0,2 h | 0,1 h | 0,0 s |
-| 1.000 | 1,6 h | 0,7 h | 0,0 s |
-| 25.000 | 39,3 h | 16,8 h | 0,1 s |
-| 100.000 | 157,2 h | 67,2 h | 0,2 s |
+| Variantes | A mão | ClinVar embarcado |
+|---|---|---|
+| 100 | 0,1 h | 0,0 s |
+| 1.000 | 0,9 h | 0,0 s |
+| 25.000 | 22,1 h | 0,1 s |
+| 100.000 | 88,4 h | 0,2 s |
 
 
 ![Figura 5. Tempo total para anotar N variantes por cada caminho, em escala logarítmica.](figuras/fig5_ganho.png)
@@ -217,6 +234,12 @@ variantes a mão levaria dias e bloquearia o acesso do projeto às fontes.
 O que a projeção não inclui, e que só aumentaria a diferença: tempo humano de
 navegação, erro de transcrição, e o retrabalho de refazer tudo quando alguém
 pergunta de qual arquivo aquela planilha saiu.
+
+A API do GenVar não entra nesta projeção de propósito. Ela existe para a
+consulta de **uma** variante, e o custo dela por variante está na tabela acima;
+ninguém anota cem mil variantes chamando-a um rsID de cada vez. A anotação em
+massa é o que o ClinVar embarcado faz, numa passada e sem rede, e é essa a
+comparação com o fluxo manual.
 
 
 ## Memória

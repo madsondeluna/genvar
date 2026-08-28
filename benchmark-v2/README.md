@@ -23,9 +23,10 @@ curl -L -o giab-hg002-grch38.vcf.gz https://ftp-trace.ncbi.nlm.nih.gov/Reference
 
 # 3. as suítes locais, a partir de frontend/ (o vite-node resolve os imports sem extensão)
 cd frontend
-NODE_OPTIONS=--expose-gc npx vite-node ../benchmark-v2/executar.mjs -- --repeticoes 3
-NODE_OPTIONS=--expose-gc npx vite-node ../benchmark-v2/reprodutibilidade.mjs
-NODE_OPTIONS=--expose-gc npx vite-node ../benchmark-v2/lote.mjs -- --coortes 1,5,10,25,50
+export NODE_OPTIONS="--expose-gc --max-old-space-size=12288"
+npx vite-node ../benchmark-v2/executar.mjs -- --repeticoes 3
+npx vite-node ../benchmark-v2/reprodutibilidade.mjs
+npx vite-node ../benchmark-v2/lote.mjs -- --coortes 1,5,10,25,50,100
 
 # 4. as suítes de rede (backend e Redis no ar)
 python3 benchmark-v2/cache.py
@@ -38,6 +39,19 @@ python3 benchmark-v2/figuras.py
 `--expose-gc` não é opcional nas suítes que reportam memória: sem ele a medida
 de memória retida não força coleta antes de ler, e o número passa a descrever o
 atraso do coletor em vez do que o programa segurou.
+
+**`--max-old-space-size=12288` também não é decoração, e o que ele muda está
+declarado em toda linha do CSV, na coluna `teto_heap_mb`.** Com o teto padrão do
+Node, perto de 2 GB, o caminho individual morre por falta de memória antes de
+terminar a coorte de 50, e a rodada não chega aos 100. Com 12 GB ela chega, e é
+dessa condição que vêm as linhas de 50 e 100 arquivos.
+
+Os dois números respondem perguntas diferentes e não devem ser lidos juntos. Com
+teto alto, o que se mede é o **algoritmo**: quanto cada caminho gasta quando a
+memória não é a restrição. Com o teto padrão, o que se mede é o **limite
+prático**, e um navegador está mais perto dele do que dos 12 GB: a aba morre, e
+onde ela morre é o resultado. As duas condições estão registradas, e é por isso
+que o teto viaja com o dado em vez de ficar no comando.
 
 ## O corpus
 

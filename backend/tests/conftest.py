@@ -22,3 +22,18 @@ def pytest_collection_modifyitems(config, items):
 # do TestClient e estourariam o teto juntos, fazendo um teste de doenca reprovar
 # por 429 e apontar para o lugar errado. Quem testa o limitador liga o dele.
 os.environ.setdefault("RATE_LIMIT_PER_MINUTE", "0")
+
+# O CACHE tambem fica desligado, e nao por comodidade: ligado, a suite passa ou
+# reprova conforme o que houver no Redis da maquina, que e estado de fora dela.
+#
+# Medido: `test_detail_degrades_when_constraint_unavailable` substitui a chamada
+# a gnomAD por uma que nao devolve nada e exige que todo gene saia marcado como
+# "sem constraint". Com o Redis populado por outra execucao, a rota devolve o
+# registro cacheado antes de chegar na chamada substituida, e o teste reprova
+# apontando para um defeito que nao existe. Com o Redis vazio, passa. Um teste
+# cujo resultado depende de o Redis estar vazio nao esta testando o codigo.
+#
+# Apontar para um banco inexistente e o jeito mais direto: `get_redis` ja trata
+# falha de conexao devolvendo None, e nesse caminho `cache_get` sempre erra e
+# `cache_set` nao grava, que e exatamente o comportamento desejado na suite.
+os.environ.setdefault("REDIS_URL", "redis://127.0.0.1:1")

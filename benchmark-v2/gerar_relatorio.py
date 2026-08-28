@@ -84,9 +84,14 @@ mão, para não divergir dos dados ao lado.
 |---|---|
 | Node | {amb.get('node', '—')} |
 | Plataforma | {amb.get('plataforma', '—')} {amb.get('arch', '')} |
-| Repetições por medida | {amb.get('repeticoes', '—')} |
+| Repetições por medida, suíte de funções | {amb.get('repeticoes', '—')} |
+| Teto de heap, suíte de funções | {amb.get('teto_heap_mb', '—')} MB |
 | Anotação clínica ativa | {'sim' if amb.get('anotacao_ativa') else 'NÃO'} |
 | Medições registradas | {len(funcoes)} |
+
+Cada suíte roda com os seus parâmetros, e eles não são os mesmos: a tabela acima
+vale para a suíte de funções. As repetições e o teto de heap das demais aparecem
+na seção de cada uma, tirados do próprio CSV.
 
 A anotação ativa não é detalhe de rodapé: com o índice do ClinVar indisponível,
 o módulo degrada para camada vazia, e todas as etapas seguintes medem o caminho
@@ -225,6 +230,17 @@ if lote:
         ))
     w(tabela(["Cenário", "Arquivos", "Individual", "Lote", "Retido individual",
               "Retido lote", "Ganho de memória"], linhas))
+    tetos = sorted({l.get("teto_heap_mb", "") for l in lote if l.get("teto_heap_mb")})
+    reps = sorted({l.get("repeticoes", "") for l in lote if l.get("repeticoes")})
+    w(f"""
+Repetições por ponto: {', '.join(reps) or '—'}. Teto de heap: {', '.join(tetos) or '—'} MB.
+
+**O teto de heap muda o resultado e por isso viaja com ele.** Com o padrão do
+Node, perto de 2 GB, o caminho individual morre antes de terminar a coorte de
+50; as linhas acima de 25 arquivos vêm de uma rodada com teto alto, onde o que
+se mede é o algoritmo e não o limite da máquina. Um navegador está mais perto do
+teto padrão, e é lá que a aba morre.
+""")
 w("""
 Dois cenários, e a distinção decide o resultado. Numa coorte em que todos os
 arquivos cobrem os mesmos cromossomos, o índice do ClinVar é montado uma vez nos
@@ -246,6 +262,10 @@ if cache:
                num(l["quente_mediana_ms"], 0) + " ms",
                num(l["ganho"], 0) + "x") for l in cache]
     w(tabela(["Tipo", "Alvo", "Sem cache", "Com cache", "Ganho"], linhas))
+    nf = sorted({l.get("n_frio", "") for l in cache if l.get("n_frio")})
+    nq = sorted({l.get("n_quente", "") for l in cache if l.get("n_quente")})
+    w(f"\nChamadas por alvo: {', '.join(nf) or '—'} sem cache, "
+      f"{', '.join(nq) or '—'} com cache.\n")
     w("""
 Sem cache, a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant,
 com as dependências entre elas respeitadas. Com cache, é uma leitura do Redis.
@@ -258,9 +278,8 @@ para todos os usuários da aplicação de uma vez.
 if ganho:
     w("\n## Ganho de tempo sobre o fluxo manual\n")
     linhas = [(num(l["variantes"], 0), num(l["manual_horas"], 1) + " h",
-               num(l["api_genvar_horas"], 1) + " h",
                num(l.get("embarcado_segundos", 0), 1) + " s") for l in ganho]
-    w(tabela(["Variantes", "A mão", "API do GenVar", "ClinVar embarcado"], linhas))
+    w(tabela(["Variantes", "A mão", "ClinVar embarcado"], linhas))
     w(secao_figura("fig5_ganho.png",
                    "Figura 5. Tempo total para anotar N variantes por cada caminho, em "
                    "escala logarítmica."))
@@ -272,6 +291,12 @@ variantes a mão levaria dias e bloquearia o acesso do projeto às fontes.
 O que a projeção não inclui, e que só aumentaria a diferença: tempo humano de
 navegação, erro de transcrição, e o retrabalho de refazer tudo quando alguém
 pergunta de qual arquivo aquela planilha saiu.
+
+A API do GenVar não entra nesta projeção de propósito. Ela existe para a
+consulta de **uma** variante, e o custo dela por variante está na tabela acima;
+ninguém anota cem mil variantes chamando-a um rsID de cada vez. A anotação em
+massa é o que o ClinVar embarcado faz, numa passada e sem rede, e é essa a
+comparação com o fluxo manual.
 """)
 
 w("\n## Memória\n")

@@ -159,17 +159,21 @@ async def main():
     console.print(t)
 
     # Projecao para as escalas do corpus, com a base declarada.
+    #
+    # A comparacao que interessa e MANUAL contra EMBARCADO, e nao manual contra
+    # a API. Ninguem anota cem mil variantes chamando a API um rsID de cada vez:
+    # a API existe para a consulta de UMA variante, e a anotacao em massa e o
+    # que o ClinVar embarcado faz, numa passada, sem rede. Manter a coluna da
+    # API na projecao convida a pergunta errada, entao ela sai daqui e fica
+    # apenas na tabela por variante, que e onde ela responde alguma coisa.
     proj = []
     for n in (100, 1_000, 25_000, 100_000):
         p = {
             "variantes": n,
             "manual_horas": round(med_manual * n / 1000 / 3600, 2),
-            "api_genvar_horas": round(med_plat * n / 1000 / 3600, 2),
         }
         if local:
             p["embarcado_segundos"] = round(local["ms_por_variante"] * n / 1000, 3)
-            p["ganho_sobre_manual"] = round(
-                (med_manual * n) / (local["ms_por_variante"] * n), 0)
         proj.append(p)
 
     with (saida / "ganho_projecao.csv").open("w", newline="", encoding="utf-8") as fh:
@@ -178,17 +182,23 @@ async def main():
         w.writerows(proj)
 
     t2 = Table(title="Projecao (extrapolada da mediana medida, nao medida nesta escala)")
-    for c in ("Variantes", "A mao", "API do GenVar", "ClinVar embarcado"):
+    for c in ("Variantes", "A mao", "ClinVar embarcado"):
         t2.add_column(c, justify="right" if c != "Variantes" else "left")
     for p in proj:
         t2.add_row(f'{p["variantes"]:,}'.replace(",", "."),
                    f'{p["manual_horas"]:.1f} h',
-                   f'{p["api_genvar_horas"]:.1f} h',
                    f'{p.get("embarcado_segundos", 0):.1f} s' if local else "—")
     console.print(t2)
-    console.print("  [dim]As duas ultimas colunas nao foram medidas nessas escalas: sao a "
-                  "mediana por variante multiplicada. Medir 100 mil a mao levaria dias e "
-                  "bloquearia o acesso do projeto as fontes.[/dim]")
+    # A razao entre as duas colunas e CONSTANTE por construcao, porque as duas
+    # escalam linearmente com n. Repeti-la em cada linha da a impressao de um
+    # resultado por escala onde ha um numero so.
+    if local:
+        razao = med_manual / local["ms_por_variante"]
+        console.print(f"  [dim]Razao constante de {razao:,.0f}x".replace(",", ".")
+                      + " por variante: as duas colunas escalam linearmente com n.[/dim]")
+    console.print("  [dim]Nenhuma das duas foi medida nessas escalas: sao a mediana por "
+                  "variante multiplicada. Medir 100 mil a mao levaria dias e bloquearia o "
+                  "acesso do projeto as fontes.[/dim]")
 
     (saida / "ganho_resumo.json").write_text(json.dumps({
         "amostra": len(alvos),
