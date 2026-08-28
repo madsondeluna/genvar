@@ -104,7 +104,21 @@ ENDPOINTS = [
     {"name": "Variante", "method": "GET", "path": "/api/variant/rs334", "external": True},
 ]
 
-ENDPOINT_TIMEOUT = 8.0
+# Teto por sonda. Oito segundos reprovava justamente as rotas que fazem o
+# trabalho: /api/gene/BRCA1 leva de 10 a 12 s a frio, porque encadeia quatro
+# chamadas externas e a mais lenta delas, o overlap de variantes do Ensembl,
+# leva 7,5 s sozinha. A pagina de status entao mostrava ReadTimeout numa rota
+# que responde 200 em 12 s, ou seja, o cronometro reprovava por ser curto e a
+# leitura era "a API esta fora do ar".
+#
+# Rota que so le dado local responde em milissegundos e nao precisa de folga;
+# rota que consulta fonte externa precisa. Sao dois tetos, e nao um.
+TIMEOUT_LOCAL = 8.0
+TIMEOUT_EXTERNO = 30.0
+
+# Acima disto a rota responde, mas devagar demais para uso interativo. Sai como
+# aviso e nao como falha: dizer que esta fora do ar seria falso.
+LENTO_MS = 5000.0
 ENDPOINTS_CACHE_KEY = "health:endpoints:v1"
 ENDPOINTS_CACHE_TTL = 30
 
@@ -113,13 +127,20 @@ async def _probe_endpoint(client: httpx.AsyncClient, base: str, spec: dict) -> E
     url = base.rstrip("/") + spec["path"]
     t0 = time.perf_counter()
     try:
-        resp = await client.request(spec["method"], url, timeout=ENDPOINT_TIMEOUT)
+        teto = TIMEOUT_EXTERNO if spec["external"] else TIMEOUT_LOCAL
+        resp = await client.request(spec["method"], url, timeout=teto)
         ms = round((time.perf_counter() - t0) * 1000, 1)
         ok = 200 <= resp.status_code < 300
+        detalhe = None
+        if not ok:
+            detalhe = f"HTTP {resp.status_code}"
+        elif ms > LENTO_MS:
+            detalhe = (f"responde, mas em {ms / 1000:.1f} s: a rota encadeia "
+                       "chamadas a fontes externas e a mais lenta domina o tempo")
         return EndpointHealth(
             name=spec["name"], method=spec["method"], path=spec["path"],
             ok=ok, status=resp.status_code, latency_ms=ms, external=spec["external"],
-            detail=None if ok else f"HTTP {resp.status_code}",
+            detail=detalhe,
         )
     except Exception as e:
         ms = round((time.perf_counter() - t0) * 1000, 1)
