@@ -35,7 +35,12 @@ export function resumo(variantes) {
 export function histograma(variantes, campo, { faixas = 20, max = null } = {}) {
   const vals = variantes.map((v) => v[campo]).filter((x) => x != null && Number.isFinite(x))
   if (!vals.length) return { faixas: [], n: 0 }
-  const topo = max ?? Math.min(Math.max(...vals), quantil(vals, 0.99))
+  // Laço em vez de `Math.max(...vals)`: espalhar um vetor num argumento empurra
+  // um item por posição de pilha, e um exoma de 400 mil variantes estoura com
+  // `Maximum call stack size exceeded` dentro do cálculo de uma métrica.
+  let maior = -Infinity
+  for (const v of vals) if (v > maior) maior = v
+  const topo = max ?? Math.min(maior, quantil(vals, 0.99))
   const largura = topo / faixas || 1
   const bins = Array.from({ length: faixas }, (_, i) => ({
     de: +(i * largura).toFixed(1), ate: +((i + 1) * largura).toFixed(1), n: 0,

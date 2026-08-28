@@ -137,8 +137,12 @@ export default function AboutPage() {
 
         <section className="mb-96" aria-labelledby="num-title">
           <h2 id="num-title" className="sr-only">Números do catálogo</h2>
+          {/* `faixa-numeros` zera o padding do cartão: o .glass-panel já traz
+              borda e raio próprios, e sem isso a faixa aparece como um quadro
+              branco em volta de quatro quadros tintos. Mesma faixa do relatório
+              de VCF e da triagem em lote, agora com a mesma classe. */}
           <div
-            className="card glass-panel"
+            className="card faixa-numeros glass-panel"
             style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 11rem), 1fr))' }}
           >
             {numeros.map((x) => (

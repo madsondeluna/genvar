@@ -518,6 +518,7 @@ def fig_errors(results_dir: Path, figures_dir: Path, dpi: int) -> None:
     _save(fig, figures_dir / "fig_errors_matrix.png", dpi)
 
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate benchmark figures for TCC")
     parser.add_argument("--results", default="results/local", help="Directory with CSV files")

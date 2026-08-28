@@ -1,0 +1,95 @@
+grupo,papel,onde,arquivo,comprimido,bytes_disco,mb_disco,bytes_cru,mb_cru,razao_compressao,registros,bytes_por_registro,ms_leitura,ms_descompressao,ms_parse_json
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-1.json.gz,True,336058,0.32,1383188,1.319,4.12,38548,8.7,0.64,1.86,25.1
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-10.json.gz,True,146220,0.139,565128,0.539,3.86,15813,9.2,0.72,0.76,7.87
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-11.json.gz,True,258586,0.247,1069410,1.02,4.14,30229,8.6,0.57,1.35,15.86
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-12.json.gz,True,185408,0.177,748507,0.714,4.04,21085,8.8,0.49,1.0,10.87
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-13.json.gz,True,146023,0.139,655072,0.625,4.49,19706,7.4,0.45,0.81,9.43
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-14.json.gz,True,119365,0.114,466659,0.445,3.91,13090,9.1,0.37,0.62,6.74
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-15.json.gz,True,157839,0.151,642593,0.613,4.07,18439,8.6,0.45,0.82,9.3
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-16.json.gz,True,237192,0.226,986958,0.941,4.16,28590,8.3,0.53,1.23,14.26
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-17.json.gz,True,314812,0.3,1419076,1.353,4.51,40349,7.8,0.64,1.66,20.66
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-18.json.gz,True,68612,0.065,251986,0.24,3.67,7266,9.4,0.3,0.37,3.85
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-19.json.gz,True,181248,0.173,734012,0.7,4.05,20430,8.9,0.44,0.94,10.65
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-2.json.gz,True,463856,0.442,2000154,1.907,4.31,56850,8.2,0.79,2.4,30.61
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-20.json.gz,True,75483,0.072,284681,0.271,3.77,7917,9.5,0.36,0.41,4.22
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-21.json.gz,True,53029,0.051,193071,0.184,3.64,5532,9.6,0.3,0.35,4.27
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-22.json.gz,True,88977,0.085,350201,0.334,3.94,10024,8.9,0.34,0.49,5.19
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-3.json.gz,True,215726,0.206,883890,0.843,4.1,24943,8.6,0.5,1.23,14.3
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-4.json.gz,True,129870,0.124,493847,0.471,3.8,13809,9.4,0.41,0.7,8.97
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-5.json.gz,True,204376,0.195,836146,0.797,4.09,23840,8.6,0.46,1.06,11.87
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-6.json.gz,True,197533,0.188,801025,0.764,4.06,22493,8.8,0.46,1.03,11.42
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-7.json.gz,True,199974,0.191,833510,0.795,4.17,23612,8.5,0.49,1.03,11.97
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-8.json.gz,True,136970,0.131,536630,0.512,3.92,15211,9.0,0.45,0.69,7.79
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-9.json.gz,True,187877,0.179,762583,0.727,4.06,21535,8.7,0.47,0.99,11.01
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-MT.json.gz,True,2641,0.003,7935,0.008,3.0,192,13.8,0.19,0.04,0.24
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-X.json.gz,True,241078,0.23,1069425,1.02,4.44,30951,7.8,0.53,1.29,15.56
+frontend/public/data/clinvar,Anotacao clinica,navegador,aviso-Y.json.gz,True,830,0.001,2045,0.002,2.46,52,16.0,0.22,0.02,0.12
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-1.json.gz,True,894428,0.853,4098830,3.909,4.58,121365,7.4,3.33,5.05,63.71
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-10.json.gz,True,392148,0.374,1768080,1.686,4.51,53797,7.3,1.04,1.94,25.63
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-11.json.gz,True,563056,0.537,2572916,2.454,4.57,76912,7.3,1.19,2.95,39.46
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-12.json.gz,True,451037,0.43,2001781,1.909,4.44,60082,7.5,1.16,2.28,31.99
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-13.json.gz,True,186635,0.178,824195,0.786,4.42,25180,7.4,0.78,1.01,12.41
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-14.json.gz,True,329052,0.314,1488297,1.419,4.52,44965,7.3,1.07,1.67,25.69
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-15.json.gz,True,359993,0.343,1593981,1.52,4.43,47980,7.5,1.13,1.93,23.96
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-16.json.gz,True,513616,0.49,2358761,2.249,4.59,71613,7.2,1.84,2.56,34.5
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-17.json.gz,True,568506,0.542,2619269,2.498,4.61,78612,7.2,1.2,2.85,38.68
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-18.json.gz,True,195909,0.187,837857,0.799,4.28,25563,7.7,4.21,1.0,12.31
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-19.json.gz,True,533596,0.509,2445564,2.332,4.58,73539,7.3,1.14,2.78,38.67
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-2.json.gz,True,926201,0.883,4332115,4.131,4.68,130515,7.1,1.81,5.57,71.18
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-20.json.gz,True,226900,0.216,995069,0.949,4.39,30088,7.5,0.94,1.17,18.94
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-21.json.gz,True,137688,0.131,580603,0.554,4.22,17544,7.8,0.71,0.76,8.73
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-22.json.gz,True,224063,0.214,983250,0.938,4.39,29858,7.5,0.86,1.16,14.86
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-3.json.gz,True,541664,0.517,2438963,2.326,4.5,73686,7.4,1.22,2.8,37.07
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-4.json.gz,True,358895,0.342,1584110,1.511,4.41,47758,7.5,1.45,1.79,23.58
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-5.json.gz,True,489451,0.467,2202746,2.101,4.5,66632,7.3,1.64,2.33,30.89
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-6.json.gz,True,449402,0.429,1993145,1.901,4.44,59474,7.6,1.5,2.12,28.03
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-7.json.gz,True,494916,0.472,2247528,2.143,4.54,68044,7.3,2.1,2.47,31.92
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-8.json.gz,True,339732,0.324,1522932,1.452,4.48,45514,7.5,1.43,1.75,21.23
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-9.json.gz,True,475738,0.454,2176232,2.075,4.57,66271,7.2,1.24,2.54,32.64
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-MT.json.gz,True,10335,0.01,49630,0.047,4.8,1618,6.4,0.71,0.09,0.94
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-X.json.gz,True,394716,0.376,1756426,1.675,4.45,51723,7.6,0.92,2.33,27.41
+frontend/public/data/clinvar,Anotacao clinica,navegador,benigna-Y.json.gz,True,692,0.001,1363,0.001,1.97,31,22.3,0.75,0.02,0.13
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-1.json.gz,True,1177268,1.123,6674337,6.365,5.67,219519,5.4,1.72,7.68,108.04
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-10.json.gz,True,491429,0.469,2688114,2.564,5.47,89723,5.5,1.22,2.8,42.04
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-11.json.gz,True,760998,0.726,4274604,4.077,5.62,141857,5.4,1.62,4.16,67.44
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-12.json.gz,True,599678,0.572,3343919,3.189,5.58,111820,5.4,1.36,3.2,51.49
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-13.json.gz,True,217817,0.208,1162621,1.109,5.34,39310,5.5,1.69,1.13,17.34
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-14.json.gz,True,423130,0.404,2321400,2.214,5.49,77535,5.5,2.55,2.44,32.82
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-15.json.gz,True,446789,0.426,2443527,2.33,5.47,81676,5.5,1.6,2.13,36.61
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-16.json.gz,True,639224,0.61,3560417,3.395,5.57,119135,5.4,1.72,3.25,55.82
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-17.json.gz,True,731038,0.697,4114627,3.924,5.63,136236,5.4,1.61,6.07,65.66
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-18.json.gz,True,218856,0.209,1140657,1.088,5.21,38357,5.7,0.97,1.24,16.86
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-19.json.gz,True,761578,0.726,4397455,4.194,5.77,147749,5.2,1.51,4.73,65.23
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-2.json.gz,True,1036167,0.988,5697039,5.433,5.5,186197,5.6,1.91,5.34,85.49
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-20.json.gz,True,286180,0.273,1562254,1.49,5.46,52762,5.4,1.04,1.37,22.97
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-21.json.gz,True,139934,0.133,711330,0.678,5.08,23650,5.9,1.01,0.71,10.47
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-22.json.gz,True,288951,0.276,1561114,1.489,5.4,52130,5.5,1.43,1.48,22.44
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-3.json.gz,True,711696,0.679,3952184,3.769,5.55,132098,5.4,1.77,3.36,58.81
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-4.json.gz,True,480604,0.458,2637746,2.516,5.49,88689,5.4,1.46,2.26,37.91
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-5.json.gz,True,616536,0.588,3456314,3.296,5.61,115015,5.4,1.64,3.22,50.29
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-6.json.gz,True,590231,0.563,3212956,3.064,5.44,107081,5.5,1.57,2.77,47.57
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-7.json.gz,True,612562,0.584,3439329,3.28,5.61,115115,5.3,1.33,3.23,53.09
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-8.json.gz,True,447137,0.426,2457001,2.343,5.49,81714,5.5,1.19,2.46,38.77
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-9.json.gz,True,540070,0.515,2992485,2.854,5.54,100561,5.4,1.24,2.76,55.08
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-MT.json.gz,True,8301,0.008,40963,0.039,4.93,1260,6.6,0.58,0.15,0.81
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-X.json.gz,True,391006,0.373,2116545,2.018,5.41,69844,5.6,0.91,2.14,32.51
+frontend/public/data/clinvar,Anotacao clinica,navegador,incerta-Y.json.gz,True,711,0.001,1599,0.002,2.25,42,16.9,1.0,0.03,0.13
+frontend/public/data/clinvar,Anotacao clinica,navegador,index.json,False,2537,0.002,2537,0.002,1.0,18,140.9,0.2,0.0,0.08
+frontend/public/data/paineis,Paineis e sinonimos,navegador,paineis.json.gz,True,91714,0.087,349954,0.334,3.82,424,216.3,0.38,0.52,3.39
+frontend/public/data/paineis,Paineis e sinonimos,navegador,simbolos.json.gz,True,234512,0.224,741364,0.707,3.16,42445,5.5,0.53,1.71,11.12
+frontend/public/data/farmaco,ClinGen e CPIC,navegador,clingen.json.gz,True,211870,0.202,1475825,1.407,6.97,3029,69.9,0.52,1.19,9.49
+frontend/public/data/farmaco,ClinGen e CPIC,navegador,cpic.json.gz,True,83180,0.079,3282982,3.131,39.47,992,83.9,0.37,0.72,33.4
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.AFR.json,False,102455,0.098,102455,0.098,1.0,3752,27.3,0.63,0.0,1.65
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.AMR.json,False,89353,0.085,89353,0.085,1.0,3303,27.1,0.68,0.0,1.44
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.All.json,False,404342,0.386,404342,0.386,1.0,14258,28.4,1.13,0.0,5.87
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.EAS.json,False,41422,0.04,41422,0.04,1.0,1542,26.9,0.47,0.0,0.7
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.EUR.json,False,411818,0.393,411818,0.393,1.0,14526,28.4,1.1,0.0,5.96
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.SAS.json,False,83803,0.08,83803,0.08,1.0,3088,27.1,0.52,0.0,1.33
+frontend/public/data/burden,Coordenadas e associacao,navegador,all_results.non_EUR.json,False,112420,0.107,112420,0.107,1.0,4080,27.6,0.55,0.0,1.76
+frontend/public/data/burden,Coordenadas e associacao,navegador,biobanks.json,False,2907,0.003,2907,0.003,1.0,10,290.7,0.42,0.0,0.07
+frontend/public/data/burden,Coordenadas e associacao,navegador,genes.json,False,984649,0.939,984649,0.939,1.0,20033,49.2,1.59,0.0,6.0
+frontend/public/data/burden,Coordenadas e associacao,navegador,phenotypes.json,False,18201,0.017,18201,0.017,1.0,44,413.7,0.71,0.0,0.25
+frontend/public/data/burden,Coordenadas e associacao,navegador,provenance.json,False,2933,0.003,2933,0.003,1.0,7,419.0,0.37,0.0,0.07
+backend/app/data,Catalogos servidos pela API,servidor,orphanet_diseases.json,False,3117565,2.973,3117565,2.973,1.0,3733,835.1,5.93,0.0,20.21
+backend/app/data,Catalogos servidos pela API,servidor,panelapp_panels.json,False,4436293,4.231,4436293,4.231,1.0,14592,304.0,6.13,0.0,31.62
+backend/app/data,Catalogos servidos pela API,servidor,pgs_catalog.json,False,4161746,3.969,4161746,3.969,1.0,6982,596.1,5.41,0.0,32.27

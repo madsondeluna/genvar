@@ -145,11 +145,13 @@ A resolução de símbolo usa `prev_symbol` e `alias_symbol` do HGNC, e a mediç
 
 `PM2` só dispara com o gnomAD consultado ao vivo: a frequência embarcada vem do que o ClinVar publica, e ausência ali significa "o ClinVar não publicou frequência", não "ausente das bases populacionais".
 
-**Saídas.** Laudo em PDF (identificação, achados patogênicos, fármaco e risco, frequência por população, tabela completa das variantes anotadas em paisagem, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde e fontes) e exportação em VCF anotado, CSV, TSV, XLSX e JSON. Todas respeitam os filtros ativos, e os botões ficam ao lado do PDF: estavam só dentro da aba de variantes, e quem queria o dado tinha de descobrir a aba antes.
+**Saídas.** Laudo em PDF (identificação, achados patogênicos, fármaco e risco, frequência por população, tabela completa das variantes anotadas, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde e fontes) e exportação em VCF anotado, CSV, TSV, XLSX e JSON. Todas respeitam os filtros ativos, e os botões ficam ao lado do PDF: estavam só dentro da aba de variantes, e quem queria o dado tinha de descobrir a aba antes.
 
 O CSV usa ponto e vírgula e traz BOM. Não é preciosismo: o Excel em configuração brasileira usa a vírgula como separador decimal e abre um CSV separado por vírgula tudo numa coluna só, e sem o BOM ele lê UTF-8 como Latin-1, transformando "patogênica" em "patogÃªnica" em toda linha.
 
 O XLSX ganha uma aba **Populações** quando o gnomAD foi consultado, com uma linha por variante e por população. É o recorte mais pedido depois do laudo, e reconstruí-lo a partir da tabela larga é trabalhoso.
+
+O documento inteiro é em retrato. Uma única página em paisagem no mesmo `Document` derruba a geração inteira com `unsupported number: -3.8e+21` na geometria da borda, e o número é sempre o mesmo, o que denuncia leitura de medida não inicializada. Não é a largura das colunas: o erro persiste com elas somando 498 pt, que cabe em retrato. O preço é coluna estreita, e foi pago encurtando rótulo e cortando o que já aparece em outra página, não espremendo tudo.
 
 O PDF e o VCF carregam o **SHA-256 do arquivo de entrada** e a versão da compilação do ClinVar. Sem isso, dois laudos do mesmo paciente em meses diferentes não são comparáveis e ninguém prova de qual arquivo cada um saiu.
 
@@ -158,6 +160,30 @@ O XLSX é escrito em SpreadsheetML sobre o JSZip que já era dependência (é el
 **Ressalva de uso.** O laudo tem a forma de um relatório clínico e a natureza de um documento de pesquisa. A ressalva aparece na capa, no rodapé de **toda** página e no fim, porque PDF circula por folha solta: uso em pesquisa e ensino, não é laudo diagnóstico, não foi emitido por laboratório clínico habilitado, e todo achado exige confirmação por método independente e aconselhamento genético.
 
 **Arquivos de exemplo.** Quatro VCF sintéticos, gerados com semente fixa por `scripts/gera_vcf_exemplo.py` e `scripts/gera_vcf_teste.py`, carregáveis por um clique na própria página: um exoma com variantes reais do ClinVar, um trio com de novo e compostos plantados, um arquivo com defeitos de rotina, e um perfil XY. Nenhum vem de sequenciamento de pessoa alguma.
+
+#### Triagem de coorte (lote)
+
+Rota `/lote`. O módulo de VCF lia um arquivo por vez, e um laboratório processa dezenas por dia: a diferença entre demonstração e ferramenta de rotina está aqui. Aceita até 200 arquivos numa passada, com o mesmo pipeline de anotação, qualidade e painel de um arquivo isolado.
+
+**O que faz isso escalar é o que se descarta.** Cinquenta exomas de 30 mil variantes são 1,5 milhão de objetos, e o navegador não segura todos: o pico de memória derruba a aba antes do décimo arquivo. Cada arquivo é lido, anotado, resumido e **descartado**, sobrando apenas as métricas e os achados, algumas centenas de linhas por amostra. É a mesma razão pela qual um pipeline de produção não carrega a coorte inteira em memória, e está medido: a memória retida não acompanha o tamanho da coorte.
+
+O processamento é serial e não paralelo, também de propósito. A leitura já satura um núcleo, e abrir cinco em paralelo troca tempo total por risco de estourar a memória da aba.
+
+Um índice do ClinVar para o lote inteiro, e não um por arquivo. A chave do cache é o conjunto de cromossomos pedido; deixar cada arquivo pedir o seu remontava o índice a cada arquivo de conjunto diferente, expandindo meio milhão de linhas de novo a cada vez.
+
+Um arquivo defeituoso não derruba o lote: entra na lista com o motivo, que é o que permite reprocessar só o que falhou.
+
+**Sinais de atenção.** A triagem ordena a fila de revisão humana, e a regra é grosseira de propósito: ela não classifica nada.
+
+| Nível | Dispara com |
+|---|---|
+| Crítico | Ti/Tv de variante nova abaixo de 1,5; mais de 10% dos heterozigotos com balanço alélico fora da faixa (com ao menos 50 heterozigotos) |
+| Aviso | Sexo cromossômico não inferido; mais de 20% reprovadas no filtro do chamador; arquivo acima do teto de leitura; build de referência presumido; cruzamento com genes desligado |
+| Achado | Presença de variante patogênica, provavelmente patogênica ou conflitante |
+
+**Consolidado da coorte.** Genes recorrentes (em quantas amostras o mesmo gene traz achado), variantes recorrentes (presentes em duas ou mais amostras) e o resumo por classificação. Numa coorte, gene que aparece em muitas amostras é candidato a causa comum ou a artefato da região, e as duas leituras pedem o mesmo primeiro passo, que é olhar.
+
+Saídas em CSV: uma linha por amostra (`CABECALHO_LOTE`) e uma linha por achado (`CABECALHO_ACHADOS`).
 
 #### Idioma da interface
 
@@ -1123,9 +1149,9 @@ A suíte separa dois tipos de teste, e a separação é a razão de o build ser 
 
 | Comando | O que roda | Rede |
 |---|---|---|
-| `pytest` | 51 unitários | não |
+| `pytest` | 64 unitários | não |
 | `pytest -m integration` | 12 de contrato externo | sim |
-| `pytest -m ""` | os 63 | sim |
+| `pytest -m ""` | os 76 | sim |
 
 ```bash
 cd backend
@@ -1144,6 +1170,7 @@ Cobertura por arquivo:
 | `test_catalogos.py` | merge dos três catálogos, precedência do curado, unicidade de id, vocabulário de categorias, endpoints de sugestão e de fontes |
 | `test_build_catalog.py` | parser do ETL antigo do Orphanet |
 | `test_apis.py` | contrato das APIs externas, marcado como integração |
+| `test_rate_limit.py` | janela deslizante, isenção da sonda de saúde e leitura do `X-Forwarded-For` a partir do fim |
 
 ### Frontend (vitest)
 
@@ -1152,7 +1179,16 @@ cd frontend
 npm test
 ```
 
-Dezoito testes sobre o módulo de VCF: parser multi-amostra, balanço alélico, Ti/Tv separado, verificação de sexo, heterozigoto composto, análise de trio, espectro de substituição e exportação tabular.
+Quarenta testes em quatro arquivos:
+
+| Arquivo | Testes | Cobre |
+|---|---|---|
+| `vcf/vcf.test.js` | 18 | parser multi-amostra, balanço alélico, Ti/Tv separado, verificação de sexo, heterozigoto composto, análise de trio, espectro de substituição e exportação tabular |
+| `vcf/lote.test.js` | 11 | triagem de coorte: sinais de atenção, genes e variantes recorrentes, arquivo defeituoso sem derrubar o lote, índice do ClinVar indisponível degradando em vez de lançar |
+| `vcf/pdf.test.js` | 6 | geração do laudo, incluindo tabela longa o bastante para atravessar páginas |
+| `rotas.test.js` | 5 | toda rota publicada em link existe no roteador |
+
+`rotas.test.js` existe por um defeito concreto: a tira de ferramentas publicava links para `/concordancia` e `/cobertura`, que nunca foram construídas. Ferramenta ainda não construída guarda o caminho em `rotaPrevista`, e não em `to`, e o teste tranca isso.
 
 **Os testes leem o resultado esperado do próprio arquivo de teste.** As fixtures em `frontend/public/fixtures/` trazem linhas `##genvar_esperado=` no cabeçalho, escritas por `scripts/gera_vcf_teste.py`, com os números plantados: 12 de novo verdadeiros, 8 sítios sem cobertura parental, 6 compostos em trans, 4 em cis, 5 recessivas homozigotas. O teste compara contra elas em vez de repetir o número no código, então mudar o gerador não faz o teste passar por acidente, e um número que não bate é defeito do código.
 

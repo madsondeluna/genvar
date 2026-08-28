@@ -92,7 +92,10 @@ export default function BrandMorphNav({ heroSlotRef }) {
               : undefined
           }
         >
-          <BrandMark className="w-24 h-24" />
+          {/* 32 e nao 28: a escala de espaco da linguagem vai de 24 a 32 sem
+              passo no meio, e `w-28` nao existe nela. Sem token, o Tailwind cai no
+              padrao dele, que e 7rem, e a marca sai com 112px na barra. */}
+          <BrandMark className="w-32 h-32" />
           GenVar
         </Link>
       </div>

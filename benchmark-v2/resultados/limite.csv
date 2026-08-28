@@ -1,0 +1,6 @@
+caso,rota,enviadas,ok,bloqueadas,falhas,segundos,limite_por_minuto,limite_por_segundo,proxies_confiaveis
+"rajada de 30, um IP",/api/panel/stats,30,10,20,0,0.07,60,10,1
+"rajada de 80, um IP",/api/panel/stats,80,10,70,0,0.53,60,10,1
+"rajada de 30, sem cabecalho",/api/panel/stats,30,10,20,0,0.13,60,10,1
+rajada de 80 com X-Forwarded-For forjado,/api/panel/stats,80,10,70,0,0.35,60,10,1
+"sonda de saude, 60 requisicoes",/health,60,60,0,0,0.27,60,10,1

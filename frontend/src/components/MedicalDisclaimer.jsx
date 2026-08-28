@@ -9,7 +9,7 @@ import Icon from './Icon'
 // nao cumpriria seria nao existir credito nenhum.
 export default function MedicalDisclaimer() {
   return (
-    <aside className="border-t border-border bg-bg" role="note" aria-label="Aviso">
+    <aside className="border-t border-border bg-bg reserva-rodape" role="note" aria-label="Aviso">
       <div className="max-w-xl mx-auto px-24 py-16 flex items-start gap-10">
         <Icon name="info" className="text-muted mt-2" />
         <p className="text-12 leading-snug">

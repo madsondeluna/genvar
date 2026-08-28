@@ -50,7 +50,13 @@ export default function ManhattanPlot({ points, genes, layout, phenos, onSelect 
       bonf: resolveColor('var(--state-critical)'),
     }
 
-    const maxLp = Math.max(LP_BONFERRONI + 1, ...points.map((p) => p.lp), 8) * 1.05
+    // Laço e não `Math.max(...points)`: `points` é o conjunto inteiro de genes do
+    // fenótipo, e espalhar um vetor num argumento gasta uma posição de pilha por
+    // item. Com o dataset completo apontado por VITE_BURDEN_DATA_URL isso vira
+    // um estouro de pilha dentro do desenho, não um gráfico lento.
+    let maxLp = Math.max(LP_BONFERRONI + 1, 8)
+    for (const p of points) if (p.lp > maxLp) maxLp = p.lp
+    maxLp *= 1.05
     const x = scaleLinear(0, layout.total, M.left, width - M.right)
     const y = scaleLinear(0, maxLp, H - M.bottom, M.top)
 

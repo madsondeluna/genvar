@@ -337,7 +337,25 @@ export default function HomePage() {
 
       </div>
 
-      <footer className="app-footer app-footer-reveal" data-visible={String(scrolled)}>
+      <footer
+        className="app-footer app-footer-reveal"
+        data-visible={String(scrolled)}
+        // A altura vai para um token que o aviso medico le como folga. Medir em
+        // vez de fixar um numero: o rodape quebra em duas linhas no estreito, e
+        // uma constante escrita a mao erraria justamente ali.
+        ref={(el) => {
+          // O rodape so existe aqui. Ao sair da pagina o token e apagado, senao
+          // as outras rotas herdariam uma folga para um rodape que nao tem.
+          if (!el) {
+            document.documentElement.style.removeProperty('--altura-rodape')
+            return
+          }
+          const publicar = () => document.documentElement.style
+            .setProperty('--altura-rodape', `${el.offsetHeight}px`)
+          publicar()
+          if (typeof ResizeObserver !== 'undefined') new ResizeObserver(publicar).observe(el)
+        }}
+      >
         <div className="max-w-xl mx-auto px-24 py-12 flex items-center justify-center gap-24 flex-wrap">
           <span className="text-12 text-muted mono flex items-center justify-center gap-16 flex-wrap">
             <a

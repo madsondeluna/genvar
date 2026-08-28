@@ -51,6 +51,20 @@
   --state-critical: oklch(from var(--status-critical) l calc(c * var(--state-chroma)) h);
 }
 
+/* A pilula do menu perde 4px de folga de cada lado, e so dentro da barra: doze
+   delas somam 96px, que e a diferenca entre a barra caber numa linha e nao
+   caber. Fora da barra a pilula continua com a folga da linguagem.
+
+   FORA de @layer, e essa e a parte que custou uma medicao. `.pill-sm` mora no
+   patterns.css, que nao e camadado, e estilo sem camada vence estilo em camada
+   por mais especifico que este seja: dentro de @layer components a regra abaixo
+   nao mudava um pixel e o padding computado continuava 4px 10px. Mesma familia
+   do defeito de modificador que a propria linguagem documenta. */
+.barra-menu .pill-sm {
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
 /* fora de @layer para vencer o patterns.css, que é não-camadado */
 .status-good { color: var(--state-good); }
 .status-warning { color: var(--state-warning); }
@@ -202,6 +216,22 @@
     background-color: var(--bg);
   }
 
+  /* Barra em três colunas: marca, menu e controles. O menu é a única coluna
+     elástica e a única que quebra; as outras duas têm a largura do conteúdo. */
+  .barra-grade {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: var(--space-8);
+    row-gap: var(--space-8);
+  }
+
+  /* Marca, fileira de itens e controles ancoram na mesma altura. */
+  .barra-marca,
+  .barra-controles {
+    min-height: var(--space-24);
+  }
+
   /* barra da home: só a borda e o fundo aparecem no scroll; a marca em si
      viaja do hero para o centro da barra pelo transform do .brand-morph */
   .app-nav-morph {
@@ -231,6 +261,14 @@
     right: 0;
     border-top: var(--hairline) solid var(--border);
     background-color: var(--bg);
+  }
+
+  /* O rodape e fixo e o aviso medico e a ultima coisa do fluxo: sem folga, o
+     rodape pousa EM CIMA do aviso e as duas bordas superiores aparecem a poucos
+     pixels uma da outra, lendo como um fio duplo. A folga e a altura do rodape,
+     entao ele encosta na base do aviso em vez de cobri-lo. */
+  .reserva-rodape {
+    padding-bottom: var(--altura-rodape, 0px);
   }
 
   .app-footer-reveal {

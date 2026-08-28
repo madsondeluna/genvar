@@ -52,7 +52,8 @@ async def main() -> None:
     parser.add_argument(
         "--suite",
         default="all",
-        choices=["all", "latency", "exhaustion", "errors", "comparison", "completeness", "payload"],
+        choices=["all", "latency", "exhaustion", "errors", "comparison", "completeness",
+                 "payload"],
     )
     parser.add_argument("--out", default=str(RESULTS_DIR), help="Output directory for CSVs")
     args = parser.parse_args()
