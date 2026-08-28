@@ -904,3 +904,38 @@ button.ngs-cartao {
   max-inline-size: none;
   line-height: var(--leading-relaxed);
 }
+
+/* Cartão de exemplo. A linha inteira é o alvo, e nada se desloca no hover:
+   controle assenta, não pula. */
+.exemplo-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+  inline-size: 100%;
+  min-block-size: var(--hit-min);
+  padding: var(--space-10) var(--space-12);
+  background: var(--dim);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-field);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--duration-2) var(--ease-out-soft),
+              border-color var(--duration-2) var(--ease-out-soft);
+}
+
+.exemplo-linha:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
+}
+
+.exemplo-linha:focus-visible {
+  outline: var(--focus-ring) solid var(--text);
+  outline-offset: var(--focus-offset);
+}
+
+.exemplo-linha:disabled { opacity: 0.6; cursor: default; }
+
+@media (pointer: coarse) {
+  .exemplo-linha { min-block-size: var(--hit-min-touch); }
+}

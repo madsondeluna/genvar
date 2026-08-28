@@ -24,6 +24,42 @@ const TETO_VARIANTES = 400_000
 
 const PAR = 'text-14 leading-normal'
 
+// Arquivos de exemplo, todos SINTÉTICOS. Existem porque quem chega aqui sem um
+// VCF próprio, que é a maioria, não conseguia ver nada funcionar. São gerados
+// por scripts/gera_vcf_teste.py e scripts/gera_vcf_exemplo.py, com semente fixa,
+// e declaram `##source=genvar-` no cabeçalho: é o mesmo marcador que o hook de
+// pre-commit exige para deixar um VCF entrar no repositório.
+//
+// `papeis` pré-atribui as amostras do trio. Sem isso, quem carrega o trio vê a
+// aba de herança no estado degradado e conclui que trio não funciona.
+const EXEMPLOS = [
+  {
+    arquivo: 'exemplo-grch38.vcf',
+    nome: 'Exoma de exemplo',
+    resumo: '6.958 variantes, GRCh38, com um núcleo de variantes reais do ClinVar',
+    mostra: 'achado clínico, impacto na proteína e critérios ACMG',
+  },
+  {
+    arquivo: 'fixtures/trio-grch38.vcf',
+    nome: 'Trio',
+    resumo: '2.255 variantes, três amostras: criança, mãe e pai',
+    mostra: 'variante de novo, recessiva herdada dos dois lados e composto em trans',
+    papeis: { proband: 0, mae: 1, pai: 2 },
+  },
+  {
+    arquivo: 'fixtures/ruim-grch38.vcf',
+    nome: 'Arquivo com defeito',
+    resumo: '4.000 variantes com problemas de rotina plantados de propósito',
+    mostra: 'balanço alélico torto e Ti/Tv de variante nova em 0,89',
+  },
+  {
+    arquivo: 'fixtures/masculino-grch38.vcf',
+    nome: 'Perfil XY',
+    resumo: '1.100 variantes, X hemizigoto e Y presente',
+    mostra: 'verificação de sexo cromossômico',
+  },
+]
+
 export default function VcfPage() {
   const [estado, setEstado] = useState('vazio')  // vazio | lendo | pronto | erro
   const [progresso, setProgresso] = useState(null)
@@ -32,6 +68,7 @@ export default function VcfPage() {
   const [resumoCli, setResumoCli] = useState(null)
   const [vus, setVus] = useState(false)
   const [gnomad, setGnomad] = useState(null)   // null | {feitas,total,...} | 'pronto'
+  const [papeisIniciais, setPapeisIniciais] = useState(null)
   const [erro, setErro] = useState(null)
   const inputRef = useRef(null)
 
@@ -136,6 +173,13 @@ export default function VcfPage() {
     setGnomad('pronto')
   }, [dados])
 
+  const carregarExemplo = useCallback(async (ex) => {
+    setPapeisIniciais(ex.papeis || null)
+    const r = await fetch(`${import.meta.env.BASE_URL}${ex.arquivo}`)
+    const blob = await r.blob()
+    processar(new File([blob], ex.arquivo.split('/').pop(), { type: 'text/plain' }))
+  }, [processar])
+
   const aoSoltar = useCallback((e) => {
     e.preventDefault()
     processar(e.dataTransfer.files?.[0])
@@ -232,6 +276,39 @@ export default function VcfPage() {
               ))}
             </ul>
           </div>
+
+          <div className="card mt-16 flex flex-col gap-12">
+            <span className="flex items-baseline justify-between gap-16 flex-wrap">
+              <h3 className="text-16 font-medium text-text">Não tem um VCF à mão?</h3>
+              <span className="label">Quatro arquivos sintéticos, nenhum dado de pessoa</span>
+            </span>
+            <p className={PAR} style={{ maxWidth: 'var(--measure-wide)' }}>
+              Gerados por script com semente fixa, cada um exercitando uma parte diferente da
+              análise. Nenhum vem de sequenciamento de ninguém: são construídos a partir de
+              coordenadas reais de gene e de variantes do ClinVar, com genótipos sorteados.
+            </p>
+            <ul className="grid gap-12 about-cards" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              {EXEMPLOS.map((ex) => (
+                <li key={ex.arquivo}>
+                  <button
+                    type="button"
+                    className="exemplo-linha"
+                    disabled={estado === 'lendo'}
+                    onClick={() => carregarExemplo(ex)}
+                  >
+                    <span className="flex flex-col gap-2" style={{ minWidth: 0 }}>
+                      <span className="text-13 text-text">
+                        {ex.nome} <span className="label">· sintético</span>
+                      </span>
+                      <span className="label">{ex.resumo}</span>
+                      <span className="text-12 text-muted">Mostra: {ex.mostra}</span>
+                    </span>
+                    <Icon name="arrow-right" className="text-muted" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         {estado === 'pronto' && dados && (
@@ -243,6 +320,7 @@ export default function VcfPage() {
             onCarregarVUS={carregarVUS}
             gnomad={gnomad}
             onConsultarGnomad={consultarGnomad}
+            papeisIniciais={papeisIniciais}
           />
         )}
       </div>

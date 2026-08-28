@@ -27,10 +27,13 @@ function Ficha({ rotulo, valor, nota, slot }) {
   )
 }
 
-export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus, onCarregarVUS, gnomad, onConsultarGnomad }) {
+export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus, onCarregarVUS, gnomad, onConsultarGnomad, papeisIniciais }) {
   const { meta, variantes: todas, metricas: metricasTodas, nome, tamanho, lidos, truncado, genesMapeados, simbolos } = dados
   const [painel, setPainel] = useState(null)
-  const [papeis, setPapeis] = useState({})
+  // O trio de exemplo já chega com os papéis atribuídos: quem o carrega sem
+  // dizer quem é a criança vê a aba de herança no estado degradado e conclui que
+  // trio não funciona.
+  const [papeis, setPapeis] = useState(papeisIniciais || {})
   const [termos, setTermos] = useState([])
 
   // Tudo abaixo lê o recorte, não o arquivo. Escolher um painel não é um filtro
