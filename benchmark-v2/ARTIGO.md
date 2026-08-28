@@ -1,99 +1,6 @@
-#!/usr/bin/env python3
-"""
-Monta o relatorio do benchmark no formato de artigo de Bioinformatics (Oxford).
+# Benchmarking a browser-resident variant annotation platform
 
-Gerado, e nao escrito a mao, pelo mesmo motivo do RELATORIO.md: numero copiado
-para dentro de um texto envelhece na primeira reexecucao, e um artigo que
-discorda do CSV ao lado dele e pior que nenhum artigo. As tabelas e os valores
-citados no corpo saem dos proprios arquivos de resultado; o texto ao redor
-discute metodo e achado, que e o que nao se deriva de dado.
-
-Estrutura do periodico: Abstract com Motivation, Results e Availability;
-Introduction; Methods; Results; Discussion; Conclusion.
-
-Uso:
-  python3 benchmark-v2/gerar_artigo.py
-"""
-import csv
-import json
-from datetime import date
-from pathlib import Path
-
-AQUI = Path(__file__).resolve().parent
-RES = AQUI / "resultados"
-FIG = AQUI / "figuras"
-SAIDA = AQUI / "ARTIGO.md"
-
-
-def ler(nome):
-    f = RES / nome
-    if not f.exists():
-        return []
-    with f.open(encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
-
-
-def n(x, casas=1):
-    try:
-        v = float(x)
-    except (TypeError, ValueError):
-        return "—"
-    if casas == 0:
-        return f"{int(round(v)):,}".replace(",", ".")
-    return f"{v:,.{casas}f}".replace(",", "X").replace(".", ",").replace("X", ".")
-
-
-def tabela(cab, linhas, legenda=None):
-    if not linhas:
-        return "_Sem dados._\n"
-    fora = ["| " + " | ".join(cab) + " |", "|" + "|".join(["---"] * len(cab)) + "|"]
-    for l in linhas:
-        fora.append("| " + " | ".join(str(c) for c in l) + " |")
-    if legenda:
-        fora.append("")
-        fora.append(legenda)
-    return "\n".join(fora) + "\n"
-
-
-def figura(arquivo, numero, legenda):
-    if not (FIG / arquivo).exists():
-        return ""
-    return (f"\n![Figura {numero}](figuras/{arquivo})\n\n"
-            f"**Fig. {numero}.** {legenda}\n\n")
-
-
-def achar(linhas, **filtros):
-    for l in linhas:
-        if all(str(l.get(k, "")).strip() == str(v) for k, v in filtros.items()):
-            return l
-    return {}
-
-
-funcoes = ler("funcoes.csv")
-reprod = ler("reprodutibilidade.csv")
-lote = ler("lote_vs_individual.csv")
-cache = ler("cache.csv")
-api = ler("api_latencia.csv")
-limite = ler("limite.csv")
-dados = ler("dados_resumo.csv")
-testes = ler("build_testes.csv")
-amb = json.loads((RES / "ambiente.json").read_text()) if (RES / "ambiente.json").exists() else {}
-manifesto = (json.loads((AQUI / "corpus/arquivos/manifesto.json").read_text())
-             if (AQUI / "corpus/arquivos/manifesto.json").exists() else [])
-
-partes = []
-w = partes.append
-
-# --- Abstract -----------------------------------------------------------------
-
-leitura_400k = achar(funcoes, arquivo="04-grande.vcf", funcao="lerVCF")
-anot_400k = achar(funcoes, arquivo="04-grande.vcf", funcao="ClinVar")
-lote_100 = achar(lote, cenario="exoma completo", arquivos="100")
-reprod_ok = sum(1 for r in reprod if str(r.get("tudo_ok", "")).lower() == "true")
-
-w(f"""# Benchmarking a browser-resident variant annotation platform
-
-_Relatório técnico em formato de artigo, {date.today().strftime('%d/%m/%Y')}. Todos
+_Relatório técnico em formato de artigo, 28/08/2026. Todos
 os valores citados vêm dos CSV em `resultados/`; este arquivo é gerado por
 `gerar_artigo.py` e não editado à mão, para não divergir dos dados._
 
@@ -110,13 +17,13 @@ localizamos medem tempo de resposta de servidor.
 
 **Results.** Foram medidas todas as funções do pipeline sobre um corpus de doze
 arquivos sintéticos determinísticos e quatro arquivos reais de fontes públicas,
-mais as rotas da API com {api[0].get('replicas', '10') if api else '10'} réplicas
-por rota. A leitura de 400.000 variantes leva {n(leitura_400k.get('mediana_ms'), 0)} ms
-e o cruzamento com o ClinVar embarcado {n(anot_400k.get('mediana_ms'), 0)} ms, com
+mais as rotas da API com 10 réplicas
+por rota. A leitura de 400.000 variantes leva 2.112 ms
+e o cruzamento com o ClinVar embarcado 799 ms, com
 o índice já montado. Em coorte de cem exomas, o processamento em lote retém
-{n(lote_100.get('lote_retido_mb'), 0)} MB contra {n(lote_100.get('individual_retido_mb'), 0)} MB
-do caminho arquivo a arquivo, um fator de {n(lote_100.get('ganho_retido'), 1)}.
-{reprod_ok} de {len(reprod)} arquivos satisfazem os seis critérios de
+54 MB contra 1.766 MB
+do caminho arquivo a arquivo, um fator de 33,0.
+9 de 9 arquivos satisfazem os seis critérios de
 reprodutibilidade. Três limites foram encontrados por medição, um deles um defeito
 de estouro de pilha em uso rotineiro.
 
@@ -147,16 +54,25 @@ descreve, que é se a mesma entrada devolve o mesmo laudo.
 
 ### 2.1 Corpus
 
-""")
 
-if manifesto:
-    w(tabela(["Arquivo", "Variantes", "MB", "Do ClinVar", "Papel"],
-             [(m["arquivo"], n(m["variantes"], 0), n(m["mb"], 2),
-               n(m.get("reais_do_clinvar", 0), 0), m["papel"]) for m in manifesto],
-             "**Tabela 1.** Corpus sintético. Semente fixa: duas execuções produzem "
-             "arquivos byte a byte idênticos."))
+| Arquivo | Variantes | MB | Do ClinVar | Papel |
+|---|---|---|---|---|
+| 01-pequeno.vcf | 1.000 | 0,07 | 80 | piso de tempo |
+| 02-medio.vcf | 25.000 | 1,67 | 2.000 | escala de painel |
+| 03-exoma.vcf | 100.000 | 6,67 | 8.000 | escala de exoma |
+| 04-grande.vcf | 400.000 | 26,67 | 32.000 | teto declarado |
+| 05-acima-do-teto.vcf | 600.000 | 39,97 | 38.020 | passando do teto |
+| 06-medio.vcf.gz | 25.000 | 0,52 | 2.000 | entrada comprimida |
+| 07-medio.zip | 25.000 | 1,67 | 2.000 | entrada em zip |
+| 08-grch37.vcf | 25.000 | 1,67 | 2.000 | build antigo, cruzamento por coordenada desligado |
+| 09-sem-build.vcf | 25.000 | 1,67 | 2.000 | build nao declarado, presumido |
+| 10-trio.vcf | 4.045 | 0,39 | 320 | heranca com numeros plantados |
+| 11-ruim.vcf | 25.000 | 1,67 | 2.000 | controle de qualidade |
+| 12-multiamostra.vcf | 25.000 | 3,15 | 2.000 | cinco amostras num arquivo |
 
-w("""
+**Tabela 1.** Corpus sintético. Semente fixa: duas execuções produzem arquivos byte a byte idênticos.
+
+
 Cada arquivo existe para exercitar um caminho que os outros não alcançam: escala,
 entrada comprimida em `.gz` e em `.zip`, GRCh37, build não declarado, trio com os
 números de herança plantados no cabeçalho, arquivo com defeitos de rotina e
@@ -204,113 +120,168 @@ réplica; quente é uma leitura do Redis. Uma réplica não teria significado: a
 chamada ao Ensembl mediu 2,3 s e 43 s em tentativas seguidas. A mediana é o valor
 citado, porque média é puxada por um pico da fonte que não representa o caso
 típico.
-""")
 
-# --- Resultados ---------------------------------------------------------------
 
-w("\n## 3 Results\n\n### 3.1 Custo por função e por escala\n")
-w(figura("fig1_custo_por_escala.png", 1,
-         "Tempo mediano de cada função contra o número de variantes, em escala "
-         "log-log. (a) funções cujo custo domina o pipeline; (b) funções de custo "
-         "desprezível na mesma escala. A leitura e o cruzamento com o ClinVar "
-         "crescem linearmente com o número de variantes; as métricas de qualidade "
-         "ficam uma ordem de grandeza abaixo em toda a faixa."))
+## 3 Results
 
-escala = [l for l in funcoes if l["funcao"] == "lerVCF" and l["arquivo"].startswith("0")]
-if escala:
-    w(tabela(["Arquivo", "Variantes", "Leitura (ms)", "p95 (ms)", "Variantes/s", "Memória (MB)"],
-             [(l["arquivo"], n(l.get("variantes"), 0), n(l["mediana_ms"], 0),
-               n(l["p95_ms"], 0), n(l.get("variantes_por_segundo"), 0),
-               n(l.get("heap_delta_mb"), 0)) for l in sorted(
-                 escala, key=lambda x: float(x.get("variantes") or 0))],
-             "**Tabela 2.** Leitura do VCF por escala."))
+### 3.1 Custo por função e por escala
 
-cat = [l for l in funcoes if l["etapa"] == "catalogo"]
-if cat:
-    w("\n### 3.2 Custo fixo de sessão\n")
-    w(tabela(["Etapa", "Tempo (ms)"], [(l["funcao"], n(l["mediana_ms"], 0)) for l in cat],
-             "**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo."))
-    w("""
+
+![Figura 1](figuras/fig1_custo_por_escala.png)
+
+**Fig. 1.** Tempo mediano de cada função contra o número de variantes, em escala log-log. (a) funções cujo custo domina o pipeline; (b) funções de custo desprezível na mesma escala. A leitura e o cruzamento com o ClinVar crescem linearmente com o número de variantes; as métricas de qualidade ficam uma ordem de grandeza abaixo em toda a faixa.
+
+
+| Arquivo | Variantes | Leitura (ms) | p95 (ms) | Variantes/s | Memória (MB) |
+|---|---|---|---|---|---|
+| 01-pequeno.vcf | 1.000 | 10 | 12 | 102.680 | 1 |
+| 02-medio.vcf | 25.000 | 108 | 123 | 231.655 | 17 |
+| 06-medio.vcf.gz | 25.000 | 95 | 108 | 264.206 | 18 |
+| 07-medio.zip | 25.000 | 93 | 102 | 267.835 | 18 |
+| 08-grch37.vcf | 25.000 | 88 | 90 | 283.846 | 18 |
+| 09-sem-build.vcf | 25.000 | 82 | 86 | 303.804 | 18 |
+| 03-exoma.vcf | 100.000 | 319 | 349 | 313.491 | 71 |
+| 04-grande.vcf | 400.000 | 2.112 | 2.327 | 189.419 | 287 |
+| 05-acima-do-teto.vcf | 600.000 | 1.991 | 2.107 | 200.879 | 287 |
+
+**Tabela 2.** Leitura do VCF por escala.
+
+
+### 3.2 Custo fixo de sessão
+
+| Etapa | Tempo (ms) |
+|---|---|
+| carregar painéis | 13 |
+| carregar símbolos | 19 |
+| carregar ClinGen | 13 |
+| carregar CPIC | 28 |
+| índice de genes | 4 |
+| montagem do índice ClinVar | 904 |
+
+**Tabela 3.** Custo pago uma vez por sessão, e não por arquivo.
+
+
 A montagem do índice do ClinVar é o maior item, e medi-la junto do primeiro
 arquivo produzia uma curva de anotação que **descia** de mil para 25 mil
 variantes: o que descia era o custo fixo sendo diluído. A chave do cache é o
 conjunto de cromossomos pedido, então um arquivo que cubra conjunto diferente
 paga a montagem outra vez. É esse mecanismo que separa os dois cenários de
 coorte na seção 3.4.
-""")
 
-w("\n### 3.3 Pipeline completo e saídas\n")
-w(figura("fig2_pipeline_por_arquivo.png", 2,
-         "Pipeline completo por arquivo. (a) tempo total, em escala logarítmica; "
-         "(b) composição percentual por etapa, em escala linear. As duas perguntas "
-         "ficam em painéis separados porque barra empilhada em eixo logarítmico "
-         "desenha comprimentos que dependem de onde cada segmento começa."))
-w(figura("fig3_saidas.png", 3,
-         "Tempo de geração por formato de saída. A linha tracejada marca 1 s, "
-         "limite prático entre uma interface que responde e uma que trava, já que "
-         "a geração roda na thread principal. XLSX é uma ordem de grandeza mais "
-         "caro que as saídas de texto."))
 
-w("\n### 3.4 Lote contra arquivo a arquivo\n")
-w(figura("fig7_lote_vs_individual.png", 7,
-         "Processamento em lote contra arquivo a arquivo, em dois cenários de "
-         "coorte. (a, c) tempo total; (b, d) memória retida ao fim, em escala "
-         "logarítmica. A memória retida do caminho individual cresce linearmente "
-         "com a coorte; a do lote não."))
-if lote:
-    w(tabela(["Cenário", "Arquivos", "Individual (s)", "Lote (s)",
-              "Retido ind. (MB)", "Retido lote (MB)", "Fator"],
-             [(l["cenario"], l["arquivos"],
-               n(float(l["individual_ms"]) / 1000, 2) if l.get("individual_ms") else "não coube",
-               n(float(l["lote_ms"]) / 1000, 2) if l.get("lote_ms") else "—",
-               n(l.get("individual_retido_mb"), 0), n(l.get("lote_retido_mb"), 0),
-               n(l.get("ganho_retido"), 1)) for l in lote],
-             "**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários."))
+### 3.3 Pipeline completo e saídas
 
-w("\n### 3.5 Reprodutibilidade\n")
-w(figura("fig4_reprodutibilidade.png", 4,
-         "Matriz de reprodutibilidade. Cada coluna é um critério binário; verde é "
-         "satisfeito."))
-if reprod:
-    w(tabela(["Arquivo", "Variantes", "Critérios", "SHA-256 da entrada"],
-             [(r["arquivo"], n(r["variantes"], 0),
-               f'{r["criterios_ok"]}/{r["criterios_total"]}', r["sha_entrada"][:16])
-              for r in reprod],
-             "**Tabela 5.** Seis critérios: TSV, CSV e VCF anotado idênticos entre "
-             "execuções; métricas invariantes à ordem das linhas; e o artefato "
-             "carregando o SHA-256 da entrada e a versão da compilação do ClinVar."))
 
-w("\n### 3.6 Latência da API e efeito do cache\n")
-w(figura("fig9_api_latencia.png", 9,
-         "Latência por rota. (a) mediana sem e com cache, com a faixa entre o menor "
-         "e o maior valor das réplicas; (b) fator de ganho do cache. As rotas que "
-         "dependem de fonte externa dominam a cauda."))
-w(figura("fig10_replicas.png", 10,
-         "As dez réplicas de cada rota, sem cache. Cada ponto é uma chamada e o "
-         "traço vermelho é a mediana. É a figura que justifica medir dez vezes: em "
-         "rota que depende de fonte externa, duas chamadas seguidas ao mesmo "
-         "endereço diferem por um fator de dez."))
-if api:
-    piores = sorted(api, key=lambda l: -float(l.get("frio_mediana_ms") or 0))[:8]
-    w(tabela(["Rota", "Tipo", "Sem cache (ms)", "Com cache (ms)", "Ganho"],
-             [(l["rota"], "externa" if str(l["externa"]).lower() in ("true", "1") else "interna",
-               n(l.get("frio_mediana_ms"), 0), n(l.get("quente_mediana_ms"), 1),
-               f'{l["ganho_cache"]}x' if l.get("ganho_cache") else "—") for l in piores],
-             "**Tabela 6.** As oito rotas mais lentas sem cache, mediana de dez réplicas."))
+![Figura 2](figuras/fig2_pipeline_por_arquivo.png)
 
-w("\n### 3.7 Infraestrutura e proteção do acesso às fontes\n")
-w(figura("fig11_infraestrutura.png", 11,
-         "(a) catálogos versionados, cru contra o que é entregue comprimido; "
-         "(b) pacote da aplicação por papel, em disco e comprimido."))
-w(figura("fig12_limite.png", 12,
-         "Limitador de taxa sob rajada. A barra com cabeçalho forjado é idêntica à "
-         "de um IP só: forjar o `X-Forwarded-For` a cada requisição não compra "
-         "nada, porque o elemento confiável é contado a partir do fim da cadeia."))
-w(figura("fig13_testes.png", 13, "Custo de provar que a aplicação continua correta."))
+**Fig. 2.** Pipeline completo por arquivo. (a) tempo total, em escala logarítmica; (b) composição percentual por etapa, em escala linear. As duas perguntas ficam em painéis separados porque barra empilhada em eixo logarítmico desenha comprimentos que dependem de onde cada segmento começa.
 
-# --- Discussao ----------------------------------------------------------------
 
-w("""
+
+![Figura 3](figuras/fig3_saidas.png)
+
+**Fig. 3.** Tempo de geração por formato de saída. A linha tracejada marca 1 s, limite prático entre uma interface que responde e uma que trava, já que a geração roda na thread principal. XLSX é uma ordem de grandeza mais caro que as saídas de texto.
+
+
+
+### 3.4 Lote contra arquivo a arquivo
+
+
+![Figura 7](figuras/fig7_lote_vs_individual.png)
+
+**Fig. 7.** Processamento em lote contra arquivo a arquivo, em dois cenários de coorte. (a, c) tempo total; (b, d) memória retida ao fim, em escala logarítmica. A memória retida do caminho individual cresce linearmente com a coorte; a do lote não.
+
+
+| Cenário | Arquivos | Individual (s) | Lote (s) | Retido ind. (MB) | Retido lote (MB) | Fator |
+|---|---|---|---|---|---|---|
+| exoma completo | 1 | 0,39 | 0,24 | 18 | 1 | 17,9 |
+| exoma completo | 5 | 0,74 | 0,83 | 88 | 3 | 32,4 |
+| exoma completo | 10 | 1,50 | 2,21 | 177 | 5 | 33,7 |
+| exoma completo | 25 | 8,32 | 5,16 | 444 | 13 | 34,2 |
+| exoma completo | 50 | 13,98 | 8,95 | 883 | 27 | 33,2 |
+| exoma completo | 100 | 102,01 | 56,33 | 1.766 | 54 | 33,0 |
+| painel dirigido | 1 | 0,07 | 0,11 | 2 | 0 | 2,4 |
+| painel dirigido | 5 | 0,38 | 0,45 | 12 | 1 | 8,8 |
+| painel dirigido | 10 | 1,00 | 0,90 | 24 | 3 | 8,6 |
+| painel dirigido | 25 | 1,42 | 1,09 | 60 | 7 | 8,7 |
+| painel dirigido | 50 | 1,33 | 1,97 | 120 | 14 | 8,7 |
+| painel dirigido | 100 | 3,17 | 2,80 | 241 | 28 | 8,7 |
+
+**Tabela 4.** Coorte processada pelos dois caminhos, em dois cenários.
+
+
+### 3.5 Reprodutibilidade
+
+
+![Figura 4](figuras/fig4_reprodutibilidade.png)
+
+**Fig. 4.** Matriz de reprodutibilidade. Cada coluna é um critério binário; verde é satisfeito.
+
+
+| Arquivo | Variantes | Critérios | SHA-256 da entrada |
+|---|---|---|---|
+| 01-pequeno.vcf | 1.000 | 6/6 | 6aa02ca6eeeb8eae |
+| 02-medio.vcf | 25.000 | 6/6 | 21fa9f4db1fb9a75 |
+| 06-medio.vcf.gz | 25.000 | 6/6 | a7c7020848168ca3 |
+| 07-medio.zip | 25.000 | 6/6 | e19a8ddf66ce279d |
+| 08-grch37.vcf | 25.000 | 6/6 | c672d8453ae884f8 |
+| 09-sem-build.vcf | 25.000 | 6/6 | bdf4c9c91abf5d92 |
+| 10-trio.vcf | 4.045 | 6/6 | 8dc5f5a33df4c76d |
+| 11-ruim.vcf | 25.000 | 6/6 | 009a6cc2d01e7d87 |
+| 12-multiamostra.vcf | 25.000 | 6/6 | b107c88335d7cacf |
+
+**Tabela 5.** Seis critérios: TSV, CSV e VCF anotado idênticos entre execuções; métricas invariantes à ordem das linhas; e o artefato carregando o SHA-256 da entrada e a versão da compilação do ClinVar.
+
+
+### 3.6 Latência da API e efeito do cache
+
+
+![Figura 9](figuras/fig9_api_latencia.png)
+
+**Fig. 9.** Latência por rota. (a) mediana sem e com cache, com a faixa entre o menor e o maior valor das réplicas; (b) fator de ganho do cache. As rotas que dependem de fonte externa dominam a cauda.
+
+
+
+![Figura 10](figuras/fig10_replicas.png)
+
+**Fig. 10.** As dez réplicas de cada rota, sem cache. Cada ponto é uma chamada e o traço vermelho é a mediana. É a figura que justifica medir dez vezes: em rota que depende de fonte externa, duas chamadas seguidas ao mesmo endereço diferem por um fator de dez.
+
+
+| Rota | Tipo | Sem cache (ms) | Com cache (ms) | Ganho |
+|---|---|---|---|---|
+| Fenotipos do gene | externa | 88.199 | 1.308,7 | 67.4x |
+| Variantes do gene | externa | 16.053 | 18,0 | 891.8x |
+| Detalhe de escore | externa | 8.297 | 17,3 | 479.6x |
+| Gene (sem variantes) | externa | 7.698 | 8,2 | 938.8x |
+| Variante | externa | 4.051 | 28,9 | 140.2x |
+| Variantes por doenca | externa | 3.275 | 14,4 | 227.5x |
+| Fontes de dados | interna | 661 | 746,2 | 0.9x |
+| Detalhe de painel | externa | 587 | 17,4 | 33.7x |
+
+**Tabela 6.** As oito rotas mais lentas sem cache, mediana de dez réplicas.
+
+
+### 3.7 Infraestrutura e proteção do acesso às fontes
+
+
+![Figura 11](figuras/fig11_infraestrutura.png)
+
+**Fig. 11.** (a) catálogos versionados, cru contra o que é entregue comprimido; (b) pacote da aplicação por papel, em disco e comprimido.
+
+
+
+![Figura 12](figuras/fig12_limite.png)
+
+**Fig. 12.** Limitador de taxa sob rajada. A barra com cabeçalho forjado é idêntica à de um IP só: forjar o `X-Forwarded-For` a cada requisição não compra nada, porque o elemento confiável é contado a partir do fim da cadeia.
+
+
+
+![Figura 13](figuras/fig13_testes.png)
+
+**Fig. 13.** Custo de provar que a aplicação continua correta.
+
+
+
 ## 4 Discussion
 
 ### 4.1 A restrição de memória é a que decide, e não a de tempo
@@ -422,8 +393,3 @@ mantém a memória retida constante enquanto a coorte cresce.
 A medição encontrou três limites e um defeito de correção que a suíte de testes
 não alcançava, o que sustenta a prática de medir até quebrar em vez de medir
 apenas o caso confortável.
-""")
-
-SAIDA.write_text("\n".join(partes))
-linhas = "\n".join(partes).count("\n")
-print(f"  {SAIDA.relative_to(AQUI.parent)}  ({linhas} linhas)")

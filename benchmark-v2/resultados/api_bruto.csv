@@ -1,0 +1,361 @@
+rota,caminho,estado,replica,ms,status,bytes
+Raiz,/,frio,1,97.3,200,56
+Raiz,/,frio,2,9.3,200,56
+Raiz,/,frio,3,9.0,200,56
+Raiz,/,frio,4,11.4,200,56
+Raiz,/,frio,5,19.2,200,56
+Raiz,/,frio,6,65.5,200,56
+Raiz,/,frio,7,14.1,200,56
+Raiz,/,frio,8,17.6,200,56
+Raiz,/,frio,9,43.0,200,56
+Raiz,/,frio,10,227.6,200,56
+Raiz,/,quente,1,13.3,200,56
+Raiz,/,quente,2,15.2,200,56
+Raiz,/,quente,3,18.7,200,56
+Raiz,/,quente,4,13.9,200,56
+Raiz,/,quente,5,8.3,200,56
+Raiz,/,quente,6,18.8,200,56
+Raiz,/,quente,7,5.0,200,56
+Raiz,/,quente,8,11.4,200,56
+Raiz,/,quente,9,13.2,200,56
+Raiz,/,quente,10,4.5,200,56
+Health,/health,frio,1,9.6,200,15
+Health,/health,frio,2,8.6,200,15
+Health,/health,frio,3,7.5,200,15
+Health,/health,frio,4,15.8,200,15
+Health,/health,frio,5,20.2,200,15
+Health,/health,frio,6,8.9,200,15
+Health,/health,frio,7,266.5,200,15
+Health,/health,frio,8,24.6,200,15
+Health,/health,frio,9,19.8,200,15
+Health,/health,frio,10,81.2,200,15
+Health,/health,quente,1,14.8,200,15
+Health,/health,quente,2,73.0,200,15
+Health,/health,quente,3,17.2,200,15
+Health,/health,quente,4,11.4,200,15
+Health,/health,quente,5,26.7,200,15
+Health,/health,quente,6,5.9,200,15
+Health,/health,quente,7,11.9,200,15
+Health,/health,quente,8,7.4,200,15
+Health,/health,quente,9,23.6,200,15
+Health,/health,quente,10,6.6,200,15
+Fontes de dados,/api/sources,frio,1,1303.0,200,8320
+Fontes de dados,/api/sources,frio,2,492.2,200,8320
+Fontes de dados,/api/sources,frio,3,830.2,200,8320
+Fontes de dados,/api/sources,frio,4,478.5,200,8320
+Fontes de dados,/api/sources,frio,5,446.1,200,8320
+Fontes de dados,/api/sources,frio,6,957.0,200,8320
+Fontes de dados,/api/sources,frio,7,352.7,200,8320
+Fontes de dados,/api/sources,frio,8,888.1,200,8320
+Fontes de dados,/api/sources,frio,9,414.9,200,8320
+Fontes de dados,/api/sources,frio,10,4599.7,200,8320
+Fontes de dados,/api/sources,quente,1,1086.2,200,8320
+Fontes de dados,/api/sources,quente,2,572.6,200,8320
+Fontes de dados,/api/sources,quente,3,1229.5,200,8320
+Fontes de dados,/api/sources,quente,4,645.3,200,8320
+Fontes de dados,/api/sources,quente,5,709.5,200,8320
+Fontes de dados,/api/sources,quente,6,508.6,200,8320
+Fontes de dados,/api/sources,quente,7,1345.9,200,8320
+Fontes de dados,/api/sources,quente,8,1064.8,200,8320
+Fontes de dados,/api/sources,quente,9,783.0,200,8320
+Fontes de dados,/api/sources,quente,10,481.2,200,8320
+Sugestao de busca,/api/suggest?q=BRCA,frio,1,18.4,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,2,11.2,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,3,15.0,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,4,12.3,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,5,11.8,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,6,13.3,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,7,12.3,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,8,13.2,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,9,10.9,200,502
+Sugestao de busca,/api/suggest?q=BRCA,frio,10,9.8,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,1,12.5,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,2,17.1,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,3,10.7,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,4,13.0,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,5,17.0,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,6,74.6,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,7,20.5,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,8,15.0,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,9,15.8,200,502
+Sugestao de busca,/api/suggest?q=BRCA,quente,10,19.2,200,502
+Catalogo de doencas,/api/disease?page_size=1,frio,1,16.5,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,2,7.5,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,3,10.7,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,4,12.6,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,5,162.5,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,6,15.4,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,7,17.7,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,8,3.9,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,9,5.0,200,356
+Catalogo de doencas,/api/disease?page_size=1,frio,10,6.6,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,1,4.0,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,2,18.4,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,3,9.0,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,4,7.7,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,5,10.1,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,6,9.9,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,7,13.4,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,8,22.1,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,9,24.2,200,356
+Catalogo de doencas,/api/disease?page_size=1,quente,10,13.8,200,356
+Panorama de doencas,/api/disease/stats,frio,1,29.3,200,1611
+Panorama de doencas,/api/disease/stats,frio,2,13.1,200,1611
+Panorama de doencas,/api/disease/stats,frio,3,12.5,200,1611
+Panorama de doencas,/api/disease/stats,frio,4,413.2,200,1611
+Panorama de doencas,/api/disease/stats,frio,5,62.9,200,1611
+Panorama de doencas,/api/disease/stats,frio,6,92.2,200,1611
+Panorama de doencas,/api/disease/stats,frio,7,62.7,200,1611
+Panorama de doencas,/api/disease/stats,frio,8,75.8,200,1611
+Panorama de doencas,/api/disease/stats,frio,9,53.6,200,1611
+Panorama de doencas,/api/disease/stats,frio,10,38.7,200,1611
+Panorama de doencas,/api/disease/stats,quente,1,18.2,200,1611
+Panorama de doencas,/api/disease/stats,quente,2,231.4,200,1611
+Panorama de doencas,/api/disease/stats,quente,3,67.4,200,1611
+Panorama de doencas,/api/disease/stats,quente,4,16.9,200,1611
+Panorama de doencas,/api/disease/stats,quente,5,15.5,200,1611
+Panorama de doencas,/api/disease/stats,quente,6,21.4,200,1611
+Panorama de doencas,/api/disease/stats,quente,7,12.6,200,1611
+Panorama de doencas,/api/disease/stats,quente,8,12.7,200,1611
+Panorama de doencas,/api/disease/stats,quente,9,10.8,200,1611
+Panorama de doencas,/api/disease/stats,quente,10,17.1,200,1611
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,1,413.7,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,2,296.9,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,3,267.0,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,4,328.0,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,5,374.6,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,6,281.4,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,7,268.0,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,8,260.7,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,9,258.9,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,frio,10,265.2,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,1,3.9,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,2,3.7,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,3,5.2,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,4,6.7,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,5,6.5,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,6,6.4,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,7,5.0,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,8,5.6,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,9,28.0,200,1217
+Detalhe de doenca,/api/disease/anemia-falciforme,quente,10,5.6,200,1217
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,1,19924.6,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,2,3312.9,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,3,3153.8,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,4,3178.4,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,5,3161.8,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,6,3237.7,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,7,3690.8,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,8,3366.6,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,9,3177.2,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,frio,10,3371.1,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,1,13.9,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,2,169.3,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,3,11.5,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,4,14.9,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,5,9.8,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,6,7.7,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,7,14.8,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,8,35.4,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,9,15.1,200,4831
+Variantes por doenca,/api/disease/anemia-falciforme/variants,quente,10,13.9,200,4831
+Catalogo de paineis,/api/panel?page_size=1,frio,1,28.7,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,2,16.0,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,3,35.8,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,4,21.8,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,5,63.3,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,6,11.8,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,7,8.1,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,8,80.5,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,9,13.2,200,423
+Catalogo de paineis,/api/panel?page_size=1,frio,10,9.4,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,1,9.6,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,2,15.8,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,3,13.0,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,4,6.4,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,5,9.0,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,6,15.0,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,7,7.2,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,8,11.2,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,9,10.1,200,423
+Catalogo de paineis,/api/panel?page_size=1,quente,10,10.9,200,423
+Panorama de paineis,/api/panel/stats,frio,1,24.2,200,1060
+Panorama de paineis,/api/panel/stats,frio,2,150.0,200,1060
+Panorama de paineis,/api/panel/stats,frio,3,94.4,200,1060
+Panorama de paineis,/api/panel/stats,frio,4,95.2,200,1060
+Panorama de paineis,/api/panel/stats,frio,5,62.9,200,1060
+Panorama de paineis,/api/panel/stats,frio,6,31.5,200,1060
+Panorama de paineis,/api/panel/stats,frio,7,15.8,200,1060
+Panorama de paineis,/api/panel/stats,frio,8,22.8,200,1060
+Panorama de paineis,/api/panel/stats,frio,9,15.8,200,1060
+Panorama de paineis,/api/panel/stats,frio,10,16.9,200,1060
+Panorama de paineis,/api/panel/stats,quente,1,15.9,200,1060
+Panorama de paineis,/api/panel/stats,quente,2,8.4,200,1060
+Panorama de paineis,/api/panel/stats,quente,3,20.1,200,1060
+Panorama de paineis,/api/panel/stats,quente,4,10.6,200,1060
+Panorama de paineis,/api/panel/stats,quente,5,15.7,200,1060
+Panorama de paineis,/api/panel/stats,quente,6,13.7,200,1060
+Panorama de paineis,/api/panel/stats,quente,7,18.8,200,1060
+Panorama de paineis,/api/panel/stats,quente,8,9.9,200,1060
+Panorama de paineis,/api/panel/stats,quente,9,25.1,200,1060
+Panorama de paineis,/api/panel/stats,quente,10,186.7,200,1060
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,1,1208.6,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,2,634.0,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,3,837.4,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,4,536.1,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,5,728.5,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,6,727.9,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,7,493.5,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,8,540.0,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,9,529.5,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,frio,10,478.8,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,1,6.0,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,2,18.2,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,3,28.1,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,4,164.2,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,5,45.5,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,6,21.5,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,7,7.1,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,8,16.7,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,9,9.3,200,1636
+Detalhe de painel,/api/panel/epilepsias-geneticas,quente,10,13.1,200,1636
+Catalogo de escores,/api/pgs?page_size=1,frio,1,60.6,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,2,32.6,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,3,29.7,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,4,13.6,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,5,16.3,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,6,12.9,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,7,13.2,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,8,11.5,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,9,22.1,200,1199
+Catalogo de escores,/api/pgs?page_size=1,frio,10,38.5,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,1,14.9,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,2,23.7,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,3,18.9,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,4,14.6,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,5,20.3,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,6,16.2,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,7,43.4,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,8,10.8,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,9,17.3,200,1199
+Catalogo de escores,/api/pgs?page_size=1,quente,10,12.8,200,1199
+Raro x poligenico,/api/pgs/interplay,frio,1,6.3,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,2,7.2,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,3,8.1,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,4,9.1,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,5,5.7,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,6,5.8,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,7,11.0,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,8,8.0,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,9,5.7,200,1334
+Raro x poligenico,/api/pgs/interplay,frio,10,10.2,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,1,15.1,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,2,28.4,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,3,32.2,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,4,6.7,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,5,26.6,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,6,7.2,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,7,7.7,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,8,6.2,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,9,8.9,200,1334
+Raro x poligenico,/api/pgs/interplay,quente,10,6.3,200,1334
+Detalhe de escore,/api/pgs/PGS000004,frio,1,8230.9,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,2,9981.8,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,3,8068.3,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,4,7828.6,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,5,8610.8,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,6,8364.0,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,7,9100.9,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,8,7966.5,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,9,8179.3,200,17869
+Detalhe de escore,/api/pgs/PGS000004,frio,10,9251.9,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,1,22.5,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,2,11.2,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,3,14.9,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,4,15.8,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,5,44.8,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,6,10.6,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,7,7.5,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,8,18.8,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,9,49.9,200,17869
+Detalhe de escore,/api/pgs/PGS000004,quente,10,41.7,200,17869
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,1,84312.1,503,91
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,2,39137.7,200,4897
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,3,42379.0,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,4,20662.5,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,5,53619.9,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,6,5064.3,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,7,4171.2,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,8,6650.7,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,9,7697.8,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,frio,10,7640.0,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,1,5.9,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,2,7.9,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,3,13.8,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,4,7.4,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,5,11.8,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,6,8.5,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,7,7.6,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,8,9.1,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,9,8.5,200,5703
+Gene (sem variantes),/api/gene/BRCA1?variantes=false,quente,10,5.9,200,5703
+Variantes do gene,/api/gene/BRCA1/variants,frio,1,35611.7,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,2,50142.8,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,3,12009.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,4,13602.5,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,5,16280.2,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,6,17205.1,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,7,15826.2,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,8,18722.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,9,11918.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,frio,10,13462.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,1,19.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,2,14.5,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,3,17.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,4,13.5,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,5,21.5,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,6,16.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,7,18.2,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,8,25.4,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,9,23.3,200,135464
+Variantes do gene,/api/gene/BRCA1/variants,quente,10,17.8,200,135464
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,1,90021.9,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,2,90028.3,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,3,88199.3,200,2946
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,4,90019.3,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,5,90020.4,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,6,90016.8,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,7,90075.4,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,8,90178.8,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,9,90178.9,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,frio,10,90119.8,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,1,90077.4,0,0
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,2,1612.8,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,3,1315.0,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,4,1422.3,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,5,2329.6,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,6,1214.8,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,7,1231.2,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,8,1302.5,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,9,1183.0,200,1112
+Fenotipos do gene,/api/gene/BRCA1/phenotypes,quente,10,90208.1,0,0
+Variante,/api/variant/rs334,frio,1,16330.2,200,3218
+Variante,/api/variant/rs334,frio,2,9813.5,200,3218
+Variante,/api/variant/rs334,frio,3,5201.3,200,3218
+Variante,/api/variant/rs334,frio,4,8121.7,200,3218
+Variante,/api/variant/rs334,frio,5,4586.9,200,3218
+Variante,/api/variant/rs334,frio,6,3393.5,200,3218
+Variante,/api/variant/rs334,frio,7,2637.2,200,3218
+Variante,/api/variant/rs334,frio,8,2596.8,200,3218
+Variante,/api/variant/rs334,frio,9,3515.2,200,3218
+Variante,/api/variant/rs334,frio,10,3039.6,200,3218
+Variante,/api/variant/rs334,quente,1,8.1,200,3218
+Variante,/api/variant/rs334,quente,2,51.1,200,3218
+Variante,/api/variant/rs334,quente,3,33.6,200,3218
+Variante,/api/variant/rs334,quente,4,24.2,200,3218
+Variante,/api/variant/rs334,quente,5,10.8,200,3218
+Variante,/api/variant/rs334,quente,6,37.6,200,3218
+Variante,/api/variant/rs334,quente,7,66.9,200,3218
+Variante,/api/variant/rs334,quente,8,14.1,200,3218
+Variante,/api/variant/rs334,quente,9,21.9,200,3218
+Variante,/api/variant/rs334,quente,10,50.4,200,3218

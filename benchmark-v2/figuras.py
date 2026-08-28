@@ -539,11 +539,11 @@ def fig_infra(resultados, figuras, dpi, formato):
         d = pd.read_csv(cat).sort_values("mb_cru", ascending=False)
         x = np.arange(len(d))
         larg = 0.38
-        eixos[0].bar(x - larg / 2, d["mb_cru"], larg, color=NEUTRAL, label="JSON cru")
+        eixos[0].bar(x - larg / 2, d["mb_cru"], larg, color=CINZA, label="JSON cru")
         eixos[0].bar(x + larg / 2, d["mb_disco"], larg, color=NPG[0],
                      label="entregue comprimido")
         eixos[0].set_xticks(x)
-        eixos[0].set_xticklabels([tc(str(g).split("/")[-1]) for g in d["grupo"]])
+        eixos[0].set_xticklabels([str(g).split("/")[-1] for g in d["grupo"]])
         eixos[0].set_ylabel("Megabytes")
         painel(eixos[0], "a")
         fig.legend(*eixos[0].get_legend_handles_labels(), loc="outside lower center", ncol=2)
@@ -553,10 +553,10 @@ def fig_infra(resultados, figuras, dpi, formato):
         por = d.groupby("papel")[["kb", "kb_gzip"]].sum().sort_values("kb", ascending=False)
         x = np.arange(len(por))
         larg = 0.38
-        eixos[1].bar(x - larg / 2, por["kb"] / 1024, larg, color=NEUTRAL)
+        eixos[1].bar(x - larg / 2, por["kb"] / 1024, larg, color=CINZA)
         eixos[1].bar(x + larg / 2, por["kb_gzip"] / 1024, larg, color=NPG[0])
         eixos[1].set_xticks(x)
-        eixos[1].set_xticklabels([tc(p) for p in por.index])
+        eixos[1].set_xticklabels(list(por.index))
         eixos[1].set_ylabel("Megabytes")
         painel(eixos[1], "b")
 
