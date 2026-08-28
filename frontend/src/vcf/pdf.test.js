@@ -205,4 +205,27 @@ describe('laudo em PDF', { timeout: 60000 }, () => {
       expect(texto).not.toContain(proibido)
     }
   })
+
+  it('mantém TODA tabela dentro da largura útil da página', async () => {
+    // Duas tabelas, a mesma trava. A de achados graves somava 614 pontos contra
+    // 499 úteis, e o excesso não some: comprime. Cada coluna recebia menos
+    // espaço do que declarava, o texto quebrava dentro dela e a célula
+    // encavalava a vizinha, que é o defeito que aparecia impresso.
+    const { LARGURA_TABELA, LARGURA_GRAVES, LARGURA_UTIL } = await import('./pdf.jsx')
+    expect(LARGURA_TABELA).toBeLessThanOrEqual(LARGURA_UTIL)
+    expect(LARGURA_GRAVES).toBeLessThanOrEqual(LARGURA_UTIL)
+  })
+
+  it('não usa símbolo fora da fonte padrão do PDF', async () => {
+    // Helvetica é a fonte base do formato e não tem glifo para U+2192: o
+    // react-pdf não avisa, imprime outro caractere, e "C→A" saía como "C'A" em
+    // toda linha da tabela. O teste lê o próprio fonte do módulo porque o
+    // defeito não faz o PDF falhar: ele fecha, e sai errado.
+    const { readFileSync } = await import('node:fs')
+    const fonte = readFileSync(new URL('./pdf.jsx', import.meta.url), 'utf8')
+    const semComentario = fonte.replace(/\/\/[^\n]*/g, '')
+    for (const simbolo of ['→', '←', '≥', '≤', '±', '×', '≠']) {
+      expect(semComentario).not.toContain(simbolo)
+    }
+  })
 })

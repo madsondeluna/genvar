@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, pdf } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Font, pdf } from '@react-pdf/renderer'
 import { ROTULO, ORDEM_GRAVIDADE, ESTRELAS, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO } from './clinvar'
 import { CRITERIOS as CRITERIOS_PDF, NAO_AVALIADOS } from './interpretacao'
 
@@ -16,6 +16,12 @@ import { CRITERIOS as CRITERIOS_PDF, NAO_AVALIADOS } from './interpretacao'
 // A paleta é fixa aqui, e não vem dos tokens, por uma razão de meio: o PDF é
 // impresso e não tem modo claro nem escuro. Os valores são os do modo claro da
 // linguagem, que é o único que faz sentido em papel.
+// Sem hifenizacao. O react-pdf parte a palavra no meio quando ela nao cabe na
+// coluna, e o resultado em coluna estreita e "Tro-ca de amino-áci-do" empilhado
+// em cinco linhas, encavalando a celula vizinha. Sem partir, a palavra que nao
+// couber transborda ou quebra no espaco, que le muito melhor.
+Font.registerHyphenationCallback((palavra) => [palavra])
+
 const TINTA = '#0d1321'
 const APAGADO = '#3e5c76'
 const LINHA = '#dde1e9'
@@ -41,42 +47,75 @@ const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modif
 //
 // A soma esta travada por um teste, porque acrescentar coluna sem tirar largura
 // de outra e o jeito silencioso de quebrar a pagina de novo.
+//
+// ONZE colunas, e nao dezessete. Cabendo na pagina, as seventeen ficavam com 16 a
+// 40 pontos cada, e nesse espaco "Troca de aminoacido (missense)" quebrava em
+// cinco linhas de duas silabas que encavalavam a celula vizinha. As seis que
+// sairam nao se perderam: Ti/Tv, balanco alelico e profundidade estao na pagina
+// de controle de qualidade, a maior populacao esta na pagina de frequencia, a
+// heranca esta no bloco do ClinGen, e a consequencia molecular esta resumida na
+// coluna de impacto. Coluna que existe em duas paginas nao acrescenta; coluna
+// ilegivel subtrai.
 const COLS_TABELA = [
-  ['Posição', 36, (v) => `${v.chrom}:${fmt(v.pos)}`],
-  ['rsID', 36, (v) => v.rsid || '—'],
-  ['Troca', 28, (v) => `${v.ref.slice(0, 4)}→${v.alt.slice(0, 4)}`],
-  ['Ti/Tv', 18, (v) => (v.transicao == null ? '—' : v.transicao ? 'Ti' : 'Tv')],
-  ['Gene', 34, (v) => v.clinvar.gene || v.gene || '—'],
-  ['Classificação', 54, (v) => ROTULO[v.clinvar.sig], (v) => ({ color: COR_SIG[v.clinvar.sig] })],
-  ['Rev.', 18, (v) => `${v.clinvar.estrelas}/4`],
-  ['Impacto', 34, (v) => IMPACTO[v.clinvar.consequencia] || '—',
+  ['Posição', 62, (v) => `${v.chrom}:${fmt(v.pos)}`],
+  ['rsID', 56, (v) => v.rsid || '—'],
+  ['Troca', 34, (v) => `${v.ref.slice(0, 4)}>${v.alt.slice(0, 4)}`],
+  ['Gene', 44, (v) => v.clinvar.gene || v.gene || '—'],
+  ['Classificação', 76, (v) => ROTULO[v.clinvar.sig], (v) => ({ color: COR_SIG[v.clinvar.sig] })],
+  ['Rev.', 22, (v) => `${v.clinvar.estrelas}/4`],
+  ['Impacto', 46, (v) => IMPACTO[v.clinvar.consequencia] || '—',
     (v) => ({ color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA })],
-  ['Consequência', 38, (v) => (v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—')],
-  ['Frequência', 36, (v) => freqDe(v)],
-  ['Maior em', 34, (v) => maiorPop(v)],
-  ['Herança', 26, (v) => v.clingen?.heranca_sigla || '—'],
-  ['Genótipo', 28, (v) => v.zigosidade],
-  ['AB', 18, (v) => (v.ab != null ? v.ab.toFixed(2) : '—')],
-  ['DP', 16, (v) => v.dp ?? '—'],
-  ['ACMG', 26, (v) => (v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—')],
-  // O asterisco marca escore que contem criterio nao verificado. A legenda dele
-  // esta na pagina de metodologia, e nao aqui: coluna de 18 pontos nao comporta
-  // explicacao, e simbolo sem legenda em nenhum lugar seria pior que ausencia.
-  ['Pts', 18, (v) => (v.acmgPontos
+  ['Frequência', 48, (v) => freqDe(v)],
+  ['Genótipo', 46, (v) => v.zigosidade],
+  ['ACMG', 42, (v) => (v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—')],
+  // O asterisco marca escore que contem criterio nao verificado; a legenda dele
+  // esta na pagina de metodologia, porque coluna de 22 pontos nao comporta
+  // explicacao e simbolo sem legenda em lugar nenhum seria pior que ausencia.
+  ['Pts', 22, (v) => (v.acmgPontos
     ? `${v.acmgPontos.pontos > 0 ? '+' : ''}${v.acmgPontos.pontos}`
       + (v.acmgPontos.naoVerificados.length ? '*' : '')
     : '—')],
 ]
 
-// Largura util de uma A4 em retrato: 595,28 pontos menos os 48 de margem de
-// cada lado. A tabela nao pode passar disto, e o teste confere.
 export const LARGURA_UTIL = 595.28 - 48 * 2
 export const LARGURA_TABELA = COLS_TABELA.reduce((t, [, w]) => t + w, 0)
+
+// Achados graves: a tabela em que o texto quebrava na tela do usuario.
+//
+// Ela tinha o mesmo defeito da completa, e pior: cabecalho e celulas em listas
+// separadas, somando 614 pontos contra os 499 uteis de uma A4 em retrato. O
+// excesso nao some, ele COMPRIME: cada coluna recebe menos espaco do que
+// declara e o texto quebra dentro dela, produzindo "Tro-ca de amino-áci-do"
+// empilhado sobre a celula vizinha. Nove colunas em vez de onze, somando 498.
+// As duas que sairam, "maior em" e "genótipo", estao na pagina de frequencia
+// por populacao e na tabela completa.
+const COLS_GRAVES = [
+  ['Gene', 44, (v) => v.clinvar.gene || v.gene || '—'],
+  ['Posição', 60, (v) => `${v.chrom}:${fmt(v.pos)}`],
+  ['rsID', 54, (v) => v.rsid || '—'],
+  ['Troca', 38, (v) => `${v.ref.slice(0, 6)}>${v.alt.slice(0, 6)}`],
+  ['Efeito', 48, (v) => IMPACTO[v.clinvar.consequencia] || '—',
+    (v) => ({ color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA })],
+  ['Classificação', 68, (v) => ROTULO[v.clinvar.sig], (v) => ({ color: COR_SIG[v.clinvar.sig] })],
+  ['Rev.', 22, (v) => `${v.clinvar.estrelas}/4`],
+  ['Condição', 104, (v) => v.clinvar.condicao || '—'],
+  ['Frequência', 60, (v) => freqDe(v)],
+]
+
+export const LARGURA_GRAVES = COLS_GRAVES.reduce((t, [, w]) => t + w, 0)
 
 const RESSALVA = 'Documento de pesquisa e ensino. Não é laudo diagnóstico, não foi emitido por '
   + 'laboratório clínico habilitado e não substitui avaliação médica. Todo achado exige '
   + 'confirmação por método independente em laboratório clínico e aconselhamento genético.'
 
+// SIMBOLO FORA DO LATIN-1 NAO EXISTE NA FONTE PADRAO DO PDF.
+//
+// O laudo usa Helvetica, a fonte base do formato, e ela nao tem glifo para
+// U+2192. O react-pdf nao avisa: ele imprime OUTRO caractere, e "C→A" saiu como
+// "C'A" em toda linha da tabela de achados. O sinal de maior e a convencao do
+// proprio VCF para REF>ALT, existe na fonte e nao precisa de fonte embarcada.
+// Antes de acrescentar simbolo novo ao laudo, gerar um PDF e olhar: o teste
+// confere que o arquivo fecha, nao que os glifos existem.
 const s = StyleSheet.create({
   pagina: { paddingTop: 44, paddingBottom: 62, paddingHorizontal: 48, fontSize: 9, color: TINTA, fontFamily: 'Helvetica' },
   eyebrow: { fontSize: 8, color: APAGADO, letterSpacing: 0.6, marginBottom: 4 },
@@ -310,13 +349,13 @@ export function RelatorioVCF({ dados, gerado }) {
         {graves.length > 0 && (
           <>
             <View style={{ flexDirection: 'row', backgroundColor: FUNDO }} fixed>
-              {[['Gene', 46], ['Posição', 66], ['rsID', 58], ['Troca', 42], ['Efeito', 62], ['Classificação', 70], ['Rev.', 22], ['Condição', 86], ['Frequência', 62], ['Maior em', 60], ['Genótipo', 40]].map(([c, w]) => (
+              {COLS_GRAVES.map(([c, w]) => (
                 <Text key={c} style={[s.th, { width: w }]}>{c}</Text>
               ))}
             </View>
             {graves.slice(0, 80).map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                {COLS_TABELA.map(([c, w, valor, estilo]) => (
+                {COLS_GRAVES.map(([c, w, valor, estilo]) => (
                   <Text key={c} style={[s.td, { width: w }, estilo ? estilo(v) : null]}>
                     {valor(v)}
                   </Text>
@@ -383,7 +422,7 @@ export function RelatorioVCF({ dados, gerado }) {
             <View key={i} style={{ marginTop: 10 }} wrap={false}>
               <Text style={s.h3}>
                 {v.clinvar?.gene || v.gene || 'sem gene'} · {v.chrom}:{fmt(v.pos)}{' '}
-                {v.ref.slice(0, 6)}→{v.alt.slice(0, 6)}
+                {v.ref.slice(0, 6)}{'>'}{v.alt.slice(0, 6)}
                 {v.rsid ? ` · ${v.rsid}` : ''}
               </Text>
               <Text style={[s.p, s.apagado, { marginBottom: 4 }]}>
@@ -440,38 +479,11 @@ export function RelatorioVCF({ dados, gerado }) {
             .slice(0, 400)
             .map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 34 }]}>{v.chrom}:{fmt(v.pos)}</Text>
-                <Text style={[s.td, { width: 38 }]}>{v.rsid || '—'}</Text>
-                <Text style={[s.td, { width: 30 }]}>{v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}</Text>
-                <Text style={[s.td, { width: 18 }]}>
-                  {v.transicao == null ? '—' : v.transicao ? 'Ti' : 'Tv'}
-                </Text>
-                <Text style={[s.td, { width: 32 }]}>{v.clinvar.gene || v.gene || '—'}</Text>
-                <Text style={[s.td, { width: 84, color: COR_SIG[v.clinvar.sig] }]}>
-                  {ROTULO[v.clinvar.sig]}
-                </Text>
-                <Text style={[s.td, { width: 54 }]}>{v.clinvar.estrelas}/4</Text>
-                <Text style={[s.td, { width: 46, color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA }]}>
-                  {IMPACTO[v.clinvar.consequencia] || '—'}
-                </Text>
-                <Text style={[s.td, { width: 16 }]}>
-                  {v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—'}
-                </Text>
-                <Text style={[s.td, { width: 30 }]}>{freqDe(v)}</Text>
-                <Text style={[s.td, { width: 48 }]}>{maiorPop(v)}</Text>
-                <Text style={[s.td, { width: 38 }]}>{v.clingen?.heranca_sigla || '—'}</Text>
-                <Text style={[s.td, { width: 40 }]}>{v.zigosidade}</Text>
-                <Text style={[s.td, { width: 26 }]}>{v.ab != null ? v.ab.toFixed(2) : '—'}</Text>
-                <Text style={[s.td, { width: 28 }]}>{v.dp ?? '—'}</Text>
-                <Text style={[s.td, { width: 20 }]}>
-                  {v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—'}
-                </Text>
-                <Text style={[s.td, { width: 14 }]}>
-                  {v.acmgPontos
-                    ? `${v.acmgPontos.pontos > 0 ? '+' : ''}${v.acmgPontos.pontos}`
-                      + (v.acmgPontos.naoVerificados.length ? '*' : '')
-                    : '—'}
-                </Text>
+                {COLS_TABELA.map(([c, w, valor, estilo]) => (
+                  <Text key={c} style={[s.td, { width: w }, estilo ? estilo(v) : null]}>
+                    {valor(v)}
+                  </Text>
+                ))}
               </View>
             ))}
           {anotadas.length > 400 && (
@@ -572,7 +584,7 @@ export function RelatorioVCF({ dados, gerado }) {
             {metricas.titv != null && metricas.titv < 1.5 ? ' — abaixo do esperado; sugere chamada falsa em excesso' : ''}
           </Campo>
           <Campo rotulo="Profundidade mediana">
-            {dp.mediana != null ? `${dp.mediana.toFixed(0)}×` : '—'} — abaixo de 10× a chamada de heterozigoto fica pouco confiável
+            {dp.mediana != null ? `${dp.mediana.toFixed(0)}x` : '—'} — abaixo de 10x a chamada de heterozigoto fica pouco confiável
           </Campo>
           <Campo rotulo="Qualidade mediana">
             {qual.mediana != null ? qual.mediana.toFixed(0) : '—'} na escala Phred, em que 30 é uma chance em mil de a variante não existir
@@ -610,7 +622,7 @@ export function RelatorioVCF({ dados, gerado }) {
               guanina no preparo da biblioteca, ou seja, bancada e não biologia.
             </Text>
             {espectro.classes.map((c, i) => (
-              <Barra key={c.rotulo} rotulo={c.rotulo.replace('>', '→')} n={c.n} max={espectro.n} cor={SERIE[i % 8]} />
+              <Barra key={c.rotulo} rotulo={c.rotulo} n={c.n} max={espectro.n} cor={SERIE[i % 8]} />
             ))}
           </>
         )}

@@ -330,6 +330,41 @@ class PgsPublication(BaseModel):
     journal: Optional[str] = None
     year: Optional[str] = None
     doi: Optional[str] = None
+    pmid: Optional[str] = None
+
+
+class PgsAncestryPhase(BaseModel):
+    """Uma fase da vida do escore: GWAS de origem, desenvolvimento ou avaliacao.
+
+    As tres ficam separadas porque a pergunta que elas respondem e diferente. Um
+    escore treinado e avaliado so em europeus nao esta errado: esta nao testado
+    fora dali, e somar as fases numa media unica apaga essa distincao.
+    """
+    dist: dict = {}
+    count: Optional[int] = None
+
+
+class PgsMetric(BaseModel):
+    nome: Optional[str] = None
+    sigla: Optional[str] = None
+    estimativa: Optional[float] = None
+    ic_min: Optional[float] = None
+    ic_max: Optional[float] = None
+    unidade: Optional[str] = None
+
+
+class PgsPerformance(BaseModel):
+    id: Optional[str] = None
+    fenotipo: Optional[str] = None
+    coorte: Optional[str] = None
+    ancestrias: List[str] = []
+    n_amostras: Optional[int] = None
+    efeitos: List[PgsMetric] = []
+    discriminacao: List[PgsMetric] = []
+    outras: List[PgsMetric] = []
+    covariaveis: Optional[str] = None
+    publicacao: Optional[str] = None
+    ano: Optional[str] = None
 
 
 class PgsScoreDetail(BaseModel):
@@ -341,6 +376,18 @@ class PgsScoreDetail(BaseModel):
     n_variants: Optional[int] = None
     publication: Optional[PgsPublication] = None
     ancestry_dev: dict = {}
+    ancestry_gwas: Optional[PgsAncestryPhase] = None
+    ancestry_dist_dev: Optional[PgsAncestryPhase] = None
+    ancestry_eval: Optional[PgsAncestryPhase] = None
+    trait_efo: List[str] = []
+    method: Optional[str] = None
+    method_params: Optional[str] = None
+    genome_build: Optional[str] = None
+    weight_type: Optional[str] = None
+    release_date: Optional[str] = None
+    license: Optional[str] = None
+    scoring_file: Optional[str] = None
+    performance: List[PgsPerformance] = []
     pgs_catalog_url: str
     live: bool = False
 
