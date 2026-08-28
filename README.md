@@ -10,7 +10,7 @@
 | **Aplicação ao vivo** | https://genvar.delunalab.dev |
 | **API em produção** | https://genvar-backend.onrender.com |
 | **Documentação da API** | https://genvar-backend.onrender.com/docs |
-| **Versão** | 2.0.0 |
+| **Versão** | 3.0.0 |
 | **Idioma da interface** | Português do Brasil (PT-BR) |
 
 
@@ -1248,13 +1248,58 @@ O tempo é a medida frágil das duas e vem com ressalva: o lote termina a mesma 
 
 As linhas acima de 25 arquivos exigem heap maior que o padrão do Node: com os 2 GB de fábrica, o caminho individual morre antes de terminar a coorte de 50. O teto vigente vai na coluna `teto_heap_mb` de cada linha do CSV, porque é ele que separa "medindo o algoritmo" de "medindo o limite da máquina", e um navegador está bem mais perto do segundo.
 
-**Cache.** Busca por gene: 4,92 s sem cache contra 5 ms com, fator 1.036. Busca por variante: 2,52 s contra 2 ms, fator 1.174. Sem cache a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant; com cache é uma leitura do Redis.
+**Cache.** Medido por `cache.py` sobre os alvos do conjunto padrão, que é um recorte diferente do da tabela de latência abaixo: busca por gene 4,92 s sem cache contra 5 ms com, fator 1.036; busca por variante 2,52 s contra 2 ms, fator 1.174. Sem cache a resposta é montada encadeando Ensembl, gnomAD, ClinVar e MyVariant; com cache é uma leitura do Redis.
 
 **Limites encontrados.** Medir até quebrar é parte do método, e três limites apareceram:
 
 - **O teto de leitura conta variantes, não genótipos.** A aplicação corta em 400.000 variantes e ignora o número de amostras. O cromossomo Y do 1000 Genomes tem 1.233 amostras: 400.000 variantes dele seriam 493 milhões de genótipos, e o processo morre antes de terminar de ler. O teto correto seria em variantes vezes amostras.
 - **`Math.max(...vetor)` estoura a pilha a 400 mil elementos.** Encontrado pelo próprio benchmark, dentro do cálculo de um histograma: espalhar um vetor num argumento gasta uma posição de pilha por item. Corrigido por laço, e o mesmo padrão foi corrigido no Manhattan plot da página de associação.
 - **Cinquenta exomas não cabem no caminho individual** com o limite de memória padrão do Node.
+
+**Resultados medidos.** Réplicas e teto de heap declarados em cada tabela, porque são condições que mudam o número.
+
+
+| Arquivo | Variantes | Leitura | p95 | Anotação ClinVar | Casadas |
+|---|---|---|---|---|---|
+| `01-pequeno.vcf` | 1.000 | 12 ms | 77 ms | 4.084 ms | 80 |
+| `02-medio.vcf` | 25.000 | 596 ms | 697 ms | 208 ms | 2.001 |
+| `03-exoma.vcf` | 100.000 | 1.169 ms | 1.696 ms | 519 ms | 8.004 |
+| `04-grande.vcf` | 400.000 | 6.902 ms | 13.767 ms | 2.050 ms | 32.012 |
+
+Três réplicas por medida, teto de heap de 12.480 MB. A montagem do índice do ClinVar é medida em separado e custa 3.948 ms, uma vez por sessão e não por arquivo.
+
+
+**Coorte processada pelos dois caminhos**, cenário de exoma completo, três réplicas:
+
+| Arquivos | Individual | Lote | Retido individual | Retido lote | Fator |
+|---|---|---|---|---|---|
+| 1 | 0,39 s | 0,24 s | 18 MB | 1 MB | 17,9x |
+| 5 | 0,74 s | 0,83 s | 88 MB | 3 MB | 32,4x |
+| 10 | 1,50 s | 2,21 s | 177 MB | 5 MB | 33,7x |
+| 25 | 8,32 s | 5,16 s | 444 MB | 13 MB | 34,2x |
+| 50 | 13,98 s | 8,95 s | 883 MB | 27 MB | 33,2x |
+| 100 | 102,01 s | 56,33 s | 1.766 MB | 54 MB | 33,0x |
+
+A memória retida do caminho individual cresce com a coorte e a do lote não. É esse número, e não o tempo, que decide se roda no navegador.
+
+
+**Latência da API**, mediana de dez réplicas por rota, cache zerado antes de cada medida a frio:
+
+| Rota | Tipo | Sem cache | Com cache | Ganho |
+|---|---|---|---|---|
+| Fenotipos do gene | externa | 88,20 s | 1.308,7 ms | 67,4x |
+| Variantes do gene | externa | 16,05 s | 18,0 ms | 891,8x |
+| Detalhe de escore | externa | 8,30 s | 17,3 ms | 479,6x |
+| Gene (sem variantes) | externa | 7,70 s | 8,2 ms | 938,8x |
+| Variante | externa | 4,05 s | 28,9 ms | 140,2x |
+| Variantes por doenca | externa | 3,28 s | 14,4 ms | 227,5x |
+| Fontes de dados | interna | 0,66 s | 746,2 ms | 0,9x |
+| Detalhe de painel | externa | 0,59 s | 17,4 ms | 33,7x |
+
+**Reprodutibilidade**: 9 de 9 arquivos satisfazem os seis critérios binários (TSV, CSV e VCF idênticos entre execuções; métricas invariantes à ordem das linhas; SHA-256 da entrada e versão da compilação do ClinVar no artefato).
+
+
+**Corpus**: 12 arquivos sintéticos determinísticos somando 85,8 MB, mais quatro reais de fontes públicas não versionados. Oito por cento de cada arquivo vem das próprias tabelas do ClinVar embarcado.
 
 **Figuras.** No guia da Nature Portfolio: coluna simples 89 mm, coluna dupla 183 mm, sans-serif de 5 a 7 pt, paleta NPG. A figura é desenhada no tamanho final, em milímetros, porque desenhar grande e encolher derruba o corpo do texto junto. `figuras.py` grava cada figura duas vezes, uma no tamanho declarado e outra em `bbox_inches='tight'`, e falha o build se a segunda for maior: `bbox_inches=None` é obrigatório para o tamanho final sair certo, e o preço é que qualquer elemento fora da caixa some cortado, sem aviso. Barra empilhada em eixo logarítmico não existe aqui, porque o comprimento aparente de cada segmento dependeria de onde ele começa.
 
