@@ -109,6 +109,52 @@ cd backend && python -m etl.orphanet
 | Prevalência | 3.239 |
 | Fenótipos HPO | 2.204 |
 
+#### Chamada de variantes (VCF)
+
+Módulo de anotação de VCF que roda **inteiro no navegador**. O arquivo não é transmitido a servidor nenhum, e isso não é escolha de arquitetura: VCF é dado genético de pessoa identificável, e o que não sobe dispensa base legal sob a LGPD. Só coordenada e identificador de variante chegam às bases públicas, e nenhum dos dois identifica alguém.
+
+Rota `/vcf`. Aceita `.vcf`, `.vcf.gz` e `.zip` com um VCF dentro. Teto de leitura em 400.000 variantes, aplicado antes de qualquer chamada de rede.
+
+**Anotação clínica.** ClinVar embarcado, 4,2 milhões de variantes em três camadas (aviso, incerta, benigna), em JSON colunar comprimido, um arquivo por cromossomo. A página carrega apenas os cromossomos presentes no arquivo do usuário, e a camada de significado incerto (2,3 milhões de registros) só a pedido.
+
+O cruzamento usa **duas chaves, e a segunda é o que salva arquivo antigo**. A chave primária é `rsID + REF + ALT`; a coordenada entra como secundária e apenas em GRCh38. A razão está medida: o GIAB/NIST de teste é GRCh37, e cruzar coordenada GRCh38 contra ele troca o gene inteiro, porque o deslocamento entre os dois builds chega a 1.847.983 bases só no BRCA1. Mas 96% das variantes dele têm rsID, e rsID independe de build.
+
+REF e ALT entram nas duas chaves de propósito. Um rsID nomeia um **sítio**, não uma troca: casar só pelo número imprimiria "patogênica" para quem carrega o alelo benigno do mesmo rs. Quando o número casa e o alelo não, o resultado sai marcado como "rsID conhecido, alelo não confere" em vez de virar achado.
+
+**Controle de qualidade**, tudo derivado do próprio arquivo, sem rede:
+
+| Métrica | O que pega |
+|---|---|
+| Balanço alélico | Heterozigoto verdadeiro fica perto de 0,5. Fora de 0,25 a 0,75 indica artefato de alinhamento, contaminação ou perda do alelo de referência |
+| Ti/Tv separado | A razão global esconde o ruído. Variante já no dbSNP tem Ti/Tv bom por construção; o ruído se concentra nas novas |
+| Verificação de sexo | Heterozigose no X fora das regiões pseudoautossômicas mais presença de Y. Pega troca de amostra |
+| Espectro de substituição | As seis classes, contadas pela pirimidina. Excesso de C>T é desaminação; excesso de C>A costuma ser oxidação no preparo da biblioteca |
+| Profundidade e qualidade | Histogramas com mediana, e o que cada faixa limita na interpretação |
+
+**Herança.** O que só aparece olhando as variantes em conjunto:
+
+- **Heterozigoto composto**: duas variantes em heterozigose no mesmo gene. Sai como **candidato**, não achado, porque sem fase não há como saber se estão em cromossomos opostos.
+- **Trio** (VCF com criança, mãe e pai): variante de novo, recessiva homozigota herdada dos dois lados, e composto em **trans** confirmado pela origem parental, que é a única forma de afirmar composto sem fasamento por leitura.
+- A regra ingênua de de novo é uma fábrica de falso positivo: um pai com três leituras no sítio sai como referência homozigota porque nenhuma das três trouxe o alelo. Exige-se `DP >= 10` nos dois pais e zero leitura do alelo alternativo, e o número de sítios **excluídos por cobertura parental insuficiente** sai junto do resultado. Sem ele, "12 de novo" e "12 de novo com 400 sítios não avaliáveis" leem igual.
+
+**Filtro por painel.** 424 painéis do PanelApp (genes verdes, que é o nível de evidência para uso diagnóstico) mais o ACMG SF v3.2. É como um laboratório clínico lê um exoma: contra o painel da suspeita, não inteiro.
+
+A resolução de símbolo usa `prev_symbol` e `alias_symbol` do HGNC, e a medição justifica o trabalho: cruzar os 4.308 genes verdes direto contra o conjunto de coordenadas casa 96,2%, e os 162 perdidos são genes de doença de verdade que só mudaram de nome (AARS, ADPRHL2, ATP5A1, C12orf65). Com o mapa a taxa vai a 98,6%. Os 61 restantes são RNA não codificante, imunoglobulina e gene mitocondrial, ausentes do conjunto codificante por construção, e saem listados na tela.
+
+**Critérios ACMG/AMP.** Sete critérios que saem mecanicamente do que está carregado (BA1, BS1, PM2, PVS1, PP5, BP6, BP7), cada um com a fonte declarada. **Não é uma classificação ACMG**: a regra completa combina 28 critérios, e a maioria exige literatura, segregação familiar ou ensaio funcional que nenhum arquivo carrega. Os doze não avaliáveis saem listados com o motivo, na tela e no PDF, porque mostrar três critérios sem dizer que existem vinte e cinco sugere uma conclusão que ninguém tirou.
+
+`PM2` só dispara com o gnomAD consultado ao vivo: a frequência embarcada vem do que o ClinVar publica, e ausência ali significa "o ClinVar não publicou frequência", não "ausente das bases populacionais".
+
+**Saídas.** Laudo em PDF de oito páginas (identificação, achados, genes, impacto na proteína, controle de qualidade, metodologia, o que o relatório não responde, fontes), e exportação em VCF anotado, TSV, XLSX e JSON, todas respeitando os filtros ativos.
+
+O PDF e o VCF carregam o **SHA-256 do arquivo de entrada** e a versão da compilação do ClinVar. Sem isso, dois laudos do mesmo paciente em meses diferentes não são comparáveis e ninguém prova de qual arquivo cada um saiu.
+
+O XLSX é escrito em SpreadsheetML sobre o JSZip que já era dependência (é ele que abre o `.zip` de entrada). SheetJS custaria cerca de 400 KB de bundle para escrever quatro tabelas planas.
+
+**Ressalva de uso.** O laudo tem a forma de um relatório clínico e a natureza de um documento de pesquisa. A ressalva aparece na capa, no rodapé de **toda** página e no fim, porque PDF circula por folha solta: uso em pesquisa e ensino, não é laudo diagnóstico, não foi emitido por laboratório clínico habilitado, e todo achado exige confirmação por método independente e aconselhamento genético.
+
+**Arquivos de exemplo.** Quatro VCF sintéticos, gerados com semente fixa por `scripts/gera_vcf_exemplo.py` e `scripts/gera_vcf_teste.py`, carregáveis por um clique na própria página: um exoma com variantes reais do ClinVar, um trio com de novo e compostos plantados, um arquivo com defeitos de rotina, e um perfil XY. Nenhum vem de sequenciamento de pessoa alguma.
+
 #### Painéis de genes (multigênico)
 
 - Hub `/paineis`: 434 painéis de genes, com busca por painel, categoria ou gene (com sugestões ao digitar) e facetas por categoria. Cada painel agrupa os genes que, juntos, respondem por uma condição ou por condições relacionadas.
@@ -336,6 +382,36 @@ Campos extraídos e mapeados para o `VariantResponse`:
 - **Uso no GenVar**: o módulo poligênico (`/poligenico`) parte de uma semente curada de escores notáveis e enriquece cada escore ao vivo pela API do PGS Catalog (`backend/app/services/pgs_catalog.py`). O detalhe canônico de cada escore fica na página do PGS Catalog.
 - **Endpoint base**: `https://www.pgscatalog.org/rest`.
 
+### Dados embarcados do módulo de VCF
+
+Diferente das APIs acima, quatro fontes entram como release estático compilado por ETL, porque o módulo de VCF roda sem rede por decisão de privacidade.
+
+| Fonte | Conteúdo | Licença | ETL |
+|---|---|---|---|
+| ClinVar (NCBI) | 4,2 milhões de variantes com classificação, nível de revisão, condição, consequência molecular e frequência herdada de ExAC, 1000 Genomes e ESP | Domínio público | `backend/etl/clinvar.py` |
+| ClinGen Gene-Disease Validity | 3.029 genes com curadoria de validade (Definitive a Refuted) e modo de herança | CC0 | `backend/etl/clingen_cpic.py` |
+| CPIC | 992 rsID que participam da definição de alelos estrela, com os fármacos que têm diretriz publicada | CC BY-SA 4.0 | `backend/etl/clingen_cpic.py` |
+| PanelApp e HGNC | 424 painéis de genes verdes mais ACMG SF v3.2, com símbolos resolvidos por `prev_symbol` e `alias_symbol` | CC BY-SA 4.0 e CC0 | `backend/etl/simbolos_e_paineis.py` |
+
+O gnomAD entra ao vivo neste módulo, por consulta GraphQL variante a variante e apenas a pedido, para as variantes que já têm achado. O conjunto segue o build do arquivo: `gnomad_r2_1` para GRCh37 e `gnomad_r4` para GRCh38.
+
+**Sobre a chamada de alelo estrela.** A camada de CPIC **não determina diplótipo**. Dizer "*1/*4" exige fase e número de cópias, e um VCF de variante curta não carrega nenhum dos dois. O que a camada afirma é que aquele rsID participa da definição dos alelos estrela de um gene com diretriz publicada, e para quais fármacos ela existe.
+
+Os arquivos são gravados em gzip e o navegador os desfaz com `DecompressionStream`. Não é economia de disco: 157 MB de JSON cru entrariam no repositório e no artefato publicado, 27 MB comprimidos não.
+
+Para gerar:
+
+```bash
+cd backend
+curl -sSL -o etl/.cache/clinvar/clinvar.vcf.gz https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz
+curl -sSL -o etl/.cache/hgnc/hgnc_complete_set.txt https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt
+curl -sSL -o etl/.cache/clingen/gene-validity.csv https://search.clinicalgenome.org/kb/gene-validity/download
+python etl/clinvar.py
+python etl/simbolos_e_paineis.py
+python etl/clingen_cpic.py
+```
+
+
 ### Dados de burden (release estático público)
 
 Diferente das bases acima, os sumários de associação por burden de variantes raras (formato SAIGE-GENE e Meta-SAIGE) são publicados como um release estático de estatísticas-resumo, não como uma API ao vivo. O ETL `backend/scripts/build_burden.py` converte esse release nos JSON colunares que o módulo `/associacao` consome, incluindo o erro-padrão do efeito Burden para os intervalos de confiança do forest plot. Manter atualizado significa rerodar o ETL quando sai uma versão nova. Detalhes de formato e execução em `DATA_BURDEN.md`.
@@ -504,6 +580,9 @@ genvar-dashboard/
 │   │   ├── orphanet.py              ETL do Orphanet: doenças, genes, herança, HPO.
 │   │   ├── panelapp.py              ETL do PanelApp: painéis e nível de evidência.
 │   │   ├── pgscatalog.py            ETL do PGS Catalog: escores e ancestria.
+│   │   ├── clinvar.py               ETL do ClinVar: 4,2 M de variantes em colunas, por cromossomo.
+│   │   ├── simbolos_e_paineis.py    Painéis para o VCF e mapa de sinônimos do HGNC.
+│   │   ├── clingen_cpic.py          Validade gene-doença e farmacogenômica.
 │   │   ├── traducoes/hpo_pt_br.tsv  Tradução dos fenótipos sem versão oficial do HPO.
 │   │   └── .cache/                  Páginas cruas por fonte, fora do git. Torna o ETL retomável.
 │   ├── pytest.ini                   Marcadores e exclusão dos testes de integração.
@@ -543,6 +622,14 @@ genvar-dashboard/
 │   │   │   ├── ForestPlot.jsx       Forest plot cross-ancestry em SVG.
 │   │   │   ├── FilterBar.jsx        Filtros de ancestria, máscara, MAF e teste.
 │   │   │   └── BiobankMap.jsx       Mapa mundial dos biobancos.
+│   │   ├── vcf/
+│   │   │   ├── parse.js             Leitura em fluxo, multi-amostra, balanço alélico, build.
+│   │   │   ├── metricas.js          Qualidade, espectro, sexo, composto e trio.
+│   │   │   ├── clinvar.js           Cruzamento por rsID mais alelo e por coordenada.
+│   │   │   ├── interpretacao.js     Painel, ClinGen, CPIC, gnomAD ao vivo e critérios ACMG.
+│   │   │   ├── exportar.js          VCF anotado, TSV, XLSX sem biblioteca, JSON e SHA-256.
+│   │   │   ├── pdf.jsx              Laudo de oito páginas, com a ressalva em toda página.
+│   │   │   └── vcf.test.js          Dezoito testes contra os números plantados nas fixtures.
 │   │   ├── hooks/
 │   │   │   ├── useSearchHistory.js  Histórico de buscas em localStorage.
 │   │   │   └── useViewMode.js       Modo de leitura global (paciente ou profissional).
@@ -793,6 +880,18 @@ Documentação interativa Swagger UI disponível em `http://localhost:8000/docs`
 
 Forma mais rápida de rodar a aplicação localmente sem Docker.
 
+#### Passo 0. Instalar o git-lfs
+
+Os dados compilados pelos ETL (ClinVar, painéis, ClinGen, CPIC e os catálogos do backend) são versionados com Git LFS. **Sem `git-lfs` instalado, esses arquivos chegam como ponteiro de texto de 130 bytes e a aplicação não encontra os dados.**
+
+```bash
+brew install git-lfs     # macOS; no Linux, o gerenciador da distribuição
+git lfs install
+```
+
+O LFS foi adotado apenas a partir de um ponto do histórico, sem reescrever commits anteriores. A razão é o crescimento: cada versão nova do ClinVar acrescentaria cerca de 27 MB ao histórico para sempre, porque o git guarda cada versão inteira de um binário.
+
+
 #### Passo 1. Clonar o repositório
 
 ```bash
@@ -947,6 +1046,19 @@ Sem essa variável, o frontend usa o caminho `/api` relativo, que é redireciona
 - Ubuntu: `sudo apt install redis-server && sudo systemctl start redis`.
 
 
+## Dado genômico no repositório
+
+Nenhum VCF de pessoa entra aqui. Os cinco arquivos `.vcf` versionados são sintéticos e declaram `##source=genvar-` no cabeçalho.
+
+Duas barreiras sustentam isso. O `.gitignore` bloqueia `.vcf`, `.bam`, `.cram` e `.fastq`, abrindo exceção apenas para as fixtures. E um hook de pre-commit em `.githooks/pre-commit` verifica o **conteúdo** de todo arquivo novo ou alterado: se ele começa com `##fileformat=VCF` e não declara `##source=genvar-`, o commit é recusado. O hook pega o caso que o `.gitignore` não pega, que é o arquivo renomeado ou adicionado com `git add -f`.
+
+Ativar depois de clonar:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+
 ## Testes
 
 A suíte separa dois tipos de teste, e a separação é a razão de o build ser confiável: testes de contrato externo reprovam quando um serviço de terceiro muda, fica fora do ar ou limita a taxa, e isso não diz nada sobre o código do projeto.
@@ -974,6 +1086,19 @@ Cobertura por arquivo:
 | `test_catalogos.py` | merge dos três catálogos, precedência do curado, unicidade de id, vocabulário de categorias, endpoints de sugestão e de fontes |
 | `test_build_catalog.py` | parser do ETL antigo do Orphanet |
 | `test_apis.py` | contrato das APIs externas, marcado como integração |
+
+### Frontend (vitest)
+
+```bash
+cd frontend
+npm test
+```
+
+Dezoito testes sobre o módulo de VCF: parser multi-amostra, balanço alélico, Ti/Tv separado, verificação de sexo, heterozigoto composto, análise de trio, espectro de substituição e exportação tabular.
+
+**Os testes leem o resultado esperado do próprio arquivo de teste.** As fixtures em `frontend/public/fixtures/` trazem linhas `##genvar_esperado=` no cabeçalho, escritas por `scripts/gera_vcf_teste.py`, com os números plantados: 12 de novo verdadeiros, 8 sítios sem cobertura parental, 6 compostos em trans, 4 em cis, 5 recessivas homozigotas. O teste compara contra elas em vez de repetir o número no código, então mudar o gerador não faz o teste passar por acidente, e um número que não bate é defeito do código.
+
+O gerador também produz um arquivo deliberadamente ruim, com balanço alélico torto e Ti/Tv de variante nova em 0,89. Sem ele, os controles de qualidade só teriam sido exercitados contra arquivos limpos, que é onde eles não têm o que encontrar.
 
 
 ## Validação quantitativa (suite de benchmark)
