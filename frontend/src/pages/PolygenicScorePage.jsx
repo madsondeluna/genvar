@@ -39,10 +39,16 @@ const FASES = [
 
 const num = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
 
-// Decimal com VÍRGULA. O catálogo devolve ponto, e um laudo em português que
-// escreve "1.61" para uma razão de chances é lido como mil seiscentos e um por
-// quem está acostumado com o separador de milhar brasileiro.
-const dec = (n) => (n == null ? '—' : String(n).replace('.', ','))
+// Decimal com VÍRGULA e casas limitadas.
+//
+// O separador: o catálogo devolve ponto, e "1.61" para uma razão de chances é
+// lido como mil seiscentos e um por quem usa o separador de milhar brasileiro.
+//
+// As casas: o valor chega como ponto flutuante e imprimir a representação crua
+// produz "0,6335999999999999" na tela, que é a aritmética binária vazando para
+// o leitor. Quatro casas cobrem qualquer métrica que o catálogo publica, e
+// `Number` remove o zero à direita que o `toFixed` acrescentaria.
+const dec = (n) => (n == null ? '—' : String(Number(Number(n).toFixed(4))).replace('.', ','))
 
 function Faixa({ dist, colunas = 1 }) {
   const itens = Object.entries(dist || {}).sort((a, b) => b[1] - a[1])

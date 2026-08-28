@@ -253,7 +253,7 @@ cd backend && python -m etl.pgscatalog
 
   O selo de maturidade separa **Pronto para uso**, **Beta** e **Exploratório**, com o que cada um significa escrito na própria página. Antes os três módulos diziam "Beta disponível", e um rótulo que não distingue nada não informa nada.
 - Página `/status`: saúde em tempo real das fontes externas (`GET /api/health/sources`) e dos próprios endpoints da API (`GET /api/health/endpoints`), com selo de interno ou externo e latência por sonda. O teto da sonda é 8 s para rota local e 30 s para rota que consulta fonte externa, e acima de 5 s a rota sai como lenta com a explicação, não como falha: `/api/gene/BRCA1` leva de 10 a 12 s a frio, porque encadeia quatro chamadas externas e o overlap de variantes do Ensembl leva 7,5 s sozinho. Com um teto único de 8 s, a página acusava `ReadTimeout` numa rota que responde 200.
-- Página `/fontes`: as oito fontes de dados com licença, uso, citação formal e data de extração dos catálogos.
+- Página `/fontes`: as quatorze fontes de dados com licença, uso, citação formal e data de extração dos catálogos, com a origem da data declarada.
 
 #### Modo de leitura e aviso médico
 
@@ -263,19 +263,97 @@ cd backend && python -m etl.pgscatalog
 
 ## A aplicação
 
-As imagens abaixo mostram a interface do GenVar em uso, a partir de consultas reais à plataforma.
+As imagens abaixo mostram a interface em uso, capturadas da versão em produção. Cada legenda traz o endereço da tela.
 
-![Página inicial do GenVar](docs/tela-inicial.png)
 
-**Página inicial.** Ponto de entrada único da plataforma, com dois campos de busca lado a lado: por símbolo de gene (nomenclatura HGNC) e por identificador de variante (rs ID do dbSNP), cada um com exemplos clicáveis de acesso rápido. O rodapé lista as cinco bases públicas integradas (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt).
+![Página inicial](docs/tela-inicio.png)
 
-![Consulta de variante no GenVar](docs/exemplo-variante.png)
+**Página inicial.** Ponto de entrada único. A busca unificada reconhece símbolo de gene, rs ID de variante ou nome de doença num campo só e leva para a página certa; abaixo dela ficam os campos específicos, as doenças de acesso rápido e os casos de exemplo.  
+`/` · [https://genvar.delunalab.dev/](https://genvar.delunalab.dev/)
 
-**Consulta de variante (rs334, anemia falciforme).** (A) Cabeçalho com os metadados da variante (cromossomo, posição, alelos, consequência, troca de aminoácido e frequência global no gnomAD) e o painel "O que a variante muda", que compara a referência e a variante no DNA e na proteína. (B) Classificação clínica do ClinVar, com significado, status de revisão e a lista de condições associadas. (C) Predições de patogenicidade em barras por preditor, ao lado do detalhamento dos escores preditivos (SIFT, PolyPhen-2, CADD, REVEL, AlphaMissense, entre outros). (D) Continuação dos escores e início da distribuição geográfica das frequências. (E) Mapa global das frequências alélicas e gráfico de frequências por população do gnomAD.
 
-![Consulta de gene no GenVar](docs/exemplo-gene.png)
+![Catálogo de doenças raras](docs/tela-doencas.png)
 
-**Consulta de gene (TP53).** (A) Cabeçalho com os metadados do gene (ID Ensembl, cromossomo, locus, fita, ID UniProt e tamanho) e o resumo de variantes por classificação clínica, com o ideograma do cromossomo. (B) Métricas de restrição do gnomAD (LOEUF, Z-score de LoF, o/e LoF, o/e Missense) e a distribuição posicional das variantes classificadas ao longo do gene. (C) Estrutura proteica predita pelo AlphaFold em renderização tridimensional interativa (NGL), colorida por confiança. (D) Tabela de variantes patogênicas, com filtro, ordenação e exportação em CSV. (E) Tabela de variantes de significado incerto (VUS). (F) Tabela de variantes benignas.
+**Catálogo de doenças raras.** 3.739 doenças monogênicas com busca por doença, categoria ou gene, e seletor de padrão de herança. O painel de panorama mostra a distribuição por herança e por categoria, com a contagem de cada uma.  
+`/doencas` · [https://genvar.delunalab.dev/doencas](https://genvar.delunalab.dev/doencas)
+
+
+![Detalhe de doença](docs/tela-doenca-detalhe.png)
+
+**Detalhe de doença.** Metadados curados do Orphanet (herança, prevalência, referências OMIM e MONDO, sinais clínicos), os genes causais com a restrição gênica obtida ao vivo da gnomAD, as variantes patogênicas por gene e o contexto brasileiro de cobertura no SUS.  
+`/doenca/anemia-falciforme` · [https://genvar.delunalab.dev/doenca/anemia-falciforme](https://genvar.delunalab.dev/doenca/anemia-falciforme)
+
+
+![Catálogo de painéis de genes](docs/tela-paineis.png)
+
+**Catálogo de painéis de genes.** 434 painéis do Genomics England PanelApp, com busca e facetas por categoria. Só entram genes de nível verde, que é o de evidência suficiente para uso diagnóstico.  
+`/paineis` · [https://genvar.delunalab.dev/paineis](https://genvar.delunalab.dev/paineis)
+
+
+![Detalhe de painel](docs/tela-painel-detalhe.png)
+
+**Detalhe de painel.** A restrição de cada gene do painel obtida ao vivo da gnomAD, com a etiqueta dizendo o que o valor de LOEUF significa para a leitura de uma variante naquele gene, e não apenas o nome da faixa.  
+`/painel/epilepsias-geneticas` · [https://genvar.delunalab.dev/painel/epilepsias-geneticas](https://genvar.delunalab.dev/painel/epilepsias-geneticas)
+
+
+![Análise de VCF](docs/tela-vcf.png)
+
+**Análise de VCF.** O módulo roda inteiro no navegador: o arquivo não é transmitido a servidor nenhum. A página abre explicando o que cada etapa da cadeia até o VCF guarda e o que perde, e oferece quatro arquivos sintéticos de exemplo, cada um exercitando uma parte diferente da análise.  
+`/vcf` · [https://genvar.delunalab.dev/vcf](https://genvar.delunalab.dev/vcf)
+
+
+![Triagem de coorte](docs/tela-lote.png)
+
+**Triagem de coorte.** Até 200 arquivos numa passada, com consolidado da coorte. Cada arquivo é lido, anotado, resumido e descartado: é essa troca que permite processar dezenas sem estourar a memória da aba, e está medida no benchmark em 54 MB retidos contra 1.766 MB do caminho arquivo a arquivo, em cem exomas.  
+`/lote` · [https://genvar.delunalab.dev/lote](https://genvar.delunalab.dev/lote)
+
+
+![Consulta de gene](docs/tela-gene.png)
+
+**Consulta de gene.** Metadados do Ensembl, métricas de restrição da gnomAD, ideograma cromossômico, estrutura proteica predita pelo AlphaFold e as tabelas de variantes por classificação clínica. A leitura das variantes vem em consulta separada, para a página aparecer antes de a parte lenta terminar.  
+`/gene/BRCA1` · [https://genvar.delunalab.dev/gene/BRCA1](https://genvar.delunalab.dev/gene/BRCA1)
+
+
+![Consulta de variante](docs/tela-variante.png)
+
+**Consulta de variante.** Anotação funcional pelo VEP do Ensembl, frequências por população da gnomAD, classificação do ClinVar, escores preditivos agregados pelo MyVariant e o escore de evidência ACMG pelo sistema de pontos de Tavtigian, que mostra os pontos e o lado para onde apontam sem nomear a faixa.  
+`/variant/rs334` · [https://genvar.delunalab.dev/variant/rs334](https://genvar.delunalab.dev/variant/rs334)
+
+
+![Escores poligênicos](docs/tela-poligenico.png)
+
+**Escores poligênicos.** 6.982 escores do PGS Catalog com facetas por categoria, e a seção que liga o raro ao poligênico: como o fundo poligênico modula a penetrância de uma variante rara monogênica, com exemplos documentados.  
+`/poligenico` · [https://genvar.delunalab.dev/poligenico](https://genvar.delunalab.dev/poligenico)
+
+
+![Detalhe de escore poligênico](docs/tela-escore-detalhe.png)
+
+**Detalhe de escore poligênico.** Servido pela plataforma em vez de levar o usuário ao PGS Catalog. Traz o método, o build, a ancestria nas três fases da vida do escore (GWAS de origem, desenvolvimento e avaliação) e o desempenho publicado por coorte, com efeito e intervalo de confiança.  
+`/escore/PGS000004` · [https://genvar.delunalab.dev/escore/PGS000004](https://genvar.delunalab.dev/escore/PGS000004)
+
+
+![Associação por burden](docs/tela-associacao.png)
+
+**Associação por burden.** Manhattan plot em canvas com filtros de fenótipo, ancestria, máscara funcional e teste estatístico, com as linhas de limiar; forest plot cross-ancestry por gene; e o mapa dos biobancos por coordenada real.  
+`/associacao` · [https://genvar.delunalab.dev/associacao](https://genvar.delunalab.dev/associacao)
+
+
+![Produtos](docs/tela-produtos.png)
+
+**Produtos.** Os quatro trabalhos que a plataforma entrega, organizados por necessidade concreta e não por camada de genética. Cada bloco declara o que entra, o que sai e o selo de maturidade.  
+`/produtos` · [https://genvar.delunalab.dev/produtos](https://genvar.delunalab.dev/produtos)
+
+
+![Status das fontes e da API](docs/tela-status.png)
+
+**Status das fontes e da API.** Saúde em tempo real das fontes externas e das dezoito rotas da própria API, com latência por sonda. O teto do cronômetro é diferente para rota local e para rota que consulta fonte externa, e acima de cinco segundos a rota sai como lenta e não como falha.  
+`/status` · [https://genvar.delunalab.dev/status](https://genvar.delunalab.dev/status)
+
+
+![Procedência dos dados](docs/tela-fontes.png)
+
+**Procedência dos dados.** As quatorze fontes com licença, uso, citação formal e data de extração de cada catálogo. A data diz de onde saiu: declarada pelo próprio arquivo do ETL ou, na falta dela, a data de modificação, porque as duas não valem o mesmo.  
+`/fontes` · [https://genvar.delunalab.dev/fontes](https://genvar.delunalab.dev/fontes)
 
 
 ## Bancos de dados e APIs integrados
@@ -480,7 +558,7 @@ A aplicação adota uma arquitetura em três camadas, conteinerizada em três se
 
 ![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
 
-**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as três páginas roteadas por react-router (HomePage, GenePage, VariantPage), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas `GET /api/gene/{símbolo}` e `GET /api/variant/{rs}`, faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v3`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
+**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as páginas roteadas por react-router (dezesseis rotas, de HomePage e GenePage às de VCF, lote e escore poligênico), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas da API (gene, variante, doença, painel, escore poligênico, sugestão, fontes e saúde), faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v3`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
 
 ![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
 
@@ -911,7 +989,7 @@ Proveniência das fontes de dados.
 
 | Endpoint | Resposta |
 |---|---|
-| `GET /api/sources` | `SourcesResponse` com as oito fontes: nome, URL do site e dos dados, licença e URL da licença, natureza (`catalogo` ou `ao vivo`), uso na aplicação, citação formal e, nos catálogos, a data de extração. |
+| `GET /api/sources` | `SourcesResponse` com as quatorze fontes: nome, URL do site e dos dados, licença e URL da licença, natureza (`catalogo` ou `ao vivo`), uso na aplicação, citação formal e, nos catálogos, a data de extração. |
 
 A data de extração é lida do arquivo gerado pelo ETL, não de uma constante. Orphanet, PanelApp e PGS Catalog são publicados sob CC BY 4.0, que exige atribuição de quem redistribui os dados: a rota `/fontes` cumpre isso e está na barra de navegação de todas as páginas.
 
@@ -1203,14 +1281,16 @@ cd frontend
 npm test
 ```
 
-Quarenta testes em quatro arquivos:
+Cento e cinquenta e três testes em seis arquivos:
 
 | Arquivo | Testes | Cobre |
 |---|---|---|
 | `vcf/vcf.test.js` | 18 | parser multi-amostra, balanço alélico, Ti/Tv separado, verificação de sexo, heterozigoto composto, análise de trio, espectro de substituição e exportação tabular |
+| `vcf/acmg.test.js` | 20 | pontuação de evidência: a tabela de pesos, as fronteiras de faixa, o escore marcado quando um critério entra com ressalva, e a garantia de que nenhum campo do retorno traz o nome de uma faixa |
 | `vcf/lote.test.js` | 11 | triagem de coorte: sinais de atenção, genes e variantes recorrentes, arquivo defeituoso sem derrubar o lote, índice do ClinVar indisponível degradando em vez de lançar |
-| `vcf/pdf.test.js` | 6 | geração do laudo, incluindo tabela longa o bastante para atravessar páginas |
+| `vcf/pdf.test.js` | 10 | geração do laudo, tabela longa o bastante para atravessar páginas, largura das colunas dentro da página e ausência de símbolo fora da fonte base do PDF |
 | `rotas.test.js` | 5 | toda rota publicada em link existe no roteador |
+| `paginas.test.js` | 89 | todo módulo de interface compila e resolve suas importações |
 
 `rotas.test.js` existe por um defeito concreto: a tira de ferramentas publicava links para `/concordancia` e `/cobertura`, que nunca foram construídas. Ferramenta ainda não construída guarda o caminho em `rotaPrevista`, e não em `to`, e o teste tranca isso.
 
