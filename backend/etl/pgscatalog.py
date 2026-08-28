@@ -141,6 +141,92 @@ def _ancestria(d: Dict[str, Any]) -> Dict[str, int]:
     return out
 
 
+# Traducao dos tracos, do arquivo ao lado. Os 200 mais frequentes cobrem 52% das
+# aparicoes; o resto fica no ingles do PGS Catalog, que e melhor que traducao
+# automatica errada num nome de doenca.
+_TRADUCOES = Path(__file__).parent / "traducoes" / "pgs_traits_pt_br.tsv"
+
+
+def _carregar_traducoes() -> Dict[str, str]:
+    if not _TRADUCOES.exists():
+        return {}
+    fora = {}
+    for i, linha in enumerate(_TRADUCOES.read_text(encoding="utf-8").splitlines()):
+        if i == 0 or not linha.strip():
+            continue
+        col = linha.split("\t")
+        if len(col) >= 2 and col[1].strip():
+            fora[col[0].strip()] = col[1].strip()
+    return fora
+
+
+TRAITS_PT = _carregar_traducoes()
+
+
+def traduzir_trait(nome: str) -> str:
+    return TRAITS_PT.get(nome.strip(), nome)
+
+
+# Nomes de metodo estatistico. Sao termos tecnicos com traducao estabelecida na
+# literatura em portugues; os que nao tem ficam como estao, porque inventar
+# traducao para nome de metodo atrapalha quem vai procurar o artigo.
+METODOS_PT = {
+    "Pruning and Thresholding (P+T)": "Poda e limiar (P+T)",
+    "Clumping and Thresholding (C+T)": "Agrupamento e limiar (C+T)",
+    "LDpred": "LDpred",
+    "LDpred2": "LDpred2",
+    "lassosum": "lassosum",
+    "PRS-CS": "PRS-CS",
+    "PRScs": "PRS-CS",
+    "SBayesR": "SBayesR",
+    "Genome-wide significant variants": "Variantes com significância genômica",
+    "Genome-wide significant associations": "Associações com significância genômica",
+    "Established variants": "Variantes já estabelecidas",
+    "Known susceptibility variants": "Variantes de suscetibilidade conhecidas",
+    "Weighted sum of risk alleles": "Soma ponderada de alelos de risco",
+    "Unweighted sum of risk alleles": "Soma não ponderada de alelos de risco",
+    "log-OR weighted sum of risk allele dosages":
+        "Soma de dosagens de alelo de risco ponderada pelo log da razao de chances",
+    "Metascore": "Metaescore",
+    "Hard thresholding": "Limiar rígido",
+    "Hazard model with stepwise selection of SNP inclusion":
+        "Modelo de riscos proporcionais com seleção de SNP passo a passo",
+    "Interaction modelling": "Modelagem de interação",
+    "Genome-wide significant associations and interaction modelling":
+        "Associações com significância genômica e modelagem de interação",
+    "Snpnet": "snpnet",
+    "Elastic net": "Rede elástica",
+    "Lasso": "Lasso",
+    "Ridge regression": "Regressão de crista",
+    "Bayesian": "Bayesiano",
+    "Stepwise regression": "Regressão passo a passo",
+    "Polygenic hazard score": "Escore poligênico de risco proporcional",
+    "Meta-analysis": "Metanálise",
+    "Hard-Thresholding Stepwise Forward Regression":
+        "Regressão passo a passo progressiva com limiar rígido",
+    "Stepwise Forward Regression": "Regressão passo a passo progressiva",
+    "Weighted sum of risk allele dosages": "Soma ponderada de dosagens de alelo de risco",
+    "Sum of risk alleles": "Soma de alelos de risco",
+}
+
+
+def traduzir_metodo(nome: str) -> str:
+    n = nome.strip()
+    if n in METODOS_PT:
+        return METODOS_PT[n]
+    # Traducao parcial e pior que nenhuma: "Associacoes com significancia
+    # genomica and interaction modelling" mistura os dois idiomas na mesma frase.
+    # So se aceita o prefixo quando o que sobra tambem tem traducao.
+    for en, pt in METODOS_PT.items():
+        for sep in (" and ", ", ", " with ", " + "):
+            if n.startswith(en + sep):
+                resto = n[len(en) + len(sep):]
+                if resto in METODOS_PT:
+                    ligacao = {" and ": " e ", ", ": ", ", " with ": " com ", " + ": " + "}[sep]
+                    return pt + ligacao + METODOS_PT[resto][0].lower() + METODOS_PT[resto][1:]
+    return n
+
+
 def transformar(d: Dict[str, Any], cats: Dict[str, str]) -> Optional[Dict[str, Any]]:
     if not d.get("id"):
         return None
@@ -154,12 +240,17 @@ def transformar(d: Dict[str, Any], cats: Dict[str, str]) -> Optional[Dict[str, A
         "id": d["id"],
         "source": "pgs_catalog",
         "name": d.get("name") or d["id"],
-        "trait": d.get("trait_reported") or "",
+        "trait": traduzir_trait(d.get("trait_reported") or ""),
+        # O nome como o PGS Catalog publica, sempre. A traducao e para leitura;
+        # a busca por termo em ingles tem de continuar funcionando, e a citacao
+        # do escore precisa bater com a fonte.
+        "trait_original": d.get("trait_reported") or "",
         "category": categoria,
         "trait_efo": [{"id": t.get("id"), "label": t.get("label")} for t in efo],
         "n_variants": d.get("variants_number"),
         "build": d.get("variants_genomebuild"),
-        "method": d.get("method_name") or "",
+        "method": traduzir_metodo(d.get("method_name") or ""),
+        "method_original": d.get("method_name") or "",
         "citation": " ".join(x for x in [pub.get("firstauthor"), str(pub.get("pub_year") or "")] if x).strip(),
         "journal": pub.get("journal") or "",
         "doi": pub.get("doi") or "",

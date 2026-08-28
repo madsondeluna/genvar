@@ -28,6 +28,17 @@ const SERIE = ['#3973b1', '#9f8322', '#9e527f', '#49955c', '#745ba5', '#ba6f3e',
 const COR_SIG = { 1: SERIE[7], 2: SERIE[7], 3: SERIE[7], 4: SERIE[5], 5: SERIE[1], 6: SERIE[3], 7: SERIE[3], 8: SERIE[3], 9: SERIE[6], 10: SERIE[5], 11: SERIE[2], 12: SERIE[3] }
 const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modificador: SERIE[0] }
 
+// Colunas da tabela completa, em paisagem. A soma tem de caber na largura util
+// de uma A4 deitada (842 menos as margens), senao o rodape da linha estoura.
+const COLS_TABELA = [
+  ['Posição', 50], ['rsID', 54], ['Troca', 44],
+  ['Ti/Tv', 26], ['Gene', 46], ['Classificação', 80],
+  ['Rev.', 22], ['Impacto', 44], ['Consequência', 72],
+  ['Frequência', 56], ['Maior em', 58], ['Herança', 40],
+  ['Genótipo', 42], ['AB', 28], ['DP', 22],
+  ['ACMG', 52],
+]
+
 const RESSALVA = 'Documento de pesquisa e ensino. Não é laudo diagnóstico, não foi emitido por '
   + 'laboratório clínico habilitado e não substitui avaliação médica. Todo achado exige '
   + 'confirmação por método independente em laboratório clínico e aconselhamento genético.'
@@ -79,6 +90,25 @@ function freq(af) {
   return `${String(p).replace('.', ',')}% (1 em ${fmt(Math.round(1 / af))})`
 }
 
+// Frequencia da melhor fonte disponivel. O gnomAD, quando consultado, vence a
+// embarcada: ele e a coorte maior e a unica estratificada por populacao.
+function freqDe(v) {
+  if (v.gnomad?.af != null) return freq(v.gnomad.af)
+  if (v.gnomad?.ausente) return 'ausente do gnomAD'
+  return freq(v.clinvar?.af)
+}
+
+// Populacao em que o alelo e mais comum. Uma variante rara no conjunto global e
+// comum numa populacao especifica muda a leitura: pode ser variante fundadora, e
+// pode ser artefato de sub-representacao daquela populacao nas coortes.
+function maiorPop(v) {
+  const p = v.gnomad?.populacoes?.[0]
+  if (!p || p.af == null) return '—'
+  const pc = p.af * 100
+  const n = pc >= 1 ? pc.toFixed(1) : pc.toPrecision(2)
+  return `${p.rotulo}: ${String(n).replace('.', ',')}%`
+}
+
 function Barra({ rotulo, n, max, cor, sufixo }) {
   return (
     <View style={s.linha}>
@@ -124,6 +154,9 @@ export function RelatorioVCF({ dados, gerado }) {
     .filter((v) => [4, 9, 10, 11].includes(v.clinvar.sig))
     .sort((a, b) => b.clinvar.estrelas - a.clinvar.estrelas)
   const comRsid = variantes.filter((v) => v.rsid).length
+  const comGnomad = anotadas
+    .filter((v) => v.gnomad?.populacoes?.length)
+    .sort((a, b) => ORDEM_GRAVIDADE.indexOf(a.clinvar.sig) - ORDEM_GRAVIDADE.indexOf(b.clinvar.sig))
 
   return (
     <Document title={`GenVar — relatório de ${nome}`} author="GenVar" creator="GenVar">
@@ -228,20 +261,28 @@ export function RelatorioVCF({ dados, gerado }) {
         {graves.length > 0 && (
           <>
             <View style={{ flexDirection: 'row', backgroundColor: FUNDO }} fixed>
-              {[['Gene', 52], ['Posição', 78], ['Troca', 48], ['Classificação', 78], ['Rev.', 26], ['Condição', 108], ['Frequência', 72], ['Genótipo', 48]].map(([c, w]) => (
+              {[['Gene', 46], ['Posição', 66], ['rsID', 58], ['Troca', 42], ['Efeito', 62], ['Classificação', 70], ['Rev.', 22], ['Condição', 86], ['Frequência', 62], ['Maior em', 60], ['Genótipo', 40]].map(([c, w]) => (
                 <Text key={c} style={[s.th, { width: w }]}>{c}</Text>
               ))}
             </View>
             {graves.slice(0, 80).map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 52 }]}>{v.clinvar.gene || '—'}</Text>
-                <Text style={[s.td, { width: 78 }]}>{v.chrom}:{fmt(v.pos)}</Text>
-                <Text style={[s.td, { width: 48 }]}>{v.ref.slice(0, 5)}&gt;{v.alt.slice(0, 5)}</Text>
-                <Text style={[s.td, { width: 78, color: COR_SIG[v.clinvar.sig] }]}>{ROTULO[v.clinvar.sig]}</Text>
-                <Text style={[s.td, { width: 26 }]}>{v.clinvar.estrelas}/4</Text>
-                <Text style={[s.td, { width: 108 }]}>{v.clinvar.condicao || '—'}</Text>
-                <Text style={[s.td, { width: 72 }]}>{freq(v.clinvar.af)}</Text>
-                <Text style={[s.td, { width: 48 }]}>{v.zigosidade}</Text>
+                <Text style={[s.td, { width: 46 }]}>{v.clinvar.gene || '—'}</Text>
+                <Text style={[s.td, { width: 66 }]}>{v.chrom}:{fmt(v.pos)}</Text>
+                <Text style={[s.td, { width: 58 }]}>{v.rsid || '—'}</Text>
+                <Text style={[s.td, { width: 42 }]}>
+                  {v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}
+                  {v.transicao != null ? (v.transicao ? ' Ti' : ' Tv') : ''}
+                </Text>
+                <Text style={[s.td, { width: 62, color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA }]}>
+                  {v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—'}
+                </Text>
+                <Text style={[s.td, { width: 70, color: COR_SIG[v.clinvar.sig] }]}>{ROTULO[v.clinvar.sig]}</Text>
+                <Text style={[s.td, { width: 22 }]}>{v.clinvar.estrelas}/4</Text>
+                <Text style={[s.td, { width: 86 }]}>{v.clinvar.condicao || '—'}</Text>
+                <Text style={[s.td, { width: 62 }]}>{freqDe(v)}</Text>
+                <Text style={[s.td, { width: 60 }]}>{maiorPop(v)}</Text>
+                <Text style={[s.td, { width: 40 }]}>{v.zigosidade}</Text>
               </View>
             ))}
             {graves.length > 80 && (
@@ -287,6 +328,105 @@ export function RelatorioVCF({ dados, gerado }) {
 
         <Rodape gerado={gerado} />
       </Page>
+
+      {/* 4. Frequencia por populacao e tabela completa */}
+      {comGnomad.length > 0 && (
+        <Page size="A4" style={s.pagina}>
+          <Text style={s.h2}>Frequência por população</Text>
+          <Text style={s.p}>
+            Consulta ao gnomAD, feita variante a variante e apenas para os achados. Uma variante
+            rara no conjunto global e comum numa população específica muda a leitura: pode ser
+            variante fundadora, e pode ser artefato de sub-representação daquela população nas
+            coortes. As populações do gnomAD são grupos de ancestralidade genética inferida, não
+            categorias de raça ou nacionalidade autodeclaradas.
+          </Text>
+
+          {comGnomad.slice(0, 12).map((v, i) => (
+            <View key={i} style={{ marginTop: 10 }} wrap={false}>
+              <Text style={s.h3}>
+                {v.clinvar?.gene || v.gene || 'sem gene'} · {v.chrom}:{fmt(v.pos)}{' '}
+                {v.ref.slice(0, 6)}→{v.alt.slice(0, 6)}
+                {v.rsid ? ` · ${v.rsid}` : ''}
+              </Text>
+              <Text style={[s.p, s.apagado, { marginBottom: 4 }]}>
+                {v.clinvar ? `${ROTULO[v.clinvar.sig]}, ${v.clinvar.estrelas}/4 estrelas. ` : ''}
+                Global {freq(v.gnomad.af)}
+                {v.gnomad.an ? ` em ${fmt(v.gnomad.an)} cromossomos` : ''}.
+              </Text>
+              {v.gnomad.populacoes.slice(0, 8).map((pop, j) => (
+                <Barra
+                  key={pop.id}
+                  rotulo={pop.rotulo}
+                  n={pop.af != null ? +(pop.af * 100).toFixed(3) : 0}
+                  max={Math.max(...v.gnomad.populacoes.map((x) => (x.af || 0) * 100), 0.001)}
+                  cor={SERIE[j % 8]}
+                  sufixo="%"
+                />
+              ))}
+            </View>
+          ))}
+
+          <Rodape gerado={gerado} />
+        </Page>
+      )}
+
+      {/* 5. Tabela completa das variantes anotadas */}
+      {anotadas.length > 0 && (
+        <Page size="A4" style={s.pagina} orientation="landscape">
+          <Text style={s.h2}>Todas as variantes com anotação clínica</Text>
+          <Text style={s.p}>
+            {fmt(anotadas.length)} variantes que o ClinVar conhece, ordenadas por gravidade e
+            depois por nível de revisão. A exportação em TSV, CSV e XLSX traz o arquivo inteiro,
+            inclusive as que não constam do catálogo.
+          </Text>
+          <View style={{ flexDirection: 'row', backgroundColor: FUNDO }} fixed>
+            {COLS_TABELA.map(([c, w]) => (
+              <Text key={c} style={[s.th, { width: w }]}>{c}</Text>
+            ))}
+          </View>
+          {anotadas
+            .slice()
+            .sort((a, b) => ORDEM_GRAVIDADE.indexOf(a.clinvar.sig) - ORDEM_GRAVIDADE.indexOf(b.clinvar.sig)
+              || b.clinvar.estrelas - a.clinvar.estrelas)
+            .slice(0, 400)
+            .map((v, i) => (
+              <View key={i} style={s.tr} wrap={false}>
+                <Text style={[s.td, { width: 50 }]}>{v.chrom}:{fmt(v.pos)}</Text>
+                <Text style={[s.td, { width: 54 }]}>{v.rsid || '—'}</Text>
+                <Text style={[s.td, { width: 44 }]}>{v.ref.slice(0, 4)}→{v.alt.slice(0, 4)}</Text>
+                <Text style={[s.td, { width: 26 }]}>
+                  {v.transicao == null ? '—' : v.transicao ? 'Ti' : 'Tv'}
+                </Text>
+                <Text style={[s.td, { width: 46 }]}>{v.clinvar.gene || v.gene || '—'}</Text>
+                <Text style={[s.td, { width: 84, color: COR_SIG[v.clinvar.sig] }]}>
+                  {ROTULO[v.clinvar.sig]}
+                </Text>
+                <Text style={[s.td, { width: 80 }]}>{v.clinvar.estrelas}/4</Text>
+                <Text style={[s.td, { width: 46, color: COR_IMPACTO[IMPACTO[v.clinvar.consequencia]] || TINTA }]}>
+                  {IMPACTO[v.clinvar.consequencia] || '—'}
+                </Text>
+                <Text style={[s.td, { width: 22 }]}>
+                  {v.clinvar.consequencia ? CONSEQUENCIA[v.clinvar.consequencia] : '—'}
+                </Text>
+                <Text style={[s.td, { width: 44 }]}>{freqDe(v)}</Text>
+                <Text style={[s.td, { width: 72 }]}>{maiorPop(v)}</Text>
+                <Text style={[s.td, { width: 56 }]}>{v.clingen?.heranca_sigla || '—'}</Text>
+                <Text style={[s.td, { width: 58 }]}>{v.zigosidade}</Text>
+                <Text style={[s.td, { width: 40 }]}>{v.ab != null ? v.ab.toFixed(2) : '—'}</Text>
+                <Text style={[s.td, { width: 42 }]}>{v.dp ?? '—'}</Text>
+                <Text style={[s.td, { width: 28 }]}>
+                  {v.acmg?.length ? v.acmg.map((c) => c.id).join(' ') : '—'}
+                </Text>
+              </View>
+            ))}
+          {anotadas.length > 400 && (
+            <Text style={[s.p, s.apagado, { marginTop: 6 }]}>
+              Listadas as 400 primeiras de {fmt(anotadas.length)}. A exportação tabular traz todas.
+            </Text>
+          )}
+          <Rodape gerado={gerado} />
+        </Page>
+      )}
 
       {/* 3. Genes, impacto e polimorfismos */}
       <Page size="A4" style={s.pagina}>

@@ -225,6 +225,62 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
         </article>
       )}
 
+      {variantes.some((v) => v.gnomad?.populacoes?.length) && (
+        <article className="card flex flex-col gap-12">
+          <span className="flex items-baseline justify-between gap-16 flex-wrap">
+            <h3 className="text-16 font-medium text-text">Frequência por população</h3>
+            <span className="label">
+              {fmt(variantes.filter((v) => v.gnomad?.populacoes?.length).length)} variantes consultadas no gnomAD
+            </span>
+          </span>
+          <p className="text-12 leading-snug about-left">
+            Uma variante rara no conjunto global e comum numa população específica muda a leitura:
+            pode ser variante fundadora, e pode ser artefato de sub-representação daquela população
+            nas coortes. As populações do gnomAD são grupos de ancestralidade genética inferida,
+            não categorias de raça ou nacionalidade autodeclaradas, e a maior delas por larga
+            margem é a europeia, o que faz frequência baixa em população não europeia significar
+            menos do que o mesmo número na europeia.
+          </p>
+          {variantes
+            .filter((v) => v.gnomad?.populacoes?.length)
+            .sort((a, b) => ORDEM_GRAVIDADE.indexOf(a.clinvar?.sig) - ORDEM_GRAVIDADE.indexOf(b.clinvar?.sig))
+            .slice(0, 8)
+            .map((v, i) => (
+              <div key={i} className="flex flex-col gap-6">
+                <span className="flex gap-8 items-baseline flex-wrap">
+                  {(v.clinvar?.gene || v.gene) && (
+                    <Link to={`/gene/${v.clinvar?.gene || v.gene}`}
+                          className="text-13 mono link-muted underline underline-offset-2">
+                      {v.clinvar?.gene || v.gene}
+                    </Link>
+                  )}
+                  <span className="text-12 mono">{v.chrom}:{fmt(v.pos)} {v.ref}→{v.alt}</span>
+                  {v.rsid && <span className="text-12 mono text-muted">{v.rsid}</span>}
+                  {v.clinvar && (
+                    <span className="tag tag-series tag-sm" style={seriesStyle(SLOT[v.clinvar.sig])}>
+                      {ROTULO[v.clinvar.sig]}
+                    </span>
+                  )}
+                  <span className="label">
+                    global {freqTexto(v.gnomad.af)}
+                    {v.gnomad.an ? ` em ${fmt(v.gnomad.an)} cromossomos` : ''}
+                  </span>
+                </span>
+                <BarrasNomeadas
+                  itens={v.gnomad.populacoes.map((p, j) => ({
+                    rotulo: p.rotulo,
+                    n: p.af != null ? +(p.af * 1e6).toFixed(0) : 0,
+                    slot: (j % 8) + 1,
+                  }))}
+                  slot={1}
+                  colunaRotulo="11rem"
+                  rotuloX="frequência em partes por milhão"
+                />
+              </div>
+            ))}
+        </article>
+      )}
+
       {variantes.some((v) => v.cpic) && (
         <article className="card flex flex-col gap-12">
           <span className="flex items-baseline justify-between gap-16 flex-wrap">

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Histograma, BarrasNomeadas } from './Grafico'
 import TabelaVariantes from './TabelaVariantes'
 import ControleQualidade from './ControleQualidade'
@@ -75,6 +75,21 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
       setPdf('erro')
     }
   }
+
+  const [saida, setSaida] = useState('parado')
+
+  // Exportação tabular no topo, ao lado do PDF. Estava só dentro da aba de
+  // variantes, e quem queria o dado tinha de descobrir a aba primeiro.
+  const exportar = useCallback(async (formato) => {
+    setSaida('gerando')
+    try {
+      const { exportarVariantes } = await import('../vcf/saidas')
+      await exportarVariantes(formato, { ...dados, variantes, metricas, resumoCli, painel })
+      setSaida('parado')
+    } catch (e) {
+      setSaida('erro')
+    }
+  }, [dados, variantes, metricas, resumoCli, painel])
 
   const dp = useMemo(() => histograma(variantes, 'dp'), [variantes])
   const qual = useMemo(() => histograma(variantes, 'qual'), [variantes])
@@ -171,12 +186,22 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
           ))}
         </div>
 
-        <span className="flex items-center gap-12 flex-wrap">
+        <span className="flex items-center gap-8 flex-wrap">
           <button type="button" className="pill pill-solid" onClick={baixarPDF} disabled={pdf === 'gerando'}>
             <Icon name="download" />
-            {pdf === 'gerando' ? 'Montando o PDF...' : 'Baixar relatório em PDF'}
+            {pdf === 'gerando' ? 'Montando o laudo...' : 'Laudo em PDF'}
           </button>
+          {[['csv', 'CSV'], ['tsv', 'TSV'], ['xlsx', 'XLSX'], ['vcf', 'VCF'], ['json', 'JSON']].map(([k, r]) => (
+            <button key={k} type="button" className="pill pill-sm" disabled={saida === 'gerando'}
+                    onClick={() => exportar(k)}>
+              <Icon name="download" /> {r}
+            </button>
+          ))}
+          <span className="label">
+            {painel ? `do painel: ${fmt(variantes.length)} variantes` : `${fmt(variantes.length)} variantes`}
+          </span>
           {pdf === 'erro' && <span className="field-error" role="alert">Não foi possível montar o PDF.</span>}
+          {saida === 'erro' && <span className="field-error" role="alert">Não foi possível gerar o arquivo.</span>}
         </span>
         </div>
 

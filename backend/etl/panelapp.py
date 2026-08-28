@@ -225,6 +225,29 @@ def _gene(g: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _unicos(nomes: List[Optional[str]]) -> List[str]:
+    """Remove repeticao preservando a ordem de aparicao."""
+    visto, fora = set(), []
+    for n in nomes:
+        if n and n not in visto:
+            visto.add(n)
+            fora.append(n)
+    return fora
+
+
+def _unicos_por_simbolo(genes: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """A primeira entrada de cada simbolo fica. Quando o mesmo gene aparece duas
+    vezes no painel com modos de heranca diferentes, a divergencia e do dado de
+    origem e escolher a segunda seria escolher pela ordem do arquivo."""
+    visto, fora = set(), []
+    for g in genes:
+        s = g.get("symbol")
+        if s and s not in visto:
+            visto.add(s)
+            fora.append(g)
+    return fora
+
+
 def transformar(d: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     genes = [g for g in (d.get("genes") or []) if g.get("entity_type") == "gene"]
     verdes = [g for g in genes if str(g.get("confidence_level")) == VERDE]
@@ -243,9 +266,13 @@ def transformar(d: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         "category_source": d.get("disease_group") or "",
         "sub_category": d.get("disease_sub_group") or "",
         "inheritance": heranca(verdes),
-        "genes": [g.get("entity_name") for g in verdes],
-        "genes_detail": [_gene(g) for g in verdes],
-        "genes_amber": [g.get("entity_name") for g in ambares],
+        # Sem repeticao. Treze paineis do PanelApp trazem o mesmo gene duas
+        # vezes, e os super paineis trazem por juntarem sub-paineis que se
+        # sobrepoem. Na tela isso virava chave de React duplicada, que o React
+        # avisa e cujo efeito e omitir ou duplicar linha em silencio.
+        "genes": _unicos([g.get("entity_name") for g in verdes]),
+        "genes_detail": _unicos_por_simbolo([_gene(g) for g in verdes]),
+        "genes_amber": _unicos([g.get("entity_name") for g in ambares]),
         "conditions": d.get("relevant_disorders") or [],
     }
 

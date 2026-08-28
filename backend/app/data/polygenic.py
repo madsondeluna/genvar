@@ -25,33 +25,33 @@ from typing import List, Optional, Tuple
 POLYGENIC_SCORES = [
     {
         "id": "PGS000004",
-        "trait": "Cancer de mama",
+        "trait": "Câncer de mama",
         "category": "Outras doenças",
-        "short": "Escore de 313 variantes amplamente validado para risco de cancer de mama.",
+        "short": "Escore de 313 variantes amplamente validado para risco de câncer de mama.",
         "citation": "Mavaddat et al., 2019",
         "n_variants": 313,
     },
     {
         "id": "PGS000001",
-        "trait": "Cancer de mama",
+        "trait": "Câncer de mama",
         "category": "Outras doenças",
-        "short": "Escore inicial de 77 variantes para cancer de mama, base de estudos posteriores.",
+        "short": "Escore inicial de 77 variantes para câncer de mama, base de estudos posteriores.",
         "citation": "Mavaddat et al., 2015",
         "n_variants": 77,
     },
     {
         "id": "PGS000013",
-        "trait": "Doenca arterial coronariana",
+        "trait": "Doença arterial coronariana",
         "category": "Doença cardiovascular",
-        "short": "Escore genome-wide para doenca arterial coronariana, um dos primeiros de larga escala.",
+        "short": "Escore genome-wide para doença arterial coronariana, um dos primeiros de larga escala.",
         "citation": "Khera et al., 2018",
         "n_variants": None,
     },
     {
         "id": "PGS000018",
-        "trait": "Doenca arterial coronariana",
+        "trait": "Doença arterial coronariana",
         "category": "Doença cardiovascular",
-        "short": "MetaGRS de doenca arterial coronariana combinando multiplos GWAS.",
+        "short": "MetaGRS de doença arterial coronariana combinando multiplos GWAS.",
         "citation": "Inouye et al., 2018",
         "n_variants": None,
     },
@@ -59,7 +59,7 @@ POLYGENIC_SCORES = [
         "id": "PGS000021",
         "trait": "Diabetes tipo 2",
         "category": "Doença metabólica",
-        "short": "Escore poligenico para risco de diabetes tipo 2.",
+        "short": "Escore poligênico para risco de diabetes tipo 2.",
         "citation": "PGS Catalog",
         "n_variants": None,
     },
@@ -67,7 +67,7 @@ POLYGENIC_SCORES = [
         "id": "PGS000027",
         "trait": "Colesterol LDL",
         "category": "Lipídeos",
-        "short": "Escore poligenico para niveis de LDL, complementar as causas monogenicas.",
+        "short": "Escore poligênico para níveis de LDL, complementar as causas monogênicas.",
         "citation": "PGS Catalog",
         "n_variants": None,
     },
@@ -75,7 +75,7 @@ POLYGENIC_SCORES = [
         "id": "PGS000034",
         "trait": "Fibrilacao atrial",
         "category": "Doença cardiovascular",
-        "short": "Escore poligenico para risco de fibrilacao atrial.",
+        "short": "Escore poligênico para risco de fibrilação atrial.",
         "citation": "PGS Catalog",
         "n_variants": None,
     },
@@ -83,7 +83,7 @@ POLYGENIC_SCORES = [
         "id": "PGS000055",
         "trait": "Diabetes tipo 1",
         "category": "Sistema imune",
-        "short": "Escore poligenico para diabetes tipo 1, com forte contribuicao do HLA.",
+        "short": "Escore poligênico para diabetes tipo 1, com forte contribuição do HLA.",
         "citation": "PGS Catalog",
         "n_variants": None,
     },
@@ -96,34 +96,34 @@ RARE_POLYGENIC = [
         "condition": "Hipercolesterolemia familiar",
         "monogenic": ["LDLR", "APOB", "PCSK9"],
         "disease_id": "hipercolesterolemia-familiar",
-        "note": "Em portadores de variante monogenica, um escore poligenico de LDL alto "
+        "note": "Em portadores de variante monogênica, um escore poligênico de LDL alto "
                 "eleva ainda mais o colesterol e o risco cardiovascular; um escore baixo "
-                "atenua parte do efeito. O poligenico ajuda a explicar por que portadores "
+                "atenua parte do efeito. O poligênico ajuda a explicar por que portadores "
                 "da mesma mutacao tem quadros diferentes.",
     },
     {
-        "condition": "Cancer de mama hereditario",
+        "condition": "Câncer de mama hereditário",
         "monogenic": ["BRCA1", "BRCA2"],
         "disease_id": "cancer-mama-ovario-hereditario",
-        "note": "O escore poligenico de cancer de mama modula o risco absoluto em portadoras "
+        "note": "O escore poligênico de câncer de mama modula o risco absoluto em portadoras "
                 "de BRCA1/BRCA2: combinando o monogenico com o poligenico estima-se melhor a "
-                "penetrancia individual do que so pela mutacao.",
+                "penetrância individual do que so pela mutacao.",
     },
     {
-        "condition": "Doenca arterial coronariana",
+        "condition": "Doença arterial coronariana",
         "monogenic": ["LDLR", "APOB", "PCSK9"],
         "disease_id": None,
-        "note": "O risco poligenico de doenca coronariana se soma ao risco monogenico da "
-                "hipercolesterolemia familiar; parte dos portadores so desenvolve doenca "
-                "precoce quando tambem tem alto risco poligenico.",
+        "note": "O risco poligênico de doença coronariana se soma ao risco monogênico da "
+                "hipercolesterolemia familiar; parte dos portadores so desenvolve doença "
+                "precoce quando tambem tem alto risco poligênico.",
     },
     {
-        "condition": "Diabetes (monogenico x poligenico)",
+        "condition": "Diabetes (monogênico x poligênico)",
         "monogenic": ["HNF1A", "GCK", "HNF4A"],
         "disease_id": None,
-        "note": "Formas monogenicas (MODY) e o risco poligenico de diabetes tipo 2 podem "
-                "coexistir; o escore poligenico ajuda a distinguir e a estratificar risco "
-                "alem da causa monogenica.",
+        "note": "Formas monogênicas (MODY) e o risco poligênico de diabetes tipo 2 podem "
+                "coexistir; o escore poligênico ajuda a distinguir e a estratificar risco "
+                "alem da causa monogênica.",
     },
 ]
 

@@ -41,6 +41,26 @@ export function linhasTabulares(variantes) {
 // convenção de escape, então o caractere é trocado por espaço, uma vez, aqui.
 const limpo = (x) => String(x ?? '').replace(/[\t\r\n]+/g, ' ')
 
+// CSV separado por PONTO E VIRGULA. O Excel em configuracao brasileira usa a
+// virgula como separador decimal, entao um CSV com virgula abre com tudo numa
+// coluna so. O ponto e virgula e o que o Excel pt-BR espera, e o LibreOffice e o
+// Sheets detectam sozinhos.
+//
+// O BOM no inicio nao e enfeite: sem ele o Excel le UTF-8 como Latin-1 e
+// "patogênica" vira "patogÃªnica" em toda linha.
+export function paraCSV(variantes) {
+  const escapa = (x) => {
+    const t = String(x ?? '')
+    return /[;"\n\r]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t
+  }
+  const linhas = [CABECALHO.map(escapa).join(';')]
+  for (const l of linhasTabulares(variantes)) {
+    // Decimal com virgula, para o Excel pt-BR ler numero como numero.
+    linhas.push(l.map((v) => escapa(typeof v === 'number' ? String(v).replace('.', ',') : v)).join(';'))
+  }
+  return '\uFEFF' + linhas.join('\r\n') + '\r\n'
+}
+
 export function paraTSV(variantes) {
   const linhas = [CABECALHO.join('\t')]
   for (const l of linhasTabulares(variantes)) linhas.push(l.map(limpo).join('\t'))

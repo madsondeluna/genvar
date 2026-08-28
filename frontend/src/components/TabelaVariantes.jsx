@@ -4,7 +4,6 @@ import Icon from './Icon'
 import { ROTULO, SLOT, ORDEM_GRAVIDADE, CONSEQUENCIA, IMPACTO, ORDEM_IMPACTO, SLOT_IMPACTO } from '../vcf/clinvar'
 import { trocaTexto } from './AchadosClinicos'
 import { seriesStyle } from '../utils/seriesSlot'
-import { paraTSV, paraJSON, paraXLSX, paraVCF, baixar, CABECALHO, linhasTabulares } from '../vcf/exportar'
 
 const fmt = (n) => (n == null ? '—' : n.toLocaleString('pt-BR'))
 
@@ -101,63 +100,10 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
   async function exportar(formato) {
     setSaida('gerando')
     try {
-      if (formato === 'vcf') {
-        const txt = paraVCF({
-          variantes: filtradas, meta: dados.meta, nome: dados.nome,
-          sha256: dados.sha256, versaoClinvar: dados.versaoClinvar, painel,
-        })
-        baixar(new Blob([txt], { type: 'text/plain' }), `${base}-genvar.vcf`)
-      } else if (formato === 'tsv') {
-        baixar(new Blob([paraTSV(filtradas)], { type: 'text/tab-separated-values' }), `${base}-genvar.tsv`)
-      } else if (formato === 'json') {
-        const txt = paraJSON({ ...dados, variantes: filtradas, resumoCli })
-        baixar(new Blob([txt], { type: 'application/json' }), `${base}-genvar.json`)
-      } else {
-        const { metricas, meta } = dados
-        const blob = await paraXLSX([
-          { nome: 'Variantes', linhas: [CABECALHO, ...linhasTabulares(filtradas)] },
-          {
-            nome: 'Achados',
-            linhas: [['classificacao', 'variantes'], ...(resumoCli
-              ? ORDEM_GRAVIDADE.filter((s) => resumoCli.porSig[s]).map((s) => [ROTULO[s], resumoCli.porSig[s]])
-              : [])],
-          },
-          {
-            nome: 'Qualidade',
-            linhas: [
-              ['metrica', 'valor'],
-              ['variantes lidas', metricas.total],
-              ['passaram no filtro', metricas.passa],
-              ['razao Ti/Tv', metricas.titv != null ? +metricas.titv.toFixed(3) : ''],
-              ['fracao com rsID', +(metricas.fracaoConhecida).toFixed(4)],
-              ...Object.entries(metricas.zigosidade).map(([k, n]) => [`zigosidade: ${k}`, n]),
-              ...Object.entries(metricas.tipos).map(([k, n]) => [`tipo: ${k}`, n]),
-            ],
-          },
-          {
-            nome: 'Metodologia',
-            linhas: [
-              ['item', 'valor'],
-              ['gerador', 'GenVar'],
-              ['arquivo', dados.nome],
-              ['build de referencia', meta.build || 'nao declarado'],
-              ['build deduzido do contig', meta.buildDeduzido ? 'sim' : 'nao'],
-              ['chamador declarado', meta.chamador || 'nao declarado'],
-              ['cruzamento com genes', dados.genesMapeados ? 'ligado' : 'desligado (build diferente de GRCh38)'],
-              ['anotacao clinica', 'ClinVar (NCBI), dominio publico'],
-              ['chave de cruzamento', 'rsID + REF + ALT; coordenada + REF + ALT apenas em GRCh38'],
-              ['frequencia populacional', 'ExAC, senao 1000 Genomes, senao ESP, conforme o ClinVar publica'],
-              ['linhas exportadas', filtradas.length],
-              ['filtros aplicados', ativos ? 'sim' : 'nao'],
-              ['sha256 do arquivo de entrada', dados.sha256 || 'nao calculado'],
-              ['versao do ClinVar', dados.versaoClinvar || 'nao registrada'],
-              ['painel aplicado', painel ? `${painel.nome} (${painel.genes.length} genes)` : 'nenhum'],
-              ['uso', 'Pesquisa e ensino. Nao e laudo diagnostico. Achado exige confirmacao em laboratorio clinico e aconselhamento genetico.'],
-            ],
-          },
-        ])
-        baixar(blob, `${base}-genvar.xlsx`)
-      }
+      const { exportarVariantes } = await import('../vcf/saidas')
+      // Exporta o que está FILTRADO, não o arquivo inteiro: o botão fica embaixo
+      // da tabela filtrada e exportar outra coisa seria mentir sobre o alvo.
+      await exportarVariantes(formato, { ...dados, variantes: filtradas, resumoCli, painel })
       setSaida('parado')
     } catch (e) {
       setSaida('erro')
@@ -390,7 +336,7 @@ export default function TabelaVariantes({ variantes, dados, resumoCli, temAnotac
 
         <span className="flex items-center gap-8 flex-wrap">
           <span className="label">Baixar {ativos ? 'o que está filtrado' : 'tudo'}</span>
-          {[['vcf', 'VCF'], ['tsv', 'TSV'], ['xlsx', 'XLSX'], ['json', 'JSON']].map(([k, r]) => (
+          {[['csv', 'CSV'], ['tsv', 'TSV'], ['xlsx', 'XLSX'], ['vcf', 'VCF'], ['json', 'JSON']].map(([k, r]) => (
             <button key={k} type="button" className="pill pill-sm" disabled={saida === 'gerando'} onClick={() => exportar(k)}>
               <Icon name="download" /> {r}
             </button>

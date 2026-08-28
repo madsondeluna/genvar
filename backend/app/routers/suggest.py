@@ -41,7 +41,13 @@ def _build_index() -> List[Dict]:
         out.append({
             "kind": "disease", "id": d["id"], "label": d["name"],
             "hint": d.get("category") or "", "extra": ", ".join(genes[:3]),
-            "haystack": _norm(f"{d['name']} {d.get('category','')} {d.get('short','')}"),
+            # O nome original e os sinonimos entram no que a busca varre. Um
+            # nome traduzido que so responde ao termo em portugues deixa de
+            # achar "myasthenic" e "night blindness", que e como a literatura
+            # nomeia essas doencas.
+            "haystack": _norm(f"{d['name']} {d.get('name_original','')} "
+                              f"{' '.join(d.get('synonyms') or [])} "
+                              f"{d.get('category','')} {d.get('short','')}"),
             "key": _norm(d["name"]),
         })
         for g in genes:

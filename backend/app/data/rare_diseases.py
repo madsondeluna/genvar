@@ -454,8 +454,15 @@ def search_diseases(
     if ql:
         items = [
             d for d in items
+            # `name_original` entra na busca junto do nome traduzido. Sem ele,
+            # traduzir 204 nomes para o portugues QUEBRARIA a busca por
+            # "myasthenic" e "night blindness", que e como esses nomes aparecem
+            # na literatura: seria trocar um problema de idioma por um pior.
+            # Sinonimos entram pelo mesmo motivo.
             if ql in _normalize(
-                f"{d.get('name','')} {d.get('category','')} {d.get('short','')} {' '.join(d.get('genes',[]))}"
+                f"{d.get('name','')} {d.get('name_original','')} "
+                f"{' '.join(d.get('synonyms') or [])} "
+                f"{d.get('category','')} {d.get('short','')} {' '.join(d.get('genes',[]))}"
             )
         ]
     total = len(items)

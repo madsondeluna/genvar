@@ -179,6 +179,31 @@ def categoria_de(nome_classificacao: str) -> Optional[str]:
     return None
 
 
+# Nomes que o Orphanet ainda nao publicou em portugues. Sao 204 de 3.733, quase
+# todos entradas recentes. Ficam numa tabela e nao numa regra: nome de doenca
+# rara nao e formulaico o bastante para regra, e traducao pela metade cria um
+# nome que nao existe em lugar nenhum, o que e pior que o ingles. Medido: um
+# tradutor por regra alcancava 80% dos casos e produzia "Alazami-Yuan sindrome"
+# e "Spastic paraplegia hereditaria relacionada a ADAR1".
+_NOMES_PT_TSV = Path(__file__).parent / "traducoes" / "nomes_doenca_pt_br.tsv"
+
+
+def _carregar_nomes_pt() -> Dict[str, str]:
+    if not _NOMES_PT_TSV.exists():
+        return {}
+    fora = {}
+    for i, linha in enumerate(_NOMES_PT_TSV.read_text(encoding="utf-8").splitlines()):
+        if i == 0 or not linha.strip():
+            continue
+        col = linha.split("\t")
+        if len(col) >= 2 and col[1].strip():
+            fora[col[0].strip()] = col[1].strip()
+    return fora
+
+
+NOMES_PT = _carregar_nomes_pt()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--refresh", action="store_true")
@@ -221,6 +246,7 @@ def main() -> int:
 
     # ---- nomes em portugues e referencias externas
     print("Lendo a nomenclatura em portugues...")
+    print(f"  {len(NOMES_PT)} nomes traduzidos pelo GenVar, para o que o Orphanet nao publicou em PT")
     pt: Dict[str, Dict[str, Any]] = {}
     for d in ET.parse(alvos["pt_product1"]).getroot().findall(".//Disorder"):
         code = d.findtext("OrphaCode")
@@ -347,7 +373,13 @@ def main() -> int:
             "id": f"orpha-{code}",
             "source": "orphanet",
             "orphanet": code,
-            "name": meta["name"],
+            "name": NOMES_PT.get(meta["name"], meta["name"]),
+            # O nome como o Orphanet publica, sempre. Nome de doenca rara e chave
+            # de busca na literatura: quem procura "Alazami-Yuan syndrome" precisa
+            # achar mesmo com a tela em portugues, e a citacao tem de bater com a
+            # fonte. Traduzir sem guardar o original troca um problema de idioma
+            # por um de rastreabilidade.
+            "name_original": meta["name"],
             "synonyms": meta["synonyms"],
             "category": primaria(classes.get(code, set())),
             "categories": sorted(classes.get(code, set())),
