@@ -26,6 +26,25 @@ services:
         value: INFO
       - key: ALLOWED_ORIGINS
         value: https://genvar.onrender.com,https://genvar.delunalab.dev
+      # Limite por IP. Protege o ACESSO DO PROJETO as fontes, nao o servidor:
+      # Ensembl, gnomAD e NCBI aplicam uso justo por IP de origem, e uma
+      # varredura daqui bloqueia a origem para todo mundo de uma vez.
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "60"
+      - key: RATE_LIMIT_PER_SECOND
+        value: "10"
+      # O Render poe UM proxy na frente. O IP e lido a partir do FIM do
+      # X-Forwarded-For: ler o primeiro le o que o cliente escreveu, e com isso
+      # o limite e burlado trocando um cabecalho.
+      - key: TRUSTED_PROXY_HOPS
+        value: "1"
+      # O NCBI exige identificacao em toda chamada ao E-utilities. Sem ela eles
+      # bloqueiam a origem sem aviso, porque nao tem a quem escrever antes.
+      - key: NCBI_EMAIL
+        value: madsondeluna@gmail.com
+      # Opcional: sobe o teto do NCBI de 3 para 10 requisicoes por segundo.
+      - key: NCBI_API_KEY
+        sync: false
       - key: REDIS_URL
         fromService:
           type: redis
@@ -38,7 +57,12 @@ services:
     domains:
       - genvar.delunalab.dev
     rootDir: frontend
-    buildCommand: npm ci && npm run build
+    # `git lfs pull` ANTES de tudo. Os catalogos sao versionados com LFS e um
+    # clone sem eles entrega ponteiros de 130 bytes: o build compila limpo, o
+    # site sobe, e a aplicacao responde "nenhum achado" para todo arquivo, que e
+    # indistinguivel de um resultado de verdade. O `prebuild` do package.json
+    # recusa o build se algum ponteiro passar mesmo assim.
+    buildCommand: git lfs install && git lfs pull && npm ci && npm run build
     staticPublishPath: dist
     autoDeploy: true
     pullRequestPreviewsEnabled: false

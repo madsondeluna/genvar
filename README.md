@@ -904,6 +904,27 @@ Documentação interativa Swagger UI disponível em `http://localhost:8000/docs`
 
 Forma mais rápida de rodar a aplicação localmente sem Docker.
 
+#### Publicação
+
+O deploy é do Render, os dois serviços com `autoDeploy`, configurados em `render.yaml`. **A branch de publicação é `beta`**; `main` está congelada como o retrato do TCC entregue e não recebe merge.
+
+O ponto que decide se a publicação presta é o Git LFS. Os 93 arquivos de catálogo são versionados com LFS, e um ambiente de build que clona sem ele recebe ponteiros de 130 bytes no lugar de cada arquivo. O build compila limpo, o site sobe, e a aplicação responde **"nenhum achado" para todo VCF**, que é indistinguível de um resultado de verdade. É a pior classe de falha: a que parece resposta.
+
+Três coisas impedem isso:
+
+| Onde | O quê |
+|---|---|
+| `render.yaml` | O `buildCommand` do frontend roda `git lfs install && git lfs pull` antes do `npm ci` |
+| `scripts/verifica_dados.mjs` | Roda como `prebuild` e **recusa o build** se algum arquivo de dado for ponteiro ou tiver menos de 200 bytes |
+| `backend/Dockerfile` | Recusa a imagem se os catálogos de `app/data` forem ponteiros |
+
+Rodar o verificador na mão, a partir da raiz:
+
+```bash
+node scripts/verifica_dados.mjs
+```
+
+
 #### Passo 0. Instalar o git-lfs
 
 Os dados compilados pelos ETL (ClinVar, painéis, ClinGen, CPIC e os catálogos do backend) são versionados com Git LFS. **Sem `git-lfs` instalado, esses arquivos chegam como ponteiro de texto de 130 bytes e a aplicação não encontra os dados.**
