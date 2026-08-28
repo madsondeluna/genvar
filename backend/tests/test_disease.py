@@ -195,8 +195,18 @@ def test_health_endpoints_reports_status():
     assert r.status_code == 200
     body = r.json()
     assert body["all_ok"] is True
-    assert body["total"] == 8
-    assert body["internal_total"] == 3 and body["internal_ok_count"] == 3
+    # O total sai da PROPRIA lista de rotas sondadas, e nao de um numero escrito
+    # aqui: fixo em 8, o teste reprovava a cada rota nova acrescentada a sonda,
+    # apontando para um defeito que nao existia. O que importa e que a sonda
+    # cubra todas as rotas que ela declara, e que nenhuma fique de fora.
+    from app.routers.health import ENDPOINTS
+    assert body["total"] == len(ENDPOINTS)
+    assert body["total"] >= 8
+    # Idem para as internas: o que se afirma e que TODA rota que nao depende de
+    # fonte externa respondeu, e nao quantas delas existem hoje.
+    internas = sum(1 for e in ENDPOINTS if not e["external"])
+    assert body["internal_total"] == internas
+    assert body["internal_ok_count"] == internas
     # cada endpoint traz o rotulo interno/externo
     assert any(e["external"] for e in body["endpoints"])
     assert any(not e["external"] for e in body["endpoints"])

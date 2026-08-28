@@ -486,6 +486,9 @@ class SourceItem(BaseModel):
     usage: str
     citation: str
     extracted_at: Optional[str] = None
+    # De onde a data saiu: "declarada no arquivo" ou "data do arquivo". As duas
+    # nao valem o mesmo, e apresentar uma pela outra inventaria precisao.
+    extracted_from: Optional[str] = None
 
 
 class SourcesResponse(BaseModel):

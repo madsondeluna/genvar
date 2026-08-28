@@ -8,9 +8,11 @@ que o autoriza a usa-los.
 A data de extracao de cada catalogo estatico vem do proprio arquivo gerado pelo
 ETL, e nao de uma constante: um numero escrito a mao envelhece em silencio.
 """
+import gzip
 import json
+from datetime import date
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from fastapi import APIRouter
 
@@ -19,16 +21,39 @@ from app.models.schemas import SourceItem, SourcesResponse
 router = APIRouter()
 
 _DATA = Path(__file__).parent.parent / "data"
+# Os catalogos servidos ao navegador moram fora de `backend/`, e contar niveis
+# de `..` no caminho de cada entrada e o jeito de errar em silencio: o caminho
+# resolve para uma pasta que nao existe e a data sai vazia sem aviso. Uma
+# entrada que comece por `web:` e resolvida a partir da RAIZ do repositorio.
+_RAIZ = Path(__file__).resolve().parents[3]
 
 
-def _extraido(arquivo: str) -> Optional[str]:
-    p = _DATA / arquivo
+def _extraido(arquivo: str) -> Tuple[Optional[str], Optional[str]]:
+    """Data de extracao do catalogo, e DE ONDE ela saiu.
+
+    A origem viaja junto porque as duas possiveis nao valem o mesmo. Quando o
+    proprio arquivo declara a data, ela e o momento em que o ETL leu a fonte.
+    Quando nao declara, o que resta e a data de modificacao do arquivo, que e
+    quando ele foi ESCRITO: quase sempre igual, mas nao a mesma coisa, e
+    apresentar uma pela outra sem dizer seria inventar precisao.
+
+    Os catalogos servidos ao navegador ficam fora de `app/data` e alguns sao
+    gzip, entao o caminho pode subir de diretorio e a leitura pode precisar
+    descomprimir.
+    """
+    p = ((_RAIZ / arquivo[4:]) if arquivo.startswith("web:") else (_DATA / arquivo)).resolve()
     if not p.exists():
-        return None
+        return None, None
     try:
-        return json.loads(p.read_text(encoding="utf-8")).get("generated_at")
-    except (OSError, json.JSONDecodeError):
-        return None
+        abrir = gzip.open if p.suffix == ".gz" else open
+        with abrir(p, "rt", encoding="utf-8") as fh:
+            d = json.load(fh)
+        declarada = d.get("generated_at") or d.get("versao") or d.get("extraido_em")
+        if declarada:
+            return str(declarada)[:10], "declarada no arquivo"
+    except (OSError, json.JSONDecodeError, EOFError):
+        return None, None
+    return date.fromtimestamp(p.stat().st_mtime).isoformat(), "data do arquivo"
 
 
 # `kind` separa o que e baixado uma vez (catalogo) do que e consultado a cada
@@ -124,7 +149,7 @@ _NOVAS = [
         "url": "https://www.genenames.org",
         "data_url": "https://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/hgnc_complete_set.txt",
         "license": "CC0 1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "kind": "catalogo", "arquivo": "../../frontend/public/data/paineis/simbolos.json.gz",
+        "kind": "catalogo", "arquivo": "web:frontend/public/data/paineis/simbolos.json.gz",
         "usage": "Nomenclatura oficial de gene: resolve símbolo antigo e sinônimo para o "
                  "símbolo corrente. Sem isso, o filtro por painel perde os genes que apenas "
                  "mudaram de nome: cruzar direto casa 96,2% dos genes verdes do PanelApp, e "
@@ -137,7 +162,7 @@ _NOVAS = [
         "url": "https://clinicalgenome.org",
         "data_url": "https://search.clinicalgenome.org/kb/gene-validity",
         "license": "CC0 1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-        "kind": "catalogo", "arquivo": "../../frontend/public/data/farmaco/clingen.json.gz",
+        "kind": "catalogo", "arquivo": "web:frontend/public/data/farmaco/clingen.json.gz",
         "usage": "Validade gene-doença curada por painel de especialistas, com o padrão de "
                  "herança. É o que permite dizer se a associação entre um gene e uma doença é "
                  "definitiva ou apenas relatada, e é a fonte do critério PVS1 no módulo de VCF.",
@@ -149,7 +174,7 @@ _NOVAS = [
         "url": "https://cpicpgx.org",
         "data_url": "https://api.cpicpgx.org/v1/",
         "license": "CC BY-SA 4.0", "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
-        "kind": "catalogo", "arquivo": "../../frontend/public/data/farmaco/cpic.json.gz",
+        "kind": "catalogo", "arquivo": "web:frontend/public/data/farmaco/cpic.json.gz",
         "usage": "Diretrizes de farmacogenômica: quais genes têm recomendação de dose ou de "
                  "escolha de fármaco. Limite declarado: o GenVar sinaliza o gene, e não "
                  "determina diplotipo, porque chamada de alelo estrela exige fase e número de "
@@ -163,7 +188,7 @@ _NOVAS = [
         "data_url": "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/",
         "license": "Domínio público",
         "license_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
-        "kind": "catalogo", "arquivo": "../../frontend/public/data/clinvar/index.json",
+        "kind": "catalogo", "arquivo": "web:frontend/public/data/clinvar/index.json",
         "usage": "A mesma base do ClinVar, compilada em JSON colunar comprimido e servida ao "
                  "navegador: 4,2 milhões de variantes em três camadas e um arquivo por "
                  "cromossomo. Existe porque o módulo de VCF roda inteiro no navegador, e "
@@ -202,10 +227,11 @@ _FONTES = _FONTES + _NOVAS
 async def sources():
     itens: List[SourceItem] = []
     for f in _FONTES:
+        quando, origem = _extraido(f["arquivo"]) if f.get("arquivo") else (None, None)
         itens.append(SourceItem(
             id=f["id"], name=f["name"], url=f["url"], data_url=f["data_url"],
             license=f["license"], license_url=f["license_url"], kind=f["kind"],
             usage=f["usage"], citation=f["citation"],
-            extracted_at=_extraido(f.get("arquivo")) if f.get("arquivo") else None,
+            extracted_at=quando, extracted_from=origem,
         ))
     return SourcesResponse(items=itens)
