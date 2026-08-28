@@ -33,7 +33,12 @@ const LINKS = [
 // leva, que e o que o interruptor booleano nao precisava dizer.
 const PROXIMO = { light: 'azul profundo', 'deep-blue': 'grafite', dark: 'claro' }
 const NOME = { light: 'Claro', 'deep-blue': 'Azul profundo', dark: 'Grafite' }
-const ICONE = { light: 'sun', 'deep-blue': 'moon', dark: 'moon' }
+// Um ícone POR modo, e não o mesmo desenho em dois deles. Com a lua nos dois
+// escuros o botão não dizia em qual dos dois se estava, e um controle que muda
+// de estado sem mudar de aparência não é um controle: é um botão que às vezes
+// funciona. O meio-círculo é o intermediário convencional, e a sequência lê
+// como uma progressão: sol cheio, meia luz, noite.
+const ICONE = { light: 'sun', 'deep-blue': 'contrast', dark: 'moon' }
 
 function ColorModeToggle() {
   const mode = useColorMode()
