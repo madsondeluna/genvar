@@ -27,7 +27,7 @@ function Ficha({ rotulo, valor, nota, slot }) {
   )
 }
 
-export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus, onCarregarVUS, gnomad, onConsultarGnomad, papeisIniciais }) {
+export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus, onCarregarVUS, carregandoVus, gnomad, onConsultarGnomad, papeisIniciais }) {
   const { meta, variantes: todas, metricas: metricasTodas, nome, tamanho, lidos, truncado, genesMapeados, simbolos } = dados
   const [painel, setPainel] = useState(null)
   // O trio de exemplo já chega com os papéis atribuídos: quem o carrega sem
@@ -97,7 +97,7 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
     <>
       <section className="mb-96" aria-labelledby="rel-title">
         <h2 id="rel-title" className="section-title mb-8">Relatório</h2>
-        <p className="text-14 leading-normal mb-24" style={{ maxWidth: 'var(--measure-wide)' }}>
+        <p className="text-14 leading-normal mb-24">
           <span className="mono">{nome}</span>, {fmt(Math.round(tamanho / 1024))} KB.{' '}
           Referência <strong className="text-text font-medium">{meta.build}</strong>
           {meta.buildPresumido
@@ -305,7 +305,7 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
         {aba === 'genes' && (
           <article className="card flex flex-col gap-12">
             <h3 className="text-16 font-medium text-text">Genes com mais variantes</h3>
-            <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+            <p className="text-12 leading-snug about-left">
               A posição de cada variante foi cruzada com as coordenadas de 20.033 genes, sem
               consultar a rede. Gene grande acumula mais variantes por tamanho, não por relevância:
               a lista é ponto de partida, não achado.
@@ -342,6 +342,7 @@ export default function VcfReport({ dados, anotacao, resumoCli: resumoTodas, vus
                 anotacao={anotacao}
                 vus={vus}
                 onCarregarVUS={onCarregarVUS}
+                carregandoVus={carregandoVus}
               />
             )
             : <p className="text-13">Consultando o ClinVar...</p>

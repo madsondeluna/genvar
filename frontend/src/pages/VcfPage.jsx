@@ -15,7 +15,7 @@ import { sha256 } from '../vcf/exportar'
 // Anotação de VCF, inteira no navegador.
 //
 // O arquivo não sobe para servidor nenhum. Isso não é escolha de arquitetura,
-// é o que dispensa base legal sob a LGPD: VCF é dado genético de pessoa
+// é o que dispensa base legal sob a LGPD: VCF é dado genético de paciente
 // identificável. As APIs recebem coordenada e rsID, que não identificam.
 //
 // Teto de leitura: um genoma passa de 4 milhões de variantes e anotar tudo
@@ -69,6 +69,7 @@ export default function VcfPage() {
   const [vus, setVus] = useState(false)
   const [gnomad, setGnomad] = useState(null)   // null | {feitas,total,...} | 'pronto'
   const [papeisIniciais, setPapeisIniciais] = useState(null)
+  const [carregandoVus, setCarregandoVus] = useState(null)  // null | {chr} | {novas}
   const [erro, setErro] = useState(null)
   const inputRef = useRef(null)
 
@@ -146,20 +147,39 @@ export default function VcfPage() {
   // pedido: baixá-la por padrão custaria dezenas de megabytes para uma leitura
   // que, por definição, não conclui nada.
   const carregarVUS = useCallback(async () => {
-    if (!dados) return
-    const info = await anotar(dados.variantes, { camadas: ['incerta'], build: dados.meta.build })
-    setAnotacao((a) => ({
-      ...a,
-      casadas: (a?.casadas || 0) + info.casadas,
-      camadasCarregadas: [a?.camadasCarregadas, info.camadasCarregadas].filter(Boolean).join('; '),
-    }))
-    anotarACMG(dados.variantes)
-    setResumoCli(resumoClinico(dados.variantes))
-    setVus(true)
-  }, [dados])
+    if (!dados || carregandoVus) return
+    // São dezenas de megabytes por cromossomo e a espera passa de meio minuto.
+    // Sem estado visível, o botão sumia e a tela ficava igual, e a leitura certa
+    // disso é que o clique não fez nada.
+    setCarregandoVus({ etapa: 'baixando' })
+    // Espera o navegador PINTAR antes de começar. Sem isto o `await` seguinte
+    // retoma num microtask, que roda antes de qualquer quadro, e o estado de
+    // carregando é definido e substituído sem nunca aparecer na tela: medido,
+    // 6,8 segundos de espera com zero retorno visual, que é exatamente o que faz
+    // o clique parecer que não fez nada.
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+    try {
+      const info = await anotar(dados.variantes, {
+        camadas: ['incerta'],
+        build: dados.meta.build,
+        onProgresso: (p) => setCarregandoVus({ etapa: 'baixando', ...p, etapaInterna: p.etapa }),
+      })
+      setAnotacao((a) => ({
+        ...a,
+        casadas: (a?.casadas || 0) + info.casadas,
+        camadasCarregadas: [a?.camadasCarregadas, info.camadasCarregadas].filter(Boolean).join('; '),
+      }))
+      anotarACMG(dados.variantes)
+      setResumoCli(resumoClinico(dados.variantes))
+      setVus(true)
+      setCarregandoVus({ etapa: 'pronto', novas: info.casadas })
+    } catch (e) {
+      setCarregandoVus({ etapa: 'erro', motivo: e.message })
+    }
+  }, [dados, carregandoVus])
 
   // gnomAD ao vivo, só para o que já tem achado. Sai daqui coordenada e alelo,
-  // que não identificam pessoa, e é uma requisição por variante: mandar 30 mil
+  // que não identificam o paciente, e é uma requisição por variante: mandar 30 mil
   // seria abuso de um serviço público e levaria horas.
   const consultarGnomad = useCallback(async (alvos) => {
     if (!dados || !alvos?.length) return
@@ -207,7 +227,7 @@ export default function VcfPage() {
           que cada etapa anterior guardou e do que descartou.{' '}
           <strong className="text-text font-medium">O arquivo não sai do seu computador.</strong>{' '}
           A leitura acontece no navegador; só coordenada e identificador de variante chegam às
-          bases públicas, e nenhum dos dois identifica uma pessoa.
+          bases públicas, e nenhum dos dois identifica o paciente.
         </p>
 
         <section className="mb-96" aria-labelledby="fluxo-title">
@@ -221,12 +241,45 @@ export default function VcfPage() {
           <NgsPipeline />
         </section>
 
+        <section className="mb-96" aria-labelledby="exemplos-title">
+          <h2 id="exemplos-title" className="section-title mb-8">Não tem um VCF à mão?</h2>
+          <div className="card flex flex-col gap-12">
+            <p className={`${PAR} texto-colunas`}>
+              Quatro arquivos sintéticos, gerados por script com semente fixa, cada um
+              exercitando uma parte diferente da análise. Nenhum vem do sequenciamento de um
+              paciente: são construídos a partir de coordenadas reais de gene e de variantes do
+              ClinVar, com genótipos sorteados.
+            </p>
+            <ul className="grid gap-12 about-cards" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              {EXEMPLOS.map((ex) => (
+                <li key={ex.arquivo}>
+                  <button
+                    type="button"
+                    className="exemplo-linha"
+                    disabled={estado === 'lendo'}
+                    onClick={() => carregarExemplo(ex)}
+                  >
+                    <span className="flex flex-col gap-2" style={{ minWidth: 0 }}>
+                      <span className="text-13 text-text">
+                        {ex.nome} <span className="label">· sintético</span>
+                      </span>
+                      <span className="label">{ex.resumo}</span>
+                      <span className="text-12 text-muted">Mostra: {ex.mostra}</span>
+                    </span>
+                    <Icon name="arrow-right" className="text-muted" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
         <section className="mb-96" aria-labelledby="upload-title">
           <h2 id="upload-title" className="section-title mb-8">Analise o seu arquivo</h2>
           <p className={`${PAR} texto-colunas mb-24`}>
             A leitura acontece aqui, no navegador. Nenhum byte do arquivo é enviado a servidor
             nenhum, e é isso que dispensa cadastro, consentimento e retenção: VCF é dado genético
-            de pessoa identificável, e o que não sobe não precisa ser protegido em trânsito.
+            de paciente identificável, e o que não sobe não precisa ser protegido em trânsito.
           </p>
 
           <div
@@ -277,38 +330,6 @@ export default function VcfPage() {
             </ul>
           </div>
 
-          <div className="card mt-16 flex flex-col gap-12">
-            <span className="flex items-baseline justify-between gap-16 flex-wrap">
-              <h3 className="text-16 font-medium text-text">Não tem um VCF à mão?</h3>
-              <span className="label">Quatro arquivos sintéticos, nenhum dado de pessoa</span>
-            </span>
-            <p className={PAR} style={{ maxWidth: 'var(--measure-wide)' }}>
-              Gerados por script com semente fixa, cada um exercitando uma parte diferente da
-              análise. Nenhum vem de sequenciamento de ninguém: são construídos a partir de
-              coordenadas reais de gene e de variantes do ClinVar, com genótipos sorteados.
-            </p>
-            <ul className="grid gap-12 about-cards" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {EXEMPLOS.map((ex) => (
-                <li key={ex.arquivo}>
-                  <button
-                    type="button"
-                    className="exemplo-linha"
-                    disabled={estado === 'lendo'}
-                    onClick={() => carregarExemplo(ex)}
-                  >
-                    <span className="flex flex-col gap-2" style={{ minWidth: 0 }}>
-                      <span className="text-13 text-text">
-                        {ex.nome} <span className="label">· sintético</span>
-                      </span>
-                      <span className="label">{ex.resumo}</span>
-                      <span className="text-12 text-muted">Mostra: {ex.mostra}</span>
-                    </span>
-                    <Icon name="arrow-right" className="text-muted" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
         </section>
 
         {estado === 'pronto' && dados && (
@@ -318,6 +339,7 @@ export default function VcfPage() {
             resumoCli={resumoCli}
             vus={vus}
             onCarregarVUS={carregarVUS}
+            carregandoVus={carregandoVus}
             gnomad={gnomad}
             onConsultarGnomad={consultarGnomad}
             papeisIniciais={papeisIniciais}

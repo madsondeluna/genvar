@@ -164,7 +164,7 @@ export function RelatorioVCF({ dados, gerado }) {
             {truncado ? ` (arquivo maior que o teto de leitura; cobertas as primeiras ${fmt(lidos)} linhas)` : ''}
           </Campo>
           <Campo rotulo="Processamento">
-            integralmente no navegador do usuário; o arquivo não foi transmitido a servidor
+            integralmente no navegador; o arquivo do paciente não foi transmitido a servidor
           </Campo>
           <Campo rotulo="Painel aplicado">
             {painel ? `${painel.nome} — ${painel.genes.length} genes` : 'nenhum; o arquivo inteiro foi analisado'}

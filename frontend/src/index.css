@@ -448,7 +448,16 @@
 /* Prosa curta dentro de cartão estreito não se justifica: a coluna é curta
    demais e o justificado abre vãos entre as palavras. Acima de 60 caracteres
    por linha o justificado volta a fechar bem, e aí vale a regra geral do app. */
-.about-left { text-align: left; }
+/* Texto de cartao: justificado e ocupando a largura toda do cartao. A classe
+   nasceu forcando alinhamento a esquerda; virou o oposto quando a decisao de
+   texto corrido e justificado passou a valer para o site inteiro. O nome ficou
+   porque ela e usada em dezenas de lugares, e renomear em massa troca risco de
+   regressao por ganho nenhum. */
+.about-left {
+  text-align: justify;
+  text-justify: inter-word;
+  max-inline-size: none;
+}
 
 @media (max-width: 768px) {
   .about-split, .about-cards { grid-template-columns: minmax(0, 1fr); }
@@ -939,3 +948,8 @@ button.ngs-cartao {
 @media (pointer: coarse) {
   .exemplo-linha { min-block-size: var(--hit-min-touch); }
 }
+
+/* Cartoes lado a lado nao esticam ate a altura do vizinho mais alto. Um cartao
+   curto estirado deixa um vazio grande embaixo do texto, e o vazio le como
+   "faltou carregar alguma coisa". */
+.about-cards { align-items: start; }

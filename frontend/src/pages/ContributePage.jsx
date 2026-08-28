@@ -113,7 +113,7 @@ export default function ContributePage() {
             Colabore
           </p>
           <h1 className="display text-40 mb-16">Entre no time</h1>
-          <div className="flex flex-col gap-12" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <div className="flex flex-col gap-12">
             <p className={PAR}>
               O GenVar é aberto e mantido por quem aparece. Não há vaga, contrato nem
               exclusividade: há frentes de trabalho, e quem pega uma entra no time.
@@ -128,7 +128,7 @@ export default function ContributePage() {
 
         <section className="mb-96" aria-labelledby="frentes-title">
           <h2 id="frentes-title" className="section-title mb-8">Frentes abertas</h2>
-          <p className={`${PAR} mb-24`} style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className={`${PAR} mb-24`}>
             Quatro, da mais necessária para a mais contínua. Cada uma diz para quem serve, porque
             a maioria delas não pede que você saiba programar.
           </p>
@@ -155,7 +155,7 @@ export default function ContributePage() {
 
         <section className="mb-96" aria-labelledby="form-title">
           <h2 id="form-title" className="section-title mb-8">Inscrição</h2>
-          <div className="flex flex-col gap-12 mb-24" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <div className="flex flex-col gap-12 mb-24">
             <p className={PAR}>
               Preencher aqui não envia nada para o GenVar. O botão monta uma issue no repositório,
               já preenchida com o que você escreveu, e abre para você conferir e confirmar. Não há
@@ -255,7 +255,7 @@ export default function ContributePage() {
 
         <section aria-labelledby="regras-title">
           <h2 id="regras-title" className="section-title mb-8">Como contribuir</h2>
-          <p className={`${PAR} mb-24`} style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className={`${PAR} mb-24`}>
             O caminho é o mesmo para todas as frentes: um pull request contra a branch
             <span className="mono"> beta</span>. Não há revisão de duas pessoas nem integração
             contínua ainda, então a suíte local é o que separa uma mudança boa de uma regressão

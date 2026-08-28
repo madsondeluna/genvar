@@ -38,7 +38,7 @@ export function conflitoFrequencia(v) {
   return null
 }
 
-export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarregarVUS, vus, gnomad, onConsultarGnomad }) {
+export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarregarVUS, carregandoVus, vus, gnomad, onConsultarGnomad }) {
   const [gene, setGene] = useState(null)
 
   const anotadas = useMemo(() => variantes.filter((v) => v.clinvar), [variantes])
@@ -67,7 +67,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             {fmt(anotadas.length)} de {fmt(variantes.length)} encontradas
           </span>
         </span>
-        <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+        <p className="text-12 leading-snug about-left">
           Cada variante foi procurada no ClinVar por{' '}
           <strong className="text-text font-medium">rsID mais alelo</strong>
           {anotacao?.podeCoordenada && <>, e por coordenada quando não havia rsID</>}. O alelo entra
@@ -91,7 +91,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             <h3 className="text-16 font-medium text-text">Variantes classificadas como patogênicas</h3>
             <span className="label">{fmt(graves.length)}</span>
           </span>
-          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className="text-12 leading-snug about-left">
             Ordenadas pelo nível de revisão, que é o que separa um painel de especialistas de um
             único envio sem critério declarado. Achado aqui não é diagnóstico: precisa de
             confirmação em laboratório clínico e de aconselhamento genético.
@@ -111,7 +111,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
               </button>
             )}
             <span className="label">
-              Sai daqui coordenada e alelo, uma requisição por variante; nada que identifique pessoa
+              Sai daqui coordenada e alelo, uma requisição por variante; nada que identifique o paciente
             </span>
           </span>
           <div className="table-scroll">
@@ -231,7 +231,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             <h3 className="text-16 font-medium text-text">Farmacogenômica</h3>
             <span className="label">{fmt(variantes.filter((v) => v.cpic).length)} variantes com diretriz</span>
           </span>
-          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className="text-12 leading-snug about-left">
             <strong className="text-text font-medium">Isto não é um diplótipo.</strong> Dizer
             &ldquo;*1/*4&rdquo; exige fase e número de cópias, e um VCF de variante curta não carrega
             nenhum dos dois. O que está aqui é que estes rsID participam da definição dos alelos
@@ -291,7 +291,7 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
       {variantes.some((v) => v.acmg?.length) && (
         <article className="card flex flex-col gap-12">
           <h3 className="text-16 font-medium text-text">Critérios ACMG/AMP avaliados</h3>
-          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className="text-12 leading-snug about-left">
             <strong className="text-text font-medium">Isto não é uma classificação ACMG.</strong> A
             regra completa combina 28 critérios, e a maioria exige literatura, segregação familiar
             ou ensaio funcional que nenhum arquivo carrega. Abaixo estão os critérios que saem
@@ -467,16 +467,52 @@ export default function AchadosClinicos({ variantes, resumoCli, anotacao, onCarr
             </p>
           )}
 
-          {!vus && (
+          {!vus && carregandoVus?.etapa !== 'baixando' && (
             <span className="flex flex-col gap-8 items-start">
               <button type="button" className="pill" onClick={onCarregarVUS}>
                 <Icon name="download" />
                 Carregar também as de significado incerto
               </button>
               <span className="label">
-                2,3 milhões de registros no ClinVar; a página baixa só os cromossomos do seu arquivo
+                2,3 milhões de registros no ClinVar; a página baixa só os cromossomos do seu
+                arquivo, e a espera passa de meio minuto
               </span>
             </span>
+          )}
+
+          {carregandoVus?.etapa === 'baixando' && (
+            <span className="flex flex-col gap-8 items-start" role="status" aria-live="polite">
+              <span className="flex items-center gap-8">
+                <span className="spinner" aria-hidden="true" />
+                <span className="text-13">
+                  {carregandoVus.etapaInterna === 'montando'
+                    ? 'Montando o índice de significado incerto'
+                    : 'Baixando a camada de significado incerto'}
+                  {carregandoVus.cromossomo ? `: cromossomo ${carregandoVus.cromossomo}` : '...'}
+                </span>
+              </span>
+              <span className="label">
+                {carregandoVus.feitos != null
+                  ? `${carregandoVus.feitos} de ${carregandoVus.total} cromossomos`
+                  : 'São dezenas de megabytes; o arquivo do paciente continua no computador dele'}
+              </span>
+            </span>
+          )}
+
+          {carregandoVus?.etapa === 'pronto' && (
+            <p className="text-13" role="status">
+              Camada de significado incerto carregada:{' '}
+              <strong className="text-text font-medium">
+                {fmt(carregandoVus.novas)} variantes novas
+              </strong>{' '}
+              entraram no relatório, e a contagem por classificação acima já as inclui.
+            </p>
+          )}
+
+          {carregandoVus?.etapa === 'erro' && (
+            <p className="field-error" role="alert">
+              Não foi possível baixar a camada: {carregandoVus.motivo}
+            </p>
           )}
         </article>
       </div>

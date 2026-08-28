@@ -127,7 +127,7 @@ export default function AboutPage() {
               A genética de uma condição, inteira e em português
             </h1>
           </div>
-          <p className={PAR} style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className={PAR}>
             O GenVar reúne bases públicas de genética humana numa consulta só. Ele não gera dado
             primário: pega o que Orphanet, PanelApp, PGS Catalog, Ensembl, gnomAD, ClinVar,
             AlphaFold e UniProt publicam, e mostra junto o que hoje exige abrir oito portais.

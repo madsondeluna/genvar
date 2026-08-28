@@ -133,22 +133,39 @@ function expandir(t) {
 // Uma tabela por camada, montada uma vez e reaproveitada entre relatórios.
 const cache = new Map()
 
-async function camada(nome, cromossomos) {
+async function camada(nome, cromossomos, onProgresso) {
   const chave = `${nome}:${[...cromossomos].sort().join()}`
   if (cache.has(chave)) return cache.get(chave)
   const idx = await carregarIndice()
   const existentes = cromossomos.filter((c) => idx.camadas[nome]?.[c])
+  // Em paralelo, mas relatando cada um que termina: a camada de significado
+  // incerto passa de meio minuto, e sem progresso a tela fica igual do começo
+  // ao fim, que se lê como clique que não fez nada.
+  let feitos = 0
   const partes = await Promise.all(
-    existentes.map((c) => buscarGz(`${BASE}${nome}-${c}.json.gz`).catch((e) => {
-      console.error(`ClinVar ${nome}-${c}: ${e.message}`)
-      return null
-    })),
+    existentes.map((c) => buscarGz(`${BASE}${nome}-${c}.json.gz`)
+      .catch((e) => {
+        console.error(`ClinVar ${nome}-${c}: ${e.message}`)
+        return null
+      })
+      .then((t) => {
+        feitos += 1
+        onProgresso?.({ camada: nome, cromossomo: c, feitos, total: existentes.length })
+        return t
+      })),
   )
   const porRs = new Map()
   const porPos = new Map()
   const rsSemAlelo = new Map()
+  let montados = 0
   for (const t of partes) {
     if (!t) continue
+    // Cede a thread entre cromossomos. A expansão são milhões de linhas e ela
+    // bloqueia a pintura: sem ceder, a barra de progresso congela no primeiro
+    // valor e o resto da espera acontece com a tela parada.
+    await new Promise((r) => setTimeout(r, 0))
+    montados += 1
+    onProgresso?.({ camada: nome, etapa: 'montando', feitos: montados, total: partes.length })
     for (const l of expandir(t)) {
       if (l.rs) {
         porRs.set(`${l.rs}|${l.ref}|${l.alt}`, l)
@@ -173,7 +190,7 @@ export async function anotar(variantes, { camadas = ['aviso'], build = null, onP
 
   for (const nome of camadas) {
     onProgresso?.({ camada: nome })
-    const { porRs, porPos, rsSemAlelo } = await camada(nome, cromossomos)
+    const { porRs, porPos, rsSemAlelo } = await camada(nome, cromossomos, onProgresso)
     for (const v of variantes) {
       if (v.clinvar) continue
       let achado = null

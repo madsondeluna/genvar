@@ -49,7 +49,7 @@ export default function Heranca({ variantes, papeis, termos }) {
               <h3 className="text-16 font-medium text-text">Variantes de novo</h3>
               <span className="label">{fmt(trio.deNovo.length)} candidatas</span>
             </span>
-            <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+            <p className="text-12 leading-snug about-left">
               Presentes na criança e ausentes nos dois pais. A regra ingênua é uma fábrica de falso
               positivo, e o motivo é cobertura: um pai com três leituras naquela posição sai como
               referência homozigota porque nenhuma das três calhou de trazer o alelo. Aqui os pais
@@ -123,7 +123,7 @@ export default function Heranca({ variantes, papeis, termos }) {
           </h3>
           <span className="label">{fmt(compostos.length)} genes</span>
         </span>
-        <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+        <p className="text-12 leading-snug about-left">
           Duas variantes em heterozigose no mesmo gene. <strong className="text-text font-medium">
           Candidato, não achado</strong>, e a diferença é de fase: só há composto se as duas
           estiverem em cromossomos opostos. Se viajarem no mesmo cromossomo, a outra cópia do gene
@@ -160,7 +160,7 @@ export default function Heranca({ variantes, papeis, termos }) {
             <h3 className="text-16 font-medium text-text">Genes que combinam com o quadro clínico</h3>
             <span className="label">{termos.join(', ')}</span>
           </span>
-          <p className="text-12 leading-snug about-left" style={{ maxWidth: 'var(--measure-wide)' }}>
+          <p className="text-12 leading-snug about-left">
             A concordância é entre o termo digitado e o texto das condições associadas ao gene, pelo
             ClinVar e pelo ClinGen. Serve para ordenar uma lista longa, não para concluir: termo
             ausente da base não significa fenótipo ausente do paciente, e sobreposição de texto não
