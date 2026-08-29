@@ -1,0 +1,8 @@
+arquivo,variantes,mb_lidos,segundos,heap_mb,variantes_por_segundo,desfecho
+1000g-chrY.vcf.gz,5001,14,3,1085,1657,orcamento esgotado
+1000g-chrY.vcf.gz,10004,26.9,6.5,2141,1536,orcamento esgotado
+1000g-chrY.vcf.gz,15004,39.7,9.5,3174,1582,orcamento esgotado
+1000g-chrY.vcf.gz,20005,52.6,12.8,4211,1569,orcamento esgotado
+1000g-chrY.vcf.gz,25008,65.5,16.2,5264,1541,orcamento esgotado
+1000g-chrY.vcf.gz,30011,78.8,163.7,6323,183,orcamento esgotado
+1000g-chrY.vcf.gz,35015,91.4,305.9,7324,114,orcamento esgotado

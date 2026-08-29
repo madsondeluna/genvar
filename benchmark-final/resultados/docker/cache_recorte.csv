@@ -1,0 +1,6 @@
+rotulo,gene,ms_com_frio,ms_sem_apos_com,ms_sem_quente,chaves_apos_com,chaves_novas_do_sem,bytes_com,bytes_sem,serviu_do_cache_de_com
+docker,MLH1,7009.3,3167.57,3.65,1,1,163904,6208,False
+docker,HBB,7026.47,2612.98,3.86,1,1,163904,1600,False
+docker,MSH2,12629.1,2976.05,3.54,1,1,163904,8256,False
+docker,VHL,4871.86,2405.99,3.92,1,1,163904,2112,False
+docker,LDLR,5383.11,3416.07,2.97,1,1,163904,5184,False

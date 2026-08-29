@@ -153,7 +153,7 @@ A Fig. 14 percorre o corpus de 16 arquivos, de 323 a 600.000 variantes. As etapa
 
 **Fig. 15.** Piso de tempo de cada função sobre o menor arquivo do corpus, em escala logarítmica. É o custo que a função tem por existir, antes de qualquer efeito de escala.
 
-A Fig. 15 isola o custo fixo. Sobre o menor arquivo do corpus, a função mais cara é `ClinVar`, com 822,8 ms, e ela é cara independentemente do tamanho do arquivo: é montagem de índice e leitura de catálogo, trabalho que acontece uma vez por sessão. Numa sessão que analisa um arquivo só, esse piso é a maior parte do tempo total; numa que analisa uma coorte, ele se dilui, e é esse o argumento quantitativo a favor do modo em lote.
+A Fig. 15 isola o custo fixo. Sobre o menor arquivo do corpus, a função mais cara é `ClinVar`, com 871,7 ms, e ela é cara independentemente do tamanho do arquivo: é montagem de índice e leitura de catálogo, trabalho que acontece uma vez por sessão. Numa sessão que analisa um arquivo só, esse piso é a maior parte do tempo total; numa que analisa uma coorte, ele se dilui, e é esse o argumento quantitativo a favor do modo em lote.
 
 ## As seis saídas e o custo de cada uma
 
@@ -161,11 +161,11 @@ A Fig. 15 isola o custo fixo. Sobre o menor arquivo do corpus, a função mais c
 
 **Fig. 16.** À esquerda, tempo de geração de cada formato, mediana do corpus, em escala logarítmica; a linha tracejada marca um segundo, limite prático entre uma interface que responde e uma que trava, já que a geração roda na thread principal. À direita, tamanho do arquivo produzido, também em escala logarítmica.
 
-A Fig. 16 mede as seis saídas que a página oferece. A mais cara é o PDF, com 3.765,1 ms de mediana, e a mais barata é o VCF anotado, com 74,9 ms: uma razão de 50 vezes entre os extremos.
+A Fig. 16 mede as seis saídas que a página oferece. A mais cara é o PDF, com 2.214,1 ms de mediana, e a mais barata é o VCF anotado, com 46,6 ms: uma razão de 47 vezes entre os extremos.
 
-O resultado que corrige a versão anterior deste benchmark está aqui. Na medição anterior o PDF não era gerado, e o XLSX era montado com uma aba só e medido antes de o compactador do formato passar a comprimir de fato: aquele número descrevia um arquivo que a aplicação não produz. Com as seis saídas medidas pelas mesmas funções que os botões chamam, o PDF é 3,0 vezes mais caro que o XLSX, e não o contrário.
+O resultado que corrige a versão anterior deste benchmark está aqui. Na medição anterior o PDF não era gerado, e o XLSX era montado com uma aba só e medido antes de o compactador do formato passar a comprimir de fato: aquele número descrevia um arquivo que a aplicação não produz. Com as seis saídas medidas pelas mesmas funções que os botões chamam, o PDF é 2,6 vezes mais caro que o XLSX, e não o contrário.
 
-O painel da direita mostra a relação inversa entre custo e tamanho. O JSON produz o maior arquivo, 17,8 MB, e o PDF o menor, 119,9 KB. Custo e tamanho medem coisas diferentes: o formato tabular serializa tudo o que foi lido, e o laudo resume, o que custa decisão de layout e paginação e produz menos bytes.
+O painel da direita mostra a relação inversa entre custo e tamanho. O JSON produz o maior arquivo, 17,8 MB, e o PDF o menor, 119,4 KB. Custo e tamanho medem coisas diferentes: o formato tabular serializa tudo o que foi lido, e o laudo resume, o que custa decisão de layout e paginação e produz menos bytes.
 
 ## Um arquivo contra uma coorte
 
@@ -183,17 +183,31 @@ O painel da direita mostra o resultado mais importante dos dois, e ele não é s
 
 **Fig. 18.** Tempo para preparar cada catálogo embarcado, uma vez por sessão, em escala logarítmica. Não é custo por arquivo analisado: é o preço de abrir a página.
 
-A Fig. 18 isola um custo que não aparece em nenhuma outra figura porque não escala com nada: os catálogos embarcados são preparados uma vez por sessão, antes de qualquer arquivo. O conjunto custa 932,3 ms, e `montagem do índice ClinVar` responde por 93% desse total, com 865,3 ms. É o preço de ter a anotação clínica disponível sem rede, e ele é pago inteiro mesmo por quem for analisar um arquivo de mil variantes. Numa sessão de um arquivo só, esse custo fixo domina; numa coorte, ele se dilui, e é o argumento quantitativo a favor do modo em lote que a seção anterior mediu pelo outro lado.
+A Fig. 18 isola um custo que não aparece em nenhuma outra figura porque não escala com nada: os catálogos embarcados são preparados uma vez por sessão, antes de qualquer arquivo. O conjunto custa 874,5 ms, e `montagem do índice ClinVar` responde por 90% desse total, com 790,7 ms. É o preço de ter a anotação clínica disponível sem rede, e ele é pago inteiro mesmo por quem for analisar um arquivo de mil variantes. Numa sessão de um arquivo só, esse custo fixo domina; numa coorte, ele se dilui, e é o argumento quantitativo a favor do modo em lote que a seção anterior mediu pelo outro lado.
+
+## Onde a leitura deixa de caber
+
+O teto do módulo de VCF não é o número de variantes, e é essa a razão de esta seção existir separada. O que ocupa memória é variantes **vezes** amostras: um arquivo com mil amostras e sessenta mil variantes carrega mais genótipos que um exoma de meio milhão de variantes com uma amostra só. A medição usa o cromossomo Y do 1000 Genomes, com 1.233 amostras, que é o pior caso do corpus por essa métrica.
+
+A medição roda em processo próprio, e isso não é detalhe de execução. Um estouro de memória derruba o processo inteiro, e medindo junto dos demais arquivos ele levaria os outros onze consigo. A versão anterior deste benchmark resolvia isso **pulando** o arquivo por estimativa, o que troca um resultado por uma suposição: o arquivo aparecia na tabela com a palavra "pulado" e nenhum número. Isolado, o estouro é o resultado.
+
+![Figura 19](figuras/fig25_teto_memoria.png)
+
+**Fig. 19.** Vazão de leitura contra memória em uso, com o número de variantes lidas anotado em cada ponto. Eixo vertical logarítmico. A linha tracejada marca a memória física da máquina.
+
+A Fig. 19 mostra que o limite não é um estouro abrupto e sim uma degradação, e que ela tem um ponto de virada nítido. A leitura começa a 1.657 variantes por segundo e termina a 114, 14,5 vezes mais lenta, sem nunca lançar erro.
+
+A vazão cai à metade do pico em 30.011 variantes, com 6,2 GB de heap. A máquina desta medição tem 8 GB de memória física, e é aí que a curva vira: acima disso o sistema passa a paginar, e o custo por variante deixa de ser linear. O limite prático, portanto, não é uma contagem de variantes que se possa escrever na interface, e sim o produto variantes por amostras contra a memória da máquina de quem usa, que a aplicação não conhece. É por isso que o aviso da página fala em teto de variantes: é a aproximação que se pode dar sem medir a máquina do usuário, e ela subestima o problema em arquivos multiamostra.
 
 ## A pontuação ACMG
 
 A classificação por critérios ACMG/AMP é a funcionalidade clínica nova desta versão, e ela tem duas partes que este benchmark mede separadas. Decidir **quais** critérios disparam para uma variante depende do que a anotação trouxe e está medido junto da etapa de anotação. Somar os pontos do sistema bayesiano adotado pelo ClinGen é a segunda parte, e é a medida abaixo.
 
-![Figura 19](figuras/fig19_acmg.png)
+![Figura 20](figuras/fig19_acmg.png)
 
-**Fig. 19.** Tempo para pontuar todas as variantes de um arquivo contra o número de variantes que têm ao menos um critério, nos dois eixos em escala logarítmica. Cada ponto é um arquivo do corpus.
+**Fig. 20.** Tempo para pontuar todas as variantes de um arquivo contra o número de variantes que têm ao menos um critério, nos dois eixos em escala logarítmica. Cada ponto é um arquivo do corpus.
 
-A Fig. 19 mostra que a pontuação é barata e cresce de forma proporcional ao que há para pontuar. No maior caso do corpus, 15.453 variantes com critério são pontuadas em 14,9 ms; no menor, 34 variantes em 0,01 ms. O custo por variante é da ordem de 1,0 microssegundos, e a etapa não aparece entre os gargalos de nenhuma escala.
+A Fig. 20 mostra que a pontuação é barata e cresce de forma proporcional ao que há para pontuar. No maior caso do corpus, 15.453 variantes com critério são pontuadas em 5,6 ms; no menor, 34 variantes em 0,00 ms. O custo por variante é da ordem de 0,4 microssegundos, e a etapa não aparece entre os gargalos de nenhuma escala.
 
 Uma observação sobre esta medição em particular, porque a primeira versão dela estava errada e o erro é instrutivo. O campo que guarda os critérios de uma variante é um **arranjo**, e a medição lia um atributo inexistente dentro dele: pontuava, portanto, uma lista vazia em toda variante. O tempo saía real, a coluna do CSV enchia, e o trabalho medido era nenhum. O que corrigiu não foi ler o código com mais atenção e sim registrar, ao lado do tempo, quantas variantes tinham critério, que é o número que denunciou o zero.
 
@@ -201,19 +215,19 @@ Uma observação sobre esta medição em particular, porque a primeira versão d
 
 As seções anteriores mediram quanto custa. Esta mede se o resultado é o mesmo quando a análise é repetida, e se a saída carrega o suficiente para alguém conferir de onde ela veio. Num trabalho de bioinformática as duas coisas valem tanto quanto o tempo: um resultado que não se repete não é resultado, e um resultado sem procedência não é conferível.
 
-![Figura 20](figuras/fig18_reprodutibilidade.png)
+![Figura 21](figuras/fig18_reprodutibilidade.png)
 
-**Fig. 20.** Fração dos arquivos do corpus que satisfazem cada critério de reprodutibilidade e de procedência. Verde para cem por cento.
+**Fig. 21.** Fração dos arquivos do corpus que satisfazem cada critério de reprodutibilidade e de procedência. Verde para cem por cento.
 
-A Fig. 20 mostra 6 critérios satisfeitos em 9 de 9 arquivos do corpus. As saídas em texto são idênticas byte a byte entre réplicas; as métricas não dependem da ordem em que as variantes foram lidas; e o VCF anotado carrega no cabeçalho o sha256 do arquivo de entrada e a versão do ClinVar usada na anotação. O último ponto é o que permite refazer a conferência meses depois: dado o laudo, sabe-se qual arquivo o gerou e contra qual versão do catálogo, sem depender de o arquivo ter sido guardado.
+A Fig. 21 mostra 6 critérios satisfeitos em 9 de 9 arquivos do corpus. As saídas em texto são idênticas byte a byte entre réplicas; as métricas não dependem da ordem em que as variantes foram lidas; e o VCF anotado carrega no cabeçalho o sha256 do arquivo de entrada e a versão do ClinVar usada na anotação. O último ponto é o que permite refazer a conferência meses depois: dado o laudo, sabe-se qual arquivo o gerou e contra qual versão do catálogo, sem depender de o arquivo ter sido guardado.
 
 ## Direto na máquina contra em contêiner
 
 As duas medições correram na mesma máquina, na mesma sessão, contra o mesmo código: o que muda é só o empacotamento. O ambiente conteinerizado sobe o backend, o frontend e o Redis em três contêineres numa rede própria, e por isso cada chamada ao cache atravessa a rede virtual do Docker em vez do loopback. Essa é a diferença que a comparação foi montada para medir; ela não é a única que sobra, e o que a medição revelou sobre as outras está dito adiante.
 
-![Figura 21](figuras/fig21_ambiente.png)
+![Figura 22](figuras/fig21_ambiente.png)
 
-**Fig. 21.** A mesma medição de latência nos dois ambientes, separada por estado do cache. À esquerda, com cache frio, onde o tempo é dominado pelas fontes externas; à direita, com cache quente, onde ele é dominado pelo próprio sistema. Escalas logarítmicas.
+**Fig. 22.** A mesma medição de latência nos dois ambientes, separada por estado do cache. À esquerda, com cache frio, onde o tempo é dominado pelas fontes externas; à direita, com cache quente, onde ele é dominado pelo próprio sistema. Escalas logarítmicas.
 
 | Família | Frio, máquina (ms) | Frio, contêiner (ms) | Quente, máquina (ms) | Quente, contêiner (ms) | Razão quente |
 |---|---|---|---|---|---|
@@ -225,17 +239,17 @@ As duas medições correram na mesma máquina, na mesma sessão, contra o mesmo 
 | listagem | 3,9 | 6,2 | 2,6 | 2,4 | 0,92× |
 | meta | 4,1 | 9,0 | 3,3 | 3,2 | 0,96× |
 
-A Fig. 21 e a tabela mostram um resultado que contraria a expectativa corrente. Com cache quente, onde o tempo é dominado pelo próprio sistema e não pelas fontes externas, o ambiente conteinerizado é **mais rápido** que o ambiente direto na máquina por um fator mediano de 0,72 entre as 7 famílias. A hipótese de partida era a oposta: o contêiner fala com o Redis por uma rede virtual e o ambiente direto fala por loopback, e a rede virtual deveria custar. Ela custa; o que a medição mostra é que esse custo é menor que a diferença entre os dois processos de Redis, que não são o mesmo: o local é a instância de desenvolvimento da máquina, com o que quer que ela já estivesse guardando, e o conteinerizado sobe limpo a cada execução.
+A Fig. 22 e a tabela mostram um resultado que contraria a expectativa corrente. Com cache quente, onde o tempo é dominado pelo próprio sistema e não pelas fontes externas, o ambiente conteinerizado é **mais rápido** que o ambiente direto na máquina por um fator mediano de 0,72 entre as 7 famílias. A hipótese de partida era a oposta: o contêiner fala com o Redis por uma rede virtual e o ambiente direto fala por loopback, e a rede virtual deveria custar. Ela custa; o que a medição mostra é que esse custo é menor que a diferença entre os dois processos de Redis, que não são o mesmo: o local é a instância de desenvolvimento da máquina, com o que quer que ela já estivesse guardando, e o conteinerizado sobe limpo a cada execução.
 
 A conclusão que a comparação sustenta, portanto, é mais estreita do que "contêiner é mais rápido": é que **a conteinerização não impõe custo detectável nesta aplicação**, e que outras diferenças de ambiente pesam mais que ela. Separar as duas exigiria subir um Redis limpo também do lado direto, o que não foi feito e fica declarado.
 
 Com cache frio a razão mediana é 1,57, e ela diz menos do que parece: nesse regime o tempo é das fontes públicas, que respondem ao que perguntar independentemente de quem pergunta estar em contêiner. A dispersão entre famílias, visível na tabela, é maior que a diferença entre ambientes.
 
-![Figura 22](figuras/fig22_ambiente_carga.png)
+![Figura 23](figuras/fig22_ambiente_carga.png)
 
-**Fig. 22.** Latência mediana sob concorrência crescente nos dois ambientes, no modo sem limitador. Escalas logarítmicas nos dois eixos.
+**Fig. 23.** Latência mediana sob concorrência crescente nos dois ambientes, no modo sem limitador. Escalas logarítmicas nos dois eixos.
 
-A Fig. 22 repete a comparação sob carga. O interesse aqui não é o valor absoluto e sim a inclinação: um ambiente que degrada mais rápido que o outro à medida que a concorrência cresce revela um gargalo que só aparece com contenção, e não na medição de uma requisição por vez.
+A Fig. 23 repete a comparação sob carga. O interesse aqui não é o valor absoluto e sim a inclinação: um ambiente que degrada mais rápido que o outro à medida que a concorrência cresce revela um gargalo que só aparece com contenção, e não na medição de uma requisição por vez.
 
 ## A versão 2.0 contra a 3.0
 
@@ -243,19 +257,19 @@ A comparação entre versões tem um limite que precisa ser dito antes dos núme
 
 E há um segundo cuidado, que a leitura do dado arquivado tornou obrigatório. A suíte de 2020 limpava o cache **uma vez** antes das doze repetições da fase fria, e não a cada repetição: da segunda em diante, ela media cache quente. A mediana publicada então como latência fria, 8,8 ms, é um número quente. Reconstruindo a medição fria a partir da primeira repetição de cada alvo, que é a única que encontrou o cache vazio, o valor é 3.831,3 ms, contra 7,7 ms das repetições seguintes. É a primeira repetição que entra na comparação abaixo, e a diferença entre os dois números mede o quanto um detalhe de protocolo altera a conclusão.
 
-![Figura 23](figuras/fig23_versoes.png)
+![Figura 24](figuras/fig23_versoes.png)
 
-**Fig. 23.** Latência mediana de gene e de variante nas duas versões, separada por estado do cache, em escala logarítmica. A medição de 2.0 é de junho de 2026 e a de 3.0 é de agosto de 2026; a fria de 2.0 foi reconstruída da primeira repetição de cada alvo, pelo motivo explicado no texto.
+**Fig. 24.** Latência mediana de gene e de variante nas duas versões, separada por estado do cache, em escala logarítmica. A medição de 2.0 é de junho de 2026 e a de 3.0 é de agosto de 2026; a fria de 2.0 foi reconstruída da primeira repetição de cada alvo, pelo motivo explicado no texto.
 
-A Fig. 23 mostra a rota de gene indo de 6.169,3 ms para 4.635,7 ms com cache frio e de 15,8 ms para 4,5 ms com cache quente. A comparação é entre a mesma rota, `/api/gene/{símbolo}`, e não entre famílias: em 3.0 a família gene reúne quatro formatos de rota que em 2.0 não existiam, e compará-las compararia escopos.
+A Fig. 24 mostra a rota de gene indo de 6.169,3 ms para 4.635,7 ms com cache frio e de 15,8 ms para 4,5 ms com cache quente. A comparação é entre a mesma rota, `/api/gene/{símbolo}`, e não entre famílias: em 3.0 a família gene reúne quatro formatos de rota que em 2.0 não existiam, e compará-las compararia escopos.
 
 Este capítulo mede, e não explica: atribuir a melhora a uma mudança específica exigiria medir as versões intermediárias, o que o dado arquivado não permite. O que se pode afirmar é que as duas condições melhoraram e que o intervalo entre as medições contém mudanças no código e mudanças nas fontes externas, que não são separáveis a posteriori.
 
-![Figura 24](figuras/fig24_versoes_superficie.png)
+![Figura 25](figuras/fig24_versoes_superficie.png)
 
-**Fig. 24.** Superfície medida em cada versão. Não é uma métrica de desempenho: é o escopo do que existia para medir, e serve para situar as demais comparações deste capítulo.
+**Fig. 25.** Superfície medida em cada versão. Não é uma métrica de desempenho: é o escopo do que existia para medir, e serve para situar as demais comparações deste capítulo.
 
-A Fig. 24 situa o resto. O benchmark de 2020 media duas famílias de rota; este mede sete, mais o pipeline de VCF no navegador, os catálogos embarcados, as saídas em seis formatos e a contagem de requisições externas. A ausência de linha de base para essas medições não é omissão: elas medem coisas que a versão anterior não tinha.
+A Fig. 25 situa o resto. O benchmark de 2020 media duas famílias de rota; este mede sete, mais o pipeline de VCF no navegador, os catálogos embarcados, as saídas em seis formatos e a contagem de requisições externas. A ausência de linha de base para essas medições não é omissão: elas medem coisas que a versão anterior não tinha.
 
 ## Limitações desta medição
 

@@ -738,6 +738,30 @@ def fig_versoes_superficie(base, saida):
         "fig24_versoes_superficie.png"
 
 
+def fig_teto_memoria(base, saida):
+    """Onde a leitura para de caber: vazao contra heap."""
+    d = _le(base, "teto_memoria.csv")
+    if d is None or len(d) < 3:
+        return None
+    fig, ax = plt.subplots(figsize=(7.4, 4.2))
+    ax.plot(d.heap_mb / 1024, d.variantes_por_segundo, "o-", color=estilo.PRINCIPAL,
+            linewidth=2, markersize=6)
+    for _, r in d.iterrows():
+        ax.annotate(estilo.milhar(r.variantes), (r.heap_mb / 1024, r.variantes_por_segundo),
+                    textcoords="offset points", xytext=(6, 6), fontsize=7.5,
+                    color=estilo.NEUTRA)
+    # A memoria fisica da maquina e onde a curva vira: acima dela o sistema pagina.
+    ax.axvline(8, color=estilo.RUIM, linestyle="--", linewidth=1.1)
+    ax.text(8.1, d.variantes_por_segundo.max() * 0.75,
+            "memória física\nda máquina", fontsize=8, color=estilo.RUIM)
+    ax.set_yscale("log")
+    ax.set_xlabel("Heap em uso, em GB")
+    ax.set_ylabel("Variantes lidas por segundo (escala logarítmica)")
+    ax.set_title("Onde a Leitura Deixa de Caber na Memória")
+    return estilo.salvar(fig, Path(saida) / "fig25_teto_memoria.png"), \
+        "fig25_teto_memoria.png"
+
+
 FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
            fig_requisicoes, fig_requisicoes_host, fig_cache_memoria,
            fig_cache_sessao, fig_cache_recorte, fig_concorrencia,
@@ -745,7 +769,7 @@ FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
            fig_custo_por_escala, fig_saidas, fig_funcoes_piso, fig_lote,
            fig_reprodutibilidade, fig_acmg, fig_catalogo,
            fig_ambiente_latencia, fig_ambiente_carga,
-           fig_versoes, fig_versoes_superficie]
+           fig_versoes, fig_versoes_superficie, fig_teto_memoria]
 
 
 def main():

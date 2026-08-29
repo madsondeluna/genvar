@@ -1,0 +1,19 @@
+# Terceira sobreposicao, usada SO na fase "produto" da suite de exaustao.
+#
+# `docker-compose.benchmark.yml` sobe o limitador com teto alto, e isso e
+# necessario para o resto: dentro do conteiner ninguem chega pelo loopback, entao
+# sem igualar o ajuste a comparacao entre ambientes viraria uma comparacao entre
+# duas politicas de vazao. Mas com o teto alto a fase "produto" nao mede nada:
+# ela registrou 0 recusas em 948 requisicoes, que e o oposto do que ela existe
+# para medir.
+#
+# Este arquivo devolve os limites de producao para essa fase, e so para ela.
+#
+# Uso:
+#   docker compose -f docker-compose.yml -f docker-compose.benchmark.yml \
+#                  -f docker-compose.limitador.yml up -d backend
+services:
+  backend:
+    environment:
+      - RATE_LIMIT_PER_SECOND=10
+      - RATE_LIMIT_PER_MINUTE=60

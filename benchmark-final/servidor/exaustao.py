@@ -170,20 +170,39 @@ async def main():
     ap.add_argument("--redis", default=os.environ.get("REDIS_URL", "redis://localhost:6379"))
     ap.add_argument("--rotulo", default="local")
     ap.add_argument("--saida", default=str(RAIZ / "resultados" / "local"))
+    ap.add_argument("--modos", default="motor,produto",
+                    help="quais fases concorrentes medir; permite medir o modo "
+                         "produto contra um servidor com o limitador no ajuste de "
+                         "producao, sem remedir o resto")
+    ap.add_argument("--anexar", action="store_true",
+                    help="acrescenta ao CSV existente em vez de sobrescrever")
+    ap.add_argument("--sem-sequencial", action="store_true")
     args = ap.parse_args()
+    modos = [m.strip() for m in args.modos.split(",") if m.strip()]
 
     console.print(f"\n[bold]Carga e limites[/bold]  ({args.rotulo})")
     linhas = []
     async with httpx.AsyncClient(limits=httpx.Limits(max_connections=200)) as cliente:
-        linhas += await sequencial(cliente, args.url, args.redis, args.rotulo)
-        linhas += await concorrente(cliente, args.url, args.redis, args.rotulo,
-                                    "motor", {})
-        # Uma pausa para a janela do limitador esvaziar antes do outro modo.
-        await asyncio.sleep(65)
-        linhas += await concorrente(cliente, args.url, args.redis, args.rotulo,
-                                    "produto", {"X-Forwarded-For": IP_FALSO})
+        if not args.sem_sequencial:
+            linhas += await sequencial(cliente, args.url, args.redis, args.rotulo)
+        if "motor" in modos:
+            linhas += await concorrente(cliente, args.url, args.redis, args.rotulo,
+                                        "motor", {})
+        if "motor" in modos and "produto" in modos:
+            # Pausa para a janela do limitador esvaziar antes do outro modo.
+            await asyncio.sleep(ESPERA_JANELA_S)
+        if "produto" in modos:
+            linhas += await concorrente(cliente, args.url, args.redis, args.rotulo,
+                                        "produto", {"X-Forwarded-For": IP_FALSO})
 
-    comum.grava_csv(Path(args.saida) / "exaustao.csv", linhas)
+    alvo = Path(args.saida) / "exaustao.csv"
+    if args.anexar and alvo.exists():
+        import csv as _csv
+        with alvo.open(encoding="utf-8") as fh:
+            antigo = [l for l in _csv.DictReader(fh)
+                      if not (l.get("fase") == "concorrente" and l.get("modo") in modos)]
+        linhas = antigo + linhas
+    comum.grava_csv(alvo, linhas)
 
     t = Table(title=f"Concorrencia: motor contra produto ({args.rotulo})")
     for c in ("Simultaneas", "Motor mediana", "Motor cauda", "Produto 200", "Produto 429"):

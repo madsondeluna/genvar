@@ -1,0 +1,6 @@
+grupo,papel,onde,arquivos,mb_disco,mb_cru,registros,ms_leitura,ms_descompressao,ms_parse_json,razao_compressao,ms_total
+frontend/public/data/clinvar,Anotacao clinica,navegador,76,25.78,127.23,4207963,80.9,130.5,1866.6,4.94,2078.0
+frontend/public/data/paineis,Paineis e sinonimos,navegador,2,0.31,1.04,42869,1.4,2.1,13.4,3.35,16.9
+frontend/public/data/farmaco,ClinGen e CPIC,navegador,2,0.28,4.54,4021,1.5,1.7,34.5,16.21,37.7
+frontend/public/data/burden,Coordenadas e associacao,navegador,11,2.15,2.15,64643,9.2,0.0,23.7,1.0,32.9
+backend/app/data,Catalogos servidos pela API,servidor,3,11.17,11.17,25307,15.4,0.0,78.9,1.0,94.3

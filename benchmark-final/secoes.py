@@ -27,6 +27,7 @@ def escrever(d, num):
     _saidas(d, num)
     _lote(d, num)
     _catalogo(d, num)
+    _teto(d, num)
     _acmg(d, num)
     _reprodutibilidade(d, num)
     _ambiente(d, num)
@@ -631,6 +632,56 @@ def _catalogo(d, num):
         f"arquivo de mil variantes. Numa sessão de um arquivo só, esse custo fixo "
         f"domina; numa coorte, ele se dilui, e é o argumento quantitativo a favor do "
         f"modo em lote que a seção anterior mediu pelo outro lado.")
+
+
+
+# ---------------------------------------------------------- teto de memoria --
+def _teto(d, num):
+    dt = d.csv("teto_memoria.csv")
+    if dt is None or len(dt) < 3:
+        return
+    d.titulo(2, "Onde a leitura deixa de caber")
+    d.txt(
+        "O teto do módulo de VCF não é o número de variantes, e é essa a razão de "
+        "esta seção existir separada. O que ocupa memória é variantes **vezes** "
+        "amostras: um arquivo com mil amostras e sessenta mil variantes carrega mais "
+        "genótipos que um exoma de meio milhão de variantes com uma amostra só. A "
+        "medição usa o cromossomo Y do 1000 Genomes, com 1.233 amostras, que é o pior "
+        "caso do corpus por essa métrica.")
+    d.txt(
+        "A medição roda em processo próprio, e isso não é detalhe de execução. Um "
+        "estouro de memória derruba o processo inteiro, e medindo junto dos demais "
+        "arquivos ele levaria os outros onze consigo. A versão anterior deste "
+        "benchmark resolvia isso **pulando** o arquivo por estimativa, o que troca um "
+        "resultado por uma suposição: o arquivo aparecia na tabela com a palavra "
+        "\"pulado\" e nenhum número. Isolado, o estouro é o resultado.")
+    g = d.figura("fig25_teto_memoria.png",
+                 "Vazão de leitura contra memória em uso, com o número de variantes "
+                 "lidas anotado em cada ponto. Eixo vertical logarítmico. A linha "
+                 "tracejada marca a memória física da máquina.")
+    pico = dt.variantes_por_segundo.max()
+    fim = dt.iloc[-1]
+    joelho = dt[dt.variantes_por_segundo < pico / 2]
+    d.txt(
+        f"A {g} mostra que o limite não é um estouro abrupto e sim uma degradação, e "
+        f"que ela tem um ponto de virada nítido. A leitura começa a "
+        f"{num(pico)} variantes por segundo e termina a "
+        f"{num(fim.variantes_por_segundo)}, "
+        f"{num(pico / fim.variantes_por_segundo, 1)} vezes mais lenta, sem nunca "
+        f"lançar erro.")
+    if not joelho.empty:
+        j = joelho.iloc[0]
+        d.txt(
+            f"A vazão cai à metade do pico em {num(j.variantes)} variantes, com "
+            f"{num(j.heap_mb / 1024, 1)} GB de heap. A máquina desta medição tem 8 GB "
+            f"de memória física, e é aí que a curva vira: acima disso o sistema passa a "
+            f"paginar, e o custo por variante deixa de ser linear. O limite prático, "
+            f"portanto, não é uma contagem de variantes que se possa escrever na "
+            f"interface, e sim o produto variantes por amostras contra a memória da "
+            f"máquina de quem usa, que a aplicação não conhece. É por isso que o aviso "
+            f"da página fala em teto de variantes: é a aproximação que se pode dar sem "
+            f"medir a máquina do usuário, e ela subestima o problema em arquivos "
+            f"multiamostra.")
 
 
 # -------------------------------------------------------------------- acmg --

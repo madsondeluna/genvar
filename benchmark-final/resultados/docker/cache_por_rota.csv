@@ -1,0 +1,46 @@
+rotulo,familia,caminho,ms_frio,ms_quente_mediana,ms_quente_p95,ganho,chaves_criadas,bytes_no_redis,chaves
+docker,gene,/api/gene/MLH1,8012.97,6.564,,1220.74,1,163904,gene:v6:MLH1:com
+docker,gene,/api/gene/HBB,5810.93,6.132,,947.64,1,163904,gene:v6:HBB:com
+docker,gene,/api/gene/MSH2,12334.22,6.848,,1801.14,1,163904,gene:v6:MSH2:com
+docker,gene,/api/gene/VHL,5005.22,6.295,,795.11,1,163904,gene:v6:VHL:com
+docker,gene,/api/gene/LDLR,5980.47,6.883,,868.88,1,163904,gene:v6:LDLR:com
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,3436.95,2.659,,1292.57,1,6208,gene:v6:MLH1:sem
+docker,gene sem variantes,/api/gene/HBB?variantes=false,2653.6,2.458,,1079.58,1,1600,gene:v6:HBB:sem
+docker,gene sem variantes,/api/gene/MSH2?variantes=false,4687.52,2.506,,1870.52,1,8256,gene:v6:MSH2:sem
+docker,gene sem variantes,/api/gene/VHL?variantes=false,2352.0,2.451,,959.61,1,2112,gene:v6:VHL:sem
+docker,gene sem variantes,/api/gene/LDLR?variantes=false,3101.49,2.565,,1209.16,1,5184,gene:v6:LDLR:sem
+docker,gene variantes,/api/gene/MLH1/variants,4887.3,6.659,,733.94,1,163904,genevars:v1:MLH1
+docker,gene variantes,/api/gene/HBB/variants,3480.54,6.058,,574.54,1,163904,genevars:v1:HBB
+docker,gene variantes,/api/gene/MSH2/variants,11356.66,7.236,,1569.47,1,163904,genevars:v1:MSH2
+docker,gene variantes,/api/gene/VHL/variants,3396.89,5.978,,568.23,1,163904,genevars:v1:VHL
+docker,gene variantes,/api/gene/LDLR/variants,4710.15,6.374,,738.96,1,163904,genevars:v1:LDLR
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,80629.73,2.071,,38932.75,1,3648,genephen:v2:MLH1
+docker,gene fenotipos,/api/gene/HBB/phenotypes,4291.98,2.461,,1744.0,1,7232,genephen:v2:HBB
+docker,gene fenotipos,/api/gene/MSH2/phenotypes,74890.21,2.805,,26698.83,1,3648,genephen:v2:MSH2
+docker,gene fenotipos,/api/gene/VHL/phenotypes,6237.88,2.257,,2763.79,1,3136,genephen:v2:VHL
+docker,gene fenotipos,/api/gene/LDLR/phenotypes,26191.64,2.016,,12991.89,1,1856,genephen:v2:LDLR
+docker,variante,/api/variant/rs334,44941.54,1.794,,25051.03,1,3648,variant:v3:rs334
+docker,variante,/api/variant/rs1800562,29183.01,2.417,,12074.06,1,3648,variant:v3:rs1800562
+docker,variante,/api/variant/rs6025,53771.03,2.118,,25387.64,1,3136,variant:v3:rs6025
+docker,variante,/api/variant/rs1799853,30419.85,2.046,,14867.96,1,3136,variant:v3:rs1799853
+docker,variante,/api/variant/rs429358,53279.57,2.168,,24575.45,1,3136,variant:v3:rs429358
+docker,doenca,/api/disease/anemia-falciforme,383.45,2.166,,177.03,1,1608,disease:v1:anemia-falciforme
+docker,doenca,/api/disease/talassemia-beta,251.21,2.048,,122.66,1,968,disease:v1:talassemia-beta
+docker,doenca,/api/disease/sindrome-de-lynch,282.69,2.31,,122.38,1,1608,disease:v1:sindrome-de-lynch
+docker,doenca,/api/disease/cancer-mama-ovario-hereditario,267.76,2.067,,129.54,1,1112,disease:v1:cancer-mama-ovario-hereditario
+docker,doenca,/api/disease/polipose-adenomatosa-familiar,250.24,2.24,,111.71,1,984,disease:v1:polipose-adenomatosa-familiar
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,3927.82,1.639,,2396.47,1,6224,diseasevars:v1:anemia-falciforme
+docker,doenca variantes,/api/disease/talassemia-beta/variants,3538.2,1.667,,2122.5,1,6216,diseasevars:v1:talassemia-beta
+docker,doenca variantes,/api/disease/sindrome-de-lynch/variants,11991.4,2.538,,4724.74,1,24656,diseasevars:v1:sindrome-de-lynch
+docker,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,9967.62,1.921,,5188.76,1,10336,diseasevars:v1:cancer-mama-ovario-hereditario
+docker,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,8514.88,1.803,,4722.62,1,5208,diseasevars:v1:polipose-adenomatosa-familiar
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,340.53,2.473,,137.7,1,3160,panel:v1:cancer-mama-ovario-hereditario
+docker,painel,/api/panel/cancer-colorretal-hereditario,363.01,2.474,,146.73,1,3160,panel:v1:cancer-colorretal-hereditario
+docker,painel,/api/panel/cardiomiopatia-hipertrofica,315.87,2.264,,139.52,1,2640,panel:v1:cardiomiopatia-hipertrofica
+docker,painel,/api/panel/cardiomiopatia-dilatada,311.95,1.95,,159.97,1,2640,panel:v1:cardiomiopatia-dilatada
+docker,painel,/api/panel/arritmias-hereditarias,307.28,2.208,,139.17,1,2128,panel:v1:arritmias-hereditarias
+docker,escore,/api/pgs/PGS000004,7653.73,2.293,,3337.87,1,20544,pgs:v3:PGS000004
+docker,escore,/api/pgs/PGS000001,1878.78,2.621,,716.82,1,12352,pgs:v3:PGS000001
+docker,escore,/api/pgs/PGS000013,1711.81,2.5,,684.72,1,24640,pgs:v3:PGS000013
+docker,escore,/api/pgs/PGS000018,1583.59,2.382,,664.81,1,24640,pgs:v3:PGS000018
+docker,escore,/api/pgs/PGS000021,755.5,2.634,,286.83,1,10304,pgs:v3:PGS000021

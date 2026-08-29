@@ -255,15 +255,20 @@ for (const item of manifesto) {
 
   // Arquivo com MUITAS amostras nao cabe, e o teto da aplicacao nao percebe:
   // ele conta VARIANTES, e o que ocupa memoria e variantes vezes amostras. O
-  // 1000 Genomes chrY tem 1.233 amostras, e 60 mil variantes dele sao 74
+  // 1000 Genomes chrY tem 1.233 amostras, e 60 mil variantes dele sao 76
   // milhoes de genotipos. Medir isso ate o estouro e o resultado; deixar o
   // estouro derrubar os outros onze arquivos nao e.
+  //
+  // Ele NAO fica sem medida: `teto_memoria.mjs` o mede em processo proprio, com
+  // orcamento de tempo e amostragem de heap, e produz `teto_memoria.csv`. A
+  // linha registrada aqui aponta para la, em vez de dizer so "pulado".
   const celulas = item.celulas_estimadas || 0
   if (celulas && celulas > LIMITE_CELULAS) {
     console.log(`    pulado: ~${(celulas / 1e6).toFixed(0)} milhoes de genotipos, `
       + `acima do teto de ${(LIMITE_CELULAS / 1e6).toFixed(0)} milhoes desta rodada`)
     linhas.push({ arquivo: rotulo, etapa: 'limite', funcao: 'variantes x amostras',
-      n: 0, mediana_ms: 0, erro: 'acima do teto de genotipos desta rodada',
+      n: 0, mediana_ms: 0,
+      erro: 'medido a parte por teto_memoria.mjs; ver teto_memoria.csv',
       celulas_estimadas: celulas, anotacao_ativa: ANOTACAO_ATIVA })
     gravarParcial()
     continue
@@ -387,20 +392,27 @@ for (const item of manifesto) {
     sha256: 'a'.repeat(64), versaoClinvar: '2026-08-22', tamanho: 0, lidos: v.length,
     truncado: false,
   }
-  if (v.length <= 100_000) {
+  // SEM TETO. A versao anterior desta medicao recusava arquivos acima de cem mil
+  // variantes por suposicao de que passaria de dois minutos por repeticao.
+  // Medido: 600 mil variantes saem em 24,2 s e 41,2 MB. E caro e cabe, entao o
+  // teto so escondia o dado mais interessante da curva.
+  {
     const blob = await medir(item.arquivo, 'saida', 'XLSX',
       () => exportar.paraXLSX(saidasMod.abasXLSX(dadosCompletos)),
       Math.min(2, REPETICOES), comum)
     if (blob) linhas[linhas.length - 1].bytes = blob.size
-  } else {
-    linhas.push({ arquivo: item.arquivo, etapa: 'saida', funcao: 'XLSX', n: 0,
-      erro: 'acima do teto de 100.000 variantes desta medicao', variantes: v.length })
   }
 
   // O PDF nunca tinha sido medido, e e a saida mais cara: monta o documento
   // inteiro em memoria antes de serializar. Teto proprio, mais baixo que o do
   // XLSX, porque o custo cresce com o numero de linhas das tabelas do laudo.
-  if (v.length <= 50_000) {
+  // SEM TETO, e pelo motivo oposto ao do XLSX. O laudo corta suas tabelas em
+  // 400, 80 e 40 linhas, entao o custo de renderizacao SATURA: o que resta
+  // crescendo com o arquivo sao passagens O(n) baratas. Medido: 600 mil
+  // variantes geram o PDF em 2,4 s, MENOS que as 25 mil de 02-medio, porque o
+  // que enche as tabelas e o numero de variantes ANOTADAS, nao o de variantes.
+  // O teto de 50 mil era suposicao e escondia exatamente esse resultado.
+  {
     const completo = { ...dadosCompletos,
       dp: metricas.histograma(v, 'dp'), qual: metricas.histograma(v, 'qual'),
       cromo: metricas.porCromossomo(v), espectro: metricas.espectroSubstituicao(v),
@@ -437,9 +449,6 @@ for (const item of manifesto) {
       ultima.diagnostico = achados.join(' ') || 'nenhum numero absurdo nos dados'
       console.log(`      diagnostico: ${ultima.diagnostico}`)
     }
-  } else {
-    linhas.push({ arquivo: item.arquivo, etapa: 'saida', funcao: 'PDF', n: 0,
-      erro: 'acima do teto de 50.000 variantes desta medicao', variantes: v.length })
   }
 
   // Pontuacao ACMG por variante. `anotarACMG` grava o ARRAY de criterios em

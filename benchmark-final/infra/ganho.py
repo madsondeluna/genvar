@@ -44,7 +44,11 @@ from rich.table import Table
 
 AQUI = Path(__file__).resolve().parent
 RAIZ = AQUI.parent
-sys.path.insert(0, str(RAIZ / "benchmark"))
+# O fluxo manual vem do benchmark da 2.0, congelado, e nao reescrito: as duas
+# geracoes tem de medir a MESMA sequencia de chamadas. O caminho vai na frente
+# de tudo porque `benchmark-final/infra/suites/` tambem se chama `suites`, e sem
+# a precedencia o import traz o pacote errado.
+sys.path.insert(0, str(RAIZ.parent / "benchmark-legacy" / "2.0"))
 
 from suites.comparison import _manual_variant  # noqa: E402
 from suites._targets import VARIANTS, VARIANT_COORDS  # noqa: E402

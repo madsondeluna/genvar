@@ -1,0 +1,12 @@
+{
+  "amostra": 10,
+  "manual_mediana_ms": 12675.6,
+  "plataforma_mediana_ms": 8588.0,
+  "ganho_api": 1.48,
+  "embarcado": {
+    "arquivo": "04-grande.vcf",
+    "variantes": 400000,
+    "ms": 1427.744,
+    "ms_por_variante": 0.0035693599999999997
+  }
+}
