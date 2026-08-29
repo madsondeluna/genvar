@@ -23,10 +23,15 @@ class TimingMiddleware(BaseHTTPMiddleware):
         return response
 
 
+# Uma constante, dois pontos de uso. Escrita duas vezes, a versao do `/` e a do
+# OpenAPI divergem sem que nada quebre, e foi assim que a API ficou anunciando
+# 2.0.0 depois que o resto do projeto ja era 3.0.0.
+VERSAO = "3.0.0"
+
 app = FastAPI(
     title="GenVar API",
     description="Genetic variant exploration API aggregating Ensembl, gnomAD, ClinVar, AlphaFold, UniProt, and MyVariant.info",
-    version="2.0.0",
+    version=VERSAO,
 )
 
 app.add_middleware(TimingMiddleware)
@@ -54,7 +59,7 @@ app.include_router(sources.router, prefix="/api/sources", tags=["sources"])
 
 @app.get("/")
 async def root():
-    return {"status": "ok", "service": "GenVar API", "version": "2.0.0"}
+    return {"status": "ok", "service": "GenVar API", "version": VERSAO}
 
 
 @app.get("/health")

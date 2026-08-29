@@ -1021,7 +1021,7 @@ próprio servidor, em paralelo, e reporta por endpoint o método, o caminho, o
 
 | Endpoint | Resposta |
 |---|---|
-| `GET /` | `{"status": "ok", "service": "GenVar API", "version": "2.0.0"}`, identificação do serviço. |
+| `GET /` | `{"status": "ok", "service": "GenVar API", "version": "3.0.0"}`, identificação do serviço. |
 | `GET /health` | `{"status": "ok"}`, usado como health check pelo Render (`healthCheckPath` no `render.yaml`) e pela suíte de benchmark (`run_benchmarks.py`). |
 
 ### Respostas de erro
