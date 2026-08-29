@@ -228,4 +228,29 @@ describe('laudo em PDF', { timeout: 60000 }, () => {
       expect(semComentario).not.toContain(simbolo)
     }
   })
+
+  it('trunca a célula de tabela para caber em uma linha', async () => {
+    // O defeito: com texto que quebra em duas linhas, o gerador de PDF produz
+    // uma coordenada absurda ao paginar a tabela e derruba o documento inteiro
+    // com "unsupported number: -5.7e+21". Medido antes da correção: um arquivo
+    // com 259 variantes anotadas gerava o laudo e um com 260 não, porque é aí
+    // que a tabela passa da primeira página. Nenhum dos 153 testes via isso,
+    // porque todos usavam conjuntos pequenos.
+    //
+    // A trava tem duas metades e as duas são verificadas aqui: a linha tem
+    // altura fixa, e a célula é truncada pela largura REAL do texto na
+    // Helvetica, não por contagem de caracteres.
+    const { readFileSync } = await import('node:fs')
+    const fonte = readFileSync(new URL('./pdf.jsx', import.meta.url), 'utf8')
+    expect(fonte).toContain('height: ALTURA_LINHA')
+    // Toda célula das duas tabelas grandes passa pelo truncamento.
+    const semComentario = fonte.replace(/\/\/[^\n]*/g, '')
+    const celulas = semComentario.match(/style=\{\[s\.td[^\]]*\]\}>\{([^}]+)\}/g) || []
+    expect(celulas.length).toBeGreaterThan(0)
+    for (const c of celulas) expect(c).toContain('umaLinha(')
+    // `lineHeight` no estilo da célula colapsa a caixa de linha e a célula sai
+    // vazia, com a borda desenhada e o texto invisível: um defeito mais
+    // silencioso que o travamento, porque o PDF fecha bem.
+    expect(semComentario).not.toMatch(/td:\s*\{[^}]*lineHeight/)
+  })
 })

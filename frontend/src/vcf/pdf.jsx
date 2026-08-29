@@ -56,6 +56,12 @@ const COR_IMPACTO = { Alto: SERIE[7], Moderado: SERIE[5], Baixo: SERIE[2], Modif
 // heranca esta no bloco do ClinGen, e a consequencia molecular esta resumida na
 // coluna de impacto. Coluna que existe em duas paginas nao acrescenta; coluna
 // ilegivel subtrai.
+const TAMANHO_TABELA = 7.5
+const ENTRELINHA_TABELA = 1.2
+const RECUO_VERTICAL = 3
+const ALTURA_LINHA = Math.ceil(
+  TAMANHO_TABELA * ENTRELINHA_TABELA + RECUO_VERTICAL * 2)
+
 const COLS_TABELA = [
   ['Posição', 62, (v) => `${v.chrom}:${fmt(v.pos)}`],
   ['rsID', 56, (v) => v.rsid || '—'],
@@ -145,8 +151,19 @@ const s = StyleSheet.create({
   valor: { width: 58, fontSize: 8, textAlign: 'right' },
 
   th: { fontSize: 7.5, color: APAGADO, paddingVertical: 4, paddingHorizontal: 4 },
-  td: { fontSize: 7.5, paddingVertical: 3, paddingHorizontal: 4 },
-  tr: { flexDirection: 'row', borderTopWidth: 0.5, borderTopColor: LINHA },
+  // Sem `lineHeight` declarado: o gerador de PDF trata o valor como PONTOS e
+  // nao como multiplo, entao `lineHeight: 1.2` colapsa a caixa de linha para
+  // 1,2 pt e a celula sai vazia, com a borda desenhada e o texto invisivel.
+  td: { fontSize: TAMANHO_TABELA, paddingVertical: RECUO_VERTICAL,
+        paddingHorizontal: 4 },
+  // Altura FIXA, e ela e a metade da correcao. Com altura livre, uma celula que
+  // quebra em duas linhas faz o gerador de PDF produzir coordenada absurda ao
+  // paginar a tabela e derruba o documento inteiro. A outra metade e o
+  // truncamento em `umaLinha`, que garante que nenhuma celula queira duas.
+  // Sem `overflow: hidden`: no gerador de PDF ele nao recorta o excedente, ele
+  // apaga o texto da celula inteira, e as linhas saem em branco.
+  tr: { flexDirection: 'row', borderTopWidth: 0.5, borderTopColor: LINHA,
+        height: ALTURA_LINHA },
 
   rodape: { position: 'absolute', bottom: 26, left: 48, right: 48, fontSize: 6.5, color: APAGADO,
             borderTopWidth: 0.5, borderTopColor: LINHA, paddingTop: 6, lineHeight: 1.4 },
@@ -186,6 +203,62 @@ function maiorPop(v) {
 // muito pequeno produzia largura em notacao exponencial ("1e+21%"), que o
 // gerador de PDF recusa com "unsupported number" e derruba o documento INTEIRO:
 // uma barra fora de escala apagava o laudo em vez de sair torta.
+// Uma celula de tabela cabe em UMA linha, sempre. Nao e preferencia de layout:
+// com texto que quebra em duas ou mais linhas, o gerador de PDF produz uma
+// coordenada absurda ("unsupported number: -5.7e+21") ao paginar a tabela e
+// derruba o documento INTEIRO. Medido: com a tabela de anotacao clinica, 259
+// variantes saem e 260 quebram, que e onde ela passa da primeira pagina.
+//
+// O orcamento vem das larguras REAIS da Helvetica, em milesimos de em, e nao de
+// uma largura media de caractere. Com media, "Heterozigoto" media 45 pt numa
+// coluna de 44 e era cortado, quando na metrica de verdade mede 42 e cabe
+// inteiro: a aproximacao grosseira nao errava para o lado seguro, errava para o
+// lado de apagar informacao do laudo.
+const RECUO_CELULA = 8
+const LARGURA_MEDIA = 500
+
+const LARG = { ' ': 278, '.': 278, ',': 278, ':': 278, ';': 278, '-': 333, '(': 333,
+  ')': 333, '/': 278, "'": 191, '"': 355, '?': 556, '!': 278, '>': 584, '<': 584,
+  '=': 584, '+': 584, '%': 889, '\u2026': 1000, '\u2014': 1000 }
+for (const [c, w] of Object.entries({
+  a: 556, b: 556, c: 500, d: 556, e: 556, f: 278, g: 556, h: 556, i: 222, j: 222,
+  k: 500, l: 222, m: 833, n: 556, o: 556, p: 556, q: 556, r: 333, s: 500, t: 278,
+  u: 556, v: 500, w: 722, x: 500, y: 500, z: 500,
+  A: 667, B: 667, C: 722, D: 722, E: 667, F: 611, G: 778, H: 722, I: 278, J: 500,
+  K: 667, L: 556, M: 833, N: 722, O: 778, P: 667, Q: 778, R: 722, S: 667, T: 611,
+  U: 722, V: 667, W: 944, X: 667, Y: 667, Z: 611,
+})) LARG[c] = w
+for (const d of '0123456789') LARG[d] = 556
+// Vogal acentuada mede o mesmo que a base; sem isto todo rotulo em portugues
+// sai superestimado e volta a ser cortado sem precisar.
+for (const [a, b] of [['á', 'a'], ['à', 'a'], ['â', 'a'], ['ã', 'a'], ['é', 'e'],
+  ['ê', 'e'], ['í', 'i'], ['ó', 'o'], ['ô', 'o'], ['õ', 'o'], ['ú', 'u'],
+  ['ç', 'c'], ['ñ', 'n']]) { LARG[a] = LARG[b]; LARG[a.toUpperCase()] = LARG[b.toUpperCase()] }
+
+function medir(texto, corpo = TAMANHO_TABELA) {
+  let total = 0
+  for (const c of texto) total += LARG[c] ?? LARGURA_MEDIA
+  return (total * corpo) / 1000
+}
+
+// Uma celula de tabela cabe em UMA linha, sempre. Nao e preferencia de layout:
+// com texto que quebra em duas linhas o gerador de PDF produz coordenada
+// absurda ("unsupported number: -5.7e+21") ao paginar a tabela e derruba o
+// documento INTEIRO. Medido: 259 variantes anotadas saem e 260 quebram, que e
+// onde a tabela passa da primeira pagina.
+function umaLinha(texto, largura) {
+  const t = String(texto ?? '')
+  const cabe = largura - RECUO_CELULA
+  if (medir(t) <= cabe) return t
+  const reticencia = medir('\u2026')
+  let acumulado = 0
+  for (let i = 0; i < t.length; i++) {
+    acumulado += medir(t[i])
+    if (acumulado + reticencia > cabe) return t.slice(0, Math.max(1, i)) + '\u2026'
+  }
+  return t
+}
+
 function larguraPct(n, max) {
   if (!Number.isFinite(n) || !Number.isFinite(max) || max <= 0) return 0
   const pct = (n / max) * 100
@@ -357,7 +430,7 @@ export function RelatorioVCF({ dados, gerado }) {
               <View key={i} style={s.tr} wrap={false}>
                 {COLS_GRAVES.map(([c, w, valor, estilo]) => (
                   <Text key={c} style={[s.td, { width: w }, estilo ? estilo(v) : null]}>
-                    {valor(v)}
+                    {umaLinha(valor(v), w)}
                   </Text>
                 ))}
               </View>
@@ -391,13 +464,13 @@ export function RelatorioVCF({ dados, gerado }) {
             </View>
             {outrosAvisos.slice(0, 40).map((v, i) => (
               <View key={i} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 52 }]}>{v.clinvar.gene || '—'}</Text>
-                <Text style={[s.td, { width: 78 }]}>{v.chrom}:{fmt(v.pos)}</Text>
-                <Text style={[s.td, { width: 48 }]}>{v.ref.slice(0, 5)}&gt;{v.alt.slice(0, 5)}</Text>
-                <Text style={[s.td, { width: 96, color: COR_SIG[v.clinvar.sig] }]}>{ROTULO[v.clinvar.sig]}</Text>
-                <Text style={[s.td, { width: 26 }]}>{v.clinvar.estrelas}/4</Text>
-                <Text style={[s.td, { width: 130 }]}>{v.clinvar.condicao || '—'}</Text>
-                <Text style={[s.td, { width: 72 }]}>{freq(v.clinvar.af)}</Text>
+                <Text style={[s.td, { width: 52 }]}>{umaLinha(v.clinvar.gene || '—', 52)}</Text>
+                <Text style={[s.td, { width: 78 }]}>{umaLinha(`${v.chrom}:${fmt(v.pos)}`, 78)}</Text>
+                <Text style={[s.td, { width: 48 }]}>{umaLinha(`${v.ref.slice(0, 5)}>${v.alt.slice(0, 5)}`, 48)}</Text>
+                <Text style={[s.td, { width: 96, color: COR_SIG[v.clinvar.sig] }]}>{umaLinha(ROTULO[v.clinvar.sig], 96)}</Text>
+                <Text style={[s.td, { width: 26 }]}>{umaLinha(`${v.clinvar.estrelas}/4`, 26)}</Text>
+                <Text style={[s.td, { width: 130 }]}>{umaLinha(v.clinvar.condicao || '—', 130)}</Text>
+                <Text style={[s.td, { width: 72 }]}>{umaLinha(freq(v.clinvar.af), 72)}</Text>
               </View>
             ))}
           </>
@@ -481,7 +554,7 @@ export function RelatorioVCF({ dados, gerado }) {
               <View key={i} style={s.tr} wrap={false}>
                 {COLS_TABELA.map(([c, w, valor, estilo]) => (
                   <Text key={c} style={[s.td, { width: w }, estilo ? estilo(v) : null]}>
-                    {valor(v)}
+                    {umaLinha(valor(v), w)}
                   </Text>
                 ))}
               </View>
@@ -507,11 +580,11 @@ export function RelatorioVCF({ dados, gerado }) {
             </View>
             {resumoCli.genes.slice(0, 30).map((g) => (
               <View key={g.gene} style={s.tr} wrap={false}>
-                <Text style={[s.td, { width: 60 }]}>{g.gene}</Text>
-                <Text style={[s.td, { width: 56, textAlign: 'right' }]}>{g.patogenicas || '—'}</Text>
-                <Text style={[s.td, { width: 48, textAlign: 'right' }]}>{g.incertas || '—'}</Text>
-                <Text style={[s.td, { width: 40, textAlign: 'right' }]}>{g.total}</Text>
-                <Text style={[s.td, { width: 296 }]}>{g.condicoes.join('; ') || '—'}</Text>
+                <Text style={[s.td, { width: 60 }]}>{umaLinha(g.gene, 60)}</Text>
+                <Text style={[s.td, { width: 56, textAlign: 'right' }]}>{umaLinha(g.patogenicas || '—', 56)}</Text>
+                <Text style={[s.td, { width: 48, textAlign: 'right' }]}>{umaLinha(g.incertas || '—', 48)}</Text>
+                <Text style={[s.td, { width: 40, textAlign: 'right' }]}>{umaLinha(g.total, 40)}</Text>
+                <Text style={[s.td, { width: 296 }]}>{umaLinha(g.condicoes.join('; ') || '—', 296)}</Text>
               </View>
             ))}
           </>
