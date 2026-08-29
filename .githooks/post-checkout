@@ -1,3 +1,26 @@
 #!/bin/sh
-command -v git-lfs >/dev/null 2>&1 || { printf >&2 "\n%s\n\n" "This repository is configured for Git LFS but 'git-lfs' was not found on your path. If you no longer wish to use Git LFS, remove this hook by deleting the 'post-checkout' file in the hooks directory (set by 'core.hookspath'; usually '.git/hooks')."; exit 2; }
-git lfs post-checkout "$@"
+# Avisa quando as dependencias do frontend mudaram na troca de ramo.
+#
+# `main` e `beta` divergem em nove pacotes: a beta tem jszip,
+# @react-pdf/renderer, vitest, vite-node e @tailwindcss/vite, que o modulo de
+# VCF e o benchmark usam; a main tem autoprefixer, lucide-react e postcss, e uma
+# versao diferente do tailwindcss. Trocar de ramo sem reinstalar faz o build
+# falhar com "Rollup failed to resolve import", e a mensagem nao diz que a causa
+# foi a troca de ramo: parece defeito do codigo.
+#
+# O hook AVISA e nao instala sozinho. Instalar leva minutos e nem toda troca de
+# ramo e para construir; decidir por quem trocou seria pior que lembrar.
+#
+# Ativar: git config core.hooksPath .githooks
+
+[ "$3" = "1" ] || exit 0   # so em troca de RAMO, nao em checkout de arquivo
+
+if ! git diff --quiet "$1" "$2" -- frontend/package.json 2>/dev/null; then
+  ramo=$(git rev-parse --abbrev-ref HEAD)
+  echo ""
+  echo "  As dependencias do frontend mudaram nesta troca de ramo ($ramo)."
+  echo "  Antes de construir ou testar:"
+  echo ""
+  echo "      cd frontend && npm install"
+  echo ""
+fi
