@@ -55,6 +55,8 @@ TELAS = [
     ("tela-produtos", "/produtos", "Produtos"),
     ("tela-status", "/status", "Status"),
     ("tela-fontes", "/fontes", "Fontes"),
+    ("tela-sobre", "/sobre", "Números do catálogo"),
+    ("tela-colabore", "/colabore", "Frentes abertas"),
 ]
 
 

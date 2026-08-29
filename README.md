@@ -263,7 +263,7 @@ cd backend && python -m etl.pgscatalog
 
 ## A aplicação
 
-As imagens abaixo mostram a interface em uso, capturadas da versão em produção por `scripts/captura_telas.py`. Cada legenda traz o endereço da tela. São páginas inteiras, não recortes da janela: a captura é feita com `Page.captureScreenshot` e `captureBeyondViewport`, que fotografa o documento e não o viewport, então a tela de gene aparece nos seus 7.392 pixels de altura em vez de terminar no primeiro rolar. Largura de 1.440 pixels CSS, resolução dobrada, modo claro fixado na captura.
+As dezessete imagens abaixo são as dezessete rotas da aplicação, sem exceção, capturadas da versão em produção por `scripts/captura_telas.py`. Cada legenda traz o endereço da tela. São páginas inteiras, não recortes da janela: a captura é feita com `Page.captureScreenshot` e `captureBeyondViewport`, que fotografa o documento e não o viewport, então a tela de gene aparece nos seus 7.392 pixels de altura em vez de terminar no primeiro rolar. Largura de 1.440 pixels CSS, resolução dobrada, modo claro fixado na captura.
 
 
 ![Página inicial](docs/tela-inicio.png)
@@ -354,6 +354,16 @@ As imagens abaixo mostram a interface em uso, capturadas da versão em produçã
 
 **Procedência dos dados.** As quatorze fontes com licença, uso, citação formal e data de extração de cada catálogo. A data diz de onde saiu: declarada pelo próprio arquivo do ETL ou, na falta dela, a data de modificação, porque as duas não valem o mesmo.  
 `/fontes` · [https://genvar.delunalab.dev/fontes](https://genvar.delunalab.dev/fontes)
+
+![Sobre o projeto](docs/tela-sobre.png)
+
+**Sobre o projeto.** Os números do catálogo conferidos contra os arquivos que os produzem, o que separa o GenVar de um portal de consulta, o compromisso com dados FAIR e a autoria.  
+`/sobre` · [https://genvar.delunalab.dev/sobre](https://genvar.delunalab.dev/sobre)
+
+![Como colaborar](docs/tela-colabore.png)
+
+**Como colaborar.** As quatro frentes abertas, cada uma dizendo para quem serve e o que exige de quem pega. A inscrição não tem back-end: o formulário monta uma issue no repositório e abre para conferência antes de enviar, então a candidatura nasce pública.  
+`/colabore` · [https://genvar.delunalab.dev/colabore](https://genvar.delunalab.dev/colabore)
 
 
 ## Bancos de dados e APIs integrados
