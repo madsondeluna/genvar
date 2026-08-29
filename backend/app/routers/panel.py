@@ -64,6 +64,30 @@ async def _enrich_gene(symbol: str) -> CausalGene:
     )
 
 
+def _condicoes(bruto) -> list[PanelCondition]:
+    """Aceita as DUAS formas em que a condicao chega, porque ha dois produtores.
+
+    O catalogo curado a mao escreve objeto, `{"name": ..., "disease_id": ...}`. O
+    ETL do PanelApp escreve string, o nome da condicao e nada mais. O roteador
+    lia so a primeira forma e estourava `TypeError: argument after ** must be a
+    mapping, not str` nos 337 paineis importados, o que virava 500 e derrubava
+    metade do catalogo: 16 dos 30 paineis listados em /paineis nao abriam.
+
+    Normalizar na leitura, e nao no ETL, porque sao dois produtores para um
+    consumidor so: corrigir o ETL deixaria o catalogo curado como o proximo a
+    divergir, e o defeito voltaria pela outra ponta.
+    """
+    saida = []
+    for c in bruto or []:
+        if isinstance(c, str):
+            nome = c.strip()
+            if nome:
+                saida.append(PanelCondition(name=nome))
+        elif isinstance(c, dict):
+            saida.append(PanelCondition(**c))
+    return saida
+
+
 @router.get("/{panel_id}", response_model=PanelDetail)
 async def get_panel_detail(panel_id: str):
     p = get_panel(panel_id)
@@ -89,7 +113,7 @@ async def get_panel_detail(panel_id: str):
         inheritance=p.get("inheritance", ""), short=p.get("short"),
         digenic=p.get("digenic") or None,
         genes=p.get("genes", []),
-        conditions=[PanelCondition(**c) for c in p.get("conditions", [])],
+        conditions=_condicoes(p.get("conditions", [])),
         panel_genes=panel_genes,
         constrained_count=constrained,
         degraded=degraded,

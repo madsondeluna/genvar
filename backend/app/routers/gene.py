@@ -273,6 +273,26 @@ async def get_gene_phenotypes(gene_symbol: str):
     if isinstance(gwas, Exception):
         gwas = {"traits": [], "association_total": 0, "truncated": False}
 
+    # Simbolo que passa na expressao regular nao e simbolo que existe. Sem esta
+    # checagem a rota devolvia 200 com listas vazias para FAKEGENE123, e o cliente
+    # exibia um painel de fenotipos vazio em vez de dizer que o gene nao existe.
+    # A consulta extra so acontece quando NAO ha nenhum resultado: se veio doenca
+    # mendeliana ou sinal de GWAS, o gene existe e nao ha o que confirmar.
+    if not mendelian and not gwas["traits"]:
+        try:
+            await ensembl.get_gene_info(symbol)
+        except HTTPException as e:
+            # SO o 404 significa gene inexistente. Qualquer outro estado e fonte
+            # instavel, e traduzir instabilidade de terceiro em "nao existe"
+            # faria a pagina dizer que o gene sumiu quando o Ensembl oscilou.
+            # O `except Exception` generico que estava aqui engolia tambem o 404,
+            # e a rota continuava devolvendo 200 com listas vazias.
+            if e.status_code == 404:
+                raise HTTPException(status_code=404,
+                                    detail=f"Gene {symbol} nao encontrado") from e
+        except Exception:
+            pass
+
     result = GenePhenotypesResponse(
         gene_symbol=symbol,
         mendelian=mendelian,

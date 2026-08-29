@@ -1,0 +1,14 @@
+{
+  "rotulo": "local",
+  "quando": "2026-08-29T02:10:11-0300",
+  "sistema": "Darwin 25.5.0",
+  "maquina": "arm64",
+  "cpu": "Apple M2",
+  "nucleos": "8",
+  "memoria_gb": 8.0,
+  "python": "3.14.3",
+  "node": "v25.8.2",
+  "docker": "Docker version 28.3.3, build 980b856816",
+  "commit": "8b04dd8",
+  "branch": "beta"
+}

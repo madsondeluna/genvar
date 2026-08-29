@@ -1,0 +1,8 @@
+{
+  "node": "v25.8.2",
+  "plataforma": "darwin",
+  "arch": "arm64",
+  "repeticoes": 3,
+  "anotacao_ativa": true,
+  "teto_heap_mb": 12480
+}

@@ -1,0 +1,1568 @@
+rotulo,nome,caminho,familia,estado,ms,status,bytes
+local,gene,/api/gene/MLH1,gene,frio,6666.928,200,136284
+local,gene,/api/gene/MLH1,gene,frio,4919.18,200,136284
+local,gene,/api/gene/MLH1,gene,frio,4898.109,200,136284
+local,gene,/api/gene/MLH1,gene,quente,4.253,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.94,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.869,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.709,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.727,200,136284
+local,gene,/api/gene/MLH1,gene,quente,4.088,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.647,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.753,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.686,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.61,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.802,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.703,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.719,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.796,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.86,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.823,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.866,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.849,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.8,200,136284
+local,gene,/api/gene/MLH1,gene,quente,3.836,200,136284
+local,gene,/api/gene/HBB,gene,frio,4108.037,200,134711
+local,gene,/api/gene/HBB,gene,frio,3641.408,200,134711
+local,gene,/api/gene/HBB,gene,frio,3464.071,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.951,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.874,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.722,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.668,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.617,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.654,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.695,200,134711
+local,gene,/api/gene/HBB,gene,quente,13.703,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.851,200,134711
+local,gene,/api/gene/HBB,gene,quente,6.704,200,134711
+local,gene,/api/gene/HBB,gene,quente,5.459,200,134711
+local,gene,/api/gene/HBB,gene,quente,6.052,200,134711
+local,gene,/api/gene/HBB,gene,quente,16.721,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.946,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.925,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.626,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.686,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.631,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.694,200,134711
+local,gene,/api/gene/HBB,gene,quente,3.6,200,134711
+local,gene,/api/gene/MSH2,gene,frio,11503.995,200,140780
+local,gene,/api/gene/MSH2,gene,frio,11566.576,200,140780
+local,gene,/api/gene/MSH2,gene,frio,16325.199,200,140780
+local,gene,/api/gene/MSH2,gene,quente,8.28,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.5,200,140780
+local,gene,/api/gene/MSH2,gene,quente,8.856,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.942,200,140780
+local,gene,/api/gene/MSH2,gene,quente,8.588,200,140780
+local,gene,/api/gene/MSH2,gene,quente,8.43,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.386,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.237,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.075,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.74,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.394,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.911,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.274,200,140780
+local,gene,/api/gene/MSH2,gene,quente,8.356,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.964,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.377,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.611,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.722,200,140780
+local,gene,/api/gene/MSH2,gene,quente,9.017,200,140780
+local,gene,/api/gene/MSH2,gene,quente,7.739,200,140780
+local,gene,/api/gene/VHL,gene,frio,5100.443,200,130928
+local,gene,/api/gene/VHL,gene,frio,4242.411,200,130928
+local,gene,/api/gene/VHL,gene,frio,4220.656,200,130928
+local,gene,/api/gene/VHL,gene,quente,5.223,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.85,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.964,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.796,200,130928
+local,gene,/api/gene/VHL,gene,quente,5.04,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.908,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.835,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.829,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.636,200,130928
+local,gene,/api/gene/VHL,gene,quente,5.249,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.736,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.672,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.867,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.75,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.682,200,130928
+local,gene,/api/gene/VHL,gene,quente,5.005,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.763,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.692,200,130928
+local,gene,/api/gene/VHL,gene,quente,5.358,200,130928
+local,gene,/api/gene/VHL,gene,quente,4.762,200,130928
+local,gene,/api/gene/LDLR,gene,frio,7573.29,200,134810
+local,gene,/api/gene/LDLR,gene,frio,4554.26,200,134810
+local,gene,/api/gene/LDLR,gene,frio,4635.698,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.889,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.862,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.428,200,134810
+local,gene,/api/gene/LDLR,gene,quente,5.11,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.695,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.501,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.49,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.448,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.431,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.399,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.411,200,134810
+local,gene,/api/gene/LDLR,gene,quente,5.525,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.593,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.529,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.503,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.407,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.339,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.263,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.309,200,134810
+local,gene,/api/gene/LDLR,gene,quente,4.442,200,134810
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3121.41,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3315.743,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3318.847,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.235,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.988,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.956,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.896,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.789,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.672,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.252,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.036,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.926,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.243,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.99,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.89,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.885,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.869,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.838,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.867,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.006,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.056,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.915,200,5298
+local,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,1.862,200,5298
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,3482.972,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,2576.739,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,2438.327,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.802,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.685,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.74,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.625,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.653,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.648,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.491,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.528,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.53,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.551,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.608,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.624,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.572,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.551,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.502,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.041,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.768,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.923,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.543,200,1289
+local,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.596,200,1289
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,frio,3103.866,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,frio,3110.724,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,frio,3252.187,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,2.33,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.673,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.706,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.828,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.798,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.687,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.622,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.666,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.661,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.701,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,57.618,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,2.151,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.914,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,2.028,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.751,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.752,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.649,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.586,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.644,200,6967
+local,gene sem variantes,/api/gene/MSH2?variantes=false,gene,quente,1.713,200,6967
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,frio,2326.247,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,frio,2263.455,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,frio,2460.994,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.919,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.695,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.643,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.542,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.504,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.519,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.477,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.544,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.5,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.464,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.477,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.625,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.541,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.519,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,2.07,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,2.094,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.531,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.526,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.6,200,1812
+local,gene sem variantes,/api/gene/VHL?variantes=false,gene,quente,1.545,200,1812
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,frio,3298.011,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,frio,2845.806,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,frio,3086.955,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.844,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.692,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.68,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.625,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.644,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.563,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.613,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.584,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.546,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.627,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.594,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.553,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.552,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.675,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.619,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.515,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.501,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.51,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.453,200,4404
+local,gene sem variantes,/api/gene/LDLR?variantes=false,gene,quente,1.479,200,4404
+local,gene variantes,/api/gene/MLH1/variants,gene,frio,5063.423,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,frio,4264.624,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,frio,4029.747,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.305,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.08,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.021,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.965,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.024,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.965,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.959,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.882,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.824,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.045,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.988,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.884,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.751,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.828,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,5.037,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,4.46,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.958,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.846,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.856,200,134947
+local,gene variantes,/api/gene/MLH1/variants,gene,quente,3.801,200,134947
+local,gene variantes,/api/gene/HBB/variants,gene,frio,4037.111,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,frio,3267.677,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,frio,3286.033,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,4.01,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.648,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.708,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,4.612,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,4.106,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.71,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.624,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.557,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.557,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.539,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.566,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.586,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.527,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.633,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.579,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.588,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.556,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.637,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.668,200,133914
+local,gene variantes,/api/gene/HBB/variants,gene,quente,3.981,200,133914
+local,gene variantes,/api/gene/MSH2/variants,gene,frio,11110.343,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,frio,11938.017,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,frio,12939.247,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.866,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,5.751,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,5.175,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.236,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.249,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.268,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.32,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.175,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.217,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.395,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.151,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.222,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.162,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.204,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.455,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.194,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.208,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.176,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.414,200,139538
+local,gene variantes,/api/gene/MSH2/variants,gene,quente,4.102,200,139538
+local,gene variantes,/api/gene/VHL/variants,gene,frio,3651.731,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,frio,3725.602,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,frio,3702.41,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.301,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.946,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.014,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.11,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.84,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.898,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.723,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.749,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,8.156,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.101,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.987,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.423,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.332,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.187,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.767,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,15.385,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,4.105,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.956,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.688,200,130116
+local,gene variantes,/api/gene/VHL/variants,gene,quente,3.856,200,130116
+local,gene variantes,/api/gene/LDLR/variants,gene,frio,4430.25,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,frio,4566.992,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,frio,3859.439,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,4.309,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.999,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.834,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.841,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.768,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.81,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.79,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.776,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.818,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.87,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.802,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.799,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,4.13,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.878,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.729,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.763,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.691,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.764,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.799,200,133485
+local,gene variantes,/api/gene/LDLR/variants,gene,quente,3.681,200,133485
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,100844.597,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,1263.778,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,1724.28,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.972,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,4.808,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,6.053,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.551,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.859,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,4.099,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,4.147,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.675,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.904,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.609,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,4.131,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.534,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.304,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.878,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.449,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.621,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.285,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.535,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.427,200,3108
+local,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,3.444,200,3108
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1985.782,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1834.483,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1879.664,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,5.545,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.319,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.422,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.413,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.435,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.384,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.297,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.49,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,5.128,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.284,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.512,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,3.799,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.079,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.502,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,11.255,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.99,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,8.579,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,6.733,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.861,200,5984
+local,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,4.322,200,5984
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,frio,10592.403,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,frio,1266.187,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,frio,1313.889,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,5.029,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,6.928,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.489,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.294,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.476,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.207,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.528,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.672,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,4.043,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.43,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.916,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.359,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.352,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,4.199,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,2.983,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.408,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.643,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.444,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,2.871,200,3147
+local,gene fenotipos,/api/gene/MSH2/phenotypes,gene,quente,3.645,200,3147
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,frio,65615.578,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,frio,1370.224,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,frio,1292.018,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.516,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.382,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.477,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.334,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.104,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.15,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.421,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.741,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.444,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,4.038,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.526,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,4.26,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.403,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.948,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.265,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,2.928,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.116,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,2.89,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.354,200,2807
+local,gene fenotipos,/api/gene/VHL/phenotypes,gene,quente,3.629,200,2807
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,frio,10952.939,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,frio,2582.378,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,frio,2781.879,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,3.72,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.638,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,5.089,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,5.531,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.67,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,7.599,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,3.696,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.519,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.78,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,9.183,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.636,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.187,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.241,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.387,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,3.988,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.047,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.635,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.685,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.167,200,1547
+local,gene fenotipos,/api/gene/LDLR/phenotypes,gene,quente,4.094,200,1547
+local,variante,/api/variant/rs334,variante,frio,4091.007,200,3218
+local,variante,/api/variant/rs334,variante,frio,2490.971,200,3218
+local,variante,/api/variant/rs334,variante,frio,2763.016,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.051,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.975,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.032,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.568,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.124,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.266,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.674,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.97,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.317,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.053,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.163,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.092,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.248,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.481,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.643,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.345,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.374,200,3218
+local,variante,/api/variant/rs334,variante,quente,5.631,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.107,200,3218
+local,variante,/api/variant/rs334,variante,quente,4.48,200,3218
+local,variante,/api/variant/rs1800562,variante,frio,4117.288,200,3126
+local,variante,/api/variant/rs1800562,variante,frio,2221.034,200,3126
+local,variante,/api/variant/rs1800562,variante,frio,2523.44,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,7.034,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.79,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,6.721,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.172,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.383,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.118,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,10.326,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.217,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.831,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.833,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.132,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.084,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.104,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.827,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,3.863,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.204,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.076,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,4.602,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,6.343,200,3126
+local,variante,/api/variant/rs1800562,variante,quente,5.649,200,3126
+local,variante,/api/variant/rs6025,variante,frio,2764.052,200,2642
+local,variante,/api/variant/rs6025,variante,frio,2597.207,200,2642
+local,variante,/api/variant/rs6025,variante,frio,2303.239,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.577,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.996,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.235,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.573,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.997,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.08,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.169,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.764,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.836,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.338,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.691,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.106,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.487,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.085,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.959,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.461,200,2642
+local,variante,/api/variant/rs6025,variante,quente,5.14,200,2642
+local,variante,/api/variant/rs6025,variante,quente,3.869,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.53,200,2642
+local,variante,/api/variant/rs6025,variante,quente,4.124,200,2642
+local,variante,/api/variant/rs1799853,variante,frio,3059.899,200,2617
+local,variante,/api/variant/rs1799853,variante,frio,2586.603,200,2617
+local,variante,/api/variant/rs1799853,variante,frio,2737.096,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.592,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.543,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.57,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.064,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,7.822,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,6.079,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,3.855,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,3.93,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.621,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.875,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.314,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,6.236,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.298,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,3.917,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.042,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.243,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,3.946,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,3.655,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.018,200,2617
+local,variante,/api/variant/rs1799853,variante,quente,4.077,200,2617
+local,variante,/api/variant/rs429358,variante,frio,3775.026,200,2737
+local,variante,/api/variant/rs429358,variante,frio,2841.226,200,2737
+local,variante,/api/variant/rs429358,variante,frio,2676.729,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.201,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.021,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.098,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.031,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.273,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.025,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.191,200,2737
+local,variante,/api/variant/rs429358,variante,quente,4.168,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.389,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.295,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.268,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.096,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.048,200,2737
+local,variante,/api/variant/rs429358,variante,quente,2.903,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.156,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.108,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.225,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.156,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.055,200,2737
+local,variante,/api/variant/rs429358,variante,quente,3.136,200,2737
+local,doenca,/api/disease/anemia-falciforme,doenca,frio,275.099,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,frio,261.023,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,frio,265.42,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,5.302,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.428,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.553,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.927,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.864,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.396,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.491,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.332,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.174,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.374,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,3.924,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.031,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,5.125,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,5.325,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.597,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.665,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.807,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.147,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.31,200,1217
+local,doenca,/api/disease/anemia-falciforme,doenca,quente,4.087,200,1217
+local,doenca,/api/disease/talassemia-beta,doenca,frio,265.937,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,frio,266.548,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,frio,264.221,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,11.142,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,7.8,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.242,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,6.61,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,5.717,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,13.565,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,3.451,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,9.539,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,5.357,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,5.969,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.327,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.41,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,3.327,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,3.796,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.315,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.398,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,3.986,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,7.653,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.899,200,768
+local,doenca,/api/disease/talassemia-beta,doenca,quente,4.341,200,768
+local,doenca,/api/disease/sindrome-de-lynch,doenca,frio,327.047,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,frio,338.465,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,frio,336.656,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,4.018,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.401,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.363,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.193,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.085,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.958,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.866,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.848,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.829,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.884,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.836,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.876,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.856,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.877,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.928,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.073,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,3.05,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.932,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.823,200,1397
+local,doenca,/api/disease/sindrome-de-lynch,doenca,quente,2.808,200,1397
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,frio,476.054,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,frio,287.857,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,frio,284.525,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,5.035,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.493,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.184,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.496,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,3.907,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,5.126,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.113,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,3.992,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.044,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.464,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.746,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.238,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.441,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.176,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.211,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.12,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,5.561,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,4.117,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,3.546,200,952
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,doenca,quente,3.597,200,952
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,frio,251.897,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,frio,256.917,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,frio,255.551,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.823,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.993,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.98,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.845,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.238,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.722,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.635,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.693,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.317,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.629,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.496,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.33,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.697,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.194,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.314,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.593,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.495,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.774,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,3.005,200,782
+local,doenca,/api/disease/polipose-adenomatosa-familiar,doenca,quente,4.734,200,782
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,4314.795,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,3400.031,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,3195.863,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.115,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.988,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.609,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.197,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.245,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.978,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.631,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.999,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.802,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.134,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.061,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.471,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.871,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.985,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,3.846,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.023,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.187,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.093,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.167,200,4831
+local,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,4.497,200,4831
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3192.885,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3342.86,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3230.708,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,3.1,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.762,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.799,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.687,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.728,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.667,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.633,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.542,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.589,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.669,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,3.253,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.64,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.865,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.606,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.458,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.49,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.473,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.522,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.623,200,4829
+local,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.476,200,4829
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,frio,13639.661,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,frio,13681.021,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,frio,10929.186,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,7.066,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.944,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.416,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.161,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.918,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.064,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.794,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.877,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.688,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.936,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.236,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.127,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.723,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.12,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.347,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.208,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.114,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.944,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,5.417,200,22461
+local,doenca variantes,/api/disease/sindrome-de-lynch/variants,doenca,quente,4.925,200,22461
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,frio,7683.092,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,frio,7973.95,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,frio,9007.802,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,3.656,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.837,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.817,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,28.37,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.934,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.485,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.972,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,3.138,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.366,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.375,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.611,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.445,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.357,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,3.391,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.381,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,3.962,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.515,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.342,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,2.482,200,9281
+local,doenca variantes,/api/disease/cancer-mama-ovario-hereditario/variants,doenca,quente,3.359,200,9281
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,frio,8302.016,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,frio,9629.934,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,frio,8263.704,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,6.604,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.786,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.397,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.727,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,4.843,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,5.435,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,4.301,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,4.398,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,4.061,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.997,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.884,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.323,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.249,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,4.095,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.775,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.489,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.431,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,3.543,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,5.997,200,4507
+local,doenca variantes,/api/disease/polipose-adenomatosa-familiar/variants,doenca,quente,8.531,200,4507
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,487.518,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,406.899,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,400.998,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.918,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.43,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.446,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.069,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.115,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.888,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,4.246,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,4.175,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.475,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.512,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.15,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.187,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,8.887,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.699,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.259,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,4.041,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.124,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,3.626,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,4.39,200,2478
+local,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,4.415,200,2478
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,435.399,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,446.624,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,382.671,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.733,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.994,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.147,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.634,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.157,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.477,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.052,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.135,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.157,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.271,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,4.058,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.611,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.991,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.024,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.907,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.989,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.569,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.933,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.677,200,2388
+local,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,3.441,200,2388
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,frio,432.732,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,frio,975.123,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,frio,448.571,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.09,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.257,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.228,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.158,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.233,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.341,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.267,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.967,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.134,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.052,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.598,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.46,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,3.278,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.479,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.612,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.581,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.305,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.0,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.606,200,2153
+local,painel,/api/panel/cardiomiopatia-hipertrofica,painel,quente,4.093,200,2153
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,frio,478.805,200,1500
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,frio,600.115,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,frio,544.645,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,472.498,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,488.617,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,641.292,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,615.526,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,535.953,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,572.83,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,469.744,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,475.72,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,1510.899,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,441.802,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,440.567,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,457.452,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,457.748,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,450.394,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,459.754,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,451.391,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,509.375,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,444.881,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,444.233,200,1440
+local,painel,/api/panel/cardiomiopatia-dilatada,painel,quente,448.209,200,1440
+local,painel,/api/panel/arritmias-hereditarias,painel,frio,491.711,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,frio,536.647,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,frio,541.002,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,426.351,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,491.231,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,434.087,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,488.274,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,450.219,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,473.186,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,419.411,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,426.492,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,481.858,200,1413
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,345.999,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,3.644,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,2.776,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,2.719,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,3.139,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,3.486,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,3.06,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,3.221,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,2.745,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,2.855,200,1850
+local,painel,/api/panel/arritmias-hereditarias,painel,quente,2.919,200,1850
+local,escore,/api/pgs/PGS000004,escore,frio,8029.196,200,17869
+local,escore,/api/pgs/PGS000004,escore,frio,7419.483,200,17869
+local,escore,/api/pgs/PGS000004,escore,frio,7048.509,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,4.137,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.04,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.04,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.907,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.986,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.982,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.158,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.187,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.844,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.764,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.531,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.868,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.531,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.11,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.744,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.825,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.017,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,3.285,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.721,200,17869
+local,escore,/api/pgs/PGS000004,escore,quente,2.872,200,17869
+local,escore,/api/pgs/PGS000001,escore,frio,1883.962,200,10149
+local,escore,/api/pgs/PGS000001,escore,frio,1860.821,200,10149
+local,escore,/api/pgs/PGS000001,escore,frio,1897.085,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.458,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.552,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.288,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.479,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.596,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,2.733,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.889,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.848,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.972,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.405,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,11.815,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.552,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.902,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.566,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.918,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.253,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.134,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.292,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,4.75,200,10149
+local,escore,/api/pgs/PGS000001,escore,quente,3.772,200,10149
+local,escore,/api/pgs/PGS000013,escore,frio,1755.94,200,21014
+local,escore,/api/pgs/PGS000013,escore,frio,1756.44,200,21014
+local,escore,/api/pgs/PGS000013,escore,frio,1810.955,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,3.631,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,3.214,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.6,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.945,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.678,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,3.808,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.842,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.593,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.604,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,3.16,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.727,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.186,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.733,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.754,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,3.347,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.953,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.635,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.364,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.521,200,21014
+local,escore,/api/pgs/PGS000013,escore,quente,2.97,200,21014
+local,escore,/api/pgs/PGS000018,escore,frio,1502.747,200,20576
+local,escore,/api/pgs/PGS000018,escore,frio,1895.013,200,20576
+local,escore,/api/pgs/PGS000018,escore,frio,1558.196,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,11.078,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.09,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,2.154,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.088,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.327,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.205,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,2.482,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.595,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,4.651,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.914,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.724,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,4.174,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.756,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.906,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.779,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.346,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,4.073,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.845,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.355,200,20576
+local,escore,/api/pgs/PGS000018,escore,quente,3.896,200,20576
+local,escore,/api/pgs/PGS000021,escore,frio,754.846,200,8651
+local,escore,/api/pgs/PGS000021,escore,frio,816.691,200,8651
+local,escore,/api/pgs/PGS000021,escore,frio,775.441,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.78,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.579,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.655,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.541,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.727,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.525,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.594,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.597,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.645,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,2.184,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.571,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.489,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.511,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.471,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.524,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.746,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.513,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.55,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.538,200,8651
+local,escore,/api/pgs/PGS000021,escore,quente,1.573,200,8651
+local,sugestao,/api/suggest?q=BRC,meta,frio,277.397,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.251,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,5.764,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.804,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.101,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.063,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.112,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,3.982,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.671,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.488,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.405,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.476,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.46,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.413,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.332,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.42,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.424,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.479,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.426,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.398,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.434,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.388,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.356,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,4.04,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.398,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.354,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.341,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.409,200,501
+local,sugestao,/api/suggest?q=MLH,meta,frio,4.232,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.904,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.879,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,5.133,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.996,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.851,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.844,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.908,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.302,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.237,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.53,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.416,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.35,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.299,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.267,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.319,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.305,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.273,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.199,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.263,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.245,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.275,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.343,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.247,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,4.406,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.296,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.327,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.245,200,105
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.964,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.971,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,5.396,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.273,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.345,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.119,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.947,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.933,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.476,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.414,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.41,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.379,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.303,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.389,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,4.307,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.357,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.413,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.257,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.291,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.333,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.229,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.332,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.317,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.307,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.704,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.905,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.305,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.193,200,708
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.219,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.063,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.156,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.105,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.425,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,3.906,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.046,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,3.943,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.373,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.405,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.394,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.471,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.4,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.246,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.392,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.427,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.365,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.391,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.402,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.32,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.568,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.416,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.341,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.453,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.42,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.388,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.393,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.33,200,215
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.695,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.918,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.8,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.23,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,5.637,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.79,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.842,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.8,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.329,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.26,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.799,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.237,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.274,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.229,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.164,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.156,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,5.218,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.415,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.235,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,4.18,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.197,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.148,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.23,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.163,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.264,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.306,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.266,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.12,200,210
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.046,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.96,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.882,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.954,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.956,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.442,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.879,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.27,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.935,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.366,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.213,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.332,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.243,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.241,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.268,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.25,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.315,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.234,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.188,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.131,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.2,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.233,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.231,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.201,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.16,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.202,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.168,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.231,200,546
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.973,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.916,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.038,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.86,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,6.194,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.103,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.973,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,5.737,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.005,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.99,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.769,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.286,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.796,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.023,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.578,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.665,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,7.121,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,8.033,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.169,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.568,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.536,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.824,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.238,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.699,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,5.477,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.547,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,6.216,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.863,200,619
+local,sugestao,/api/suggest?q=VHL,meta,frio,7.531,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,6.363,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,7.699,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,7.436,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,4.101,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.82,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.928,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.87,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.353,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.367,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.209,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.264,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.375,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.289,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.264,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.417,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.243,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.164,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.156,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.267,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.183,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.292,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,4.254,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.201,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.182,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.398,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.255,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.273,200,263
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.866,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,5.364,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,4.124,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.906,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,5.386,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.856,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,5.756,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.909,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.384,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,4.229,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.193,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.17,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.353,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.193,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.691,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.646,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.322,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.213,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.16,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.183,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.227,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.312,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.204,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.197,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.214,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.2,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.205,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.165,200,377
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.897,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.924,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,4.333,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,6.517,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,5.496,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,5.912,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,7.064,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,7.107,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,6.128,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.275,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.073,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.131,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.382,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.583,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.118,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,8.065,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.075,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,4.763,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,6.312,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,4.595,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.438,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.901,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,6.562,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.212,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,4.896,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,4.973,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,6.761,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,6.74,200,779
+local,catalogo de doencas,/api/disease,listagem,frio,7.266,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,3.5,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,4.452,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,3.523,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,3.68,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,4.409,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,4.333,200,8759
+local,catalogo de doencas,/api/disease,listagem,frio,4.056,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.816,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.508,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.49,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.71,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,3.362,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,3.397,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,3.129,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.557,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.591,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.764,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.478,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.222,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.199,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.752,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,3.222,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.756,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.266,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.462,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.887,200,8759
+local,catalogo de doencas,/api/disease,listagem,quente,2.735,200,8759
+local,estatistica de doencas,/api/disease/stats,listagem,frio,9.858,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,8.809,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,9.313,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,8.703,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,9.954,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,7.292,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,9.347,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,frio,8.039,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.57,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,6.236,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.154,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,6.998,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.186,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.855,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,6.784,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,5.847,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,7.11,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.481,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,7.574,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.428,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,8.658,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,6.043,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.778,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,5.558,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.077,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,5.583,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,7.264,200,1611
+local,estatistica de doencas,/api/disease/stats,listagem,quente,4.673,200,1611
+local,catalogo de paineis,/api/panel,listagem,frio,4.706,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,4.371,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,5.7,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,2.144,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,1.956,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,1.97,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,1.977,200,11794
+local,catalogo de paineis,/api/panel,listagem,frio,2.364,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.502,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.401,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.415,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.355,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.362,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.38,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.362,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.414,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.278,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.285,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.295,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.298,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,2.291,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.288,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.289,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.207,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.33,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.226,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.321,200,11794
+local,catalogo de paineis,/api/panel,listagem,quente,1.408,200,11794
+local,estatistica de paineis,/api/panel/stats,listagem,frio,5.535,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,3.255,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.708,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.635,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.782,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.63,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.592,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,frio,2.632,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.215,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.039,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.083,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.05,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.929,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.013,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.0,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.933,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.919,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.935,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.053,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.924,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.0,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,2.077,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.905,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.942,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.954,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.933,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.966,200,1060
+local,estatistica de paineis,/api/panel/stats,listagem,quente,1.943,200,1060
+local,catalogo de escores,/api/pgs,listagem,frio,15.832,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,4.135,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,5.825,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,4.865,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,5.765,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,7.666,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,5.146,200,7065
+local,catalogo de escores,/api/pgs,listagem,frio,5.657,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.134,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,3.559,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.755,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.999,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.358,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,6.133,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,6.044,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.084,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.489,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.947,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.989,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.21,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.49,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.979,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,5.005,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.107,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.65,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.905,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.565,200,7065
+local,catalogo de escores,/api/pgs,listagem,quente,4.166,200,7065
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,4.131,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.369,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.586,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.533,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.483,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,4.238,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.944,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,frio,3.567,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.749,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.493,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.533,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.477,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.406,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.613,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.915,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,3.065,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.684,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.3,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.236,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.143,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.0,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.094,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.435,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.459,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.645,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.618,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.544,200,1334
+local,raro x poligenico,/api/pgs/interplay,listagem,quente,2.423,200,1334
+local,fontes,/api/sources,meta,frio,221.418,200,8320
+local,fontes,/api/sources,meta,frio,1572.688,200,8320
+local,fontes,/api/sources,meta,frio,181.29,200,8320
+local,fontes,/api/sources,meta,frio,320.151,200,8320
+local,fontes,/api/sources,meta,frio,225.311,200,8320
+local,fontes,/api/sources,meta,frio,195.071,200,8320
+local,fontes,/api/sources,meta,frio,241.324,200,8320
+local,fontes,/api/sources,meta,frio,192.48,200,8320
+local,fontes,/api/sources,meta,quente,154.378,200,8320
+local,fontes,/api/sources,meta,quente,154.754,200,8320
+local,fontes,/api/sources,meta,quente,177.701,200,8320
+local,fontes,/api/sources,meta,quente,169.694,200,8320
+local,fontes,/api/sources,meta,quente,160.417,200,8320
+local,fontes,/api/sources,meta,quente,172.941,200,8320
+local,fontes,/api/sources,meta,quente,157.95,200,8320
+local,fontes,/api/sources,meta,quente,151.529,200,8320
+local,fontes,/api/sources,meta,quente,168.942,200,8320
+local,fontes,/api/sources,meta,quente,162.43,200,8320
+local,fontes,/api/sources,meta,quente,170.067,200,8320
+local,fontes,/api/sources,meta,quente,172.357,200,8320
+local,fontes,/api/sources,meta,quente,186.911,200,8320
+local,fontes,/api/sources,meta,quente,181.48,200,8320
+local,fontes,/api/sources,meta,quente,188.066,200,8320
+local,fontes,/api/sources,meta,quente,167.415,200,8320
+local,fontes,/api/sources,meta,quente,194.608,200,8320
+local,fontes,/api/sources,meta,quente,162.759,200,8320
+local,fontes,/api/sources,meta,quente,167.161,200,8320
+local,fontes,/api/sources,meta,quente,163.458,200,8320
+local,saude das fontes,/api/health/sources,meta,frio,1472.247,200,782
+local,saude das fontes,/api/health/sources,meta,frio,4.239,200,782
+local,saude das fontes,/api/health/sources,meta,frio,4.706,200,782
+local,saude das fontes,/api/health/sources,meta,frio,2.15,200,782
+local,saude das fontes,/api/health/sources,meta,frio,2.151,200,782
+local,saude das fontes,/api/health/sources,meta,frio,2.069,200,782
+local,saude das fontes,/api/health/sources,meta,frio,2.075,200,782
+local,saude das fontes,/api/health/sources,meta,frio,2.143,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.626,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.433,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.383,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.431,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.417,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.371,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.533,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.401,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.348,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.409,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.375,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.54,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.283,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.662,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.381,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.336,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.333,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.316,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.422,200,782
+local,saude das fontes,/api/health/sources,meta,quente,1.668,200,782
+local,saude das rotas,/api/health/endpoints,meta,frio,9420.704,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,3.033,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,3.995,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,2.297,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,6.558,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,2.118,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,2.141,200,3112
+local,saude das rotas,/api/health/endpoints,meta,frio,2.156,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.602,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.516,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.545,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.562,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.49,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.425,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.554,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.475,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.548,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.505,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.516,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.443,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.469,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.415,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.455,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.381,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.386,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.375,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.43,200,3112
+local,saude das rotas,/api/health/endpoints,meta,quente,1.456,200,3112

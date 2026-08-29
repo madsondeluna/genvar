@@ -1,0 +1,6 @@
+rotulo,gene,ms_com_frio,ms_sem_apos_com,ms_sem_quente,chaves_apos_com,chaves_novas_do_sem,bytes_com,bytes_sem,serviu_do_cache_de_com
+local,MLH1,6531.45,3256.84,1.75,1,1,163888,6192,False
+local,HBB,4523.77,2636.72,1.64,1,1,147504,1584,False
+local,MSH2,12562.79,3381.52,1.81,1,1,163888,8240,False
+local,VHL,5644.11,2239.46,1.67,1,1,147504,2096,False
+local,LDLR,5541.62,2895.7,1.72,1,1,147504,5168,False

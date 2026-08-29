@@ -1,0 +1,60 @@
+rotulo,familia,caminho,campos,preenchidos,completude_pct,vazios
+local,gene,/api/gene/MLH1,33,33,100.0,
+local,gene,/api/gene/HBB,33,33,100.0,
+local,gene,/api/gene/MSH2,33,33,100.0,
+local,gene,/api/gene/VHL,33,33,100.0,
+local,gene,/api/gene/LDLR,33,33,100.0,
+local,gene,/api/gene/RB1,33,33,100.0,
+local,gene,/api/gene/BRCA1,33,33,100.0,
+local,gene,/api/gene/TP53,33,33,100.0,
+local,gene,/api/gene/CFTR,33,33,100.0,
+local,gene,/api/gene/PAH,33,33,100.0,
+local,gene fenotipos,/api/gene/MLH1/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/HBB/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/MSH2/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/VHL/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/LDLR/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/RB1/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/BRCA1/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/TP53/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/CFTR/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/PAH/phenotypes,6,6,100.0,
+local,variante,/api/variant/rs334,49,35,71.4,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;polyphen_prediction;polyphen_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs1800562,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs6025,49,27,55.1,abraom_af;cosmic_ids;dann_score;dbscsnv_ada;dbscsnv_rf;exac_af;fathmm_pred;fathmm_score;gerp_rs;interpro_domains;metalr_pred;metalr_score;metasvm_pred;metasvm_score;mutpred_score;phastcons_score;phylop_score;primateai_pred;primateai_score;revel_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs1799853,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs429358,49,35,71.4,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;polyphen_prediction;polyphen_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs1801133,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs1042522,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs5030858,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs28929474,49,37,75.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;mutpred_score;phastcons_score;phylop_score;spliceai_max;thousand_genomes_af
+local,variante,/api/variant/rs121913529,49,36,73.5,abraom_af;cosmic_ids;dbscsnv_ada;dbscsnv_rf;exac_af;gerp_rs;interpro_domains;phastcons_score;phylop_score;polyphen_prediction;polyphen_score;spliceai_max;thousand_genomes_af
+local,doenca,/api/disease/anemia-falciforme,23,23,100.0,
+local,doenca,/api/disease/talassemia-beta,18,13,72.2,example_id;example_kind;newborn;prevalence_br;sus
+local,doenca,/api/disease/sindrome-de-lynch,18,15,83.3,newborn;prevalence_br;sus
+local,doenca,/api/disease/cancer-mama-ovario-hereditario,18,13,72.2,example_id;example_kind;newborn;prevalence_br;sus
+local,doenca,/api/disease/polipose-adenomatosa-familiar,18,13,72.2,example_id;example_kind;newborn;prevalence_br;sus
+local,doenca,/api/disease/sindrome-de-li-fraumeni,18,13,72.2,example_id;example_kind;newborn;prevalence_br;sus
+local,doenca,/api/disease/von-hippel-lindau,18,15,83.3,newborn;prevalence_br;sus
+local,doenca,/api/disease/neurofibromatose-tipo-1,18,13,72.2,example_id;example_kind;newborn;prevalence_br;sus
+local,doenca,/api/disease/hipercolesterolemia-familiar,22,18,81.8,newborn;prevalence_br;sus.pcdt_name;sus.pcdt_url
+local,doenca,/api/disease/hemocromatose-hereditaria,22,18,81.8,newborn;prevalence_br;sus.pcdt_name;sus.pcdt_url
+local,painel,/api/panel/cancer-mama-ovario-hereditario,11,10,90.9,digenic
+local,painel,/api/panel/cancer-colorretal-hereditario,11,11,100.0,
+local,painel,/api/panel/cardiomiopatia-hipertrofica,11,11,100.0,
+local,painel,/api/panel/cardiomiopatia-dilatada,11,10,90.9,digenic
+local,painel,/api/panel/arritmias-hereditarias,11,11,100.0,
+local,painel,/api/panel/hipercolesterolemia-familiar,11,11,100.0,
+local,painel,/api/panel/surdez-nao-sindromica,11,11,100.0,
+local,painel,/api/panel/retinopatias-hereditarias,11,11,100.0,
+local,painel,/api/panel/epilepsias-geneticas,11,10,90.9,digenic
+local,escore,/api/pgs/PGS000004,30,29,96.7,weight_type
+local,escore,/api/pgs/PGS000001,30,27,90.0,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
+local,escore,/api/pgs/PGS000013,35,34,97.1,weight_type
+local,escore,/api/pgs/PGS000018,36,35,97.2,weight_type
+local,escore,/api/pgs/PGS000021,30,29,96.7,weight_type
+local,escore,/api/pgs/PGS000027,32,31,96.9,weight_type
+local,escore,/api/pgs/PGS000034,32,29,90.6,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
+local,escore,/api/pgs/PGS000055,31,28,90.3,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
+local,escore,/api/pgs/PGS000002,30,27,90.0,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
+local,escore,/api/pgs/PGS000003,30,27,90.0,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
