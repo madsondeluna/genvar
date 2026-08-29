@@ -101,5 +101,10 @@ def rotas(n=None):
         ("fontes", "/api/sources", "meta"),
         ("saude das fontes", "/api/health/sources", "meta"),
         ("saude das rotas", "/api/health/endpoints", "meta"),
+        # As duas de vida. Nao respondem dado nenhum e por isso e tentador
+        # deixa-las de fora; sao justamente as que um balanceador consulta a cada
+        # poucos segundos, e o piso de latencia delas e o piso da aplicacao.
+        ("raiz", "/", "meta"),
+        ("vida", "/health", "meta"),
     ]
     return r

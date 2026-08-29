@@ -110,8 +110,8 @@ def _latencia(d, num):
                   "quente, em escala logarítmica. A escala é logarítmica porque a razão "
                   "entre as duas condições passa de três ordens de grandeza; em escala "
                   "linear a barra do cache quente seria invisível.")
-    rede = dl[dl.de_rede]
-    local = dl[~dl.de_rede]
+    rede = dl[dl.de_rede == True]  # noqa: E712
+    local = dl[dl.de_rede == False]  # noqa: E712
     d.txt(
         f"A {g1} separa as rotas em dois regimes que a média esconderia. As rotas que "
         f"consultam bases externas quando o cache erra respondem em "
@@ -207,6 +207,35 @@ def _cache(d, num):
                 f"{num(tot['sem cache'] / tot['com cache'], 1)}. A razão é menor que o "
                 f"ganho por consulta isolada, e tem de ser: as consultas distintas pagam "
                 f"o preço cheio nas duas condições, e o cache só age na repetição.")
+
+    dttl = d.csv("cache_ttl.csv")
+    if dttl is not None and not dttl.empty:
+        g = d.figura("fig26_cache_ttl.png",
+                     "Prazo restante de cada tipo de chave no momento da leitura, "
+                     "logo após ser escrita. A linha tracejada marca o TTL declarado "
+                     "de uma hora. Verde quando todas as chaves daquele tipo têm "
+                     "prazo.")
+        sem = int((~dttl.tem_prazo).sum())
+        d.txt(
+            f"A {g} responde a única pergunta sobre expiração que a medição fria não "
+            f"responde. Esperar a hora do TTL não acrescentaria informação: uma chave "
+            f"expirada é indistinguível de uma chave ausente, que é o que a medição "
+            f"fria já exercita. O que é distinguível, e não aparece em nenhuma medida "
+            f"de tempo, é uma chave escrita **sem** prazo: ela nunca expira, nunca "
+            f"deixa a resposta errada, nunca aparece como lentidão, e vai ocupando "
+            f"memória até a instância encher. É o único defeito de cache que não se "
+            f"manifesta como desempenho, e por isso o único que precisa ser procurado "
+            f"de propósito.")
+        if sem == 0:
+            d.txt(
+                f"Das {len(dttl)} chaves escritas pelas rotas medidas, "
+                f"{len(dttl)} têm prazo, com mediana de {num(dttl.ttl_s.median(), 0)} "
+                f"segundos contra os 3.600 declarados. A diferença é o tempo decorrido "
+                f"entre a escrita e a leitura do prazo. Nenhum tipo de chave vaza.")
+        else:
+            d.txt(
+                f"**{sem} das {len(dttl)} chaves não têm prazo** e nunca expiram. "
+                f"São elas: {', '.join(dttl[~dttl.tem_prazo].chave.head(6))}.")
 
     if dr is not None and not dr.empty:
         g = d.figura("fig08_cache_recorte.png",

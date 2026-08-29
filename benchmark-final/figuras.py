@@ -762,6 +762,28 @@ def fig_teto_memoria(base, saida):
         "fig25_teto_memoria.png"
 
 
+def fig_cache_ttl(base, saida):
+    """Toda chave escrita recebeu prazo de expiracao?"""
+    d = _le(base, "cache_ttl.csv")
+    if d is None or d.empty:
+        return None
+    g = d.groupby("prefixo").agg(chaves=("chave", "count"),
+                                 com_prazo=("tem_prazo", "sum"),
+                                 ttl=("ttl_s", "median")).sort_values("ttl")
+    fig, ax = plt.subplots(figsize=(7.2, max(2.8, 0.42 * len(g))))
+    cores = [estilo.BOM if c == n else estilo.RUIM
+             for c, n in zip(g.com_prazo, g.chaves)]
+    barras = ax.barh(g.index, g.ttl, color=cores, height=0.62)
+    ax.axvline(3600, color=estilo.NEUTRA, linestyle="--", linewidth=1.1)
+    ax.text(3610, len(g) - 0.6, "TTL declarado:\numa hora", fontsize=8,
+            color=estilo.NEUTRA)
+    ax.set_xlabel("Prazo restante da chave no momento da leitura, em segundos")
+    ax.set_title("Prazo de Expiração por Tipo de Chave")
+    ax.set_xlim(0, 4200)
+    estilo.rotular_barras_h(ax, barras, "{:.0f} s", folga=0.01)
+    return estilo.salvar(fig, Path(saida) / "fig26_cache_ttl.png"), "fig26_cache_ttl.png"
+
+
 FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
            fig_requisicoes, fig_requisicoes_host, fig_cache_memoria,
            fig_cache_sessao, fig_cache_recorte, fig_concorrencia,
@@ -769,7 +791,8 @@ FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
            fig_custo_por_escala, fig_saidas, fig_funcoes_piso, fig_lote,
            fig_reprodutibilidade, fig_acmg, fig_catalogo,
            fig_ambiente_latencia, fig_ambiente_carga,
-           fig_versoes, fig_versoes_superficie, fig_teto_memoria]
+           fig_versoes, fig_versoes_superficie, fig_teto_memoria,
+           fig_cache_ttl]
 
 
 def main():

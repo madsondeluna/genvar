@@ -1,0 +1,9 @@
+rotulo,chave,bytes,ttl_s,tem_prazo,prefixo
+local,gene:v6:HBB:sem,1584,3468,True,gene
+local,gene:v6:MLH1:com,163888,3462,True,gene
+local,genevars:v1:TP53,147504,3476,True,genevars
+local,variant:v3:rs334,3632,3587,True,variant
+local,disease:v1:anemia-falciforme,1600,3587,True,disease
+local,diseasevars:v1:talassemia-beta,6208,3592,True,diseasevars
+local,panel:v1:epilepsias-geneticas,1856,3593,True,panel
+local,pgs:v3:PGS000004,20528,3600,True,pgs

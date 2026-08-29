@@ -26,11 +26,14 @@ Quatro medicoes, porque "o cache acelera" e uma frase, nao um resultado.
      pratica, com semente fixa para ser reproduzivel, e mede o tempo total e a
      taxa de acerto com o cache ligado e com ele desligado a cada consulta.
 
-O QUE ESTA SUITE NAO MEDE: expiracao por TTL. O TTL e de uma hora e esperar por
-ele multiplicaria a duracao da corrida sem acrescentar informacao, porque uma
-chave expirada e indistinguivel de uma chave ausente, que e o que a medicao fria
-ja exercita. A limitacao esta declarada em vez de contornada com um TTL de
-brinquedo, que mediria outra configuracao que nao a de producao.
+  E. O TTL ESTA ONDE DEVERIA. Esperar uma hora pela expiracao nao acrescentaria
+     informacao: uma chave expirada e indistinguivel de uma chave ausente, que e
+     o que a medicao fria ja exercita. O que NAO e indistinguivel, e por isso e
+     medido aqui, e se toda chave escrita recebeu prazo. Uma chave sem prazo
+     nunca expira: ela nao aparece em nenhuma medicao de latencia, nao devolve
+     dado errado, e vai ocupando memoria ate a instancia encher. E o unico
+     defeito de cache que nao se manifesta como lentidao, e por isso o unico que
+     precisa ser procurado de proposito.
 
 Uso:
   python3 benchmark-final/servidor/cache.py --url http://localhost:8000 --rotulo local
@@ -217,6 +220,43 @@ async def main():
                           f"{acertos}/{N_SESSAO} acertos previstos, "
                           f"{unicos} consultas distintas")
     comum.grava_csv(saida / "cache_sessao.csv", sessao)
+
+    # --- E: toda chave escrita tem prazo? --------------------------------------
+    console.print("\n  [dim]E: prazo de expiracao das chaves[/dim]")
+    limpa(r)
+    async with httpx.AsyncClient() as cliente:
+        for familia, caminhos in casos:
+            await _get(cliente, args.url, caminhos[0])
+    prazos = []
+    for chave, bytes_ in chaves_com_tamanho(r).items():
+        ttl = r.ttl(chave)
+        prazos.append({
+            "rotulo": args.rotulo, "chave": chave, "bytes": bytes_,
+            "ttl_s": ttl,
+            # -1 e a resposta do Redis para "existe e nunca expira"; -2 e "nao
+            # existe". A primeira e o vazamento que esta medicao procura.
+            "tem_prazo": ttl is not None and ttl > 0,
+            "prefixo": chave.split(":")[0],
+        })
+    comum.grava_csv(saida / "cache_ttl.csv", prazos)
+    sem_prazo = [p for p in prazos if not p["tem_prazo"]]
+    t3 = Table(title=f"Prazo das chaves ({args.rotulo})")
+    for c in ("Prefixo", "Chaves", "Com prazo", "TTL mediano"):
+        t3.add_column(c, justify="left" if c == "Prefixo" else "right")
+    for pref in sorted({p["prefixo"] for p in prazos}):
+        ls = [p for p in prazos if p["prefixo"] == pref]
+        ttls = sorted(p["ttl_s"] for p in ls if p["tem_prazo"])
+        t3.add_row(pref, str(len(ls)),
+                   str(sum(1 for p in ls if p["tem_prazo"])),
+                   f"{ttls[len(ttls) // 2]} s" if ttls else "—")
+    console.print(t3)
+    if sem_prazo:
+        console.print(f"  [red]{len(sem_prazo)} chaves SEM prazo: nunca expiram e "
+                      f"ocupam memoria para sempre[/red]")
+        for p in sem_prazo[:5]:
+            console.print(f"    {p['chave']}")
+    else:
+        console.print(f"  [green]as {len(prazos)} chaves escritas tem prazo[/green]")
 
     t = Table(title=f"Sessao de {N_SESSAO} consultas, {unicos} distintas ({args.rotulo})")
     for c in ("Modo", "Tempo total", "Mediana", "p95"):

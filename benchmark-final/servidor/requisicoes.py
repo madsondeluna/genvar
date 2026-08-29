@@ -92,6 +92,11 @@ def _casos():
         ("estatistica de paineis", ["/api/panel/stats"]),
         ("saude das fontes", ["/api/health/sources"]),
         ("saude das rotas", ["/api/health/endpoints"]),
+        # As duas de vida. Nao consultam nada, e e justamente esse zero que
+        # precisa ser medido: sem ele elas ficam sem classificacao e o resumo
+        # as marca como indeterminadas.
+        ("raiz", ["/"]),
+        ("vida", ["/health"]),
     ]
 
 

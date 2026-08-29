@@ -1566,3 +1566,423 @@ local,saude das rotas,/api/health/endpoints,meta,quente,1.386,200,3112
 local,saude das rotas,/api/health/endpoints,meta,quente,1.375,200,3112
 local,saude das rotas,/api/health/endpoints,meta,quente,1.43,200,3112
 local,saude das rotas,/api/health/endpoints,meta,quente,1.456,200,3112
+local,sugestao,/api/suggest?q=BRC,meta,frio,180.201,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.075,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,6.611,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,4.331,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,5.518,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,5.115,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,5.139,200,501
+local,sugestao,/api/suggest?q=BRC,meta,frio,3.992,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.775,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,4.488,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.436,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.421,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.766,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.769,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.28,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.257,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.351,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.808,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.628,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.448,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.639,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.591,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.996,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.532,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.529,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.504,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.598,200,501
+local,sugestao,/api/suggest?q=BRC,meta,quente,3.489,200,501
+local,sugestao,/api/suggest?q=MLH,meta,frio,4.01,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.947,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,4.05,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,4.021,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,5.308,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,4.002,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.988,200,105
+local,sugestao,/api/suggest?q=MLH,meta,frio,3.973,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.477,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.323,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,4.293,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.247,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.424,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.294,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.262,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.593,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.303,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.384,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.745,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.167,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.268,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.251,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.316,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.238,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.226,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.241,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.177,200,105
+local,sugestao,/api/suggest?q=MLH,meta,quente,3.19,200,105
+local,sugestao,/api/suggest?q=TP5,meta,frio,13.167,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.101,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.017,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.842,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.92,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,4.009,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.915,200,708
+local,sugestao,/api/suggest?q=TP5,meta,frio,3.949,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.389,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.285,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.353,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.384,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.526,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.314,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.277,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,8.201,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.277,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.308,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,4.085,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.398,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.277,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,4.666,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,4.058,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.36,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.297,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.277,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.313,200,708
+local,sugestao,/api/suggest?q=TP5,meta,quente,3.285,200,708
+local,sugestao,/api/suggest?q=CFT,meta,frio,5.071,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,5.587,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.116,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.101,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,3.894,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.079,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,6.27,200,215
+local,sugestao,/api/suggest?q=CFT,meta,frio,4.187,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.223,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,6.164,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.949,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,6.714,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.731,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.913,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,5.51,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.299,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.787,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,5.142,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,6.384,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,5.073,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.455,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.926,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.792,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.816,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.572,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,3.479,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.761,200,215
+local,sugestao,/api/suggest?q=CFT,meta,quente,4.358,200,215
+local,sugestao,/api/suggest?q=HBB,meta,frio,5.948,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.061,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.149,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.064,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.958,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.018,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,3.986,200,210
+local,sugestao,/api/suggest?q=HBB,meta,frio,4.015,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.527,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.282,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.213,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,4.201,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.221,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.67,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.167,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.142,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.471,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.158,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.222,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.171,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.661,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.167,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.184,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.65,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.173,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.085,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.184,200,210
+local,sugestao,/api/suggest?q=HBB,meta,quente,3.051,200,210
+local,sugestao,/api/suggest?q=LDL,meta,frio,6.262,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.03,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,3.985,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.079,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,5.567,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.187,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.128,200,546
+local,sugestao,/api/suggest?q=LDL,meta,frio,4.019,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.827,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.439,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.392,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.341,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.365,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.309,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.426,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.39,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.278,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.325,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.359,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.315,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.315,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.248,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.356,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.324,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.314,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.624,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.319,200,546
+local,sugestao,/api/suggest?q=LDL,meta,quente,3.342,200,546
+local,sugestao,/api/suggest?q=MSH,meta,frio,7.06,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.884,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.006,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.965,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.001,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,4.039,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.982,200,619
+local,sugestao,/api/suggest?q=MSH,meta,frio,3.968,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.428,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.265,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.329,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.284,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.319,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.296,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.308,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,4.666,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.243,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.217,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.254,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.226,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.182,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.206,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.384,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.223,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.222,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.166,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.152,200,619
+local,sugestao,/api/suggest?q=MSH,meta,quente,3.25,200,619
+local,sugestao,/api/suggest?q=VHL,meta,frio,5.151,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.936,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.932,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,5.547,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.858,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,4.113,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,3.841,200,263
+local,sugestao,/api/suggest?q=VHL,meta,frio,4.088,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.577,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.435,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.41,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.375,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.349,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.331,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.441,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.366,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.317,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.294,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.315,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.318,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.331,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.285,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.347,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.291,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.329,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.364,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.332,200,263
+local,sugestao,/api/suggest?q=VHL,meta,quente,3.297,200,263
+local,sugestao,/api/suggest?q=PAH,meta,frio,5.4,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.94,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.859,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.717,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.916,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.907,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.963,200,377
+local,sugestao,/api/suggest?q=PAH,meta,frio,3.884,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.576,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.488,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.348,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.294,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.395,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.402,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.336,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.361,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.311,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.349,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.293,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.328,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.275,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.234,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.254,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.302,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.258,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.309,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.404,200,377
+local,sugestao,/api/suggest?q=PAH,meta,quente,3.421,200,377
+local,sugestao,/api/suggest?q=RB1,meta,frio,6.399,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,4.292,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,4.283,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.928,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.995,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.891,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,3.971,200,779
+local,sugestao,/api/suggest?q=RB1,meta,frio,4.085,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.495,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.482,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.359,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.293,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.269,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.314,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.712,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.443,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.334,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.348,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.412,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.981,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,5.281,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,4.676,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.57,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.503,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.511,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.412,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.395,200,779
+local,sugestao,/api/suggest?q=RB1,meta,quente,3.427,200,779
+local,fontes,/api/sources,meta,frio,205.537,200,8320
+local,fontes,/api/sources,meta,frio,376.674,200,8320
+local,fontes,/api/sources,meta,frio,110.796,200,8320
+local,fontes,/api/sources,meta,frio,266.218,200,8320
+local,fontes,/api/sources,meta,frio,116.241,200,8320
+local,fontes,/api/sources,meta,frio,109.679,200,8320
+local,fontes,/api/sources,meta,frio,110.367,200,8320
+local,fontes,/api/sources,meta,frio,123.984,200,8320
+local,fontes,/api/sources,meta,quente,108.108,200,8320
+local,fontes,/api/sources,meta,quente,110.219,200,8320
+local,fontes,/api/sources,meta,quente,116.392,200,8320
+local,fontes,/api/sources,meta,quente,126.998,200,8320
+local,fontes,/api/sources,meta,quente,132.659,200,8320
+local,fontes,/api/sources,meta,quente,136.218,200,8320
+local,fontes,/api/sources,meta,quente,117.916,200,8320
+local,fontes,/api/sources,meta,quente,121.655,200,8320
+local,fontes,/api/sources,meta,quente,131.852,200,8320
+local,fontes,/api/sources,meta,quente,116.286,200,8320
+local,fontes,/api/sources,meta,quente,115.862,200,8320
+local,fontes,/api/sources,meta,quente,121.322,200,8320
+local,fontes,/api/sources,meta,quente,137.228,200,8320
+local,fontes,/api/sources,meta,quente,132.349,200,8320
+local,fontes,/api/sources,meta,quente,114.65,200,8320
+local,fontes,/api/sources,meta,quente,119.602,200,8320
+local,fontes,/api/sources,meta,quente,132.461,200,8320
+local,fontes,/api/sources,meta,quente,114.935,200,8320
+local,fontes,/api/sources,meta,quente,116.188,200,8320
+local,fontes,/api/sources,meta,quente,121.253,200,8320
+local,saude das fontes,/api/health/sources,meta,frio,4967.484,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.321,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.674,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.147,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.199,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.067,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.008,200,784
+local,saude das fontes,/api/health/sources,meta,frio,2.273,200,784
+local,saude das fontes,/api/health/sources,meta,quente,2.92,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.743,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.457,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.486,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.538,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.375,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.559,200,784
+local,saude das fontes,/api/health/sources,meta,quente,2.635,200,784
+local,saude das fontes,/api/health/sources,meta,quente,2.4,200,784
+local,saude das fontes,/api/health/sources,meta,quente,2.554,200,784
+local,saude das fontes,/api/health/sources,meta,quente,3.57,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.712,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.465,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.524,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.629,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.374,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.667,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.423,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.341,200,784
+local,saude das fontes,/api/health/sources,meta,quente,1.385,200,784
+local,saude das rotas,/api/health/endpoints,meta,frio,30028.167,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,3.756,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,2.073,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,3.559,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,2.124,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,2.181,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,2.171,200,3320
+local,saude das rotas,/api/health/endpoints,meta,frio,2.149,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.506,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.578,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.486,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.488,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.437,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.401,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.382,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.375,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.532,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.377,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.401,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.399,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.405,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.349,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.371,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.372,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.395,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.409,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.356,200,3320
+local,saude das rotas,/api/health/endpoints,meta,quente,1.379,200,3320
+local,raiz,/,meta,frio,1.779,200,56
+local,raiz,/,meta,frio,1.876,200,56
+local,raiz,/,meta,frio,1.776,200,56
+local,raiz,/,meta,frio,1.801,200,56
+local,raiz,/,meta,frio,2.538,200,56
+local,raiz,/,meta,frio,1.872,200,56
+local,raiz,/,meta,frio,1.806,200,56
+local,raiz,/,meta,frio,3.162,200,56
+local,raiz,/,meta,quente,2.563,200,56
+local,raiz,/,meta,quente,2.48,200,56
+local,raiz,/,meta,quente,2.489,200,56
+local,raiz,/,meta,quente,2.112,200,56
+local,raiz,/,meta,quente,3.195,200,56
+local,raiz,/,meta,quente,2.233,200,56
+local,raiz,/,meta,quente,2.338,200,56
+local,raiz,/,meta,quente,2.417,200,56
+local,raiz,/,meta,quente,2.587,200,56
+local,raiz,/,meta,quente,2.222,200,56
+local,raiz,/,meta,quente,2.136,200,56
+local,raiz,/,meta,quente,2.314,200,56
+local,raiz,/,meta,quente,2.397,200,56
+local,raiz,/,meta,quente,2.126,200,56
+local,raiz,/,meta,quente,2.446,200,56
+local,raiz,/,meta,quente,2.198,200,56
+local,raiz,/,meta,quente,2.322,200,56
+local,raiz,/,meta,quente,2.176,200,56
+local,raiz,/,meta,quente,2.227,200,56
+local,raiz,/,meta,quente,2.278,200,56
+local,vida,/health,meta,frio,3.42,200,15
+local,vida,/health,meta,frio,1.944,200,15
+local,vida,/health,meta,frio,1.97,200,15
+local,vida,/health,meta,frio,2.036,200,15
+local,vida,/health,meta,frio,1.893,200,15
+local,vida,/health,meta,frio,6.616,200,15
+local,vida,/health,meta,frio,1.828,200,15
+local,vida,/health,meta,frio,1.938,200,15
+local,vida,/health,meta,quente,1.477,200,15
+local,vida,/health,meta,quente,1.26,200,15
+local,vida,/health,meta,quente,1.243,200,15
+local,vida,/health,meta,quente,1.138,200,15
+local,vida,/health,meta,quente,1.175,200,15
+local,vida,/health,meta,quente,1.158,200,15
+local,vida,/health,meta,quente,5.911,200,15
+local,vida,/health,meta,quente,1.219,200,15
+local,vida,/health,meta,quente,1.14,200,15
+local,vida,/health,meta,quente,1.078,200,15
+local,vida,/health,meta,quente,1.084,200,15
+local,vida,/health,meta,quente,1.232,200,15
+local,vida,/health,meta,quente,1.178,200,15
+local,vida,/health,meta,quente,1.155,200,15
+local,vida,/health,meta,quente,1.258,200,15
+local,vida,/health,meta,quente,1.253,200,15
+local,vida,/health,meta,quente,1.177,200,15
+local,vida,/health,meta,quente,1.185,200,15
+local,vida,/health,meta,quente,1.121,200,15
+local,vida,/health,meta,quente,1.148,200,15
