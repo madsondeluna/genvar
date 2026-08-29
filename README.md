@@ -263,7 +263,7 @@ cd backend && python -m etl.pgscatalog
 
 ## A aplicação
 
-As imagens abaixo mostram a interface em uso, capturadas da versão em produção. Cada legenda traz o endereço da tela.
+As imagens abaixo mostram a interface em uso, capturadas da versão em produção por `scripts/captura_telas.py`. Cada legenda traz o endereço da tela. São páginas inteiras, não recortes da janela: a captura é feita com `Page.captureScreenshot` e `captureBeyondViewport`, que fotografa o documento e não o viewport, então a tela de gene aparece nos seus 7.392 pixels de altura em vez de terminar no primeiro rolar. Largura de 1.440 pixels CSS, resolução dobrada, modo claro fixado na captura.
 
 
 ![Página inicial](docs/tela-inicio.png)
@@ -831,6 +831,7 @@ genvar-dashboard/
 ├── docs/                            Diagramas (Figuras 1 a 3) e capturas de tela do README.
 ├── mock-results-vcf-test/           Saídas de uma análise real: GIAB/NIST HG001 pelo pipeline inteiro.
 ├── scripts/
+│   ├── captura_telas.py             Captura as telas do README em página inteira, via CDP.
 │   ├── gera_diagramas.py            Gera os SVG das Figuras 1 e 3.
 │   ├── gera_saidas_exemplo.mjs      Roda o pipeline de VCF fora do navegador e grava mock-results-vcf-test/.
 │   ├── gera_vcf_teste.py            Gera as fixtures sintéticas de VCF.

@@ -29,6 +29,33 @@ CINZA, CINZA_B, CINZA_T = "#f5f5f5", "#666666", "#fafafa"   # etapa offline
 TINTA, RISCO = "#222222", "#555555"
 
 
+# Larguras da Helvetica, em milesimos de em. Nao e a metrica completa da fonte:
+# e o suficiente para quebrar a linha perto da largura certa. O alinhamento fino
+# fica por conta de `textLength`, que forca a largura exata e nao depende desta
+# estimativa estar perfeita.
+_L = {" ": 278, ".": 278, ",": 278, ":": 278, ";": 278, "-": 333, "(": 333,
+      ")": 333, "/": 278, "'": 191, '"': 355, "?": 556, "!": 278, "\u00b7": 333}
+for _c, _w in zip("abcdefghijklmnopqrstuvwxyz",
+                  (556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833,
+                   556, 556, 556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500)):
+    _L[_c] = _w
+for _c, _w in zip("ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                  (667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833,
+                   722, 778, 667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611)):
+    _L[_c] = _w
+for _c in "0123456789":
+    _L[_c] = 556
+# Vogal acentuada mede o mesmo que a base; sem isso toda linha em portugues sai
+# subestimada e a justificacao estica o que ja estava cheio.
+for _a, _b in zip("áàâãäéêëíîïóôõöúûüçñ", "aaaaaeeeiiiooooouuucn"):
+    _L[_a] = _L[_b]
+    _L[_a.upper()] = _L[_b.upper()]
+
+
+def _mede(txt, size):
+    return sum(_L.get(c, 500) for c in txt) * size / 1000
+
+
 class Svg:
     def __init__(self, w, h, titulo, subtitulo):
         self.w, self.h = w, h
@@ -75,6 +102,33 @@ class Svg:
         w = len(s) * size * 0.52 + 14
         self.caixa(x - w / 2, y - 12, w, 19, "#ffffff", RISCO, 9, largura=0.8)
         self.txt(x, y + 1.5, s, size, 400, "middle", "#333333")
+
+    def paragrafo(self, x, y, largura, texto, size=11, entrelinha=15, fill="#333333"):
+        """Texto quebrado na largura e justificado, menos a ultima linha.
+
+        SVG nao tem justificacao: o que existe e `textLength`, que forca a
+        largura da linha, com `lengthAdjust="spacing"` distribuindo a diferenca
+        pelos espacos em vez de esticar os glifos. Quebrar perto da largura
+        certa antes disso e o que impede o estica-lo de aparecer.
+        """
+        palavras, linhas, atual = texto.split(), [], []
+        for pal in palavras:
+            teste = " ".join(atual + [pal])
+            if atual and _mede(teste, size) > largura:
+                linhas.append(atual)
+                atual = [pal]
+            else:
+                atual.append(pal)
+        if atual:
+            linhas.append(atual)
+        for i, linha in enumerate(linhas):
+            txt = " ".join(linha)
+            ultima = i == len(linhas) - 1
+            comp = "" if ultima or len(linha) == 1 else (
+                f' textLength="{largura:g}" lengthAdjust="spacing"')
+            self.p.append(f'<text x="{x}" y="{y + i * entrelinha}" font-size="{size}" '
+                          f'fill="{fill}"{comp}>{escape(txt)}</text>')
+        return y + len(linhas) * entrelinha
 
     def legenda(self, y, itens):
         x = 64
@@ -266,15 +320,15 @@ def fluxo_vcf():
         s.seta([(bx + 78, 780), (bx + 78, 800)])
     s.p.append(f'<polyline points="64,780 916,780" fill="none" stroke="{RISCO}" stroke-width="1.6"/>')
 
-    s.caixa(64, 900, 852, 96, "#ffffff", "#b3b3b3", 8, largura=1.4)
+    s.caixa(64, 900, 852, 92, "#ffffff", "#b3b3b3", 8, largura=1.4)
     s.txt(84, 926, "O arquivo do usuário não sai do navegador", 12.5, 700)
-    for i, l in enumerate([
-        "Nenhuma etapa acima faz requisição ao backend: não há upload, não há identificador de sessão e não há",
-        "registro do que foi analisado. O que trafega são os catálogos embarcados, no sentido servidor para navegador,",
-        "e eles são os mesmos para qualquer usuário. O sha256 do arquivo de entrada aparece em todas as saídas para",
-        "que um resultado possa ser conferido contra o arquivo que o gerou, sem que o arquivo precise ser guardado.",
-    ]):
-        s.txt(84, 946 + i * 15, l, 11, 400, "start", "#333333")
+    s.paragrafo(84, 946, 812,
+                "Nenhuma etapa acima faz requisição ao backend: não há upload, não há "
+                "identificador de sessão e não há registro do que foi analisado. O que trafega "
+                "são os catálogos embarcados, no sentido servidor para navegador, e eles são os "
+                "mesmos para qualquer usuário. O sha256 do arquivo de entrada aparece em todas "
+                "as saídas para que um resultado possa ser conferido contra o arquivo que o "
+                "gerou, sem que o arquivo precise ser guardado.")
 
     s.legenda(1032, [
         ("#f5f5f5", "#666666", "Entrada do usuário"),
