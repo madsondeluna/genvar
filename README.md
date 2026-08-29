@@ -14,6 +14,30 @@
 | **Idioma da interface** | Português do Brasil (PT-BR) |
 
 
+## Versão 3.0, em desenvolvimento
+
+Esta `main` é a versão descrita nesta monografia. Existe uma versão 3.0 em
+desenvolvimento no ramo [`beta`](https://github.com/madsondeluna/genvar/tree/beta),
+que acrescenta:
+
+| Módulo | O que faz |
+|---|---|
+| Análise de VCF no navegador | Lê o arquivo do usuário localmente, sem upload, e cruza contra um catálogo do ClinVar embarcado com 4,2 milhões de variantes |
+| Classificação ACMG/AMP | Pontuação bayesiana de Tavtigian, adotada pelo ClinGen, por critério e por variante |
+| Escores poligênicos | Catálogo do PGS Catalog e a relação entre variante rara e risco poligênico |
+| Painéis de genes | Painéis do PanelApp e curados, com nível de evidência |
+| Doenças raras | Catálogo do Orphanet com genes, herança e termos HPO |
+| Triagem de coorte | Vários VCF numa passada, com resultado agregado |
+
+A 3.0 amplia a API de duas rotas para dezoito e acrescenta 41 MB de catálogos
+servidos como assets estáticos. O ramo `beta` traz também `benchmark-final/`,
+com a medição quantitativa dessa versão em 26 figuras.
+
+Ela **não** faz parte deste trabalho de conclusão: fica registrada aqui porque o
+mesmo repositório abriga as duas, e para que quem chegar por este README saiba
+que o desenvolvimento continuou. Os dois estados estão fixados em etiquetas:
+`tcc-junho-2026` para esta versão e `v3.0.0` para aquela.
+
 ## Descrição do projeto
 
 GenVar Dashboard é uma aplicação web full-stack para exploração interativa de genes e variantes genéticas humanas. A plataforma integra cinco bases públicas primárias (Ensembl, gnomAD, ClinVar, AlphaFold e UniProt) e um agregador de escores preditivos (MyVariant.info, sobre o dbNSFP) em uma interface unificada em português do Brasil, eliminando a necessidade de consultar múltiplos portais separados para obter uma visão consolidada de uma variante ou gene de interesse.
