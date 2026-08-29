@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prebuild": "node ../scripts/verifica_dados.mjs"
+    "prebuild": "node scripts/verifica_dados.mjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.8.1",

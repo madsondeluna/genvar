@@ -92,6 +92,13 @@ async def main():
     ap.add_argument("--redis", default=os.environ.get("REDIS_URL", "redis://localhost:6379"))
     ap.add_argument("--rotulo", default="local")
     ap.add_argument("--saida", default=str(RAIZ / "resultados" / "local"))
+    ap.add_argument("--alvos-rede", type=int, default=ALVOS_REDE,
+                    help="alvos por rota de rede; menor reduz a carga sobre as fontes")
+    ap.add_argument("--familias", default=None,
+                    help="mede so estas familias, separadas por virgula")
+    ap.add_argument("--anexar", action="store_true",
+                    help="acrescenta ao CSV existente em vez de sobrescrever, para a "
+                         "medicao poder ser feita em blocos")
     args = ap.parse_args()
     saida = Path(args.saida)
 
@@ -101,7 +108,9 @@ async def main():
     vistos = {}
     for nome, caminho, familia in todos:
         vistos[nome] = vistos.get(nome, 0) + 1
-        if familia in FAMILIAS_DE_REDE and vistos[nome] > ALVOS_REDE:
+        if familia in FAMILIAS_DE_REDE and vistos[nome] > args.alvos_rede:
+            continue
+        if args.familias and familia not in args.familias.split(","):
             continue
         selecao.append((nome, caminho, familia))
 
@@ -154,6 +163,13 @@ async def main():
                           f"quente {rq['mediana'] or 0:6.1f} ms   "
                           f"{'x' + str(g) if g else '—'}")
 
+    # Em blocos, o CSV bruto acumula: o resumo e sempre refeito por
+    # `recomputar.py` sobre o bruto inteiro, entao acrescentar aqui e suficiente.
+    if args.anexar and (saida / "latencia_bruto.csv").exists():
+        import csv as _csv
+        with (saida / "latencia_bruto.csv").open(encoding="utf-8") as fh:
+            antigo = list(_csv.DictReader(fh))
+        bruto = antigo + bruto
     comum.grava_csv(saida / "latencia_bruto.csv", bruto)
     comum.grava_csv(saida / "latencia.csv", resumos)
     comum.grava_json(saida / "ambiente.json", comum.ambiente(args.rotulo))
@@ -162,7 +178,11 @@ async def main():
     for c in ("Familia", "Alvos", "Frio", "Quente", "Ganho"):
         t.add_column(c, justify="left" if c == "Familia" else "right")
     for familia in dict.fromkeys(f for _, _, f in selecao):
-        ls = [r for r in resumos if r["familia"] == familia and r["frio_mediana"]]
+        # Rota que nao devolveu 200 em nenhuma repeticao entra no CSV com resumo
+        # vazio e fica FORA da tabela: ela nao tem mediana, e ordenar None com
+        # float derrubava a suite depois de os dados ja terem sido gravados.
+        ls = [r for r in resumos if r["familia"] == familia
+              and r["frio_mediana"] is not None and r["quente_mediana"] is not None]
         if not ls:
             continue
         f = sorted(r["frio_mediana"] for r in ls)[len(ls) // 2]

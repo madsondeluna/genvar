@@ -20,7 +20,7 @@ aberto. Não é dado de paciente. É sequenciamento humano real, não sintético
 | Chamador | GATK SelectVariants 2.8, chamada de 2014 |
 
 O arquivo de entrada não é versionado: mora em
-`benchmark-v2/corpus/reais/nist-usuario.vcf.gz`, que o `benchmark-v2/README.md`
+`benchmark-final/corpus/reais/nist-usuario.vcf.gz`, que o `benchmark-final/README.md`
 explica como obter.
 
 ## As saídas
@@ -61,5 +61,5 @@ NODE_OPTIONS="--max-old-space-size=8192" npx vite-node ../scripts/gera_saidas_ex
 A captura da tela sai de:
 
 ```bash
-python3 scripts/captura_telas.py --so laudo --vcf benchmark-v2/corpus/reais/nist-usuario.vcf.gz
+python3 scripts/captura_telas.py --so laudo --vcf benchmark-final/corpus/reais/nist-usuario.vcf.gz
 ```

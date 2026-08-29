@@ -17,6 +17,13 @@ distintas, e responder as duas com um numero so seria errado nas duas pontas:
   requisicoes recusadas em cada nivel de concorrencia. Verificado antes de
   medir: 10 requisicoes passam e a 11a no mesmo segundo e recusada.
 
+  CADA NIVEL DO MODO PRODUTO ESPERA A JANELA DO MINUTO ESVAZIAR. O limitador tem
+  DOIS tetos, 10 por segundo e 60 por minuto, e a primeira versao desta suite
+  encadeava os niveis sem pausa: a rajada de um nivel gastava o orcamento do
+  minuto e o nivel seguinte comecava sem saldo. O resultado dizia "recusa 100%
+  a partir de 10 simultaneas", quando o que estava esgotado era o minuto e nao a
+  concorrencia. Sem a pausa a suite mede a si mesma.
+
 FASE SEQUENCIAL, HERDADA DA 2.0. Tres taxas com cache limpo a cada lote, para
 medir o servidor no pior caso, quando toda consulta sai para a rede. E o unico
 regime em que o tempo de resposta e dominado pelas fontes publicas e nao pelo
@@ -51,6 +58,7 @@ console = Console()
 TAXAS = [("0,5 req/s", 2.0), ("1 req/s", 1.0), ("2 req/s", 0.5)]
 CONCORRENCIAS = [1, 5, 10, 20, 40, 80, 160]
 REPETICOES_CONCORRENTES = 3
+ESPERA_JANELA_S = 65
 IP_FALSO = "203.0.113.5"
 
 PREFIXOS = ("gene:", "genevars:", "genephen:", "variant:", "disease:",
@@ -105,9 +113,12 @@ async def sequencial(cliente, base, url_redis, rotulo):
             await asyncio.sleep(pausa)
         decorrido = time.perf_counter() - t0
         rs = comum.resumo(tempos)
-        console.print(f"    {nome_taxa:<10} mediana {rs['mediana']:8.1f} ms   "
-                      f"p95 {rs['p95']:8.1f} ms   {erros} erros em {len(sujeitos)}   "
-                      f"{decorrido:.1f} s")
+        # `p95` so existe com amostra que o sustente; abaixo disso o resumo traz
+        # o maximo, e a coluna `cauda` diz qual dos dois. Formatar o p95 as cegas
+        # quebrava a suite assim que a regra de amostra minima entrou.
+        console.print(f"    {nome_taxa:<10} mediana {rs['mediana'] or 0:8.1f} ms   "
+                      f"{rs['cauda']} {rs['p95'] if rs['p95'] is not None else rs['max']:8.1f} ms"
+                      f"   {erros} erros em {len(sujeitos)}   {decorrido:.1f} s")
     return linhas
 
 
@@ -119,7 +130,14 @@ async def concorrente(cliente, base, url_redis, rotulo, modo, cabecalhos):
         await _uma(cliente, base + caminho, {})
 
     console.print(f"\n  [dim]Fase concorrente, modo {modo}, cache quente[/dim]")
-    for n in CONCORRENCIAS:
+    for i_nivel, n in enumerate(CONCORRENCIAS):
+        # No modo produto, cada nivel comeca com a janela do minuto limpa, senao
+        # ele herda o orcamento gasto pelo nivel anterior e a medicao vira uma
+        # medicao da propria suite.
+        if modo == "produto" and i_nivel > 0:
+            console.print(f"      [dim]aguardando {ESPERA_JANELA_S} s para a janela "
+                          f"do minuto esvaziar[/dim]")
+            await asyncio.sleep(ESPERA_JANELA_S)
         for rep in range(REPETICOES_CONCORRENTES):
             pedidos = [sujeitos[i % len(sujeitos)] for i in range(n)]
             t0 = time.perf_counter()
@@ -139,8 +157,9 @@ async def concorrente(cliente, base, url_redis, rotulo, modo, cabecalhos):
         total_s = sum(
             l["decorrido_s"] for l in ls[::n]) if n else 0
         vazao = len(ok) / total_s if total_s else 0
+        cauda = rs["p95"] if rs["p95"] is not None else rs["max"]
         console.print(f"    {n:>4} simultaneas   mediana {rs['mediana'] or 0:8.1f} ms   "
-                      f"p95 {rs['p95'] or 0:8.1f} ms   vazao {vazao:6.1f} req/s   "
+                      f"{rs['cauda']:>12} {cauda or 0:8.1f} ms   vazao {vazao:6.1f} req/s   "
                       f"429: {recusadas:>3}   outros erros: {outros}")
     return linhas
 
@@ -167,7 +186,7 @@ async def main():
     comum.grava_csv(Path(args.saida) / "exaustao.csv", linhas)
 
     t = Table(title=f"Concorrencia: motor contra produto ({args.rotulo})")
-    for c in ("Simultaneas", "Motor mediana", "Motor p95", "Produto 200", "Produto 429"):
+    for c in ("Simultaneas", "Motor mediana", "Motor cauda", "Produto 200", "Produto 429"):
         t.add_column(c, justify="right")
     for n in CONCORRENCIAS:
         m = [l["ms"] for l in linhas if l["fase"] == "concorrente"
@@ -175,7 +194,8 @@ async def main():
         p = [l for l in linhas if l["fase"] == "concorrente"
              and l["modo"] == "produto" and l["nivel"] == n]
         rm = comum.resumo(m)
-        t.add_row(str(n), f"{rm['mediana'] or 0:.1f} ms", f"{rm['p95'] or 0:.1f} ms",
+        t.add_row(str(n), f"{rm['mediana'] or 0:.1f} ms",
+                  f"{(rm['p95'] if rm['p95'] is not None else rm['max']) or 0:.1f} ms",
                   str(sum(1 for l in p if l["status"] == 200)),
                   str(sum(1 for l in p if l["status"] == 429)))
     console.print(t)

@@ -442,12 +442,14 @@ for (const item of manifesto) {
       erro: 'acima do teto de 50.000 variantes desta medicao', variantes: v.length })
   }
 
-  // Pontuacao ACMG por variante, medida a parte dos criterios: `criteriosACMG`
-  // decide QUAIS criterios disparam e `pontuarACMG` soma os pontos, e so a
-  // segunda existe desde a 3.0.
+  // Pontuacao ACMG por variante. `anotarACMG` grava o ARRAY de criterios em
+  // `v.acmg`, nao um objeto: a primeira versao desta medicao lia
+  // `x.acmg.criterios`, que e undefined sobre um array, e pontuava lista vazia
+  // em toda variante. O tempo saia real e o trabalho medido era nenhum.
+  const comCriterios = v.filter((x) => Array.isArray(x.acmg) && x.acmg.length)
   await medir(item.arquivo, 'saida', 'pontuação ACMG',
-    () => v.map((x) => (x.acmg ? acmg.pontuarACMG(x.acmg.criterios || []) : null)),
-    REPETICOES, comum)
+    () => comCriterios.map((x) => acmg.pontuarACMG(x.acmg)),
+    REPETICOES, { ...comum, variantes_com_criterio: comCriterios.length })
   for (const [f, texto] of Object.entries(saidas)) {
     const l = linhas.find((x) => x.arquivo === item.arquivo && x.funcao === f
       || (f === 'VCF' && x.arquivo === item.arquivo && x.funcao === 'VCF anotado'))

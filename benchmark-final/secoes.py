@@ -26,6 +26,11 @@ def escrever(d, num):
     _pipeline(d, num)
     _saidas(d, num)
     _lote(d, num)
+    _catalogo(d, num)
+    _acmg(d, num)
+    _reprodutibilidade(d, num)
+    _ambiente(d, num)
+    _versoes(d, num)
     _limitacoes(d, num)
 
 
@@ -82,12 +87,22 @@ def _latencia(d, num):
     linhas = []
     for f in fam:
         s = dl[dl.familia == f]
-        linhas.append([ROTULO[f], len(s), num(s.frio_mediana.median()),
-                       num(s.quente_mediana.median()),
-                       num(s.frio_p95.median()),
-                       f"{num(s.ganho_cache.median(), 0)}×"])
-    d.tabela(["Família", "Rotas", "Frio (ms)", "Quente (ms)", "p95 frio (ms)", "Ganho"],
-             linhas)
+        # O ganho da tabela e a razao entre as DUAS MEDIANAS DESTA LINHA, e nao a
+        # mediana das razoes por rota: assim a linha fecha para quem dividir as
+        # duas colunas anteriores, e a figura diz o mesmo numero.
+        mf, mq = s.frio_mediana.median(), s.quente_mediana.median()
+        linhas.append([ROTULO[f], len(s), num(mf), num(mq),
+                       num(s.frio_max.median()),
+                       f"{num(mf / mq, 0)}×" if mq else "—"])
+    d.tabela(["Família", "Rotas", "Frio (ms)", "Quente (ms)",
+              "Maior observado, frio (ms)", "Ganho"], linhas)
+    d.txt(
+        "A coluna de cauda traz o **maior valor observado**, e não um percentil. Com "
+        "três repetições frias por rota, um percentil 95 interpolado cai entre a "
+        "segunda e a terceira observação, isto é, é o máximo com outro nome, e "
+        "publicá-lo como percentil sugeriria uma estimativa de cauda que a amostra não "
+        "sustenta. As medições quentes têm vinte repetições e aí o percentil existe; "
+        "onde ele aparece neste capítulo, é porque a amostra o comporta.")
 
     g1 = d.figura("fig01_latencia_familia.png",
                   "Latência mediana por família de rota, com cache frio e com cache "
@@ -125,16 +140,20 @@ def _latencia(d, num):
 
     g3 = d.figura("fig03_dispersao_latencia.png",
                   "Mediana com intervalo de confiança de 95% e p95 da latência fria, "
-                  "por rota que consulta a rede. A distância entre a mediana e o p95 "
-                  "mede a dependência de fontes de terceiros: ela não é ruído da "
-                  "aplicação, é a variabilidade das bases públicas.")
-    pior95 = rede.loc[rede.frio_p95.idxmax()]
+                  "por rota que consulta a rede, com o maior valor observado marcado "
+                  "à direita. A distância entre a mediana e o máximo mede a dependência "
+                  "de fontes de terceiros: ela não é ruído da aplicação, é a "
+                  "variabilidade das bases públicas. A classificação de quais rotas "
+                  "consultam a rede é derivada da contagem medida de requisições "
+                  "externas, não declarada à mão.")
+    pior95 = rede.loc[rede.frio_max.idxmax()]
     d.txt(
         f"A {g3} traz a informação que a mediana sozinha esconde. A rota `"
-        f"{pior95.nome}` tem mediana de {num(pior95.frio_mediana)} ms e p95 de "
-        f"{num(pior95.frio_p95)} ms, uma razão de "
-        f"{num(pior95.frio_p95 / pior95.frio_mediana, 1)}. Uma consulta em vinte "
-        f"custa esse valor, e é ele que define a experiência de quem espera pela tela. "
+        f"{pior95.nome}` tem mediana de {num(pior95.frio_mediana)} ms e máximo "
+        f"observado de {num(pior95.frio_max)} ms em {num(pior95.frio_n, 0)} repetições, "
+        f"uma razão de {num(pior95.frio_max / pior95.frio_mediana, 1)}. Não é possível "
+        f"dizer com que frequência esse valor ocorre, e o capítulo não o afirma: o que "
+        f"se sabe é que ele ocorreu, e é ele que define a experiência de quem esperou. "
         f"A causa está fora da aplicação: o servidor não controla o tempo de resposta "
         f"do Ensembl nem do gnomAD, e a única defesa disponível é não perguntar de "
         f"novo, que é o que o cache faz.")
@@ -230,18 +249,29 @@ def _requisicoes(d, num):
 
     g = d.figura("fig04_requisicoes.png",
                  "Requisições a bases públicas por consulta, com cache frio e com "
-                 "cache quente, por família de rota. Com cache quente todas as "
-                 "famílias fazem zero requisições, e as barras correspondentes têm "
-                 "comprimento nulo.")
-    m = dr.groupby("familia").requisicoes_frio.mean().sort_values(ascending=False)
-    rede = m[m > 0]
+                 "cache quente, por família de rota, ordenadas pelo custo frio.")
+    m = dr.groupby("familia").agg(frio=("requisicoes_frio", "mean"),
+                                  quente=("requisicoes_quente", "mean"))
+    rede = m[m.frio > 0].sort_values("frio", ascending=False)
+    zeradas = rede[rede.quente == 0]
+    restantes = rede[rede.quente > 0]
     d.txt(
         f"A {g} mostra a distribuição desse custo. O topo é `{rede.index[0]}`, com "
-        f"{num(rede.iloc[0])} requisições por consulta fria, e a mediana entre as "
-        f"famílias que usam rede é de {num(rede.median())}. Com o cache quente, todas "
-        f"caem a zero, sem exceção: a economia não é parcial. É esse zero que torna a "
+        f"{num(rede.frio.iloc[0])} requisições por consulta fria, e a mediana entre as "
+        f"{len(rede)} famílias que usam rede é de {num(rede.frio.median())}. Com o "
+        f"cache quente, {len(zeradas)} delas caem a zero. É esse zero que torna a "
         f"aplicação utilizável em sala de aula, onde trinta pessoas consultam o mesmo "
         f"gene em poucos minutos e apenas a primeira consulta chega às fontes.")
+    if not restantes.empty:
+        nomes = ", ".join(f"`{i}`" for i in restantes.index)
+        d.txt(
+            f"A exceção é {nomes}, que ainda faz "
+            f"{num(restantes.quente.iloc[0])} requisição por consulta mesmo com o cache "
+            f"quente. Não é falha do cache: essa rota não grava no cache um resultado "
+            f"obtido com alguma das fontes fora do ar, para não fixar por uma hora uma "
+            f"resposta empobrecida por instabilidade momentânea. O preço da regra é "
+            f"que, enquanto a fonte oscila, a rota volta a perguntar. A alternativa "
+            f"seria guardar a resposta incompleta e servi-la como se fosse a completa.")
 
     g2 = d.figura("fig05_requisicoes_host.png",
                   "Composição das requisições por base de destino, com cache frio. "
@@ -249,8 +279,8 @@ def _requisicoes(d, num):
                   "logarítmico o comprimento de um segmento empilhado depende de onde "
                   "ele começa, e a composição deixa de ser legível.")
     if "hosts" in dr.columns:
-        painel = dr[dr.familia == "painel"]
-        if not painel.empty and isinstance(painel.hosts.iloc[0], str):
+        painel = dr[(dr.familia == "painel") & dr.hosts.notna()]
+        if not painel.empty:
             d.txt(
                 f"A {g2} mostra que a pressão não se distribui por igual entre as "
                 f"fontes. A rota de painel concentra as suas "
@@ -266,7 +296,12 @@ def _carga(d, num):
     de = d.csv("exaustao.csv")
     if de is None:
         return
-    conc = de[de.fase == "concorrente"]
+    # `nivel` mistura inteiro na fase concorrente e texto na sequencial, entao a
+    # coluna chega como objeto e comparar dois niveis levanta TypeError.
+    conc = de[de.fase == "concorrente"].copy()
+    conc["nivel"] = pd.to_numeric(conc.nivel, errors="coerce")
+    conc = conc[conc.nivel.notna()]
+    conc["nivel"] = conc.nivel.astype(int)
     if conc.empty:
         return
     d.titulo(2, "Comportamento sob carga e o limitador de taxa")
@@ -400,15 +435,42 @@ def _comparacao(d, num):
     d.tabela(["Família", "Alvos", "Manual (s)", "Frio (s)", "Quente (ms)",
               "Ganho frio", "Ganho quente"], linhas)
     d.txt(
-        "Uma ressalva de protocolo antes do número, porque ela muda como ele deve ser "
-        "lido. As duas medições são feitas em sequência sobre o mesmo alvo: primeiro o "
-        "fluxo manual, que consulta as fontes uma a uma, e logo depois a consulta "
-        "integrada com o cache limpo, que consulta as mesmas fontes. A segunda medição "
-        "encontra as fontes recém-acionadas, e portanto mais lentas a responder do que "
-        "estariam em repouso. O viés é sistemático e tem sinal conhecido: ele penaliza "
-        "a consulta integrada. O ganho relatado é, por isso, um piso, e não uma "
-        "estimativa central. A ordem foi mantida porque é a do protocolo da versão "
-        "2.0, e inverter a ordem tornaria as duas medições incomparáveis entre si.")
+        "Antes do número, uma questão de protocolo que a primeira execução desta suíte "
+        "obrigou a resolver, e cuja resolução é ela própria um resultado. As duas "
+        "medições são feitas sobre o mesmo alvo, uma após a outra, contra as mesmas "
+        "fontes: quem for medido em segundo lugar as encontra recém-acionadas, e paga "
+        "pelo controle de vazão que elas aplicam. Medindo sempre o fluxo manual "
+        "primeiro, a família gene saiu com ganho 0,92, isto é, a ferramenta aparecia "
+        "**mais lenta** que o caminho que ela substitui. O número não descrevia a "
+        "ferramenta; descrevia a ordem.")
+    if "ordem" in dc.columns and dc.ordem.notna().any():
+        efeito = []
+        for f in ("gene", "variante"):
+            s_ = dc[(dc.familia == f) & dc.ordem.notna()]
+            a = s_[s_.ordem == "integrada primeiro"].genvar_frio_ms.median()
+            b = s_[s_.ordem == "manual primeiro"].genvar_frio_ms.median()
+            if pd.notna(a) and pd.notna(b):
+                efeito.append([ROTULO[f], num(a / 1000, 2), num(b / 1000, 2),
+                               f"+{num((b / a - 1) * 100, 0)}%"])
+        if efeito:
+            d.txt(
+                "A correção é a padrão para efeito de ordem: metade dos alvos de cada "
+                "família é medida com o fluxo manual primeiro e a outra metade com a "
+                "consulta integrada primeiro. O contrabalanceamento não só remove o "
+                "sinal fixo do viés como **permite medi-lo**, e a tabela abaixo é essa "
+                "medição.")
+            d.tabela(["Família", "Integrada medida primeiro (s)",
+                      "Integrada medida após o manual (s)", "Efeito da ordem"], efeito)
+            d.txt(
+                "O efeito é grande e tem o sinal esperado. Uma consequência dele "
+                "atravessa todo este capítulo e precisa ficar explícita: **os tempos "
+                "frios desta seção não são comparáveis aos da seção de latência.** Lá a "
+                "mesma rota de gene foi medida isolada, com pausa entre repetições, e "
+                "respondeu em segundos; aqui, dentro de um protocolo que aciona as "
+                "mesmas fontes duas vezes por alvo, ela responde em dezenas de "
+                "segundos. Os dois números estão corretos e medem regimes diferentes. O "
+                "que esta seção compara é a **razão** entre dois caminhos submetidos ao "
+                "mesmo regime, e é só isso que ela afirma.")
     gf = dc.ganho_frio.median()
     d.txt(
         f"A {g} e a tabela acima mostram um resultado que precisa ser lido com "
@@ -540,6 +602,270 @@ def _lote(d, num):
         f"uma razão de {num(maior.ganho_retido, 0)} vezes. É essa diferença que decide "
         f"se a coorte cabe: o modo individual acumula o resultado de cada arquivo, e o "
         f"navegador tem um teto de memória que o servidor não tem.")
+
+
+
+
+# ---------------------------------------------------------------- catalogo --
+def _catalogo(d, num):
+    df = d.csv("funcoes.csv")
+    if df is None:
+        return
+    c = df[(df.etapa == "catalogo") & df.erro.isna() & df.mediana_ms.notna()]
+    if c.empty:
+        return
+    d.titulo(2, "O custo de preparar os catálogos embarcados")
+    g = d.figura("fig20_catalogo.png",
+                 "Tempo para preparar cada catálogo embarcado, uma vez por sessão, em "
+                 "escala logarítmica. Não é custo por arquivo analisado: é o preço de "
+                 "abrir a página.")
+    caro = c.groupby("funcao").mediana_ms.median().sort_values()
+    total = caro.sum()
+    d.txt(
+        f"A {g} isola um custo que não aparece em nenhuma outra figura porque não "
+        f"escala com nada: os catálogos embarcados são preparados uma vez por sessão, "
+        f"antes de qualquer arquivo. O conjunto custa {num(total)} ms, e "
+        f"`{caro.index[-1]}` responde por {num(caro.iloc[-1] / total * 100, 0)}% desse "
+        f"total, com {num(caro.iloc[-1])} ms. É o preço de ter a anotação clínica "
+        f"disponível sem rede, e ele é pago inteiro mesmo por quem for analisar um "
+        f"arquivo de mil variantes. Numa sessão de um arquivo só, esse custo fixo "
+        f"domina; numa coorte, ele se dilui, e é o argumento quantitativo a favor do "
+        f"modo em lote que a seção anterior mediu pelo outro lado.")
+
+
+# -------------------------------------------------------------------- acmg --
+def _acmg(d, num):
+    df = d.csv("funcoes.csv")
+    if df is None or "variantes_com_criterio" not in df.columns:
+        return
+    a = df[(df.funcao == "pontuação ACMG") & df.erro.isna()
+           & df.variantes_com_criterio.notna() & (df.variantes_com_criterio > 0)]
+    if len(a) < 3:
+        return
+    d.titulo(2, "A pontuação ACMG")
+    d.txt(
+        "A classificação por critérios ACMG/AMP é a funcionalidade clínica nova desta "
+        "versão, e ela tem duas partes que este benchmark mede separadas. Decidir "
+        "**quais** critérios disparam para uma variante depende do que a anotação "
+        "trouxe e está medido junto da etapa de anotação. Somar os pontos do sistema "
+        "bayesiano adotado pelo ClinGen é a segunda parte, e é a medida abaixo.")
+    g = d.figura("fig19_acmg.png",
+                 "Tempo para pontuar todas as variantes de um arquivo contra o número "
+                 "de variantes que têm ao menos um critério, nos dois eixos em escala "
+                 "logarítmica. Cada ponto é um arquivo do corpus.")
+    maior = a.loc[a.variantes_com_criterio.idxmax()]
+    menor = a.loc[a.variantes_com_criterio.idxmin()]
+    d.txt(
+        f"A {g} mostra que a pontuação é barata e cresce de forma proporcional ao que "
+        f"há para pontuar. No maior caso do corpus, {num(maior.variantes_com_criterio)} "
+        f"variantes com critério são pontuadas em {num(maior.mediana_ms)} ms; no menor, "
+        f"{num(menor.variantes_com_criterio)} variantes em {num(menor.mediana_ms, 2)} "
+        f"ms. O custo por variante é da ordem de "
+        f"{num(maior.mediana_ms / maior.variantes_com_criterio * 1000, 1)} "
+        f"microssegundos, e a etapa não aparece entre os gargalos de nenhuma escala.")
+    d.txt(
+        "Uma observação sobre esta medição em particular, porque a primeira versão "
+        "dela estava errada e o erro é instrutivo. O campo que guarda os critérios de "
+        "uma variante é um **arranjo**, e a medição lia um atributo inexistente dentro "
+        "dele: pontuava, portanto, uma lista vazia em toda variante. O tempo saía "
+        "real, a coluna do CSV enchia, e o trabalho medido era nenhum. O que corrigiu "
+        "não foi ler o código com mais atenção e sim registrar, ao lado do tempo, "
+        "quantas variantes tinham critério, que é o número que denunciou o zero.")
+
+
+# ------------------------------------------------------- reprodutibilidade --
+def _reprodutibilidade(d, num):
+    dr = d.csv("reprodutibilidade.csv")
+    if dr is None:
+        return
+    d.titulo(2, "Reprodutibilidade e procedência da saída")
+    d.txt(
+        "As seções anteriores mediram quanto custa. Esta mede se o resultado é o "
+        "mesmo quando a análise é repetida, e se a saída carrega o suficiente para "
+        "alguém conferir de onde ela veio. Num trabalho de bioinformática as duas "
+        "coisas valem tanto quanto o tempo: um resultado que não se repete não é "
+        "resultado, e um resultado sem procedência não é conferível.")
+    g = d.figura("fig18_reprodutibilidade.png",
+                 "Fração dos arquivos do corpus que satisfazem cada critério de "
+                 "reprodutibilidade e de procedência. Verde para cem por cento.")
+    criterios = [c for c in ("tsv_identico", "csv_identico", "vcf_identico",
+                             "metricas_independem_da_ordem",
+                             "vcf_carrega_sha_da_entrada",
+                             "vcf_carrega_versao_clinvar") if c in dr.columns]
+    falhos = [c for c in criterios if dr[c].mean() < 1]
+    if not falhos:
+        d.txt(
+            f"A {g} mostra {len(criterios)} critérios satisfeitos em "
+            f"{len(dr)} de {len(dr)} arquivos do corpus. As saídas em texto são "
+            f"idênticas byte a byte entre réplicas; as métricas não dependem da ordem "
+            f"em que as variantes foram lidas; e o VCF anotado carrega no cabeçalho o "
+            f"sha256 do arquivo de entrada e a versão do ClinVar usada na anotação. O "
+            f"último ponto é o que permite refazer a conferência meses depois: dado o "
+            f"laudo, sabe-se qual arquivo o gerou e contra qual versão do catálogo, "
+            f"sem depender de o arquivo ter sido guardado.")
+    else:
+        d.txt(
+            f"A {g} mostra que {len(falhos)} de {len(criterios)} critérios não foram "
+            f"satisfeitos em todos os arquivos: {', '.join(falhos)}. Isso é um "
+            f"resultado negativo e está registrado como tal.")
+
+
+# ------------------------------------------------------ local x conteiner ----
+def _ambiente(d, num):
+    from pathlib import Path
+    docker = Path(d.res).parent / "docker"
+    if not (docker / "latencia.csv").exists():
+        return
+    a = pd.read_csv(Path(d.res) / "latencia.csv")
+    b = pd.read_csv(docker / "latencia.csv")
+    d.titulo(2, "Direto na máquina contra em contêiner")
+    d.txt(
+        "As duas medições correram na mesma máquina, na mesma sessão, contra o mesmo "
+        "código: o que muda é só o empacotamento. O ambiente conteinerizado sobe o "
+        "backend, o frontend e o Redis em três contêineres numa rede própria, e por "
+        "isso cada chamada ao cache atravessa a rede virtual do Docker em vez do "
+        "loopback. Essa é a diferença que a comparação foi montada para medir; ela "
+        "não é a única que sobra, e o que a medição revelou sobre as outras está "
+        "dito adiante.")
+    g = d.figura("fig21_ambiente.png",
+                 "A mesma medição de latência nos dois ambientes, separada por estado "
+                 "do cache. À esquerda, com cache frio, onde o tempo é dominado pelas "
+                 "fontes externas; à direita, com cache quente, onde ele é dominado "
+                 "pelo próprio sistema. Escalas logarítmicas.")
+    # Comparacao PAREADA por familia. Medianas agregadas nao servem aqui: as duas
+    # corridas tem composicao diferente de rota (a conteinerizada mediu menos
+    # alvos por familia de rede, para poupar as fontes publicas), e a mediana do
+    # conjunto passa a descrever a composicao em vez do ambiente. Medido: o
+    # agregado dava 1.464 ms local contra 85 ms em conteiner, o que leria como o
+    # conteiner sendo dezessete vezes mais rapido, quando familia a familia a
+    # diferenca e de outra ordem.
+    fam = [f for f in ORDEM if f in set(a.familia) and f in set(b.familia)]
+    if fam:
+        linhas, razoes_q, razoes_f = [], [], []
+        for f in fam:
+            fa = a[a.familia == f].frio_mediana.median()
+            fb = b[b.familia == f].frio_mediana.median()
+            qa = a[a.familia == f].quente_mediana.median()
+            qb = b[b.familia == f].quente_mediana.median()
+            if pd.notna(qa) and pd.notna(qb) and qa:
+                razoes_q.append(qb / qa)
+            if pd.notna(fa) and pd.notna(fb) and fa:
+                razoes_f.append(fb / fa)
+            linhas.append([ROTULO[f], num(fa), num(fb), num(qa), num(qb),
+                           f"{num(qb / qa, 2)}×" if qa and pd.notna(qb) else "—"])
+        d.tabela(["Família", "Frio, máquina (ms)", "Frio, contêiner (ms)",
+                  "Quente, máquina (ms)", "Quente, contêiner (ms)",
+                  "Razão quente"], linhas)
+        mediana_q = sorted(razoes_q)[len(razoes_q) // 2] if razoes_q else None
+        if mediana_q:
+            direcao = "mais rápido" if mediana_q < 1 else "mais lento"
+            d.txt(
+                f"A {g} e a tabela mostram um resultado que contraria a expectativa "
+                f"corrente. Com cache quente, onde o tempo é dominado pelo próprio "
+                f"sistema e não pelas fontes externas, o ambiente conteinerizado é "
+                f"**{direcao}** que o ambiente direto na máquina por um fator mediano "
+                f"de {num(mediana_q, 2)} entre as {len(razoes_q)} famílias. A hipótese "
+                f"de partida era a oposta: o contêiner fala com o Redis por uma rede "
+                f"virtual e o ambiente direto fala por loopback, e a rede virtual "
+                f"deveria custar. Ela custa; o que a medição mostra é que esse custo é "
+                f"menor que a diferença entre os dois processos de Redis, que não são o "
+                f"mesmo: o local é a instância de desenvolvimento da máquina, com o que "
+                f"quer que ela já estivesse guardando, e o conteinerizado sobe limpo a "
+                f"cada execução.")
+            d.txt(
+                "A conclusão que a comparação sustenta, portanto, é mais estreita do "
+                "que \"contêiner é mais rápido\": é que **a conteinerização não impõe "
+                "custo detectável nesta aplicação**, e que outras diferenças de "
+                "ambiente pesam mais que ela. Separar as duas exigiria subir um Redis "
+                "limpo também do lado direto, o que não foi feito e fica declarado.")
+        if razoes_f:
+            mediana_f = sorted(razoes_f)[len(razoes_f) // 2]
+            d.txt(
+                f"Com cache frio a razão mediana é {num(mediana_f, 2)}, e ela diz menos "
+                f"do que parece: nesse regime o tempo é das fontes públicas, que "
+                f"respondem ao que perguntar independentemente de quem pergunta estar "
+                f"em contêiner. A dispersão entre famílias, visível na tabela, é maior "
+                f"que a diferença entre ambientes.")
+
+    if (docker / "exaustao.csv").exists():
+        g2 = d.figura("fig22_ambiente_carga.png",
+                      "Latência mediana sob concorrência crescente nos dois ambientes, "
+                      "no modo sem limitador. Escalas logarítmicas nos dois eixos.")
+        d.txt(
+            f"A {g2} repete a comparação sob carga. O interesse aqui não é o valor "
+            f"absoluto e sim a inclinação: um ambiente que degrada mais rápido que o "
+            f"outro à medida que a concorrência cresce revela um gargalo que só "
+            f"aparece com contenção, e não na medição de uma requisição por vez.")
+
+
+# ---------------------------------------------------------- 2.0 contra 3.0 ----
+def _versoes(d, num):
+    from pathlib import Path
+    bruto = Path(d.res).resolve().parents[2] / "benchmark-legacy" / "2.0" / "results" / "local" / "latency_raw.csv"
+    if not bruto.exists():
+        return
+    d.titulo(2, "A versão 2.0 contra a 3.0")
+    d.txt(
+        "A comparação entre versões tem um limite que precisa ser dito antes dos "
+        "números: **a versão 2.0 não pode ser remedida.** O código está congelado num "
+        "commit anterior e as fontes externas mudaram desde então, de modo que "
+        "reexecutar o benchmark de junho hoje mediria outra coisa. O que se compara "
+        "aqui é o dado arquivado daquela execução contra o desta, e apenas para as "
+        "métricas cujo protocolo é idêntico e cujo alvo ainda existe: latência de gene "
+        "e de variante, nos dois estados de cache. Todo o resto da 3.0 é superfície "
+        "nova, sem linha de base.")
+    l20 = pd.read_csv(bruto)
+    frio = l20[(l20.phase == "cold") & (l20.status == 200)]
+    r1 = frio[frio.run == 1].elapsed_ms.median()
+    resto = frio[frio.run > 1].elapsed_ms.median()
+    d.txt(
+        f"E há um segundo cuidado, que a leitura do dado arquivado tornou "
+        f"obrigatório. A suíte de 2020 limpava o cache **uma vez** antes das doze "
+        f"repetições da fase fria, e não a cada repetição: da segunda em diante, ela "
+        f"media cache quente. A mediana publicada então como latência fria, "
+        f"{num(l20[(l20.phase == 'cold')].elapsed_ms.median())} ms, é um número "
+        f"quente. Reconstruindo a medição fria a partir da primeira repetição de cada "
+        f"alvo, que é a única que encontrou o cache vazio, o valor é "
+        f"{num(r1)} ms, contra {num(resto)} ms das repetições seguintes. É a primeira "
+        f"repetição que entra na comparação abaixo, e a diferença entre os dois "
+        f"números mede o quanto um detalhe de protocolo altera a conclusão.")
+    g = d.figura("fig23_versoes.png",
+                 "Latência mediana de gene e de variante nas duas versões, separada "
+                 "por estado do cache, em escala logarítmica. A medição de 2.0 é de "
+                 "junho de 2026 e a de 3.0 é de agosto de 2026; a fria de 2.0 foi "
+                 "reconstruída da primeira repetição de cada alvo, pelo motivo "
+                 "explicado no texto.")
+    d30 = d.csv("latencia.csv")
+    if d30 is not None:
+        # A rota, e nao a familia: em 3.0 a familia gene reune quatro formatos e
+        # em 2.0 havia um so, entao comparar familias compararia escopos.
+        g30 = d30[d30.nome == "gene"].frio_mediana.median()
+        q30 = d30[d30.nome == "gene"].quente_mediana.median()
+        q20 = l20[(l20.phase == "warm") & (l20.status == 200)
+                  & (l20.endpoint == "gene")].elapsed_ms.median()
+        f20 = frio[(frio.run == 1) & (frio.endpoint == "gene")].elapsed_ms.median()
+        d.txt(
+            f"A {g} mostra a rota de gene indo de {num(f20)} ms para {num(g30)} ms com "
+            f"cache frio e de {num(q20)} ms para {num(q30)} ms com cache quente. "
+            f"A comparação é entre a mesma rota, `/api/gene/{{símbolo}}`, e não entre "
+            f"famílias: em 3.0 a família gene reúne quatro formatos de rota que em 2.0 "
+            f"não existiam, e compará-las compararia escopos.")
+        d.txt(
+            "Este capítulo mede, e não explica: atribuir a melhora a uma mudança "
+            "específica exigiria medir as versões intermediárias, o que o dado "
+            "arquivado não permite. O que se pode afirmar é que as duas condições "
+            "melhoraram e que o intervalo entre as medições contém mudanças no código "
+            "e mudanças nas fontes externas, que não são separáveis a posteriori.")
+    g2 = d.figura("fig24_versoes_superficie.png",
+                  "Superfície medida em cada versão. Não é uma métrica de desempenho: "
+                  "é o escopo do que existia para medir, e serve para situar as demais "
+                  "comparações deste capítulo.")
+    d.txt(
+        f"A {g2} situa o resto. O benchmark de 2020 media duas famílias de rota; este "
+        f"mede sete, mais o pipeline de VCF no navegador, os catálogos embarcados, as "
+        f"saídas em seis formatos e a contagem de requisições externas. A ausência de "
+        f"linha de base para essas medições não é omissão: elas medem coisas que a "
+        f"versão anterior não tinha.")
 
 
 # --------------------------------------------------------------- limitacoes --

@@ -9,7 +9,7 @@ local,gene,/api/gene/BRCA1,33,33,100.0,
 local,gene,/api/gene/TP53,33,33,100.0,
 local,gene,/api/gene/CFTR,33,33,100.0,
 local,gene,/api/gene/PAH,33,33,100.0,
-local,gene fenotipos,/api/gene/MLH1/phenotypes,6,6,100.0,
+local,gene fenotipos,/api/gene/MLH1/phenotypes,6,5,83.3,mendelian
 local,gene fenotipos,/api/gene/HBB/phenotypes,6,6,100.0,
 local,gene fenotipos,/api/gene/MSH2/phenotypes,6,6,100.0,
 local,gene fenotipos,/api/gene/VHL/phenotypes,6,6,100.0,
@@ -48,6 +48,7 @@ local,painel,/api/panel/hipercolesterolemia-familiar,11,11,100.0,
 local,painel,/api/panel/surdez-nao-sindromica,11,11,100.0,
 local,painel,/api/panel/retinopatias-hereditarias,11,11,100.0,
 local,painel,/api/panel/epilepsias-geneticas,11,10,90.9,digenic
+local,painel,/api/panel/pa-brugada-syndrome-and-cardiac-sodium-channel-disease,11,10,90.9,digenic
 local,escore,/api/pgs/PGS000004,30,29,96.7,weight_type
 local,escore,/api/pgs/PGS000001,30,27,90.0,ancestry_dist_dev.count;ancestry_dist_dev.dist;weight_type
 local,escore,/api/pgs/PGS000013,35,34,97.1,weight_type

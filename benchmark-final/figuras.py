@@ -252,7 +252,14 @@ def fig_concorrencia(base, saida):
     d = _le(base, "exaustao.csv")
     if d is None:
         return None
-    d = d[d.fase == "concorrente"]
+    d = d[d.fase == "concorrente"].copy()
+    # A coluna `nivel` guarda inteiro na fase concorrente e texto na sequencial
+    # ("0,5 req/s"), entao ela chega do CSV como objeto e `sorted` ordena como
+    # texto: 1, 10, 160, 20, 40, 5, 80. O eixo saia fora de ordem e os rotulos
+    # empilhados no canto.
+    d["nivel"] = pd.to_numeric(d.nivel, errors="coerce")
+    d = d[d.nivel.notna()]
+    d["nivel"] = d.nivel.astype(int)
     niveis = sorted(d.nivel.unique())
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(9.6, 4.0))
 
@@ -469,10 +476,12 @@ def fig_lote(base, saida):
                 linewidth=1.6, markersize=4, label=f"{cen}, individual")
         a1.plot(s_.arquivos, s_.lote_ms / 1000, "o-", color=estilo.CICLO[i],
                 linewidth=2.2, markersize=5, label=f"{cen}, em lote")
+        # Sem rotulo no segundo painel: as series sao as mesmas, e duas legendas
+        # identicas gastam a metade inferior da figura repetindo informacao.
         a2.plot(s_.arquivos, s_.individual_retido_mb, "o--", color=estilo.CICLO[i],
-                linewidth=1.6, markersize=4, label=f"{cen}, individual")
+                linewidth=1.6, markersize=4)
         a2.plot(s_.arquivos, s_.lote_retido_mb, "o-", color=estilo.CICLO[i],
-                linewidth=2.2, markersize=5, label=f"{cen}, em lote")
+                linewidth=2.2, markersize=5)
     for a, rot, tit in ((a1, "Segundos até o fim da coorte", "Tempo Total da Coorte"),
                         (a2, "Memória retida ao fim, em MB", "Memória Retida ao Fim")):
         a.set_xscale("log")
@@ -480,28 +489,253 @@ def fig_lote(base, saida):
         a.set_xlabel("Arquivos na coorte (escala logarítmica)")
         a.set_ylabel(rot)
         a.set_title(tit)
-    estilo.legenda_abaixo(a1, 2, y=-0.28)
-    estilo.legenda_abaixo(a2, 2, y=-0.28)
+    alcas, rotulos = a1.get_legend_handles_labels()
+    fig.legend(alcas, rotulos, loc="lower center", ncol=4, frameon=False,
+               bbox_to_anchor=(0.5, -0.06))
     return estilo.salvar(fig, Path(saida) / "fig17_lote.png"), "fig17_lote.png"
 
 
 def fig_reprodutibilidade(base, saida):
-    """A mesma entrada devolve a mesma saida, replica apos replica."""
+    """A mesma entrada devolve a mesma saida, e a saida carrega a procedencia."""
     d = _le(base, "reprodutibilidade.csv")
     if d is None:
         return None
-    col = "iguais" if "iguais" in d.columns else None
-    fig, ax = plt.subplots(figsize=(7.2, 3.6))
-    if col:
-        g = d.groupby("arquivo")[col].mean() * 100
-        ax.barh(g.index, g.values, color=estilo.BOM, height=0.62)
-        ax.set_xlabel("Réplicas com hash idêntico, em %")
-        ax.set_xlim(0, 105)
-    else:
+    criterios = [
+        ("tsv_identico", "TSV idêntico entre réplicas"),
+        ("csv_identico", "CSV idêntico entre réplicas"),
+        ("vcf_identico", "VCF anotado idêntico entre réplicas"),
+        ("metricas_independem_da_ordem", "Métricas independem da ordem de leitura"),
+        ("vcf_carrega_sha_da_entrada", "Saída carrega o sha256 da entrada"),
+        ("vcf_carrega_versao_clinvar", "Saída carrega a versão do ClinVar"),
+    ]
+    criterios = [(c, r) for c, r in criterios if c in d.columns]
+    if not criterios:
         return None
-    ax.set_title("Reprodutibilidade da Saída Entre Réplicas")
+    frac = [100 * d[c].mean() for c, _ in criterios]
+    fig, ax = plt.subplots(figsize=(7.6, 3.6))
+    cores = [estilo.BOM if f == 100 else estilo.RUIM for f in frac]
+    barras = ax.barh([r for _, r in criterios], frac, color=cores, height=0.62)
+    ax.set_xlim(0, 108)
+    ax.set_xlabel(f"Arquivos do corpus que satisfazem o critério, em % (n = {len(d)})")
+    ax.set_title("Reprodutibilidade e Procedência da Saída")
+    estilo.rotular_barras_h(ax, barras, "{:.0f}%")
     return estilo.salvar(fig, Path(saida) / "fig18_reprodutibilidade.png"), \
         "fig18_reprodutibilidade.png"
+
+
+def fig_acmg(base, saida):
+    """Custo da pontuacao ACMG contra o numero de variantes com criterio."""
+    d = _le(base, "funcoes.csv")
+    if d is None or "variantes_com_criterio" not in d.columns:
+        return None
+    d = d[(d.funcao == "pontuação ACMG") & d.erro.isna()
+          & d.variantes_com_criterio.notna() & (d.variantes_com_criterio > 0)]
+    if len(d) < 3:
+        return None
+    fig, ax = plt.subplots(figsize=(7.0, 4.0))
+    ax.scatter(d.variantes_com_criterio, d.mediana_ms, s=70,
+               color=estilo.PRINCIPAL, zorder=3)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlabel("Variantes com ao menos um critério ACMG (escala logarítmica)")
+    ax.set_ylabel("Milissegundos para pontuar todas (escala logarítmica)")
+    ax.set_title("Custo da Pontuação ACMG em Função do Que Há Para Pontuar")
+    return estilo.salvar(fig, Path(saida) / "fig19_acmg.png"), "fig19_acmg.png"
+
+
+def fig_catalogo(base, saida):
+    """Custo de carregar cada catalogo embarcado, uma vez por sessao."""
+    d = _le(base, "funcoes.csv")
+    if d is None:
+        return None
+    d = d[(d.etapa == "catalogo") & d.erro.isna() & d.mediana_ms.notna()]
+    if d.empty:
+        return None
+    g = d.groupby("funcao").mediana_ms.median().sort_values()
+    fig, ax = plt.subplots(figsize=(7.2, max(2.8, 0.42 * len(g))))
+    barras = ax.barh(g.index, g.values, color=estilo.SECUNDARIA, height=0.62)
+    ax.set_xscale("log")
+    ax.set_xlabel("Milissegundos, uma vez por sessão (escala logarítmica)")
+    ax.set_title("Custo de Preparar os Catálogos Embarcados")
+    ax.set_xlim(g.values.min() * 0.5, g.values.max() * 3)
+    estilo.rotular_barras_h(ax, barras, "{:.0f}", folga=0.0)
+    return estilo.salvar(fig, Path(saida) / "fig20_catalogo.png"), "fig20_catalogo.png"
+
+
+
+
+# ------------------------------------------------------- local x conteiner ----
+def _le_par(nome):
+    a = _le(AQUI / "resultados" / "local", nome)
+    b = _le(AQUI / "resultados" / "docker", nome)
+    return (a, b) if a is not None and b is not None else (None, None)
+
+
+def fig_ambiente_latencia(base, saida):
+    """A mesma medicao, direto na maquina e em conteiner."""
+    a, b = _le_par("latencia.csv")
+    if a is None:
+        return None
+    fam = [f for f in ORDEM_FAMILIA if f in set(a.familia) and f in set(b.familia)]
+    if not fam:
+        return None
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(9.6, 4.0))
+    x = np.arange(len(fam))
+    l = 0.38
+    for eixo, coluna, titulo in ((a1, "frio_mediana", "Com Cache Frio"),
+                                 (a2, "quente_mediana", "Com Cache Quente")):
+        va = [a[a.familia == f][coluna].median() for f in fam]
+        vb = [b[b.familia == f][coluna].median() for f in fam]
+        b1 = eixo.bar(x - l / 2, va, l, label="Direto na máquina", color=estilo.PRINCIPAL)
+        b2 = eixo.bar(x + l / 2, vb, l, label="Em contêiner", color=estilo.SECUNDARIA)
+        eixo.set_yscale("log")
+        eixo.set_xticks(x)
+        eixo.set_xticklabels([ROTULO_FAMILIA[f] for f in fam], rotation=25, ha="right")
+        eixo.set_ylabel("Latência mediana, em ms (escala logarítmica)")
+        eixo.set_title(titulo)
+        eixo.set_ylim(min(min(va), min(vb)) * 0.5, max(max(va), max(vb)) * 9)
+        # Rotulos escalonados em duas alturas: onde as duas barras sao quase
+        # iguais, dois rotulos na mesma altura se sobrepoem e viram um numero
+        # unico ilegivel ("3.303.384" por 3.303 e 3.384).
+        for bi, v in zip(b1, va):
+            eixo.text(bi.get_x() + bi.get_width() / 2, v * 1.9, estilo.milhar(v),
+                      ha="center", fontsize=7, color=estilo.PRINCIPAL)
+        for bi, v in zip(b2, vb):
+            eixo.text(bi.get_x() + bi.get_width() / 2, v * 1.15, estilo.milhar(v),
+                      ha="center", fontsize=7, color="#2A7A93")
+    alcas, rotulos = a1.get_legend_handles_labels()
+    fig.legend(alcas, rotulos, loc="lower center", ncol=2, frameon=False,
+               bbox_to_anchor=(0.5, -0.08))
+    return estilo.salvar(fig, Path(saida) / "fig21_ambiente.png"), "fig21_ambiente.png"
+
+
+def fig_ambiente_carga(base, saida):
+    """Capacidade sob concorrencia nos dois ambientes."""
+    a, b = _le_par("exaustao.csv")
+    if a is None:
+        return None
+    fig, ax = plt.subplots(figsize=(7.2, 4.0))
+    for d_, nome, cor in ((a, "Direto na máquina", estilo.PRINCIPAL),
+                          (b, "Em contêiner", estilo.SECUNDARIA)):
+        d_ = d_[(d_.fase == "concorrente") & (d_.modo == "motor")].copy()
+        d_["nivel"] = pd.to_numeric(d_.nivel, errors="coerce")
+        d_ = d_[d_.nivel.notna() & (d_.status == 200)]
+        if d_.empty:
+            continue
+        g = d_.groupby("nivel").ms.median().sort_index()
+        ax.plot(g.index, g.values, "o-", color=cor, linewidth=2, markersize=5, label=nome)
+    ax.set_xscale("log", base=2)
+    ax.set_yscale("log")
+    ax.minorticks_off()
+    ax.set_xlabel("Requisições simultâneas")
+    ax.set_ylabel("Latência mediana, em ms (escala logarítmica)")
+    ax.set_title("Capacidade sob Concorrência nos Dois Ambientes")
+    estilo.legenda_abaixo(ax, 2, y=-0.20)
+    return estilo.salvar(fig, Path(saida) / "fig22_ambiente_carga.png"), \
+        "fig22_ambiente_carga.png"
+
+
+# ---------------------------------------------------------- 2.0 contra 3.0 ----
+LEGADO = AQUI.parent / "benchmark-legacy" / "2.0" / "results" / "local"
+
+
+def _frio_da_2_0():
+    """A fria de verdade da 2.0, reconstruida da PRIMEIRA repeticao de cada alvo.
+
+    A suite da 2.0 limpava o Redis UMA vez antes das doze repeticoes frias, entao
+    da segunda em diante ela media cache quente. A mediana publicada como fria,
+    15,3 ms para gene, e um numero quente. Aqui so a repeticao 1 de cada alvo
+    entra, que e a unica que encontrou o cache vazio.
+    """
+    caminho = LEGADO / "latency_raw.csv"
+    if not caminho.exists():
+        return None
+    d = pd.read_csv(caminho)
+    d = d[(d.phase == "cold") & (d.status == 200) & (d.run == 1)]
+    return d.groupby("endpoint").elapsed_ms.median()
+
+
+def _quente_da_2_0():
+    caminho = LEGADO / "latency_raw.csv"
+    if not caminho.exists():
+        return None
+    d = pd.read_csv(caminho)
+    d = d[(d.phase == "warm") & (d.status == 200)]
+    return d.groupby("endpoint").elapsed_ms.median()
+
+
+def fig_versoes(base, saida):
+    """As duas metricas cujo protocolo e identico nas duas versoes."""
+    frio20, quente20 = _frio_da_2_0(), _quente_da_2_0()
+    d30 = _le(base, "latencia.csv")
+    if frio20 is None or d30 is None:
+        return None
+    # Comparar pela FAMILIA seria comparar coisas diferentes: em 3.0 a familia
+    # gene reune quatro formatos de rota (`/gene/X`, `?variantes=false`,
+    # `/variants` e `/phenotypes`) e em 2.0 ela era so `/api/gene/X`. A
+    # comparacao usa o NOME da rota, que e o mesmo objeto nas duas versoes.
+    mapa = {"gene": "gene", "variant": "variante"}
+    fam = [f for f in mapa if f in frio20.index and mapa[f] in set(d30.nome)]
+    if not fam:
+        return None
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(9.2, 4.0))
+    x = np.arange(len(fam))
+    l = 0.38
+    for eixo, v20, coluna, titulo in (
+            (a1, frio20, "frio_mediana", "Com Cache Frio"),
+            (a2, quente20, "quente_mediana", "Com Cache Quente")):
+        va = [v20[f] for f in fam]
+        vb = [d30[d30.nome == mapa[f]][coluna].median() for f in fam]
+        b1 = eixo.bar(x - l / 2, va, l, label="Versão 2.0, junho de 2026",
+                      color=estilo.NEUTRA)
+        b2 = eixo.bar(x + l / 2, vb, l, label="Versão 3.0, agosto de 2026",
+                      color=estilo.PRINCIPAL)
+        eixo.set_yscale("log")
+        eixo.set_xticks(x)
+        eixo.set_xticklabels([ROTULO_FAMILIA[mapa[f]] for f in fam])
+        eixo.set_ylabel("Latência mediana, em ms (escala logarítmica)")
+        eixo.set_title(titulo)
+        eixo.set_ylim(min(min(va), min(vb)) * 0.4, max(max(va), max(vb)) * 6)
+        for bi, v in list(zip(b1, va)) + list(zip(b2, vb)):
+            eixo.text(bi.get_x() + bi.get_width() / 2, v * 1.2, estilo.milhar(v),
+                      ha="center", fontsize=8)
+    alcas, rotulos = a1.get_legend_handles_labels()
+    fig.legend(alcas, rotulos, loc="lower center", ncol=2, frameon=False,
+               bbox_to_anchor=(0.5, -0.06))
+    return estilo.salvar(fig, Path(saida) / "fig23_versoes.png"), "fig23_versoes.png"
+
+
+def fig_versoes_superficie(base, saida):
+    """O que cresceu de uma versao para a outra."""
+    d30 = _le(base, "latencia.csv")
+    r30 = _le(base, "requisicoes.csv")
+    if d30 is None:
+        return None
+    itens = [
+        ("Rotas de API medidas", 2, int(d30.nome.nunique())),
+        ("Famílias de rota", 2, int(d30.familia.nunique())),
+        ("Fontes consultadas ao vivo", 6, 8),
+        ("Catálogos embarcados", 0, 4),
+        ("Formatos de saída do VCF", 0, 6),
+    ]
+    if r30 is not None:
+        itens.append(("Rotas com contagem de requisições", 0,
+                      int(r30.familia.nunique())))
+    fig, ax = plt.subplots(figsize=(7.4, 3.8))
+    y = np.arange(len(itens))
+    l = 0.38
+    b1 = ax.barh(y + l / 2, [i[1] for i in itens], l, label="Versão 2.0",
+                 color=estilo.NEUTRA)
+    b2 = ax.barh(y - l / 2, [i[2] for i in itens], l, label="Versão 3.0",
+                 color=estilo.PRINCIPAL)
+    ax.set_yticks(y)
+    ax.set_yticklabels([i[0] for i in itens])
+    ax.set_xlabel("Contagem")
+    ax.set_title("Superfície Medida em Cada Versão")
+    estilo.rotular_barras_h(ax, list(b1) + list(b2), "{:.0f}")
+    estilo.legenda_abaixo(ax, 2, y=-0.22)
+    return estilo.salvar(fig, Path(saida) / "fig24_versoes_superficie.png"), \
+        "fig24_versoes_superficie.png"
 
 
 FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
@@ -509,7 +743,9 @@ FIGURAS = [fig_latencia_familia, fig_ganho_cache, fig_dispersao_latencia,
            fig_cache_sessao, fig_cache_recorte, fig_concorrencia,
            fig_erros, fig_completude, fig_campos_vazios, fig_comparacao,
            fig_custo_por_escala, fig_saidas, fig_funcoes_piso, fig_lote,
-           fig_reprodutibilidade]
+           fig_reprodutibilidade, fig_acmg, fig_catalogo,
+           fig_ambiente_latencia, fig_ambiente_carga,
+           fig_versoes, fig_versoes_superficie]
 
 
 def main():

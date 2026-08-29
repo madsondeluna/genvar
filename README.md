@@ -843,9 +843,8 @@ genvar-dashboard/
 ├── scripts/
 │   ├── captura_telas.py             Captura as telas do README em página inteira, via CDP.
 │   ├── gera_diagramas.py            Gera os SVG das Figuras 1 e 3.
-│   ├── gera_saidas_exemplo.mjs      Roda o pipeline de VCF fora do navegador e grava mock-results-vcf-test/.
+│   └── gera_saidas_exemplo.mjs      Roda o pipeline de VCF fora do navegador e grava mock-results-vcf-test/.
 │   ├── gera_vcf_teste.py            Gera as fixtures sintéticas de VCF.
-│   └── verifica_dados.mjs           Confere que nenhum dado chegou como ponteiro de LFS.
 ├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
 ├── render.yaml                      Configuração de deploy no Render (produção).
@@ -1062,13 +1061,13 @@ Três coisas impedem isso:
 | Onde | O quê |
 |---|---|
 | `render.yaml` | O `buildCommand` do frontend roda `git lfs install && git lfs pull` antes do `npm ci` |
-| `scripts/verifica_dados.mjs` | Roda como `prebuild` e **recusa o build** se algum arquivo de dado for ponteiro ou tiver menos de 200 bytes |
+| `frontend/scripts/verifica_dados.mjs` | Roda como `prebuild` e **recusa o build** se algum arquivo de dado for ponteiro ou tiver menos de 200 bytes |
 | `backend/Dockerfile` | Recusa a imagem se os catálogos de `app/data` forem ponteiros |
 
 Rodar o verificador na mão, a partir da raiz:
 
 ```bash
-node scripts/verifica_dados.mjs
+node frontend/scripts/verifica_dados.mjs
 ```
 
 
@@ -1312,7 +1311,7 @@ Os seis formatos que a página produz, todos a partir da mesma tabela:
 | `resumo.json` | Os números da tabela acima, legíveis por máquina |
 | `tela-laudo.png` | A captura acima, em página inteira |
 
-O arquivo de entrada não é versionado: mora em `benchmark-v2/corpus/reais/nist-usuario.vcf.gz`, e o `benchmark-v2/README.md` explica como obtê-lo. A saída anotada, essa sim, entra no repositório, e o hook de pre-commit continua estrito: ela passa porque declara no cabeçalho o sha256 daquela entrada de referência pública, e qualquer outro VCF na mesma pasta é barrado. Aceitar "foi o GenVar que exportou" deixaria passar a exportação de um arquivo de paciente, que é o caso que o hook existe para barrar; aceitar um hash não deixa passar nada além daquele arquivo.
+O arquivo de entrada não é versionado: mora em `benchmark-final/corpus/reais/nist-usuario.vcf.gz`, e o `benchmark-final/README.md` explica como obtê-lo. A saída anotada, essa sim, entra no repositório, e o hook de pre-commit continua estrito: ela passa porque declara no cabeçalho o sha256 daquela entrada de referência pública, e qualquer outro VCF na mesma pasta é barrado. Aceitar "foi o GenVar que exportou" deixaria passar a exportação de um arquivo de paciente, que é o caso que o hook existe para barrar; aceitar um hash não deixa passar nada além daquele arquivo.
 
 
 ## Testes
@@ -1386,7 +1385,7 @@ A primeira nasceu com a versão 2.0 e continua válida: ela cobre o que a API fa
 
 ### Benchmark da plataforma (`benchmark-v2/`)
 
-Relatório completo, com todas as tabelas e figuras, em [`benchmark-v2/RELATORIO.md`](benchmark-v2/RELATORIO.md). Metodologia e como reproduzir em [`benchmark-v2/README.md`](benchmark-v2/README.md).
+Relatório completo, com todas as tabelas e figuras, em [`benchmark-v2/RELATORIO.md`](benchmark-v2/RELATORIO.md). Metodologia e como reproduzir em [`benchmark-final/README.md`](benchmark-v2/README.md).
 
 **Corpus.** Doze arquivos sintéticos determinísticos, cada um existente para exercitar um caminho que os outros não alcançam: escala de mil a 600 mil variantes, entrada em `.gz` e em `.zip`, GRCh37, build não declarado, trio com os números de herança plantados no cabeçalho, arquivo com defeitos de rotina e arquivo com cinco amostras. **8% de cada um vem das próprias tabelas do ClinVar embarcado**, e a razão é uma correção de método: a primeira versão usava posição e rsID sorteados, casou 16 variantes em 400.000 e divergiu em 58, ou seja, exercitava o ramo "rsID conhecido, alelo não confere" e deixava resumo clínico, critérios ACMG, filtro por painel e a largura das linhas exportadas medindo o caso vazio.
 

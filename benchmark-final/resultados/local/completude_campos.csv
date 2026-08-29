@@ -65,7 +65,7 @@ local,gene fenotipos,gwas,10,10,0,False
 local,gene fenotipos,gwas_association_total,10,10,0,False
 local,gene fenotipos,gwas_trait_total,10,10,0,False
 local,gene fenotipos,gwas_truncated,10,10,0,False
-local,gene fenotipos,mendelian,10,10,0,False
+local,gene fenotipos,mendelian,10,9,1,False
 local,gene,alphafold_pae_url,10,10,0,False
 local,gene,alphafold_pdb_url,10,10,0,False
 local,gene,assembly_name,10,10,0,False
@@ -99,17 +99,17 @@ local,gene,variant_bin_size,10,10,0,False
 local,gene,variant_distribution,10,10,0,False
 local,gene,vus_count,10,10,0,False
 local,gene,vus_variants,10,10,0,False
-local,painel,category,9,9,0,False
-local,painel,conditions,9,9,0,False
-local,painel,constrained_count,9,9,0,False
-local,painel,degraded,9,9,0,False
-local,painel,digenic,9,6,3,False
-local,painel,genes,9,9,0,False
-local,painel,id,9,9,0,False
-local,painel,inheritance,9,9,0,False
-local,painel,name,9,9,0,False
-local,painel,panel_genes,9,9,0,False
-local,painel,short,9,9,0,False
+local,painel,category,10,10,0,False
+local,painel,conditions,10,10,0,False
+local,painel,constrained_count,10,10,0,False
+local,painel,degraded,10,10,0,False
+local,painel,digenic,10,6,4,False
+local,painel,genes,10,10,0,False
+local,painel,id,10,10,0,False
+local,painel,inheritance,10,10,0,False
+local,painel,name,10,10,0,False
+local,painel,panel_genes,10,10,0,False
+local,painel,short,10,10,0,False
 local,variante,abraom_af,10,0,10,True
 local,variante,alphamissense_pred,10,10,0,False
 local,variante,alphamissense_score,10,10,0,False

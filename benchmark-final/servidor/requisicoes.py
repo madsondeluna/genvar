@@ -165,6 +165,11 @@ async def main():
                 r1 = cliente.get(caminho, timeout=180)
                 ms_frio = (time.perf_counter() - t0) * 1000
                 n_frio = contador.total
+                # A composicao POR HOST tem de ser copiada antes do `zera()`:
+                # montando a linha depois da medicao quente, a coluna guardava a
+                # contagem quente, que e vazia, e a figura de composicao ficava
+                # sem dado nenhum.
+                por_host_frio = dict(contador.por_host)
                 hosts_frio.update(contador.por_host)
 
                 contador.zera()
@@ -184,7 +189,7 @@ async def main():
                     "status_frio": r1.status_code, "status_quente": r2.status_code,
                     "requisicoes_frio": n_frio, "requisicoes_quente": n_quente,
                     "ms_frio": round(ms_frio, 1), "ms_quente": round(ms_quente, 1),
-                    "hosts": ";".join(f"{h}={n}" for h, n in sorted(contador.por_host.items())) or "",
+                    "hosts": ";".join(f"{h}={n}" for h, n in sorted(por_host_frio.items())) or "",
                 })
             if frios:
                 console.print(f"  {familia:<22} frio {sum(frios)/len(frios):5.1f}   "

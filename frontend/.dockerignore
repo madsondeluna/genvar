@@ -1,0 +1,14 @@
+# O repositorio mora num volume exFAT, e o macOS escreve um sidecar "._nome" ao
+# lado de cada arquivo para guardar atributos estendidos. O Docker tenta ler o
+# xattr desses arquivos ao montar o contexto e falha com "operation not
+# permitted", derrubando o build inteiro antes de rodar qualquer comando.
+._*
+.DS_Store
+
+node_modules
+dist
+__pycache__
+*.pyc
+.venv
+.pytest_cache
+.git

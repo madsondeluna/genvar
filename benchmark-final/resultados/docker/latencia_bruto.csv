@@ -1,0 +1,947 @@
+rotulo,nome,caminho,familia,estado,ms,status,bytes
+docker,gene,/api/gene/MLH1,gene,frio,6897.425,200,136284
+docker,gene,/api/gene/MLH1,gene,frio,5078.662,200,136284
+docker,gene,/api/gene/MLH1,gene,frio,4675.917,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,8.664,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.51,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,5.896,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.096,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.453,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,13.46,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,13.433,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,7.388,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,9.502,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,12.053,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,10.483,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,13.64,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,10.957,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,7.036,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,8.319,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,10.152,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.44,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.475,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,6.413,200,136284
+docker,gene,/api/gene/MLH1,gene,quente,28.547,200,136284
+docker,gene,/api/gene/HBB,gene,frio,3500.612,200,134712
+docker,gene,/api/gene/HBB,gene,frio,3760.142,200,134712
+docker,gene,/api/gene/HBB,gene,frio,3788.982,200,134712
+docker,gene,/api/gene/HBB,gene,quente,7.337,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.342,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.347,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.156,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.595,200,134712
+docker,gene,/api/gene/HBB,gene,quente,5.839,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.399,200,134712
+docker,gene,/api/gene/HBB,gene,quente,5.954,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.651,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.132,200,134712
+docker,gene,/api/gene/HBB,gene,quente,38.395,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.487,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.14,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.229,200,134712
+docker,gene,/api/gene/HBB,gene,quente,5.969,200,134712
+docker,gene,/api/gene/HBB,gene,quente,5.715,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.268,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.531,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.526,200,134712
+docker,gene,/api/gene/HBB,gene,quente,6.201,200,134712
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3383.608,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3317.612,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,frio,3137.219,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.747,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.226,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.235,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.706,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,3.032,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.666,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.711,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.628,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.512,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,4.196,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.366,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.442,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.371,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.426,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.356,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.375,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.523,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.377,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.381,200,5298
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,quente,2.508,200,5298
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,2521.045,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,2532.837,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,frio,2569.015,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.877,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.401,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,3.101,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.327,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.269,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.295,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.061,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.137,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.274,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.28,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.169,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.836,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.235,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.088,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,2.301,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,3.047,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,3.175,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,5.914,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.734,200,1290
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,quente,1.772,200,1290
+docker,gene variantes,/api/gene/MLH1/variants,gene,frio,4297.472,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,frio,4211.052,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,frio,4466.905,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.822,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.342,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,39.153,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,7.972,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,13.092,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,9.54,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,13.217,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,9.799,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,8.874,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,7.309,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.66,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.237,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.739,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.504,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.343,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.296,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.503,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,5.874,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,7.365,200,134947
+docker,gene variantes,/api/gene/MLH1/variants,gene,quente,6.117,200,134947
+docker,gene variantes,/api/gene/HBB/variants,gene,frio,3634.393,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,frio,3450.183,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,frio,3415.465,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.815,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.605,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.836,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.052,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,7.682,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.789,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.867,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.0,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.125,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.018,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.309,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.834,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.487,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.619,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.442,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.435,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,34.246,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.068,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,6.155,200,133914
+docker,gene variantes,/api/gene/HBB/variants,gene,quente,5.954,200,133914
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,5021.65,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,1394.384,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,frio,1280.972,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.99,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.649,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.443,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.738,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.545,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.81,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.771,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.601,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.438,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.471,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.827,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.634,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.697,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.515,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.469,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.078,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.045,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.923,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,2.019,200,3109
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,quente,1.908,200,3109
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1789.757,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1842.387,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,frio,1923.775,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.986,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,3.093,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.605,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.341,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.355,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.352,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.295,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.205,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.23,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.311,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.634,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.409,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.131,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.057,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,1.822,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.251,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,2.301,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,3.444,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,1.873,200,5984
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,quente,1.679,200,5984
+docker,variante,/api/variant/rs334,variante,frio,6337.162,200,3217
+docker,variante,/api/variant/rs334,variante,frio,5618.29,200,3217
+docker,variante,/api/variant/rs334,variante,frio,6205.079,200,3217
+docker,variante,/api/variant/rs334,variante,quente,3.41,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.324,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.831,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.602,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.379,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.396,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.131,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.31,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.236,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.29,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.299,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.219,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.193,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.269,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.275,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.174,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.238,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.177,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.257,200,3217
+docker,variante,/api/variant/rs334,variante,quente,2.492,200,3217
+docker,variante,/api/variant/rs1800562,variante,frio,4042.199,200,3126
+docker,variante,/api/variant/rs1800562,variante,frio,2263.063,200,3126
+docker,variante,/api/variant/rs1800562,variante,frio,2395.863,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.878,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.744,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.756,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.748,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.614,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.537,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.318,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.37,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.383,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.273,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.246,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.508,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.512,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.491,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.139,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.33,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.201,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.182,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,2.198,200,3126
+docker,variante,/api/variant/rs1800562,variante,quente,5.43,200,3126
+docker,doenca,/api/disease/anemia-falciforme,doenca,frio,327.268,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,frio,261.061,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,frio,259.136,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,4.391,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.434,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,2.812,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.104,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,2.852,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.264,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.778,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.681,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.626,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.488,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.501,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.664,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.588,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,2.568,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,2.919,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.766,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,3.478,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.652,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.57,200,1218
+docker,doenca,/api/disease/anemia-falciforme,doenca,quente,1.667,200,1218
+docker,doenca,/api/disease/talassemia-beta,doenca,frio,278.961,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,frio,260.762,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,frio,296.488,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.579,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.297,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.338,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.163,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.146,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.127,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.293,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.838,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.34,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.403,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.201,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.269,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.358,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.265,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.302,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.422,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.269,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.233,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.301,200,769
+docker,doenca,/api/disease/talassemia-beta,doenca,quente,2.216,200,769
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,3711.548,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,3470.958,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,frio,3152.343,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,2.385,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.663,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.534,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.596,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.817,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.665,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.581,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.653,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.643,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.648,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.707,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.617,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.74,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.61,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.691,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.524,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.699,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.82,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.715,200,4831
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,quente,1.641,200,4831
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3350.988,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3490.866,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,frio,3168.205,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.389,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.788,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.58,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.595,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.694,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.579,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.997,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,3.593,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.725,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.251,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.684,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.688,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.61,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.624,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.645,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,3.076,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,2.882,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,3.49,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.775,200,4829
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,quente,1.754,200,4829
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,340.468,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,353.539,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,frio,340.473,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.656,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.195,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.168,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.161,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.24,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.517,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.392,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.11,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.556,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.793,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.329,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.501,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.399,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.3,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.58,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.306,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.241,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,2.275,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,10.815,200,2478
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,quente,1.862,200,2478
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,328.55,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,332.262,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,frio,369.737,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.165,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.816,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.685,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.585,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.459,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.518,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.482,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.61,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.884,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.689,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.588,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.19,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.091,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.049,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,1.984,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.01,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.145,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.069,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.361,200,2388
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,quente,2.165,200,2388
+docker,escore,/api/pgs/PGS000004,escore,frio,7710.238,200,17869
+docker,escore,/api/pgs/PGS000004,escore,frio,7614.647,200,17869
+docker,escore,/api/pgs/PGS000004,escore,frio,7328.387,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,5.324,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.338,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.251,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.432,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,4.425,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.428,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.555,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.311,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.313,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.246,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,4.953,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.082,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.107,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.625,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.583,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.156,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.075,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.31,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.092,200,17869
+docker,escore,/api/pgs/PGS000004,escore,quente,2.368,200,17869
+docker,escore,/api/pgs/PGS000001,escore,frio,2253.015,200,10149
+docker,escore,/api/pgs/PGS000001,escore,frio,1972.756,200,10149
+docker,escore,/api/pgs/PGS000001,escore,frio,2300.504,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,3.632,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,3.124,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.076,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.017,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.935,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.016,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.014,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.982,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.853,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.981,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.059,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.925,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.885,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.865,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.822,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.84,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.846,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.912,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,1.691,200,10149
+docker,escore,/api/pgs/PGS000001,escore,quente,2.004,200,10149
+docker,sugestao,/api/suggest?q=BRC,meta,frio,78.015,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,8.852,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,29.661,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,15.981,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,9.632,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,9.102,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,9.347,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,frio,10.486,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,4.514,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.598,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.709,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.323,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.324,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.253,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.111,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.26,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.362,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.402,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.282,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.554,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.209,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.204,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.13,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.35,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.216,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.17,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.261,200,501
+docker,sugestao,/api/suggest?q=BRC,meta,quente,3.142,200,501
+docker,sugestao,/api/suggest?q=MLH,meta,frio,4.428,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,8.32,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,9.309,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,9.157,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,9.581,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,4.019,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,8.362,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,frio,8.131,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,5.551,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,4.769,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.4,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.177,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.414,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.997,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.854,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.963,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.019,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.074,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.944,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.008,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.985,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.207,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.013,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.892,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,3.025,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.988,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.981,200,105
+docker,sugestao,/api/suggest?q=MLH,meta,quente,2.979,200,105
+docker,sugestao,/api/suggest?q=TP5,meta,frio,9.072,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,7.124,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,24.208,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,10.545,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,8.46,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,10.253,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,9.814,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,frio,9.228,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,5.618,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,5.258,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,3.468,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,3.183,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,2.992,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,2.881,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,3.403,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.775,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,5.325,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,7.424,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,7.635,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,5.455,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.277,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.046,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,5.39,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.647,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,4.867,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.372,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,6.436,200,708
+docker,sugestao,/api/suggest?q=TP5,meta,quente,4.357,200,708
+docker,sugestao,/api/suggest?q=CFT,meta,frio,8.866,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,8.782,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,9.158,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,9.416,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,8.896,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,8.457,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,9.266,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,frio,9.278,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,5.811,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,4.677,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.486,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.336,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.316,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.504,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.638,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.291,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.182,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.254,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.437,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.329,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.338,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.185,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.248,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.214,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.098,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.284,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.108,200,215
+docker,sugestao,/api/suggest?q=CFT,meta,quente,3.248,200,215
+docker,sugestao,/api/suggest?q=HBB,meta,frio,8.627,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,16.456,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,8.802,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,7.03,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,8.309,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,10.084,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,6.77,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,frio,8.901,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,6.057,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,4.918,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,3.402,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,3.522,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,3.137,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.897,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.885,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.963,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.927,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.803,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.87,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.831,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.862,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,3.286,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.871,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.839,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.899,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.815,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.977,200,210
+docker,sugestao,/api/suggest?q=HBB,meta,quente,2.785,200,210
+docker,sugestao,/api/suggest?q=LDL,meta,frio,10.09,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,9.314,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,9.498,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,8.392,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,9.852,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,9.163,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,8.713,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,frio,8.836,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,4.918,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.448,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.425,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.172,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.149,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.105,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.201,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.258,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.188,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.125,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.186,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.117,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.293,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.125,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.271,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.19,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.37,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.206,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,82.673,200,546
+docker,sugestao,/api/suggest?q=LDL,meta,quente,3.552,200,546
+docker,sugestao,/api/suggest?q=MSH,meta,frio,10.658,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,15.87,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,9.171,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,8.765,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,7.838,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,7.878,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,9.269,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,frio,8.632,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,6.19,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.746,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.856,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.219,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,2.988,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.09,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.127,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,2.943,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.102,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.478,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.345,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.044,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.049,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.107,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.137,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,5.597,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.463,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.053,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.105,200,619
+docker,sugestao,/api/suggest?q=MSH,meta,quente,3.051,200,619
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.737,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.588,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.766,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.896,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.633,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.535,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,9.167,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,frio,6.621,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,6.206,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,5.322,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,4.877,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,4.32,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.358,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.22,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.218,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.039,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.005,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.176,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.078,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.112,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.078,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.27,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.182,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.188,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.059,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.057,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,2.998,200,263
+docker,sugestao,/api/suggest?q=VHL,meta,quente,3.037,200,263
+docker,sugestao,/api/suggest?q=PAH,meta,frio,9.248,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,8.481,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,8.682,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,4.718,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,9.139,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,8.853,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,9.284,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,frio,8.476,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,5.895,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.196,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.148,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,4.257,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.309,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.153,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.204,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.071,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.042,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,2.975,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.777,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.503,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.305,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.307,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.13,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.071,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.043,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.094,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.117,200,377
+docker,sugestao,/api/suggest?q=PAH,meta,quente,3.402,200,377
+docker,sugestao,/api/suggest?q=RB1,meta,frio,8.868,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,8.4,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,8.554,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,8.435,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,9.016,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,8.847,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,9.513,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,frio,9.542,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,5.698,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,4.904,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,3.273,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,3.076,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.946,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.825,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.998,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.83,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.866,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.982,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.88,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.857,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,3.218,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,3.235,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,3.433,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.852,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.95,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.804,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.982,200,779
+docker,sugestao,/api/suggest?q=RB1,meta,quente,2.853,200,779
+docker,catalogo de doencas,/api/disease,listagem,frio,6.562,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,5.439,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,4.876,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,6.002,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,7.098,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,8.203,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,4.68,200,8759
+docker,catalogo de doencas,/api/disease,listagem,frio,3.622,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.67,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.376,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.165,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.185,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.228,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.054,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.238,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.243,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.109,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.501,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.122,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.378,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.092,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.044,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.104,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.06,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,1.994,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.067,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.043,200,8759
+docker,catalogo de doencas,/api/disease,listagem,quente,2.162,200,8759
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,19.815,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,9.927,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,10.182,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,9.973,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,9.836,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,9.843,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,10.279,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,frio,9.452,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,5.566,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,4.874,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,4.232,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.848,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.627,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.555,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.473,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.46,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.486,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.771,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.541,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.382,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.598,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.812,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.488,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.535,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.646,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.62,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,3.083,200,1611
+docker,estatistica de doencas,/api/disease/stats,listagem,quente,2.444,200,1611
+docker,catalogo de paineis,/api/panel,listagem,frio,6.805,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,5.648,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,5.696,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,5.243,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,6.371,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,5.313,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,6.084,200,11794
+docker,catalogo de paineis,/api/panel,listagem,frio,5.875,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,3.195,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,3.24,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,3.052,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,3.174,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.926,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,3.877,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.91,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.827,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.648,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.729,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.465,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.927,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.367,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.402,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.359,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.375,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.579,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.421,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.453,200,11794
+docker,catalogo de paineis,/api/panel,listagem,quente,2.517,200,11794
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,10.483,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,6.291,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,7.16,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,6.823,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,6.864,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,6.209,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,5.735,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,frio,5.871,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.652,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.586,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.533,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.306,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.689,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.169,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.486,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.247,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.085,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.099,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.58,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.043,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,1.985,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.007,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.029,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,3.637,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.076,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,1.998,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.122,200,1060
+docker,estatistica de paineis,/api/panel/stats,listagem,quente,2.051,200,1060
+docker,catalogo de escores,/api/pgs,listagem,frio,12.896,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,8.207,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,8.568,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,14.198,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,10.059,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,8.392,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,8.333,200,7065
+docker,catalogo de escores,/api/pgs,listagem,frio,7.369,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,5.351,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,5.702,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,4.233,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,3.038,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.434,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.46,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.428,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.437,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.411,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.443,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.426,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.375,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.332,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.321,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.28,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.44,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.468,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.498,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.352,200,7065
+docker,catalogo de escores,/api/pgs,listagem,quente,2.306,200,7065
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.446,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.366,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,3.903,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.56,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.189,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.34,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.378,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,frio,4.321,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.068,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.185,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.038,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.928,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.092,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.095,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.041,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.9,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.919,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.979,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.522,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.133,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,2.412,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.832,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.945,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.925,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.909,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.849,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.929,200,1334
+docker,raro x poligenico,/api/pgs/interplay,listagem,quente,1.88,200,1334
+docker,fontes,/api/sources,meta,frio,143.033,200,8231
+docker,fontes,/api/sources,meta,frio,85.15,200,8231
+docker,fontes,/api/sources,meta,frio,90.923,200,8231
+docker,fontes,/api/sources,meta,frio,98.055,200,8231
+docker,fontes,/api/sources,meta,frio,84.495,200,8231
+docker,fontes,/api/sources,meta,frio,81.716,200,8231
+docker,fontes,/api/sources,meta,frio,79.894,200,8231
+docker,fontes,/api/sources,meta,frio,81.391,200,8231
+docker,fontes,/api/sources,meta,quente,74.725,200,8231
+docker,fontes,/api/sources,meta,quente,75.366,200,8231
+docker,fontes,/api/sources,meta,quente,75.251,200,8231
+docker,fontes,/api/sources,meta,quente,78.221,200,8231
+docker,fontes,/api/sources,meta,quente,85.272,200,8231
+docker,fontes,/api/sources,meta,quente,88.835,200,8231
+docker,fontes,/api/sources,meta,quente,79.639,200,8231
+docker,fontes,/api/sources,meta,quente,97.634,200,8231
+docker,fontes,/api/sources,meta,quente,92.272,200,8231
+docker,fontes,/api/sources,meta,quente,79.767,200,8231
+docker,fontes,/api/sources,meta,quente,78.027,200,8231
+docker,fontes,/api/sources,meta,quente,82.332,200,8231
+docker,fontes,/api/sources,meta,quente,78.93,200,8231
+docker,fontes,/api/sources,meta,quente,81.089,200,8231
+docker,fontes,/api/sources,meta,quente,82.285,200,8231
+docker,fontes,/api/sources,meta,quente,80.784,200,8231
+docker,fontes,/api/sources,meta,quente,82.344,200,8231
+docker,fontes,/api/sources,meta,quente,80.896,200,8231
+docker,fontes,/api/sources,meta,quente,81.964,200,8231
+docker,fontes,/api/sources,meta,quente,96.985,200,8231
+docker,saude das fontes,/api/health/sources,meta,frio,1324.721,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,5.729,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,4.9,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,4.72,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,4.348,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,4.263,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,4.603,200,783
+docker,saude das fontes,/api/health/sources,meta,frio,3.824,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,3.637,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.334,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.275,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.452,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.545,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.06,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.233,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.137,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.143,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.125,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.133,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.125,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.129,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,4.638,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.154,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.122,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.197,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.134,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.29,200,783
+docker,saude das fontes,/api/health/sources,meta,quente,2.177,200,783
+docker,saude das rotas,/api/health/endpoints,meta,frio,19.439,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.557,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.543,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.488,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.949,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.518,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,4.876,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,frio,5.249,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.349,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.426,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.54,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.493,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,3.477,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.67,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.162,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,4.456,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.222,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.101,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.247,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.153,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.124,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.18,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.229,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.103,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.144,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.122,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.346,200,2909
+docker,saude das rotas,/api/health/endpoints,meta,quente,2.384,200,2909

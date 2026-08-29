@@ -32,7 +32,7 @@ const interp = await import(`${SRC}/vcf/interpretacao.js`)
 const exportar = await import(`${SRC}/vcf/exportar.js`)
 const saidas = await import(`${SRC}/vcf/saidas.js`)
 
-const ENTRADA = `${RAIZ}/benchmark-v2/corpus/reais/nist-usuario.vcf.gz`
+const ENTRADA = `${RAIZ}/benchmark-final/corpus/reais/nist-usuario.vcf.gz`
 const bytes = readFileSync(ENTRADA)
 const arq = new Blob([bytes])
 Object.defineProperty(arq, 'name', { value: 'NIST-HG001.vcf.gz' })

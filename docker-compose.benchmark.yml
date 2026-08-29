@@ -1,0 +1,39 @@
+# Sobreposicao usada so pelo benchmark.
+#
+# As portas do compose padrao colidem com o ambiente local de desenvolvimento,
+# que serve o backend em 8000 e o Redis em 6379. Derrubar o ambiente local para
+# medir o conteinerizado funcionaria, mas as duas medicoes deixariam de poder ser
+# feitas na mesma sessao, e a comparacao entre elas passaria a carregar a
+# diferenca de horario junto com a diferenca de ambiente. Em portas proprias, as
+# duas coexistem e a unica variavel que muda e o ambiente.
+#
+# Uso:
+#   docker compose -f docker-compose.yml -f docker-compose.benchmark.yml up -d
+#
+# `!override` e obrigatorio: o Compose SOMA listas de portas entre arquivos em vez
+# de substituir, entao sem a marca o servico tentava abrir 6379 e 6380 ao mesmo
+# tempo e falhava com "address already in use" no primeiro, que e o do Redis
+# local.
+services:
+  backend:
+    ports: !override
+      - "8001:8000"
+    environment:
+      # O limitador de taxa dispensa quem chega pelo loopback, e dentro do
+      # conteiner NINGUEM chega assim: o backend ve o gateway do Docker
+      # (192.168.65.1) e aplica o limite. Sem isto, a medicao local roda sem
+      # limitador e a conteinerizada roda com ele, e a comparacao entre os dois
+      # ambientes viraria uma comparacao entre duas politicas de vazao. Medido:
+      # as rotas de doenca, painel e escore devolviam 429 no conteiner e 200 na
+      # maquina, com a mesma carga.
+      #
+      # O comportamento do limitador NAO deixa de ser medido: ele e o objeto da
+      # fase "produto" da suite de exaustao, que o exercita de proposito.
+      - RATE_LIMIT_PER_SECOND=100000
+      - RATE_LIMIT_PER_MINUTE=100000
+  frontend:
+    ports: !override
+      - "3001:3000"
+  redis:
+    ports: !override
+      - "6380:6379"

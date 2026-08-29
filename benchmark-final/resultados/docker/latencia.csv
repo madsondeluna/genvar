@@ -1,0 +1,38 @@
+rotulo,nome,caminho,familia,de_rede,status,bytes,frio_n,frio_mediana,frio_ic_baixo,frio_ic_alto,frio_p95,frio_max,frio_cauda,frio_min,frio_desvio,quente_n,quente_mediana,quente_ic_baixo,quente_ic_alto,quente_p95,quente_max,quente_cauda,quente_min,quente_desvio,ganho_cache
+docker,gene,/api/gene/MLH1,gene,True,200,136284,3,5078.662,4675.917,6897.425,,6897.425,maximo de 3,4675.917,966.391,20,8.492,6.482,10.957,14.385,28.547,p95,5.896,5.007,598.05
+docker,gene,/api/gene/HBB,gene,True,200,134712,3,3760.142,3500.612,3788.982,,3788.982,maximo de 3,3500.612,129.677,20,6.305,6.148,6.509,8.89,38.395,p95,5.715,7.002,596.37
+docker,gene sem variantes,/api/gene/MLH1?variantes=false,gene,True,200,5298,3,3317.612,3137.219,3383.608,,3383.608,maximo de 3,3137.219,104.139,20,2.518,2.404,2.872,3.769,4.196,p95,2.356,0.537,1317.56
+docker,gene sem variantes,/api/gene/HBB?variantes=false,gene,True,200,1290,3,2532.837,2521.045,2569.015,,2569.015,maximo de 3,2521.045,20.41,20,2.287,2.202,2.619,3.312,5.914,p95,1.734,0.866,1107.49
+docker,gene variantes,/api/gene/MLH1/variants,gene,True,200,134947,3,4297.472,4211.052,4466.905,,4466.905,maximo de 3,4211.052,106.268,20,6.78,6.423,8.423,14.514,39.153,p95,5.874,7.155,633.85
+docker,gene variantes,/api/gene/HBB/variants,gene,True,200,133914,3,3450.183,3415.465,3634.393,,3634.393,maximo de 3,3415.465,96.072,20,6.009,5.835,6.14,9.01,34.246,p95,5.435,6.164,574.17
+docker,gene fenotipos,/api/gene/MLH1/phenotypes,gene,True,200,3109,3,1394.384,1280.972,5021.65,,5021.65,maximo de 3,1280.972,1737.258,20,2.441,1.971,2.573,2.819,2.99,p95,1.515,0.427,571.23
+docker,gene fenotipos,/api/gene/HBB/phenotypes,gene,True,200,5984,3,1842.387,1789.757,1923.775,,1923.775,maximo de 3,1789.757,55.131,20,2.306,2.218,2.382,3.111,3.444,p95,1.679,0.415,798.95
+docker,variante,/api/variant/rs334,variante,True,200,3217,3,6205.079,5618.29,6337.162,,6337.162,maximo de 3,5618.29,312.436,20,2.282,2.237,2.351,2.86,3.41,p95,2.131,0.286,2719.14
+docker,variante,/api/variant/rs1800562,variante,True,200,3126,3,2395.863,2263.063,4042.199,,4042.199,maximo de 3,2263.063,809.21,20,2.437,2.296,2.575,3.006,5.43,p95,2.139,0.685,983.12
+docker,doenca,/api/disease/anemia-falciforme,doenca,True,200,1218,3,261.061,259.136,327.268,,327.268,maximo de 3,259.136,31.674,20,2.69,1.665,3.184,3.797,4.391,p95,1.488,0.907,97.05
+docker,doenca,/api/disease/talassemia-beta,doenca,True,200,769,3,278.961,260.762,296.488,,296.488,maximo de 3,260.762,14.586,20,2.295,2.249,2.339,2.592,2.838,p95,2.127,0.156,121.55
+docker,doenca variantes,/api/disease/anemia-falciforme/variants,doenca,True,200,4831,3,3470.958,3152.343,3711.548,,3711.548,maximo de 3,3152.343,229.034,20,1.658,1.629,1.707,1.848,2.385,p95,1.524,0.175,2093.46
+docker,doenca variantes,/api/disease/talassemia-beta/variants,doenca,True,200,4829,3,3350.988,3168.205,3490.866,,3490.866,maximo de 3,3168.205,132.113,20,1.74,1.664,2.124,3.495,3.593,p95,1.579,0.643,1925.86
+docker,painel,/api/panel/cancer-mama-ovario-hereditario,painel,True,200,2478,3,340.473,340.468,353.539,,353.539,maximo de 3,340.468,6.161,20,2.317,2.24,2.509,3.194,10.815,p95,1.862,1.857,146.95
+docker,painel,/api/panel/cancer-colorretal-hereditario,painel,True,200,2388,3,332.262,328.55,369.737,,369.737,maximo de 3,328.55,18.603,20,1.934,1.647,2.08,2.199,2.361,p95,1.459,0.273,171.8
+docker,escore,/api/pgs/PGS000004,escore,True,200,17869,3,7614.647,7328.387,7710.238,,7710.238,maximo de 3,7328.387,162.239,20,2.325,2.246,2.494,4.972,5.324,p95,2.075,0.949,3275.12
+docker,escore,/api/pgs/PGS000001,escore,True,200,10149,3,2253.015,1972.756,2300.504,,2300.504,maximo de 3,1972.756,144.614,20,1.958,1.869,2.015,3.149,3.632,p95,1.691,0.451,1150.67
+docker,sugestao,/api/suggest?q=BRC,meta,False,200,501,8,10.059,9.102,29.661,,78.015,maximo de 8,8.852,22.401,20,3.272,3.213,3.356,3.749,4.514,p95,3.111,0.305,3.07
+docker,sugestao,/api/suggest?q=MLH,meta,False,200,105,8,8.341,4.428,9.309,,9.581,maximo de 8,4.019,2.046,20,3.01,2.983,3.125,4.808,5.551,p95,2.854,0.66,2.77
+docker,sugestao,/api/suggest?q=TP5,meta,False,200,708,8,9.521,8.46,10.545,,24.208,maximo de 8,7.124,5.061,20,5.422,4.612,6.325,7.435,7.635,p95,2.881,1.444,1.76
+docker,sugestao,/api/suggest?q=CFT,meta,False,200,215,8,9.027,8.782,9.278,,9.416,maximo de 8,8.457,0.299,20,3.303,3.248,3.388,4.734,5.811,p95,3.098,0.622,2.73
+docker,sugestao,/api/suggest?q=HBB,meta,False,200,210,8,8.715,7.539,10.084,,16.456,maximo de 8,6.77,2.854,20,2.898,2.866,3.057,4.975,6.057,p95,2.785,0.8,3.01
+docker,sugestao,/api/suggest?q=LDL,meta,False,200,546,8,9.239,8.713,9.675,,10.09,maximo de 8,8.392,0.54,20,3.204,3.179,3.332,8.806,82.673,p95,3.105,17.296,2.88
+docker,sugestao,/api/suggest?q=MSH,meta,False,200,619,8,8.968,8.255,10.658,,15.87,maximo de 8,7.838,2.455,20,3.117,3.071,3.404,5.627,6.19,p95,2.943,0.843,2.88
+docker,sugestao,/api/suggest?q=VHL,meta,False,200,263,8,9.61,9.167,9.766,,9.896,maximo de 8,6.621,1.011,20,3.179,3.069,3.245,5.366,6.206,p95,2.998,0.881,3.02
+docker,sugestao,/api/suggest?q=PAH,meta,False,200,377,8,8.768,8.476,9.248,,9.284,maximo de 8,4.718,1.409,20,3.175,3.094,3.308,4.339,5.895,p95,2.975,0.642,2.76
+docker,sugestao,/api/suggest?q=RB1,meta,False,200,779,8,8.857,8.435,9.513,,9.542,maximo de 8,8.4,0.417,20,2.966,2.862,3.155,4.944,5.698,p95,2.804,0.724,2.99
+docker,catalogo de doencas,/api/disease,listagem,False,200,8759,8,5.72,4.68,7.098,,8.203,maximo de 8,3.622,1.372,20,2.142,2.08,2.233,2.509,2.67,p95,1.994,0.168,2.67
+docker,estatistica de doencas,/api/disease/stats,listagem,False,200,1611,8,9.95,9.836,10.279,,19.815,maximo de 8,9.452,3.278,20,2.609,2.511,2.792,4.909,5.566,p95,2.382,0.856,3.81
+docker,catalogo de paineis,/api/panel,listagem,False,200,11794,8,5.785,5.313,6.228,,6.805,maximo de 8,5.243,0.494,20,2.689,2.459,2.926,3.272,3.877,p95,2.359,0.387,2.15
+docker,estatistica de paineis,/api/panel/stats,listagem,False,200,1060,8,6.557,5.871,7.16,,10.483,maximo de 8,5.735,1.422,20,2.367,2.08,3.237,3.654,3.689,p95,1.985,0.67,2.77
+docker,catalogo de escores,/api/pgs,listagem,False,200,7065,8,8.48,8.207,12.128,,14.198,maximo de 8,7.369,2.32,20,2.436,2.39,2.464,5.369,5.702,p95,2.28,0.991,3.48
+docker,raro x poligenico,/api/pgs/interplay,listagem,False,200,1334,8,4.353,4.189,4.446,,4.56,maximo de 8,3.903,0.184,20,1.962,1.922,2.08,2.417,2.522,p95,1.832,0.175,2.22
+docker,fontes,/api/sources,meta,False,200,8231,8,84.823,81.391,98.055,,143.033,maximo de 8,79.894,19.688,20,80.993,79.285,82.338,97.017,97.634,p95,74.725,6.404,1.05
+docker,saude das fontes,/api/health/sources,meta,True,200,783,8,4.662,4.263,5.729,,1324.721,maximo de 8,3.824,436.58,20,2.165,2.133,2.282,3.687,4.638,p95,2.06,0.611,2.15
+docker,saude das rotas,/api/health/endpoints,meta,True,200,2909,8,4.716,4.518,5.249,,19.439,maximo de 8,4.488,4.868,20,2.238,2.157,2.405,3.526,4.456,p95,2.101,0.552,2.11
