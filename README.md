@@ -1268,7 +1268,7 @@ git config core.hooksPath .githooks
 
 A entrada é o **GIAB/NIST HG001**, a linhagem NA12878 do Genome in a Bottle Consortium, distribuída publicamente pelo NIST e pelo Coriell com consentimento para uso aberto. Não é dado de paciente: nenhum arquivo genético de pessoa identificável entra neste repositório, e a barreira que garante isso está em [Dado genômico no repositório](#dado-genômico-no-repositório). É sequenciamento humano real, não sintético, e é por isso que serve para mostrar o que a análise devolve num arquivo de verdade, com os defeitos que um arquivo de verdade tem.
 
-A pasta guarda a saída de uma execução do pipeline sobre esse arquivo, produzida por `scripts/gera_saidas_exemplo.mjs`, que importa os mesmos módulos que a página `/vcf` carrega no navegador e os chama na mesma ordem. O que muda é só o ambiente: Node em vez de aba.
+A pasta guarda a saída de uma execução do pipeline sobre esse arquivo, produzida por `scripts/gera_saidas_exemplo.mjs`, que importa os mesmos módulos que a página `/vcf` carrega no navegador e os chama na mesma ordem. O que muda é só o ambiente: Node em vez de aba. O `mock-results-vcf-test/README.md` traz o mesmo detalhamento junto dos arquivos.
 
 | Item | Valor |
 |---|---|
@@ -1281,12 +1281,15 @@ A pasta guarda a saída de uma execução do pipeline sobre esse arquivo, produz
 | Razão Ti/Tv | 2,73 |
 | Já no dbSNP | 96,0%, 28.819 com rsID |
 | Casadas no ClinVar | 131, com 86 de alelo divergente |
-| Com critério ACMG | 97 variantes |
+| Patogênicas | 7 |
+| Com diretriz farmacogenética | 18 |
+| Com critério ACMG | 97 |
 | Maior evidência | TPP1 · rs56144125, escore +9 (PVS1 +8, PP5 +1) |
 
-![Relatório do VCF com o arquivo real carregado](mock-results-vcf-test/tela-1-resumo.png)
+![Relatório completo da análise do VCF](mock-results-vcf-test/tela-laudo.png)
 
-**Cabeçalho do relatório em `/vcf`.** As cinco métricas do arquivo, o painel de genes e o campo de sinais clínicos, com o nome, o tamanho e a referência lidos do próprio cabeçalho do VCF.
+**Relatório de `/vcf` com o arquivo carregado.** A tela inteira, 8.324 pixels de altura: métricas do arquivo, distribuição das classificações do ClinVar, as sete patogênicas com nível de revisão e validade gene-doença, as dezoito variantes com diretriz farmacogenética, a régua do escore ACMG com os critérios que dispararam e os que este módulo não avalia, efeito na proteína, polimorfismos já catalogados e cobertura da anotação.  
+`/vcf` · [https://genvar.delunalab.dev/vcf](https://genvar.delunalab.dev/vcf)
 
 Três números da tabela pedem explicação, e nenhum dos três é defeito.
 
@@ -1296,20 +1299,20 @@ Três números da tabela pedem explicação, e nenhum dos três é defeito.
 
 **A razão Ti/Tv é 2,73, abaixo da faixa de 2,8 a 3,3 que a página imprime ao lado.** A faixa é a esperada para exoma capturado com pipelines atuais, e este é um recorte de 2014 chamado pelo GATK 2.8, anterior à recalibração que empurrou esse número para cima. O valor está onde se espera de um conjunto daquela época, e mantê-lo à vista é o ponto: a página compara o arquivo com a referência em vez de aceitar qualquer número em silêncio.
 
-Conteúdo da pasta:
+Os seis formatos que a página produz, todos a partir da mesma tabela:
 
 | Arquivo | O que traz |
 |---|---|
 | `NIST-HG001-genvar.tsv` | Uma linha por variante, 28 colunas, sete delas de ACMG (critérios, pontos, direção, avaliados, não avaliados, não verificados, pontos por critério) |
 | `NIST-HG001-genvar.csv` | O mesmo conteúdo em vírgula, para planilha |
+| `NIST-HG001-genvar.xlsx` | Quatro abas: Variantes com as 30.009 linhas, Achados, Qualidade e Metodologia |
 | `NIST-HG001-genvar.json.gz` | Estrutura completa: cabeçalho, métricas, achados, farmacogenômica e cobertura da anotação |
+| `NIST-HG001-genvar.vcf` | O VCF de entrada com as anotações acrescentadas em campos `GENVAR_*` |
 | `NIST-HG001-genvar.pdf` | Laudo em 72 KB, o mesmo que o botão "Laudo em PDF" produz |
 | `resumo.json` | Os números da tabela acima, legíveis por máquina |
-| `tela-1-resumo.png` | Cabeçalho do relatório e as cinco métricas do arquivo |
-| `tela-2-patogenicas.png` | Distribuição das classificações do ClinVar e a tabela das sete patogênicas |
-| `tela-3-acmg.png` | Régua do escore ACMG, os sete critérios que dispararam e os vinte e um que este módulo não avalia |
+| `tela-laudo.png` | A captura acima, em página inteira |
 
-O VCF anotado não está versionado. O hook de pre-commit aceita apenas VCF que declare `##source=genvar-`, marca escrita só pelo gerador de fixtures sintéticas, e o exportador declara `##source=GenVar`. Abrir a regra para o produtor faria o hook aceitar também a exportação de um arquivo de paciente, que é o caso que ele existe para barrar. Os quatro formatos acima carregam o mesmo conteúdo, e o VCF se refaz rodando o script sobre a entrada citada.
+O arquivo de entrada não é versionado: mora em `benchmark-v2/corpus/reais/nist-usuario.vcf.gz`, e o `benchmark-v2/README.md` explica como obtê-lo. A saída anotada, essa sim, entra no repositório, e o hook de pre-commit continua estrito: ela passa porque declara no cabeçalho o sha256 daquela entrada de referência pública, e qualquer outro VCF na mesma pasta é barrado. Aceitar "foi o GenVar que exportou" deixaria passar a exportação de um arquivo de paciente, que é o caso que o hook existe para barrar; aceitar um hash não deixa passar nada além daquele arquivo.
 
 
 ## Testes

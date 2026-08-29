@@ -66,11 +66,8 @@ backend/etl/.cache/
 !frontend/public/fixtures/[!._]*.vcf
 !frontend/public/exemplo-grch38.vcf
 
-# O VCF anotado de mock-results-vcf-test/ NAO e versionado, e a regra `*.vcf`
-# acima ja da conta disso. Nao e questao de sigilo: a entrada e o GIAB/NIST
-# HG002, material de referencia de consentimento aberto. E que o hook de
-# pre-commit so aceita VCF que declare `##source=genvar-`, marca que apenas o
-# gerador sintetico escreve, e o exportador declara `##source=GenVar`. Abrir a
-# regra para o produtor aceitaria tambem a exportacao de um arquivo de paciente,
-# que e exatamente o que o hook existe para barrar. Os outros quatro formatos da
-# pasta mostram o mesmo conteudo, e o VCF se refaz rodando o pipeline.
+# A saida anotada do exemplo entra no repositorio, e a regra `*.vcf` acima a
+# pegaria junto com os arquivos de trabalho. O hook de pre-commit continua
+# estrito: ela so passa porque declara o sha256 do GIAB/NIST HG001, a entrada de
+# referencia publica. Qualquer outro VCF nesta pasta e barrado do mesmo jeito.
+!mock-results-vcf-test/[!._]*.vcf

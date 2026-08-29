@@ -28,3 +28,5 @@ frontend/public/data/burden/*.json filter=lfs diff=lfs merge=lfs -text
 mock-results-vcf-test/*.tsv filter=lfs diff=lfs merge=lfs -text
 mock-results-vcf-test/*.csv filter=lfs diff=lfs merge=lfs -text
 mock-results-vcf-test/*.json.gz filter=lfs diff=lfs merge=lfs -text
+mock-results-vcf-test/*.vcf filter=lfs diff=lfs merge=lfs -text
+mock-results-vcf-test/*.xlsx filter=lfs diff=lfs merge=lfs -text

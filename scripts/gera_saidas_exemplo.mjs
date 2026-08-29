@@ -4,6 +4,7 @@
 // mesma ordem em que a pagina os chama. O que muda e so o ambiente, Node em vez
 // de aba, e por isso os caminhos de `/data/...` sao resolvidos contra o disco.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { gzipSync } from 'node:zlib'
 import { join, resolve, dirname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -71,10 +72,14 @@ const base = { nome: 'NIST-HG001.vcf.gz', tamanho: bytes.length, meta, variantes
 // Saidas de texto, pelas mesmas funcoes que os botoes chamam.
 writeFileSync(join(SAIDA, 'NIST-HG001-genvar.tsv'), exportar.paraTSV(variantes))
 writeFileSync(join(SAIDA, 'NIST-HG001-genvar.csv'), exportar.paraCSV(variantes))
-writeFileSync(join(SAIDA, 'NIST-HG001-genvar.json'), exportar.paraJSON(base))
+// O JSON sai indentado e da 21 MB com 30 mil variantes. Gravado ja comprimido,
+// porque a alternativa e lembrar de comprimir a mao a cada corrida, e quem
+// esquecer versiona os 21 MB.
+writeFileSync(join(SAIDA, 'NIST-HG001-genvar.json.gz'),
+  gzipSync(Buffer.from(exportar.paraJSON(base)), { level: 9 }))
 writeFileSync(join(SAIDA, 'NIST-HG001-genvar.vcf'), exportar.paraVCF({
   variantes, meta, nome: base.nome, sha256: sha, versaoClinvar: '2026-08-22', painel: null }))
-console.log('  TSV, CSV, JSON e VCF anotado gravados')
+console.log('  TSV, CSV, JSON.gz e VCF anotado gravados')
 
 const dp = met.histograma(variantes, 'dp')
 const qual = met.histograma(variantes, 'qual')
@@ -88,6 +93,11 @@ const porGene = Object.entries(variantes.reduce((c, v) => {
 const completo = { ...base, dp, qual, cromo, espectro, porGene, papeis: {}, termos: [],
   anotacao: { casadas: anot.casadas, divergentes: anot.divergentes,
     podeCoordenada: meta.build === 'GRCh38', camadasCarregadas: 'aviso' } }
+
+// A planilha vem depois do `completo` porque a aba Metodologia le a anotacao.
+const xlsx = await exportar.paraXLSX(saidas.abasXLSX(completo))
+writeFileSync(join(SAIDA, 'NIST-HG001-genvar.xlsx'), Buffer.from(await xlsx.arrayBuffer()))
+console.log(`  XLSX gravado, ${(xlsx.size / 1024).toFixed(0)} KB`)
 
 const { gerarPDF } = await import(`${SRC}/vcf/pdf.jsx`)
 const blob = await gerarPDF(completo)

@@ -107,6 +107,17 @@ export async function exportarVariantes(formato, dados) {
     return
   }
 
+  baixar(await paraXLSX(abasXLSX(dados)), `${base}-genvar.xlsx`)
+}
+
+// As abas da planilha, sem tocar no navegador. Separado de `exportarVariantes`
+// porque aquela funcao termina em `baixar()`, que precisa de `document` e de
+// `URL.createObjectURL`: fora da aba ela nao roda, e o gerador das saidas de
+// exemplo ficava sem jeito de produzir o XLSX que o botao produz. Montar as
+// abas aqui e o que garante que a planilha do repositorio e a mesma do botao,
+// em vez de uma segunda versao que diverge na primeira coluna nova.
+export function abasXLSX(dados) {
+  const { variantes, metricas, resumoCli } = dados
   const abas = [
     { nome: 'Variantes', linhas: [CABECALHO, ...linhasTabulares(variantes)] },
     {
@@ -120,6 +131,5 @@ export async function exportarVariantes(formato, dados) {
   ]
   const pops = populacoes(variantes)
   if (pops.length > 1) abas.splice(2, 0, { nome: 'Populacoes', linhas: pops })
-
-  baixar(await paraXLSX(abas), `${base}-genvar.xlsx`)
+  return abas
 }

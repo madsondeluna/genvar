@@ -13,6 +13,10 @@
 # "non-monotonic index". Somem antes de qualquer commit.
 find . -name "._*" -not -path "./node_modules/*" -delete 2>/dev/null
 
+# sha256 do GIAB/NIST HG001, a unica entrada de referencia publica que este
+# repositorio versiona anotada. Ver "Exemplo de analise completa" no README.
+REFERENCIA_PUBLICA=8926b10552e1229e1c295cbe396eb60e83fa8c21ee3df971c8641fc69b71a0a8
+
 falhou=0
 for f in $(git diff --cached --name-only --diff-filter=ACM); do
   [ -f "$f" ] || continue
@@ -20,13 +24,29 @@ for f in $(git diff --cached --name-only --diff-filter=ACM); do
                   *) cabecalho=$(head -c 4096 "$f" 2>/dev/null) ;; esac
   case "$cabecalho" in
     *"##fileformat=VCF"*)
-      case "$cabecalho" in
-        *"##source=genvar-"*) ;;
-        *) echo "bloqueado: $f e um VCF que nao declara ##source=genvar-." >&2
-           echo "  VCF de pessoa nao entra no repositorio. Se for sintetico, gere-o" >&2
-           echo "  com scripts/gera_vcf_teste.py, que escreve o cabecalho correto." >&2
-           falhou=1 ;;
-      esac ;;
+      permitido=0
+      # Caminho normal: fixture sintetica, em qualquer lugar da arvore.
+      case "$cabecalho" in *"##source=genvar-"*) permitido=1 ;; esac
+      # Excecao unica, presa a UM arquivo de entrada e nao a uma pasta nem a um
+      # produtor. A saida anotada carrega o sha256 do arquivo que a gerou, e so
+      # passa se for o do material de referencia publico. Aceitar "foi o GenVar
+      # que exportou" deixaria passar a exportacao de um paciente, que e o caso
+      # que este hook existe para barrar; aceitar um hash so nao deixa passar
+      # nada alem daquele arquivo.
+      if [ "$permitido" -eq 0 ]; then
+        case "$f" in
+          mock-results-vcf-test/*)
+            case "$cabecalho" in
+              *"##genvar_sha256_entrada=$REFERENCIA_PUBLICA"*) permitido=1 ;;
+            esac ;;
+        esac
+      fi
+      if [ "$permitido" -eq 0 ]; then
+        echo "bloqueado: $f e um VCF que nao declara ##source=genvar-." >&2
+        echo "  VCF de pessoa nao entra no repositorio. Se for sintetico, gere-o" >&2
+        echo "  com scripts/gera_vcf_teste.py, que escreve o cabecalho correto." >&2
+        falhou=1
+      fi ;;
   esac
   # Alinhamento: SAM comeca com "@HD\tVN:" na PRIMEIRA linha e BAM com os bytes
   # "BAM\1". Procurar "@HD" em qualquer lugar do arquivo acusava este proprio
