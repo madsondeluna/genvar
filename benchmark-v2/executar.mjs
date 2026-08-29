@@ -178,7 +178,7 @@ const DIR_REAIS = join(dirname(CORPUS), 'reais')
 // `amostras` e `variantes_aprox` medidos com zcat antes da rodada; servem para
 // o executor decidir o que cabe SEM antes gastar minutos lendo o arquivo.
 const REAIS = [
-  ['nist-usuario.vcf.gz', 'GIAB/NIST, GRCh37, exoma de rotina', 1, 30_000],
+  ['nist-usuario.vcf.gz', 'GIAB/NIST HG001 (NA12878), GRCh37, recorte de exoma', 1, 30_000],
   ['htslib-teste.vcf', 'htslib, casos de borda de sintaxe', 2, 15],
   ['giab-hg002-grch38.vcf.gz', 'GIAB HG002 v4.2.1, GRCh38, referencia de ouro', 1, 4_100_000],
   ['1000g-chrY.vcf.gz', '1000 Genomes chrY, GRCh37, 1.233 amostras', 1233, 62_000],

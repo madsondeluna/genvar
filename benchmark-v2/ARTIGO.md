@@ -87,7 +87,7 @@ vazio. A fração efetiva é registrada no manifesto, porque prometer 8% e entre
 1% em silêncio é o mesmo erro com outra roupa.
 
 Quatro arquivos reais complementam o corpus: o benchmark GIAB HG002 v4.2.1 em
-GRCh38, um exoma GIAB/NIST em GRCh37, o cromossomo Y do 1000 Genomes com 1.233
+GRCh38, um recorte de exoma do GIAB/NIST HG001 em GRCh37, o cromossomo Y do 1000 Genomes com 1.233
 amostras, e o arquivo de casos de borda do htslib. O corpus sintético controla a
 variável; os reais verificam que o controle não construiu um mundo mais fácil que
 o real.

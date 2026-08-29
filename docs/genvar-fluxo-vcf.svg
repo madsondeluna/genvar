@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="1110" viewBox="0 0 980 1110" font-family="Helvetica, Arial, sans-serif">
+<rect width="980" height="1110" fill="#ffffff"/>
+<defs><marker id="arr" markerWidth="9" markerHeight="9" refX="7.5" refY="3.2" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,3.2 L0,6.4 z" fill="#555555"/></marker></defs>
+<text x="490.0" y="38" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">GenVar 3.0 — Fluxo da análise de VCF no navegador</text>
+<text x="490.0" y="60" font-size="12.5" font-weight="400" fill="#555555" text-anchor="middle">Da escolha do arquivo às saídas, sem nenhuma requisição ao backend</text>
+<rect x="150.0" y="86" width="300" height="60" rx="12" ry="12" fill="#f5f5f5" stroke="#666666" stroke-width="1.6"/>
+<text x="300.0" y="107" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">Usuário escolhe um arquivo</text>
+<text x="300.0" y="125" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">.vcf ou .vcf.gz, do disco local</text>
+<polyline points="300,146 300,176" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="150.0" y="176" width="300" height="84" rx="6" ry="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="300.0" y="197" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">parse.js</text>
+<text x="300.0" y="215" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">descompressão por DecompressionStream</text>
+<text x="300.0" y="230" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">varredura por linha, sem carregar tudo em memória</text>
+<polyline points="300,260 300,296" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="150.0" y="296" width="300" height="84" rx="6" ry="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="300.0" y="317" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">metricas.js</text>
+<text x="300.0" y="335" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">Ti/Tv, profundidade, qualidade, fração em dbSNP</text>
+<text x="300.0" y="350" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">histogramas cortados no percentil 99</text>
+<polyline points="300,380 300,416" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="150.0" y="416" width="300" height="84" rx="6" ry="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="300.0" y="437" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">clinvar.js</text>
+<text x="300.0" y="455" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">índice por cromossomo e camada de significado</text>
+<text x="300.0" y="470" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">baixa só as fatias que o arquivo toca</text>
+<polyline points="300,500 300,536" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="150.0" y="536" width="300" height="100" rx="6" ry="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="300.0" y="557" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">interpretacao.js + acmg.js</text>
+<text x="300.0" y="575" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">critérios ACMG e pontuação bayesiana</text>
+<text x="300.0" y="590" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">Tavtigian et al. (2018, 2020)</text>
+<text x="300.0" y="605" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">banda derivada do ponto, nunca fixada à mão</text>
+<polyline points="300,636 300,672" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="150.0" y="672" width="300" height="84" rx="6" ry="6" fill="#d5e8d4" stroke="#82b366" stroke-width="1.6"/>
+<text x="300.0" y="693" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">saidas.js · exportar.js · pdf.jsx</text>
+<text x="300.0" y="711" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">mesma tabela para todos os formatos</text>
+<text x="300.0" y="726" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">sha256 do arquivo em toda saída</text>
+<rect x="520" y="400" width="400" height="116" rx="6" ry="6" fill="#fff2cc" stroke="#d6b656" stroke-width="1.6"/>
+<text x="720.0" y="421" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">Catálogos embarcados (assets estáticos)</text>
+<text x="720.0" y="439" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">ClinVar GRCh38, versão 2026-08-22</text>
+<text x="720.0" y="454" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">4.207.945 variantes em 76 arquivos .json.gz</text>
+<text x="720.0" y="469" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">41 MB servidos como qualquer outro asset;</text>
+<text x="720.0" y="484" font-size="10.5" font-weight="400" fill="#333333" text-anchor="middle">é o único dado que trafega, e só nesse sentido</text>
+<polyline points="520,458 450,458" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="16" y="176" width="104" height="580" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.6"/>
+<text x="68" y="466" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle" transform="rotate(-90 68 466)">lote.js  ·  /lote</text>
+<text x="90" y="466" font-size="10.5" fill="#333333" text-anchor="middle" transform="rotate(-90 90 466)">a mesma sequência, N arquivos, resultado agregado</text>
+<polyline points="120,218 146,218" fill="none" stroke="#555555" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<polyline points="300,756 300,780" fill="none" stroke="#555555" stroke-width="1.6"/>
+<rect x="64" y="800" width="156" height="62" rx="12" ry="12" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="142.0" y="821" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">TSV</text>
+<text x="142.0" y="839" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">tabular</text>
+<polyline points="142,780 142,800" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="236" y="800" width="156" height="62" rx="12" ry="12" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="314.0" y="821" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">CSV</text>
+<text x="314.0" y="839" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">planilha</text>
+<polyline points="314,780 314,800" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="408" y="800" width="156" height="62" rx="12" ry="12" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="486.0" y="821" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">JSON</text>
+<text x="486.0" y="839" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">estruturado</text>
+<polyline points="486,780 486,800" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="580" y="800" width="156" height="62" rx="12" ry="12" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="658.0" y="821" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">VCF</text>
+<text x="658.0" y="839" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">anotado</text>
+<polyline points="658,780 658,800" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="752" y="800" width="156" height="62" rx="12" ry="12" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.6"/>
+<text x="830.0" y="821" font-size="12.5" font-weight="700" fill="#222222" text-anchor="middle">PDF</text>
+<text x="830.0" y="839" font-size="11" font-weight="400" fill="#333333" text-anchor="middle">laudo</text>
+<polyline points="830,780 830,800" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arr)"/>
+<polyline points="64,780 916,780" fill="none" stroke="#555555" stroke-width="1.6"/>
+<rect x="64" y="900" width="852" height="96" rx="8" ry="8" fill="#ffffff" stroke="#b3b3b3" stroke-width="1.4"/>
+<text x="84" y="926" font-size="12.5" font-weight="700" fill="#222222" text-anchor="start">O arquivo do usuário não sai do navegador</text>
+<text x="84" y="946" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Nenhuma etapa acima faz requisição ao backend: não há upload, não há identificador de sessão e não há</text>
+<text x="84" y="961" font-size="11" font-weight="400" fill="#333333" text-anchor="start">registro do que foi analisado. O que trafega são os catálogos embarcados, no sentido servidor para navegador,</text>
+<text x="84" y="976" font-size="11" font-weight="400" fill="#333333" text-anchor="start">e eles são os mesmos para qualquer usuário. O sha256 do arquivo de entrada aparece em todas as saídas para</text>
+<text x="84" y="991" font-size="11" font-weight="400" fill="#333333" text-anchor="start">que um resultado possa ser conferido contra o arquivo que o gerou, sem que o arquivo precise ser guardado.</text>
+<rect x="64" y="1032" width="22" height="14" rx="3" ry="3" fill="#f5f5f5" stroke="#666666" stroke-width="1.3"/>
+<text x="94" y="1043.5" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Entrada do usuário</text>
+<rect x="226.2" y="1032" width="22" height="14" rx="3" ry="3" fill="#d5e8d4" stroke="#82b366" stroke-width="1.3"/>
+<text x="256.2" y="1043.5" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Etapa no navegador</text>
+<rect x="388.4" y="1032" width="22" height="14" rx="3" ry="3" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.3"/>
+<text x="418.4" y="1043.5" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Caminho de coorte</text>
+<rect x="544.7" y="1032" width="22" height="14" rx="3" ry="3" fill="#fff2cc" stroke="#d6b656" stroke-width="1.3"/>
+<text x="574.7" y="1043.5" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Dado embarcado</text>
+<rect x="683.3000000000001" y="1032" width="22" height="14" rx="3" ry="3" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.3"/>
+<text x="713.3000000000001" y="1043.5" font-size="11" font-weight="400" fill="#333333" text-anchor="start">Saída</text>
+</svg>

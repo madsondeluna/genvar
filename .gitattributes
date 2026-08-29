@@ -20,3 +20,11 @@ frontend/public/data/paineis/*.json.gz filter=lfs diff=lfs merge=lfs -text
 frontend/public/data/farmaco/*.json.gz filter=lfs diff=lfs merge=lfs -text
 backend/app/data/*.json filter=lfs diff=lfs merge=lfs -text
 frontend/public/data/burden/*.json filter=lfs diff=lfs merge=lfs -text
+
+# Saidas de demonstracao: regeneraveis por scripts/gera_saidas_exemplo.mjs e
+# refeitas a cada release do ClinVar, entao sao exatamente o caso que o LFS
+# existe para atender. As capturas .png ficam de FORA: o README as referencia
+# como imagem, e num clone sem git-lfs um ponteiro apareceria como link quebrado.
+mock-results-vcf-test/*.tsv filter=lfs diff=lfs merge=lfs -text
+mock-results-vcf-test/*.csv filter=lfs diff=lfs merge=lfs -text
+mock-results-vcf-test/*.json.gz filter=lfs diff=lfs merge=lfs -text

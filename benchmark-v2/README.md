@@ -86,7 +86,7 @@ Quatro arquivos reais, baixados de fontes públicas e nunca versionados:
 
 | Arquivo | Origem | Build | Amostras |
 |---|---|---|---|
-| `nist-usuario.vcf.gz` | GIAB/NIST, exoma de rotina | GRCh37 | 1 |
+| `nist-usuario.vcf.gz` | GIAB/NIST HG001 (NA12878), recorte de exoma | GRCh37 | 1 |
 | `giab-hg002-grch38.vcf.gz` | GIAB HG002 v4.2.1, referência de ouro | GRCh38 | 1 |
 | `1000g-chrY.vcf.gz` | 1000 Genomes, cromossomo Y | GRCh37 | 1.233 |
 | `htslib-teste.vcf` | htslib, casos de borda de sintaxe | GRCh37 | 2 |

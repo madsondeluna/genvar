@@ -554,15 +554,19 @@ Diferente das bases acima, os sumários de associação por burden de variantes 
 
 ## Arquitetura do sistema
 
-A aplicação adota uma arquitetura em três camadas, conteinerizada em três serviços orquestrados por Docker Compose. A Figura 1 descreve a visão estática (componentes e fontes de dados) e a Figura 2 detalha o ciclo de vida dinâmico de uma requisição de gene no servidor. Os dois diagramas reproduzem a arquitetura real do sistema.
+A aplicação tem duas trilhas de dados independentes. A primeira passa pelo servidor: o navegador chama a API, o backend consulta as fontes públicas e devolve um JSON. A segunda não passa: a análise de VCF roda inteiramente no navegador, contra catálogos servidos como assets estáticos, e nenhum byte do arquivo do usuário sai da máquina dele. A Figura 1 mostra as duas trilhas lado a lado, a Figura 2 detalha o ciclo de vida de uma requisição de gene no servidor e a Figura 3 detalha a trilha que não usa o servidor. Os três diagramas são gerados por `scripts/gera_diagramas.py` e reproduzem a arquitetura da versão 3.0.0.
 
 ![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
 
-**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em quatro blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido por nginx (imagem alpine) na porta 3000; reúne as páginas roteadas por react-router (dezesseis rotas, de HomePage e GenePage às de VCF, lote e escore poligênico), as visualizações (Plotly.js para gráficos, NGL para a estrutura tridimensional, Ideogram para o cromossomo) e o cliente HTTP (axios), que encaminha as chamadas ao backend pelo proxy `/api`. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000; expõe as rotas da API (gene, variante, doença, painel, escore poligênico, sugestão, fontes e saúde), faz a orquestração assíncrona das fontes com `asyncio.gather` (chamadas em paralelo) seguida de agregação no servidor, e isola cada fonte em um módulo de serviço próprio. O cache em memória (laranja) é o Redis 7, acoplado ao backend em leitura e escrita (R/W), com política read-through (o backend lê do cache e, em falta, busca na fonte e grava o resultado), expiração de uma hora (TTL 1 h) e chaves versionadas por tipo (`gene:v3`, `variant:v3`). As fontes de dados externas (roxo), acessadas por HTTPS, são cinco bases públicas primárias, Ensembl (REST: gene, VEP, overlap de variantes), gnomAD (GraphQL: frequências e restrição), ClinVar (E-utilities: significância clínica), AlphaFold (REST: estrutura tridimensional) e UniProt (REST: identificador da proteína), mais o agregador MyVariant.info (REST: escores preditivos). As setas marcam o fluxo de requisição: do usuário ao frontend, do frontend ao backend por HTTP/JSON em `/api`, e do backend às fontes em requisições paralelas.
+**Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em seis blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido como build estático; reúne dezessete rotas do react-router, agrupadas em exploração (gene, variante, doenças raras), painéis e escores (painéis, poligênico, associação), análise de VCF (`/vcf` e `/lote`) e meta (início, produtos, status, fontes, sobre, colabore); as visualizações (Plotly.js, NGL para estrutura tridimensional, Ideogram, Manhattan em canvas, réguas ACMG e `@react-pdf/renderer` para o laudo); e o cliente HTTP (axios sobre `/api`, com TanStack Query). O bloco amarelo dentro do navegador é a trilha local: treze módulos de VCF (`parse`, `metricas`, `clinvar`, `interpretacao`, `acmg`, `lote`, `saidas`, `exportar`, `pdf` e testes) e 41 MB de catálogos embarcados, entre eles o ClinVar GRCh38 de 2026-08-22 com 4.207.945 variantes em 76 fatias `.json.gz` por cromossomo e camada de significado. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000: oito roteadores (gene, variante, doença, painel, escore poligênico, sugestão, fontes e saúde) expondo dezoito rotas sob `/api`, middleware de tempo de resposta, limite de taxa, CORS e compressão, orquestração assíncrona com `asyncio.gather` e oito módulos de serviço, um por fonte ao vivo. O cache (laranja) é o Redis 7 em política read-through com expiração de uma hora e chaves versionadas por tipo: `gene:v6:{símbolo}:{com|sem}`, `genevars:v1`, `genephen:v2`, `variant:v3`, `disease:v1`, `diseasevars:v1`, `panel:v1` e `pgs:v3`. As fontes externas (roxo) são as oito consultadas dentro do tempo da requisição: Ensembl, gnomAD, ClinVar, MyVariant.info, UniProt, AlphaFold, GWAS Catalog e PGS Catalog. O bloco cinza no rodapé é a compilação prévia: seis scripts de ETL que rodam fora do tempo da requisição e geram os dois conjuntos de catálogos, os do navegador e os que o processo do servidor carrega em memória. As setas cheias marcam o fluxo de requisição; as tracejadas, o que o ETL alimenta.
 
 ![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
 
 **Figura 2. Ciclo de vida da requisição `/api/gene/{símbolo}`.** O fluxograma acompanha uma chamada do início ao fim no servidor. O navegador emite `GET /api/gene/{símbolo}` e o backend valida o símbolo. A primeira decisão consulta o Redis (Em cache?): em caso de acerto (hit), a resposta sai do cache em cerca de 16 ms, com entrega imediata, encerrando o fluxo; em caso de falha (miss), a requisição prossegue. A etapa seguinte é sequencial e obrigatória antes do paralelismo: o lookup no Ensembl converte o símbolo no `gene_id`. De posse do `gene_id`, o `asyncio.gather` dispara três chamadas em paralelo, o overlap de variantes no Ensembl, a restrição (constraint) do gene no gnomAD e o identificador da proteína no UniProt. A chamada ao AlphaFold (estrutura tridimensional) é condicional e só ocorre se o UniProt devolver um identificador. Concluídas as chamadas, o servidor agrega, classifica e prioriza as variantes, grava o resultado no cache (TTL 1 h, exceto quando a busca de variantes no Ensembl falhou, para não fixar um resultado vazio durante uma instabilidade) montando um JSON único e devolve a resposta ao navegador. A rota `/api/variant/{rs}` segue o mesmo padrão, acrescentando as chamadas ao ClinVar (E-utilities) e ao MyVariant.info (escores preditivos), omitidas no diagrama por clareza.
+
+![Fluxo da análise de VCF no navegador](docs/genvar-fluxo-vcf.svg)
+
+**Figura 3. Fluxo da análise de VCF no navegador.** O fluxograma acompanha um arquivo da escolha às saídas, e nenhuma das etapas faz requisição ao backend. O usuário escolhe um `.vcf` ou `.vcf.gz` do disco. O `parse.js` descomprime por `DecompressionStream` e varre linha a linha, sem carregar o arquivo inteiro em memória. O `metricas.js` calcula a razão Ti/Tv, profundidade, qualidade e a fração já presente no dbSNP, com histogramas cortados no percentil 99. O `clinvar.js` consulta o índice embarcado por cromossomo e camada de significado e baixa apenas as fatias que aquele arquivo toca, o que evita transferir os 41 MB inteiros. O `interpretacao.js` com o `acmg.js` aplica os critérios ACMG/AMP e a pontuação bayesiana de Tavtigian, adotada pelo ClinGen, sempre derivando a banda do ponto e nunca fixando o rótulo à mão. O `saidas.js`, o `exportar.js` e o `pdf.jsx` escrevem a mesma tabela em TSV, CSV, JSON, VCF anotado e PDF, todos carimbados com o sha256 do arquivo de entrada. A faixa azul à esquerda é o `lote.js`, que repete a mesma sequência para N arquivos e agrega o resultado da coorte em `/lote`. O único dado que trafega são os catálogos embarcados, e só no sentido servidor para navegador: são iguais para qualquer usuário e não dependem do que foi analisado.
 
 Os passos abaixo descrevem os mesmos fluxos no nível do código.
 
@@ -570,7 +574,7 @@ Os passos abaixo descrevem os mesmos fluxos no nível do código.
 
 1. Frontend envia `GET /api/gene/MLH1`.
 2. Backend valida o símbolo via `validate_gene_symbol()` (regex HGNC).
-3. Verifica cache Redis com chave versionada `gene:v3:MLH1`. Retorna imediatamente em caso de cache hit.
+3. Verifica cache Redis com chave versionada `gene:v6:MLH1:com`. O recorte com ou sem variantes faz parte da chave, porque `/api/gene/{símbolo}` aceita `variantes=false` e a tabela pesada tem rota própria em `/api/gene/{símbolo}/variants`, sob a chave `genevars:v1`. Retorna imediatamente em caso de cache hit.
 4. Se cache miss: `ensembl.get_gene_info()`, sequencial (necessário para obter o `gene_id`).
 5. Com o `gene_id`, executa em paralelo via `asyncio.gather()`:
    - `ensembl.get_gene_variants(gene_id)`: lista de variantes com `clinical_significance`.
@@ -824,7 +828,13 @@ genvar-dashboard/
 │   ├── figuras/                     PNGs no tamanho final de publicação.
 │   └── RELATORIO.md                 Relatório gerado, com todas as tabelas e figuras.
 ├── deploy/                          Blueprint Render e worker Cloudflare para o /beta.
-├── docs/                            Diagramas de arquitetura e fluxo (SVG das Figuras 1 e 2).
+├── docs/                            Diagramas (Figuras 1 a 3) e capturas de tela do README.
+├── mock-results-vcf-test/           Saídas de uma análise real: GIAB/NIST HG001 pelo pipeline inteiro.
+├── scripts/
+│   ├── gera_diagramas.py            Gera os SVG das Figuras 1 e 3.
+│   ├── gera_saidas_exemplo.mjs      Roda o pipeline de VCF fora do navegador e grava mock-results-vcf-test/.
+│   ├── gera_vcf_teste.py            Gera as fixtures sintéticas de VCF.
+│   └── verifica_dados.mjs           Confere que nenhum dado chegou como ponteiro de LFS.
 ├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
 ├── render.yaml                      Configuração de deploy no Render (produção).
@@ -1243,6 +1253,54 @@ git config core.hooksPath .githooks
 ```
 
 
+## Exemplo de análise completa (`mock-results-vcf-test/`)
+
+A entrada é o **GIAB/NIST HG001**, a linhagem NA12878 do Genome in a Bottle Consortium, distribuída publicamente pelo NIST e pelo Coriell com consentimento para uso aberto. Não é dado de paciente: nenhum arquivo genético de pessoa identificável entra neste repositório, e a barreira que garante isso está em [Dado genômico no repositório](#dado-genômico-no-repositório). É sequenciamento humano real, não sintético, e é por isso que serve para mostrar o que a análise devolve num arquivo de verdade, com os defeitos que um arquivo de verdade tem.
+
+A pasta guarda a saída de uma execução do pipeline sobre esse arquivo, produzida por `scripts/gera_saidas_exemplo.mjs`, que importa os mesmos módulos que a página `/vcf` carrega no navegador e os chama na mesma ordem. O que muda é só o ambiente: Node em vez de aba.
+
+| Item | Valor |
+|---|---|
+| Arquivo | `NIST-HG001.vcf.gz`, 1,39 MB comprimido, 7,30 MB expandido |
+| sha256 da entrada | `8926b10552e1229e1c295cbe396eb60e83fa8c21ee3df971c8641fc69b71a0a8` |
+| Amostra | `NIST-hg001-7001` |
+| Referência | GRCh37, declarada no cabeçalho |
+| Chamador | GATK SelectVariants 2.8, chamada de 2014 |
+| Variantes | 30.009, das quais 26.218 (87,4%) passaram no filtro |
+| Razão Ti/Tv | 2,73 |
+| Já no dbSNP | 96,0%, 28.819 com rsID |
+| Casadas no ClinVar | 131, com 86 de alelo divergente |
+| Com critério ACMG | 97 variantes |
+| Maior evidência | TPP1 · rs56144125, escore +9 (PVS1 +8, PP5 +1) |
+
+![Relatório do VCF com o arquivo real carregado](mock-results-vcf-test/tela-1-resumo.png)
+
+**Cabeçalho do relatório em `/vcf`.** As cinco métricas do arquivo, o painel de genes e o campo de sinais clínicos, com o nome, o tamanho e a referência lidos do próprio cabeçalho do VCF.
+
+Três números da tabela pedem explicação, e nenhum dos três é defeito.
+
+**A referência é GRCh37 e o ClinVar embarcado é GRCh38.** Isso não é um cruzamento entre builds porque o cruzamento não usa coordenada: cada variante é procurada por rsID mais alelo. O rsID nomeia um sítio e é estável entre montagens, e o alelo entra na chave porque o mesmo rsID pode carregar um alelo patogênico e outro benigno. Casar só pelo número imprimiria a classificação de quem o arquivo não tem.
+
+**86 das 131 casadas têm alelo divergente.** É o resultado esperado desse critério, não uma falha: a posição está no ClinVar, o rsID casa, e o alelo que a amostra carrega não é o que a submissão classificou. A anotação registra a divergência em vez de silenciá-la, e é justamente aí que casar só pelo rsID daria uma resposta errada com aparência de certeza.
+
+**A razão Ti/Tv é 2,73, abaixo da faixa de 2,8 a 3,3 que a página imprime ao lado.** A faixa é a esperada para exoma capturado com pipelines atuais, e este é um recorte de 2014 chamado pelo GATK 2.8, anterior à recalibração que empurrou esse número para cima. O valor está onde se espera de um conjunto daquela época, e mantê-lo à vista é o ponto: a página compara o arquivo com a referência em vez de aceitar qualquer número em silêncio.
+
+Conteúdo da pasta:
+
+| Arquivo | O que traz |
+|---|---|
+| `NIST-HG001-genvar.tsv` | Uma linha por variante, 28 colunas, sete delas de ACMG (critérios, pontos, direção, avaliados, não avaliados, não verificados, pontos por critério) |
+| `NIST-HG001-genvar.csv` | O mesmo conteúdo em vírgula, para planilha |
+| `NIST-HG001-genvar.json.gz` | Estrutura completa: cabeçalho, métricas, achados, farmacogenômica e cobertura da anotação |
+| `NIST-HG001-genvar.pdf` | Laudo em 72 KB, o mesmo que o botão "Laudo em PDF" produz |
+| `resumo.json` | Os números da tabela acima, legíveis por máquina |
+| `tela-1-resumo.png` | Cabeçalho do relatório e as cinco métricas do arquivo |
+| `tela-2-patogenicas.png` | Distribuição das classificações do ClinVar e a tabela das sete patogênicas |
+| `tela-3-acmg.png` | Régua do escore ACMG, os sete critérios que dispararam e os vinte e um que este módulo não avalia |
+
+O VCF anotado não está versionado. O hook de pre-commit aceita apenas VCF que declare `##source=genvar-`, marca escrita só pelo gerador de fixtures sintéticas, e o exportador declara `##source=GenVar`. Abrir a regra para o produtor faria o hook aceitar também a exportação de um arquivo de paciente, que é o caso que ele existe para barrar. Os quatro formatos acima carregam o mesmo conteúdo, e o VCF se refaz rodando o script sobre a entrada citada.
+
+
 ## Testes
 
 A suíte separa dois tipos de teste, e a separação é a razão de o build ser confiável: testes de contrato externo reprovam quando um serviço de terceiro muda, fica fora do ar ou limita a taxa, e isso não diz nada sobre o código do projeto.
@@ -1318,7 +1376,7 @@ Relatório completo, com todas as tabelas e figuras, em [`benchmark-v2/RELATORIO
 
 **Corpus.** Doze arquivos sintéticos determinísticos, cada um existente para exercitar um caminho que os outros não alcançam: escala de mil a 600 mil variantes, entrada em `.gz` e em `.zip`, GRCh37, build não declarado, trio com os números de herança plantados no cabeçalho, arquivo com defeitos de rotina e arquivo com cinco amostras. **8% de cada um vem das próprias tabelas do ClinVar embarcado**, e a razão é uma correção de método: a primeira versão usava posição e rsID sorteados, casou 16 variantes em 400.000 e divergiu em 58, ou seja, exercitava o ramo "rsID conhecido, alelo não confere" e deixava resumo clínico, critérios ACMG, filtro por painel e a largura das linhas exportadas medindo o caso vazio.
 
-Mais quatro arquivos reais, de fontes públicas, nunca versionados: o benchmark GIAB HG002 v4.2.1 em GRCh38 (149 MB), um exoma GIAB/NIST em GRCh37, o cromossomo Y do 1000 Genomes com 1.233 amostras, e o arquivo de casos de borda do htslib. O corpus sintético controla a variável; os reais provam que o controle não inventou um mundo mais fácil que o real.
+Mais quatro arquivos reais, de fontes públicas, nunca versionados: o benchmark GIAB HG002 v4.2.1 em GRCh38 (149 MB), um recorte de exoma do GIAB/NIST HG001 (NA12878) em GRCh37, o cromossomo Y do 1000 Genomes com 1.233 amostras, e o arquivo de casos de borda do htslib. O corpus sintético controla a variável; os reais provam que o controle não inventou um mundo mais fácil que o real.
 
 **Reprodutibilidade.** Seis critérios binários por arquivo: TSV, CSV e VCF anotado byte a byte idênticos entre duas execuções; métricas invariantes à ordem das linhas da entrada, verificada com embaralhamento determinístico; e o artefato carregando o SHA-256 da entrada e a versão da compilação do ClinVar. Nove de nove arquivos satisfazem os seis. É a metade da promessa que tempo nenhum mede: um fluxo com oito portais abertos e cópia e cola não tem como sustentá-la.
 
@@ -1711,7 +1769,7 @@ Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_RE
 6. **AlphaFold**: o endpoint retorna array. `[0]` corresponde ao modelo canônico.
 7. **MyVariant.info**: preferir HGVS genômico (`chr{chr}:g.{pos}{ref}>{alt}`) quando há coordenadas do VEP. Em caso de falha, o sistema recorre à busca por `dbsnp.rsid`.
 
-As chaves de cache são versionadas (`gene:v3:`, `variant:v3:`) para invalidar respostas antigas após mudanças no schema.
+As chaves de cache são versionadas (`gene:v6:`, `genevars:v1:`, `genephen:v2:`, `variant:v3:`, `disease:v1:`, `diseasevars:v1:`, `panel:v1:`, `pgs:v3:`) para invalidar respostas antigas após mudanças no schema.
 
 
 ## Estratégia de produto

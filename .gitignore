@@ -65,3 +65,12 @@ backend/etl/.cache/
 # `._trio-grch38.vcf`, que o macOS escreve ao lado do arquivo neste volume.
 !frontend/public/fixtures/[!._]*.vcf
 !frontend/public/exemplo-grch38.vcf
+
+# O VCF anotado de mock-results-vcf-test/ NAO e versionado, e a regra `*.vcf`
+# acima ja da conta disso. Nao e questao de sigilo: a entrada e o GIAB/NIST
+# HG002, material de referencia de consentimento aberto. E que o hook de
+# pre-commit so aceita VCF que declare `##source=genvar-`, marca que apenas o
+# gerador sintetico escreve, e o exportador declara `##source=GenVar`. Abrir a
+# regra para o produtor aceitaria tambem a exportacao de um arquivo de paciente,
+# que e exatamente o que o hook existe para barrar. Os outros quatro formatos da
+# pasta mostram o mesmo conteudo, e o VCF se refaz rodando o pipeline.

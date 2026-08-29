@@ -1,0 +1,26 @@
+{
+  "arquivo": "NIST-HG001.vcf.gz",
+  "sha256": "8926b10552e1229e1c295cbe396eb60e83fa8c21ee3df971c8641fc69b71a0a8",
+  "build": "GRCh37",
+  "build_presumido": false,
+  "chamador": "SelectVariants",
+  "amostras": [
+    "NIST-hg001-7001"
+  ],
+  "variantes": 30009,
+  "linhas_lidas": 29968,
+  "truncado": false,
+  "titv": 2.7293377823408624,
+  "fracao_no_dbsnp": 0.9603452297644041,
+  "clinvar_casadas": 131,
+  "clinvar_divergentes": 86,
+  "acmg_com_criterio": 97,
+  "por_classificacao": {
+    "1": 5,
+    "3": 2,
+    "4": 90,
+    "9": 23,
+    "10": 4,
+    "11": 7
+  }
+}
