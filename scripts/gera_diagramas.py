@@ -16,7 +16,7 @@ Uso: python3 scripts/gera_diagramas.py
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-DOCS = Path(__file__).resolve().parent.parent / "docs"
+DOCS = Path(__file__).resolve().parent.parent / "docs" / "diagramas"
 FONTE = 'Helvetica, Arial, sans-serif'
 
 # Paleta draw.io, uma familia por camada.

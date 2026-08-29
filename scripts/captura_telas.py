@@ -34,7 +34,7 @@ import websockets
 from PIL import Image
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-DOCS = Path(__file__).resolve().parent.parent / "docs"
+DOCS = Path(__file__).resolve().parent.parent / "docs" / "telas"
 LARGURA = 1440
 ESCALA = 2
 

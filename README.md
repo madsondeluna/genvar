@@ -83,7 +83,7 @@ O rs ID (Reference SNP cluster ID) é o identificador da variante no dbSNP, o ba
 
 ### Plataforma beta: da doença rara ao poligênico
 
-Além da busca por gene e por variante, a plataforma reúne um conjunto de módulos que cobrem a genética do monogênico ao poligênico, servidos sob rotas próprias e por uma navegação compartilhada. O plano de evolução está em `ROADMAP.md`. Todos os módulos seguem a mesma disciplina de design (tokens e ícones da linguagem Pure) e um aviso médico global.
+Além da busca por gene e por variante, a plataforma reúne um conjunto de módulos que cobrem a genética do monogênico ao poligênico, servidos sob rotas próprias e por uma navegação compartilhada. O plano de evolução está em `docs/guias/ROADMAP.md`. Todos os módulos seguem a mesma disciplina de design (tokens e ícones da linguagem Pure) e um aviso médico global.
 
 #### Doenças raras (monogênico)
 
@@ -243,7 +243,7 @@ cd backend && python -m etl.pgscatalog
 - Manhattan plot em canvas com filtros de fenótipo, ancestria, máscara funcional, limite de MAF e teste estatístico (Burden, SKAT, SKAT-O), com linhas de limiar (Bonferroni, Cauchy, sugestivo) e uma tabela de maiores sinais exportável em CSV.
 - Forest plot cross-ancestry por gene, com o efeito (beta) e o intervalo de confiança de 95% por ancestria, o losango da meta-análise e a heterogeneidade entre ancestrias (I quadrado, com a escala do que é consistente ou divergente).
 - Mapa mundial dos biobancos por coordenada real, com a cobertura por ancestria e o destaque da camada latina (AMR).
-- Dados: JSON colunar servido em `frontend/public/data/burden`, gerado pelo ETL `backend/scripts/build_burden.py` a partir de sumários gene-based públicos (formato SAIGE-GENE e Meta-SAIGE). A fonte é configurável por `VITE_BURDEN_DATA_URL` para apontar ao dataset completo hospedado em produção. Detalhes em `DATA_BURDEN.md`.
+- Dados: JSON colunar servido em `frontend/public/data/burden`, gerado pelo ETL `backend/scripts/build_burden.py` a partir de sumários gene-based públicos (formato SAIGE-GENE e Meta-SAIGE). A fonte é configurável por `VITE_BURDEN_DATA_URL` para apontar ao dataset completo hospedado em produção. Detalhes em `docs/guias/DATA_BURDEN.md`.
 
 #### Produtos, fontes e status
 
@@ -266,101 +266,101 @@ cd backend && python -m etl.pgscatalog
 As dezessete imagens abaixo são as dezessete rotas da aplicação, sem exceção, capturadas da versão em produção por `scripts/captura_telas.py`. Cada legenda traz o endereço da tela. São páginas inteiras, não recortes da janela: a captura é feita com `Page.captureScreenshot` e `captureBeyondViewport`, que fotografa o documento e não o viewport, então a tela de gene aparece nos seus 7.392 pixels de altura em vez de terminar no primeiro rolar. Largura de 1.440 pixels CSS, resolução dobrada, modo claro fixado na captura.
 
 
-![Página inicial](docs/tela-inicio.png)
+![Página inicial](docs/telas/tela-inicio.png)
 
 **Página inicial.** Ponto de entrada único. A busca unificada reconhece símbolo de gene, rs ID de variante ou nome de doença num campo só e leva para a página certa; abaixo dela ficam os campos específicos, as doenças de acesso rápido e os casos de exemplo.  
 `/` · [https://genvar.delunalab.dev/](https://genvar.delunalab.dev/)
 
 
-![Catálogo de doenças raras](docs/tela-doencas.png)
+![Catálogo de doenças raras](docs/telas/tela-doencas.png)
 
 **Catálogo de doenças raras.** 3.739 doenças monogênicas com busca por doença, categoria ou gene, e seletor de padrão de herança. O painel de panorama mostra a distribuição por herança e por categoria, com a contagem de cada uma.  
 `/doencas` · [https://genvar.delunalab.dev/doencas](https://genvar.delunalab.dev/doencas)
 
 
-![Detalhe de doença](docs/tela-doenca-detalhe.png)
+![Detalhe de doença](docs/telas/tela-doenca-detalhe.png)
 
 **Detalhe de doença.** Metadados curados do Orphanet (herança, prevalência, referências OMIM e MONDO, sinais clínicos), os genes causais com a restrição gênica obtida ao vivo da gnomAD, as variantes patogênicas por gene e o contexto brasileiro de cobertura no SUS.  
 `/doenca/anemia-falciforme` · [https://genvar.delunalab.dev/doenca/anemia-falciforme](https://genvar.delunalab.dev/doenca/anemia-falciforme)
 
 
-![Catálogo de painéis de genes](docs/tela-paineis.png)
+![Catálogo de painéis de genes](docs/telas/tela-paineis.png)
 
 **Catálogo de painéis de genes.** 434 painéis do Genomics England PanelApp, com busca e facetas por categoria. Só entram genes de nível verde, que é o de evidência suficiente para uso diagnóstico.  
 `/paineis` · [https://genvar.delunalab.dev/paineis](https://genvar.delunalab.dev/paineis)
 
 
-![Detalhe de painel](docs/tela-painel-detalhe.png)
+![Detalhe de painel](docs/telas/tela-painel-detalhe.png)
 
 **Detalhe de painel.** A restrição de cada gene do painel obtida ao vivo da gnomAD, com a etiqueta dizendo o que o valor de LOEUF significa para a leitura de uma variante naquele gene, e não apenas o nome da faixa.  
 `/painel/epilepsias-geneticas` · [https://genvar.delunalab.dev/painel/epilepsias-geneticas](https://genvar.delunalab.dev/painel/epilepsias-geneticas)
 
 
-![Análise de VCF](docs/tela-vcf.png)
+![Análise de VCF](docs/telas/tela-vcf.png)
 
 **Análise de VCF.** O módulo roda inteiro no navegador: o arquivo não é transmitido a servidor nenhum. A página abre explicando o que cada etapa da cadeia até o VCF guarda e o que perde, e oferece quatro arquivos sintéticos de exemplo, cada um exercitando uma parte diferente da análise.  
 `/vcf` · [https://genvar.delunalab.dev/vcf](https://genvar.delunalab.dev/vcf)
 
 
-![Triagem de coorte](docs/tela-lote.png)
+![Triagem de coorte](docs/telas/tela-lote.png)
 
 **Triagem de coorte.** Até 200 arquivos numa passada, com consolidado da coorte. Cada arquivo é lido, anotado, resumido e descartado: é essa troca que permite processar dezenas sem estourar a memória da aba, e está medida no benchmark em 54 MB retidos contra 1.766 MB do caminho arquivo a arquivo, em cem exomas.  
 `/lote` · [https://genvar.delunalab.dev/lote](https://genvar.delunalab.dev/lote)
 
 
-![Consulta de gene](docs/tela-gene.png)
+![Consulta de gene](docs/telas/tela-gene.png)
 
 **Consulta de gene.** Metadados do Ensembl, métricas de restrição da gnomAD, ideograma cromossômico, estrutura proteica predita pelo AlphaFold e as tabelas de variantes por classificação clínica. A leitura das variantes vem em consulta separada, para a página aparecer antes de a parte lenta terminar.  
 `/gene/BRCA1` · [https://genvar.delunalab.dev/gene/BRCA1](https://genvar.delunalab.dev/gene/BRCA1)
 
 
-![Consulta de variante](docs/tela-variante.png)
+![Consulta de variante](docs/telas/tela-variante.png)
 
 **Consulta de variante.** Anotação funcional pelo VEP do Ensembl, frequências por população da gnomAD, classificação do ClinVar, escores preditivos agregados pelo MyVariant e o escore de evidência ACMG pelo sistema de pontos de Tavtigian, que mostra os pontos e o lado para onde apontam sem nomear a faixa.  
 `/variant/rs334` · [https://genvar.delunalab.dev/variant/rs334](https://genvar.delunalab.dev/variant/rs334)
 
 
-![Escores poligênicos](docs/tela-poligenico.png)
+![Escores poligênicos](docs/telas/tela-poligenico.png)
 
 **Escores poligênicos.** 6.982 escores do PGS Catalog com facetas por categoria, e a seção que liga o raro ao poligênico: como o fundo poligênico modula a penetrância de uma variante rara monogênica, com exemplos documentados.  
 `/poligenico` · [https://genvar.delunalab.dev/poligenico](https://genvar.delunalab.dev/poligenico)
 
 
-![Detalhe de escore poligênico](docs/tela-escore-detalhe.png)
+![Detalhe de escore poligênico](docs/telas/tela-escore-detalhe.png)
 
 **Detalhe de escore poligênico.** Servido pela plataforma em vez de levar o usuário ao PGS Catalog. Traz o método, o build, a ancestria nas três fases da vida do escore (GWAS de origem, desenvolvimento e avaliação) e o desempenho publicado por coorte, com efeito e intervalo de confiança.  
 `/escore/PGS000004` · [https://genvar.delunalab.dev/escore/PGS000004](https://genvar.delunalab.dev/escore/PGS000004)
 
 
-![Associação por burden](docs/tela-associacao.png)
+![Associação por burden](docs/telas/tela-associacao.png)
 
 **Associação por burden.** Manhattan plot em canvas com filtros de fenótipo, ancestria, máscara funcional e teste estatístico, com as linhas de limiar; forest plot cross-ancestry por gene; e o mapa dos biobancos por coordenada real.  
 `/associacao` · [https://genvar.delunalab.dev/associacao](https://genvar.delunalab.dev/associacao)
 
 
-![Produtos](docs/tela-produtos.png)
+![Produtos](docs/telas/tela-produtos.png)
 
 **Produtos.** Os quatro trabalhos que a plataforma entrega, organizados por necessidade concreta e não por camada de genética. Cada bloco declara o que entra, o que sai e o selo de maturidade.  
 `/produtos` · [https://genvar.delunalab.dev/produtos](https://genvar.delunalab.dev/produtos)
 
 
-![Status das fontes e da API](docs/tela-status.png)
+![Status das fontes e da API](docs/telas/tela-status.png)
 
 **Status das fontes e da API.** Saúde em tempo real das fontes externas e das dezoito rotas da própria API, com latência por sonda. O teto do cronômetro é diferente para rota local e para rota que consulta fonte externa, e acima de cinco segundos a rota sai como lenta e não como falha.  
 `/status` · [https://genvar.delunalab.dev/status](https://genvar.delunalab.dev/status)
 
 
-![Procedência dos dados](docs/tela-fontes.png)
+![Procedência dos dados](docs/telas/tela-fontes.png)
 
 **Procedência dos dados.** As quatorze fontes com licença, uso, citação formal e data de extração de cada catálogo. A data diz de onde saiu: declarada pelo próprio arquivo do ETL ou, na falta dela, a data de modificação, porque as duas não valem o mesmo.  
 `/fontes` · [https://genvar.delunalab.dev/fontes](https://genvar.delunalab.dev/fontes)
 
-![Sobre o projeto](docs/tela-sobre.png)
+![Sobre o projeto](docs/telas/tela-sobre.png)
 
 **Sobre o projeto.** Os números do catálogo conferidos contra os arquivos que os produzem, o que separa o GenVar de um portal de consulta, o compromisso com dados FAIR e a autoria.  
 `/sobre` · [https://genvar.delunalab.dev/sobre](https://genvar.delunalab.dev/sobre)
 
-![Como colaborar](docs/tela-colabore.png)
+![Como colaborar](docs/telas/tela-colabore.png)
 
 **Como colaborar.** As quatro frentes abertas, cada uma dizendo para quem serve e o que exige de quem pega. A inscrição não tem back-end: o formulário monta uma issue no repositório e abre para conferência antes de enviar, então a candidatura nasce pública.  
 `/colabore` · [https://genvar.delunalab.dev/colabore](https://genvar.delunalab.dev/colabore)
@@ -559,22 +559,22 @@ python etl/clingen_cpic.py
 
 ### Dados de burden (release estático público)
 
-Diferente das bases acima, os sumários de associação por burden de variantes raras (formato SAIGE-GENE e Meta-SAIGE) são publicados como um release estático de estatísticas-resumo, não como uma API ao vivo. O ETL `backend/scripts/build_burden.py` converte esse release nos JSON colunares que o módulo `/associacao` consome, incluindo o erro-padrão do efeito Burden para os intervalos de confiança do forest plot. Manter atualizado significa rerodar o ETL quando sai uma versão nova. Detalhes de formato e execução em `DATA_BURDEN.md`.
+Diferente das bases acima, os sumários de associação por burden de variantes raras (formato SAIGE-GENE e Meta-SAIGE) são publicados como um release estático de estatísticas-resumo, não como uma API ao vivo. O ETL `backend/scripts/build_burden.py` converte esse release nos JSON colunares que o módulo `/associacao` consome, incluindo o erro-padrão do efeito Burden para os intervalos de confiança do forest plot. Manter atualizado significa rerodar o ETL quando sai uma versão nova. Detalhes de formato e execução em `docs/guias/DATA_BURDEN.md`.
 
 
 ## Arquitetura do sistema
 
 A aplicação tem duas trilhas de dados independentes. A primeira passa pelo servidor: o navegador chama a API, o backend consulta as fontes públicas e devolve um JSON. A segunda não passa: a análise de VCF roda inteiramente no navegador, contra catálogos servidos como assets estáticos, e nenhum byte do arquivo do usuário sai da máquina dele. A Figura 1 mostra as duas trilhas lado a lado, a Figura 2 detalha o ciclo de vida de uma requisição de gene no servidor e a Figura 3 detalha a trilha que não usa o servidor. Os três diagramas são gerados por `scripts/gera_diagramas.py` e reproduzem a arquitetura da versão 3.0.0.
 
-![Arquitetura em camadas do GenVar](docs/genvar-arquitetura.svg)
+![Arquitetura em camadas do GenVar](docs/diagramas/genvar-arquitetura.svg)
 
 **Figura 1. Arquitetura em camadas.** O diagrama organiza o sistema em seis blocos, identificados por cor na legenda. A camada de apresentação (azul) é o frontend em React 18 com Vite, servido como build estático; reúne dezessete rotas do react-router, agrupadas em exploração (gene, variante, doenças raras), painéis e escores (painéis, poligênico, associação), análise de VCF (`/vcf` e `/lote`) e meta (início, produtos, status, fontes, sobre, colabore); as visualizações (Plotly.js, NGL para estrutura tridimensional, Ideogram, Manhattan em canvas, réguas ACMG e `@react-pdf/renderer` para o laudo); e o cliente HTTP (axios sobre `/api`, com TanStack Query). O bloco amarelo dentro do navegador é a trilha local: treze módulos de VCF (`parse`, `metricas`, `clinvar`, `interpretacao`, `acmg`, `lote`, `saidas`, `exportar`, `pdf` e testes) e 41 MB de catálogos embarcados, entre eles o ClinVar GRCh38 de 2026-08-22 com 4.207.945 variantes em 76 fatias `.json.gz` por cromossomo e camada de significado. A camada de aplicação (verde) é o backend em FastAPI sobre Uvicorn, em imagem python:3.12-slim na porta 8000: oito roteadores (gene, variante, doença, painel, escore poligênico, sugestão, fontes e saúde) expondo dezoito rotas sob `/api`, middleware de tempo de resposta, limite de taxa, CORS e compressão, orquestração assíncrona com `asyncio.gather` e oito módulos de serviço, um por fonte ao vivo. O cache (laranja) é o Redis 7 em política read-through com expiração de uma hora e chaves versionadas por tipo: `gene:v6:{símbolo}:{com|sem}`, `genevars:v1`, `genephen:v2`, `variant:v3`, `disease:v1`, `diseasevars:v1`, `panel:v1` e `pgs:v3`. As fontes externas (roxo) são as oito consultadas dentro do tempo da requisição: Ensembl, gnomAD, ClinVar, MyVariant.info, UniProt, AlphaFold, GWAS Catalog e PGS Catalog. O bloco cinza no rodapé é a compilação prévia: seis scripts de ETL que rodam fora do tempo da requisição e geram os dois conjuntos de catálogos, os do navegador e os que o processo do servidor carrega em memória. As setas cheias marcam o fluxo de requisição; as tracejadas, o que o ETL alimenta.
 
-![Ciclo de vida da requisição de gene no GenVar](docs/genvar-fluxo-gene.svg)
+![Ciclo de vida da requisição de gene no GenVar](docs/diagramas/genvar-fluxo-gene.svg)
 
 **Figura 2. Ciclo de vida da requisição `/api/gene/{símbolo}`.** O fluxograma acompanha uma chamada do início ao fim no servidor. O navegador emite `GET /api/gene/{símbolo}` e o backend valida o símbolo. A primeira decisão consulta o Redis (Em cache?): em caso de acerto (hit), a resposta sai do cache em cerca de 16 ms, com entrega imediata, encerrando o fluxo; em caso de falha (miss), a requisição prossegue. A etapa seguinte é sequencial e obrigatória antes do paralelismo: o lookup no Ensembl converte o símbolo no `gene_id`. De posse do `gene_id`, o `asyncio.gather` dispara três chamadas em paralelo, o overlap de variantes no Ensembl, a restrição (constraint) do gene no gnomAD e o identificador da proteína no UniProt. A chamada ao AlphaFold (estrutura tridimensional) é condicional e só ocorre se o UniProt devolver um identificador. Concluídas as chamadas, o servidor agrega, classifica e prioriza as variantes, grava o resultado no cache (TTL 1 h, exceto quando a busca de variantes no Ensembl falhou, para não fixar um resultado vazio durante uma instabilidade) montando um JSON único e devolve a resposta ao navegador. A rota `/api/variant/{rs}` segue o mesmo padrão, acrescentando as chamadas ao ClinVar (E-utilities) e ao MyVariant.info (escores preditivos), omitidas no diagrama por clareza.
 
-![Fluxo da análise de VCF no navegador](docs/genvar-fluxo-vcf.svg)
+![Fluxo da análise de VCF no navegador](docs/diagramas/genvar-fluxo-vcf.svg)
 
 **Figura 3. Fluxo da análise de VCF no navegador.** O fluxograma acompanha um arquivo da escolha às saídas, e nenhuma das etapas faz requisição ao backend. O usuário escolhe um `.vcf` ou `.vcf.gz` do disco. O `parse.js` descomprime por `DecompressionStream` e varre linha a linha, sem carregar o arquivo inteiro em memória. O `metricas.js` calcula a razão Ti/Tv, profundidade, qualidade e a fração já presente no dbSNP, com histogramas cortados no percentil 99. O `clinvar.js` consulta o índice embarcado por cromossomo e camada de significado e baixa apenas as fatias que aquele arquivo toca, o que evita transferir os 41 MB inteiros. O `interpretacao.js` com o `acmg.js` aplica os critérios ACMG/AMP e a pontuação bayesiana de Tavtigian, adotada pelo ClinGen, sempre derivando a banda do ponto e nunca fixando o rótulo à mão. O `saidas.js`, o `exportar.js` e o `pdf.jsx` escrevem a mesma tabela em TSV, CSV, JSON, VCF anotado e PDF, todos carimbados com o sha256 do arquivo de entrada. A faixa azul à esquerda é o `lote.js`, que repete a mesma sequência para N arquivos e agrega o resultado da coorte em `/lote`. O único dado que trafega são os catálogos embarcados, e só no sentido servidor para navegador: são iguais para qualquer usuário e não dependem do que foi analisado.
 
@@ -823,7 +823,8 @@ genvar-dashboard/
 │   │   ├── docker/                  CSVs do ambiente conteinerizado (Docker Compose).
 │   │   └── figures/                 Figuras comparativas local vs Docker (fig_cmp_*).
 │   └── metrics/                     Dados, figuras, diagramas e scripts da metrificação do TCC.
-├── benchmark-v2/                    Benchmark da plataforma: o pipeline de VCF, não a API.
+├── benchmark-final/                 Benchmark da versão 3.0: sete suítes de API, três de navegador, 26 figuras.
+├── benchmark-legacy/                As duas gerações anteriores, congeladas.
 │   ├── executar.mjs                 Toda função do pipeline, sobre todo arquivo do corpus.
 │   ├── reprodutibilidade.mjs        Mesma entrada, mesmo laudo: seis critérios binários.
 │   ├── lote.mjs                     Lote contra arquivo a arquivo: tempo, pico e memória retida.
@@ -837,22 +838,19 @@ genvar-dashboard/
 │   ├── resultados/                  CSVs de cada suíte, versionados.
 │   ├── figuras/                     PNGs no tamanho final de publicação.
 │   └── RELATORIO.md                 Relatório gerado, com todas as tabelas e figuras.
-├── deploy/                          Blueprint Render e worker Cloudflare para o /beta.
-├── docs/                            Diagramas (Figuras 1 a 3) e capturas de tela do README.
+├── deploy/                          Blueprint Render, worker Cloudflare e os compose do benchmark.
+├── docs/
+│   ├── diagramas/                   Figuras 1 a 3 da arquitetura, em SVG, e o mapa do site.
+│   ├── telas/                       As dezessete capturas de tela do README.
+│   └── guias/                       SETUP, ROADMAP, DEPLOY_BETA, DATA_BURDEN e o relatório de APIs.
 ├── mock-results-vcf-test/           Saídas de uma análise real: GIAB/NIST HG001 pelo pipeline inteiro.
 ├── scripts/
 │   ├── captura_telas.py             Captura as telas do README em página inteira, via CDP.
 │   ├── gera_diagramas.py            Gera os SVG das Figuras 1 e 3.
 │   └── gera_saidas_exemplo.mjs      Roda o pipeline de VCF fora do navegador e grava mock-results-vcf-test/.
 │   ├── gera_vcf_teste.py            Gera as fixtures sintéticas de VCF.
-├── imgs/                            Logos das fontes de dados.
 ├── docker-compose.yml               Orquestração: backend, frontend e Redis.
 ├── render.yaml                      Configuração de deploy no Render (produção).
-├── SETUP.md                         Guia de instalação detalhado.
-├── ROADMAP.md                       Plano de evolução por fases (monogênico a poligênico).
-├── DATA_BURDEN.md                   Fontes públicas e ETL da camada de burden.
-├── DEPLOY_BETA.md                   Passo a passo do deploy isolado em genvar.delunalab.dev/beta.
-├── API_TESTING_REPORT.md            Relatório de testes e discrepâncias das APIs.
 └── README.md
 ```
 
@@ -1379,13 +1377,13 @@ São **duas suítes, em duas pastas**, e a divisão é por objeto de medida:
 | Pasta | Mede | Escopo |
 |---|---|---|
 | `benchmark/` | A API: latência, exaustão, tratamento de erro, completude e enriquecimento de payload | Seis suítes, executadas contra o backend |
-| `benchmark-v2/` | A plataforma: cada função do pipeline de VCF, sobre um corpus de doze arquivos sintéticos e quatro arquivos reais, mais reprodutibilidade, lote contra individual, cache e catálogos | Sete suítes, a maioria executada no próprio pipeline do navegador |
+| `benchmark-legacy/v2/` | A plataforma: cada função do pipeline de VCF, sobre um corpus de doze arquivos sintéticos e quatro arquivos reais, mais reprodutibilidade, lote contra individual, cache e catálogos | Sete suítes, a maioria executada no próprio pipeline do navegador |
 
 A primeira nasceu com a versão 2.0 e continua válida: ela cobre o que a API faz. A segunda existe porque a primeira não alcança nada do módulo de VCF, que é onde está o trabalho pesado desta versão, e que até então não tinha um único número medido.
 
-### Benchmark da plataforma (`benchmark-v2/`)
+### Benchmark da versão 3.0 (`benchmark-final/`)
 
-Relatório completo, com todas as tabelas e figuras, em [`benchmark-v2/RELATORIO.md`](benchmark-v2/RELATORIO.md). Metodologia e como reproduzir em [`benchmark-final/README.md`](benchmark-v2/README.md).
+Resultados e discussão, com as 26 figuras legendadas e citadas no texto, em [`benchmark-final/RESULTADOS.md`](benchmark-final/RESULTADOS.md). Metodologia e como reproduzir em [`benchmark-final/README.md`](benchmark-final/README.md). As medições anteriores ficam congeladas em [`benchmark-legacy/`](benchmark-legacy/).
 
 **Corpus.** Doze arquivos sintéticos determinísticos, cada um existente para exercitar um caminho que os outros não alcançam: escala de mil a 600 mil variantes, entrada em `.gz` e em `.zip`, GRCh37, build não declarado, trio com os números de herança plantados no cabeçalho, arquivo com defeitos de rotina e arquivo com cinco amostras. **8% de cada um vem das próprias tabelas do ClinVar embarcado**, e a razão é uma correção de método: a primeira versão usava posição e rsID sorteados, casou 16 variantes em 400.000 e divergiu em 58, ou seja, exercitava o ramo "rsID conhecido, alelo não confere" e deixava resumo clínico, critérios ACMG, filtro por painel e a largura das linhas exportadas medindo o caso vazio.
 
@@ -1772,7 +1770,7 @@ Figuras comparativas local vs Docker (`plot_comparison.py`, salvas em `results/f
 
 ## Notas técnicas sobre as APIs
 
-Discrepâncias identificadas durante os testes e documentadas em `API_TESTING_REPORT.md`:
+Discrepâncias identificadas durante os testes e documentadas em `docs/guias/API_TESTING_REPORT.md`:
 
 1. **gnomAD**: o campo `af` não existe no tipo `VariantPopulation`. A frequência é calculada no backend como `ac / an`.
 2. **gnomAD**: o campo de restrição é `oe_lof_upper` (LOEUF), não `loeuf` como aparece em alguns exemplos antigos.

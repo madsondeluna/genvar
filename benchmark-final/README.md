@@ -57,7 +57,7 @@ npx vite-node ../benchmark-final/navegador/lote.mjs -- --coortes 1,5,10,25,50,10
 cd -
 
 # 5. servidor, ambiente conteinerizado
-docker compose -f docker-compose.yml -f docker-compose.benchmark.yml up -d
+docker compose -f docker-compose.yml -f deploy/docker-compose.benchmark.yml up -d
 DD=benchmark-final/resultados/docker
 U=http://localhost:8001; R=redis://localhost:6380
 REDIS_URL=$R python3 benchmark-final/servidor/requisicoes.py --saida $DD --rotulo docker
